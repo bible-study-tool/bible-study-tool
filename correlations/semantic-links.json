@@ -1,0 +1,153 @@
+{
+  "$schema": "semantic-links/v1",
+  "version": "1.0.0",
+  "last_updated": "2026-08-23",
+  "description": "MVP: Curated cross-language semantic relationships for Genesis 1:1-3",
+  "links": [
+    {
+      "id": "sl-001",
+      "type": "relation/equivalent",
+      "confidence": "high",
+      "source": "manual",
+      "created": "2026-08-23",
+      "reviewed_by": null,
+      "entries": [
+        {
+          "strongs": "H7225",
+          "language": "hebrew",
+          "word": "רֵאשִׁית",
+          "transliteration": "reshit",
+          "definition": "beginning, first, chief, firstfruits",
+          "strongs_def": "beginning; first; chief; firstfruits",
+          "passages": [
+            "passage/gen-1-1"
+          ]
+        },
+        {
+          "strongs": "G2532",
+          "language": "greek",
+          "word": "ἀρχή",
+          "transliteration": "archē",
+          "definition": "beginning, origin, source, power",
+          "strongs_def": "beginning; origin; power; rule",
+          "passages": [
+            "passage/john-1-1",
+            "passage/colossians-1-18"
+          ]
+        },
+        {
+          "english_concept": "beginning, origin, first",
+          "notes": "Hebrew reshit and Greek archē both convey 'beginning' but reshit emphasizes 'first' (temporal) while archē also carries 'origin' and 'source' (ontological). In John 1:1, archē is used with the Logos, adding a theological dimension absent in Genesis 1:1."
+        }
+      ],
+      "semantic_field": "sf-origins-beginning",
+      "passages": [
+        "passage/gen-1-1",
+        "passage/john-1-1"
+      ],
+      "tags": [
+        "relation/equivalent",
+        "lang/hebrew",
+        "lang/greek",
+        "strongs-H7225",
+        "strongs-G2532"
+      ]
+    },
+    {
+      "id": "sl-002",
+      "type": "relation/semantic-field",
+      "confidence": "high",
+      "source": "manual",
+      "created": "2026-08-23",
+      "reviewed_by": null,
+      "entries": [
+        {
+          "strongs": "H1254",
+          "language": "hebrew",
+          "word": "בָּרָא",
+          "transliteration": "bara",
+          "definition": "to create, shape, form",
+          "strongs_def": "to create; to shape; to form",
+          "passages": [
+            "passage/gen-1-1",
+            "passage/isaiah-40-26",
+            "passage/jeremiah-10-12",
+            "passage/ephesians-2-10"
+          ]
+        },
+        {
+          "strongs": "G2936",
+          "language": "greek",
+          "word": "κτίζω",
+          "transliteration": "ktizō",
+          "definition": "to create, make, form",
+          "strongs_def": "to create; to make; to form",
+          "passages": [
+            "passage/romans-1-20",
+            "passage/colossians-1-16",
+            "passage/revelation-4-11"
+          ]
+        },
+        {
+          "english_concept": "to create, divine creative activity",
+          "notes": "Bara is used exclusively of divine creative activity in the OT. Ktizō is used for both divine and human creation in the NT. This is a semantic field relationship, not a strict equivalence."
+        }
+      ],
+      "semantic_field": "sf-creation-creative-act",
+      "passages": [
+        "passage/gen-1-1",
+        "passage/romans-1-20"
+      ],
+      "tags": [
+        "relation/semantic-field",
+        "lang/hebrew",
+        "lang/greek",
+        "strongs-H1254",
+        "strongs-G2936"
+      ]
+    },
+    {
+      "id": "sl-003",
+      "type": "relation/contrast",
+      "confidence": "high",
+      "source": "manual",
+      "created": "2026-08-23",
+      "reviewed_by": null,
+      "entries": [
+        {
+          "strongs": "H1254",
+          "language": "hebrew",
+          "word": "בָּרָא",
+          "transliteration": "bara",
+          "definition": "to create (divine)",
+          "passages": [
+            "passage/gen-1-1"
+          ]
+        },
+        {
+          "strongs": "H6213",
+          "language": "hebrew",
+          "word": "עָשָׂה",
+          "transliteration": "asah",
+          "definition": "to make, do (human or divine)",
+          "passages": [
+            "passage/exodus-20-11",
+            "passage/gen-1-7",
+            "passage/gen-1-16"
+          ]
+        }
+      ],
+      "semantic_field": "sf-creation-make",
+      "passages": [
+        "passage/gen-1-1",
+        "passage/exodus-20-11"
+      ],
+      "tags": [
+        "relation/contrast",
+        "lang/hebrew",
+        "strongs-H1254",
+        "strongs-H6213"
+      ]
+    }
+  ]
+}
