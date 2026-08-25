@@ -43,10 +43,11 @@ bible-study-tool/
 │   ├── ai-discovered-links.json  # AI-suggested links awaiting review
 │   ├── DETERMINISTIC_VS_AI.md    # Core vs AI layer boundary
 │   ├── MACULA_INTEGRATION.md     # Macula dataset integration plan
-│   └── SEMANTIC_LINKING_GUIDE.md # Full implementation guide
+│   └── SEMANTIC_LINKING_GUIDE.md # Code-level implementation guide
 ├── notes/               # Study notes and word studies
 ├── ai-prompts/          # Templates for AI-assisted tasks
 ├── search/              # Semantic search engine (Python)
+│   └── linking/         # Semantic linking pipeline (layers b & c)
 ├── .gitlab/             # GitLab CI, merge request templates
 ├── CONTRIBUTION_STANDARDS.md
 ├── kb-schema.md
@@ -132,11 +133,64 @@ python search/semantic_search.py --repo . --rebuild-index
 The built index is saved to index/semantic_index.pkl (a generated binary;  
 add "index/*.pkl" to .gitignore).
 
+### Semantic linking pipeline (layers b & c)
+
+A dedicated package (`search/linking/`) implements the semantic correlating
+feature in two cooperating layers, matching the deterministic/AI boundary in
+[DETERMINISTIC_VS_AI.md](correlations/DETERMINISTIC_VS_AI.md). See
+[SEMANTIC_LINKING_GUIDE.md](correlations/SEMANTIC_LINKING_GUIDE.md) for full
+detail.
+
+* **Layer (b) — deterministic concordance**: groups entries that share an
+  original-language lexeme (Strong's number) into cross-passage /
+  cross-language root links. Always authoritative. Writes `index/concordance.json`.
+* **Layer (c) — multilingual discovery (AI)**: proposes cross-language links
+  *beyond* a shared Strong's number (different lexemes, different scripts,
+  same conceptual field) using a pluggable multilingual embedder. Gated by
+  strict rules and written only to `correlations/ai-discovered-links.json`
+  for human review — it never touches the deterministic core.
+
+Both layers query a shared **SQLite index** (`index/semantic.db`) so they read
+only the generated index instead of rescanning the Markdown tree. Markdown in
+`materials/` stays the single source of truth; the `.db` is a rebuilt artifact.
+
+```bash
+# Build the SQLite index (once, from authoritative Markdown)
+python -m search.linking.dbindex build --repo .
+
+# Query the index (FTS5 free-text + metadata, no rescan of materials/)
+python -m search.linking.dbindex query --db index/semantic.db --count
+python -m search.linking.dbindex query --db index/semantic.db --strongs H7225
+python -m search.linking.dbindex query --db index/semantic.db --tag theme/creation
+python -m search.linking.dbindex query --db index/semantic.db --free-text "creation light"
+
+# Layer (b): deterministic concordance (queries the index)
+python -m search.linking.cli --repo . --deterministic
+
+# Layer (c): multilingual candidate discovery (pending human review)
+python -m search.linking.cli --repo . --discover --top-k 5
+
+# Both layers, rebuilding the index and seeding accepted candidates
+python -m search.linking.cli --repo . --all --rebuild-db --seed
+
+# Run tests
+python -m search.linking.test_pipeline
+```
+
+The embedder is pluggable: it uses `intfloat/multilingual-e5-small` when
+`sentence-transformers` is installed and otherwise falls back to a
+deterministic, offline, cross-script character n-gram embedder (numpy only).
+
 ### Install dependencies
 
 ```bash
 pip install pyyaml scikit-learn
 ```
+
+> Note: scikit-learn is only needed by the legacy `search/semantic_search.py`
+> TF-IDF engine. The linking pipeline (`search/linking/`) requires only
+> `numpy` and `PyYAML` for its deterministic mode; SQLite (`sqlite3`) is part
+> of Python's standard library.
 
 ```
 
