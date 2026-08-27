@@ -10,7 +10,7 @@ import unittest
 
 from search.linking.loader import Loader
 from search.linking.concordance import build_concordance
-from search.linking.candidates import discover_candidates, _curated_pairs
+from search.linking.candidates import discover_candidates, _curated_pairs, _merge_existing, _candidate_key
 from search.linking.embedder import get_embedder
 
 
@@ -149,6 +149,54 @@ class CandidateTests(unittest.TestCase):
             self.assertNotIn(frozenset(strongs), curated)
             langs = {e["language"] for e in c["entries"]}
             self.assertEqual(len(langs), 2, "candidates must be cross-language")
+
+    def test_merge_preserves_review_annotations(self):
+        """Human review metadata must survive regeneration (no clobbering)."""
+        prior = [
+            {
+                "id": "aid-1",
+                "type": "relation/equivalent",
+                "review_status": "rejected",
+                "aligns_with_doctrine": None,
+                "reviewed_by": "reviewer@example",
+                "review_note": "unsupported etymology",
+                "entries": [{"strongs": "H1111"}, {"strongs": "G2222"}],
+            }
+        ]
+        fresh = [
+            {
+                "id": "aid-20260101-001",
+                "type": "relation/equivalent",
+                "review_status": "pending",
+                "aligns_with_doctrine": None,
+                "entries": [{"strongs": "G2222"}, {"strongs": "H1111"}],
+            },
+            {
+                "id": "aid-20260101-002",
+                "type": "relation/semantic-field",
+                "review_status": "pending",
+                "aligns_with_doctrine": None,
+                "entries": [{"strongs": "H3333"}, {"strongs": "G4444"}],
+            },
+        ]
+        merged = _merge_existing(prior, fresh)
+        self.assertEqual(len(merged), 2)
+        by_pair = {_candidate_key(c): c for c in merged}
+        # The reviewed pair keeps its annotations despite fresh 'pending'.
+        reviewed = by_pair[frozenset({"H1111", "G2222"})]
+        self.assertEqual(reviewed["review_status"], "rejected")
+        self.assertEqual(reviewed["reviewed_by"], "reviewer@example")
+        self.assertEqual(reviewed["review_note"], "unsupported etymology")
+        # The new pair stays untouched/pending.
+        new = by_pair[frozenset({"H3333", "G4444"})]
+        self.assertEqual(new["review_status"], "pending")
+
+    def test_candidate_key_is_unordered(self):
+        """Identity key must not depend on entry ordering."""
+        a = {"entries": [{"strongs": "H1"}, {"strongs": "G2"}]}
+        b = {"entries": [{"strongs": "G2"}, {"strongs": "H1"}]}
+        self.assertEqual(_candidate_key(a), _candidate_key(b))
+
 
     def test_embedder_deterministic_available(self):
         emb = get_embedder(prefer_model=False)

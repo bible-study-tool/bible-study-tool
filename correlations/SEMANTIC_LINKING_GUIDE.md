@@ -149,6 +149,14 @@ Generated candidates. Each has `review_status: pending`, `confidence`, the two
 lexemes with their languages, a similarity score, and a rationale. **Nothing
 here is authoritative** until a human promotes it into `semantic-links.json`.
 
+This file is **tracked in git** — it is the durable review queue. Regenerating
+candidates with `--discover` does **not** clobber human review state: for each
+freshly proposed candidate, the pipeline carries forward prior
+`review_status`, `aligns_with_doctrine`, `reviewed_by`, and `review_note`
+values for the same Strong's pair (see `_merge_existing` in `candidates.py`).
+So reviewers can annotate, commit, and later regenerate without losing
+decisions or rejected-link traceability.
+
 ## Promotion workflow (human)
 
 1. Reviewer opens `ai-discovered-links.json`.

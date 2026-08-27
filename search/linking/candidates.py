@@ -328,6 +328,49 @@ def discover_candidates(
     ]
 
 
+def _candidate_key(cand: dict) -> frozenset:
+    """Stable identity key for a candidate: its unordered Strong's pair.
+
+    Two runs of the pipeline produce the same pair for the same two lexemes,
+    so this lets us carry forward human review annotations across
+    regenerations instead of clobbering them.
+    """
+    strongs = {e.get("strongs") for e in cand.get("entries", [])}
+    return frozenset(s for s in strongs if s)
+
+
+# Review metadata that a human may have set on a candidate; these must survive
+# regeneration so decisions (and rejected-link traceability) are not lost.
+_PRESERVED_FIELDS = ("review_status", "aligns_with_doctrine", "reviewed_by", "review_note")
+
+
+def _merge_existing(existing_cands: list[dict], fresh_cands: list[dict]) -> list[dict]:
+    """Carry forward human review annotations from prior candidates.
+
+    ``existing_cands`` come from the file on disk (which is now tracked);
+    ``fresh_cands`` are this run's freshly discovered proposals. For each
+    fresh candidate, if a prior candidate had the same Strong's pair and had
+    been reviewed (non-default review metadata), copy that metadata forward.
+    This prevents a ``--discover`` run from discarding human decisions.
+    """
+    by_pair: dict[frozenset, dict] = {}
+    for prior in existing_cands:
+        key = _candidate_key(prior)
+        if key and (prior.get("review_status") != "pending" or prior.get("aligns_with_doctrine") is not None):
+            by_pair[key] = prior
+
+    merged = []
+    for cand in fresh_cands:
+        prior = by_pair.get(_candidate_key(cand))
+        if prior is not None:
+            cand = {**cand}
+            for field in _PRESERVED_FIELDS:
+                if field in prior and prior[field] is not None:
+                    cand[field] = prior[field]
+        merged.append(cand)
+    return merged
+
+
 def write_candidates(
     loader,
     out_path: str | Path = "correlations/ai-discovered-links.json",
@@ -339,10 +382,26 @@ def write_candidates(
     ``min_similarity`` is threaded into the acceptance gate so callers can
     tune it for the active embedder space (transformer space is typically
     ~0.82+; the deterministic fallback space is ~0.7+).
+
+    Human review annotations on existing candidates are preserved across
+    runs: a fresh discovery never clobbers prior ``review_status`` /
+    ``aligns_with_doctrine`` / ``reviewed_by`` / ``review_note`` for the same
+    Strong's pair.
     """
-    candidates = discover_candidates(loader, min_similarity=min_similarity, **kw)
+    fresh = discover_candidates(loader, min_similarity=min_similarity, **kw)
     path = Path(out_path)
     path.parent.mkdir(parents=True, exist_ok=True)
+
+    existing_cands: list[dict] = []
+    if path.exists():
+        try:
+            with open(path, encoding="utf-8") as fh:
+                existing = json.load(fh)
+            existing_cands = existing.get("candidates", []) if isinstance(existing, dict) else []
+        except Exception:
+            existing_cands = []
+
+    candidates = _merge_existing(existing_cands, fresh)
     payload = {
         "$schema": "ai-discovered-links/v1",
         "version": "1.0.0",
