@@ -50,7 +50,7 @@ bible-study-tool/
 │   └── linking/         # Semantic linking pipeline (layers b & c)
 ├── .gitlab/             # GitLab CI, merge request templates
 ├── CONTRIBUTION_STANDARDS.md
-├── kb-schema.md
+├── kc-schema.md
 └── README.md
 ```
 
@@ -188,7 +188,7 @@ The project plans to integrate the [Macula](https://tools.bible/tools/macula-gre
 
 *   Tag Taxonomy — Complete tag vocabulary and relationship types
     
-*   [Knowledge Base Schema](kb-schema.md) — Entry format and metadata rules
+*   [Knowledge Base Schema](kc-schema.md) — Entry format and metadata rules
     
 *   Semantic Linking Implementation Guide — How cross-language relationships work
     
