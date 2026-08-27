@@ -51,6 +51,9 @@ bible-study-tool/
 ├── .gitlab/             # GitLab CI, merge request templates
 ├── CONTRIBUTION_STANDARDS.md
 ├── kc-schema.md
+├── LICENSE              # Code license (MIT)
+├── LICENSE.content      # Content license (CC BY 4.0)
+├── NOTICE.md            # Purpose, doctrinal basis, content-sourcing policy
 └── README.md
 ```
 
@@ -218,7 +221,15 @@ embeddings are the planned upgrade via a pluggable embedder.
 
 ## License
 
-[To be determined]
+This repository is dual-licensed by component:
+
+*   **Code** (the `search/` pipeline and tooling): [MIT](LICENSE)
+*   **Original content** (concordance data, semantic links, cross-references,
+    taxonomies, word studies): [CC BY 4.0](LICENSE.content)
+
+See [NOTICE.md](NOTICE.md) for the project's doctrinal basis and its
+content-sourcing policy, including why Ellen G. White and copyrighted
+translation texts are linked to rather than bundled.
 
 ## Contributing
 
