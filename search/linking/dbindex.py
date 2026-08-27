@@ -221,6 +221,31 @@ class SemanticDB:
         finally:
             con.close()
 
+    # ---- cross-references --------------------------------------------------
+
+    def cross_references(self, entry_id: str) -> list[dict]:
+        """Return the structured cross_references list for an entry.
+
+        The list is stored as JSON inside the entry's frontmatter, so we read
+        it straight from the index rather than rescanning the Markdown tree.
+        Returns [] when the entry is missing or has no cross-references.
+        """
+        con = self._connect()
+        try:
+            row = con.execute(
+                "SELECT frontmatter FROM entries WHERE id = ?", (entry_id,)
+            ).fetchone()
+            if row is None:
+                return []
+            try:
+                fm = json.loads(row["frontmatter"])
+            except Exception:
+                return []
+            xr = fm.get("cross_references", [])
+            return xr if isinstance(xr, list) else []
+        finally:
+            con.close()
+
     # ---- FTS5 free-text query ---------------------------------------------
 
     def search(self, query: str, top_k: int = 10) -> list[dict]:
@@ -278,6 +303,7 @@ def main(argv=None):
     q.add_argument("--free-text", help="FTS5 free-text query")
     q.add_argument("--strongs", help="tag lookup, e.g. H7225")
     q.add_argument("--tag", help="tag lookup, e.g. theme/creation")
+    q.add_argument("--xref", help="list cross-references for an entry id")
     q.add_argument("--count", action="store_true", help="print entry count")
     q.add_argument("--top-k", type=int, default=10)
 
@@ -300,6 +326,15 @@ def main(argv=None):
         elif args.tag:
             for r in db.entries_by_tag(args.tag):
                 print(f"{r['id']} — {r['passage']}")
+        elif getattr(args, "xref", None):
+            refs = db.cross_references(args.xref)
+            if not refs:
+                print(f"No cross-references for {args.xref}")
+            for ref in refs:
+                if isinstance(ref, dict):
+                    print(f"{ref.get('type', 'xref/unknown')} -> {ref.get('target', '?')}")
+                    if ref.get("note"):
+                        print(f"   {ref['note']}")
         elif getattr(args, "free_text", None):
             for r in db.search(args.free_text, top_k=args.top_k):
                 print(f"{r['id']} — {r['passage']} (bm25 {r['bm25']:.3f})")

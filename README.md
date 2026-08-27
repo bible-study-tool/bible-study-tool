@@ -104,34 +104,20 @@ The initial MVP covers **Genesis 1:1–3** with:
 *   AI-assisted word study and cross-reference discovery
     
 
-## Lexical / Keyword Search (MVP)
+## Lexical / Keyword Search
 
-A lightweight offline search engine is included in  
-`search/semantic_search.py`. It uses TF-IDF vectorization (scikit-learn)  
-and YAML-frontmatter parsing (PyYAML). No API calls, fully offline.
-Note: TF-IDF is a lexical/keyword search, not neural-semantic search. It  
-matches literal terms and word n-grams; it does not understand synonyms,  
-concepts, paraphrase, or cross-language meaning. True "semantic" matching  
-(embeddings) is the planned upgrade - the engine interface is designed for a  
-drop-in embeddings backend.
-Usage:
+All search — free-text, metadata, and cross-references — runs through the
+`search/linking/` pipeline backed by a single SQLite index (`index/semantic.db`).
+No API calls; fully offline.
 
-```bash
-# Build and persist the index once
-python search/semantic_search.py --repo . --build-index
-
-# Then query (loads the saved index)
-python search/semantic_search.py --repo . --query "creation of light"
-python search/semantic_search.py --repo . --strongs H7225
-python search/semantic_search.py --repo . --tag theme/creation
-python search/semantic_search.py --repo . --xref gen-1-1-kjv
-
-# Force a rebuild
-python search/semantic_search.py --repo . --rebuild-index
-```
-
-The built index is saved to index/semantic_index.pkl (a generated binary;  
-add "index/*.pkl" to .gitignore).
+> **Honesty note:** The free-text search is lexical/keyword (SQLite FTS5 BM25),
+> not neural-semantic. It matches literal terms and n-grams; it does not
+> understand synonyms, concepts, paraphrase, or cross-language meaning. True
+> semantic matching (embeddings) is the planned upgrade, provided by the
+> pluggable embedder in the linking layer (c). The older standalone
+> `search/semantic_search.py` (TF-IDF) has been **removed** — its deterministic
+> lookups and cross-reference support are now native to the linking pipeline,
+> which is a single, more capable engine.
 
 ### Semantic linking pipeline (layers b & c)
 
@@ -163,6 +149,7 @@ python -m search.linking.dbindex query --db index/semantic.db --count
 python -m search.linking.dbindex query --db index/semantic.db --strongs H7225
 python -m search.linking.dbindex query --db index/semantic.db --tag theme/creation
 python -m search.linking.dbindex query --db index/semantic.db --free-text "creation light"
+python -m search.linking.dbindex query --db index/semantic.db --xref gen-1-1-kjv
 
 # Layer (b): deterministic concordance (queries the index)
 python -m search.linking.cli --repo . --deterministic
@@ -184,15 +171,14 @@ deterministic, offline, cross-script character n-gram embedder (numpy only).
 ### Install dependencies
 
 ```bash
-pip install pyyaml scikit-learn
+pip install numpy pyyaml
 ```
 
-> Note: scikit-learn is only needed by the legacy `search/semantic_search.py`
-> TF-IDF engine. The linking pipeline (`search/linking/`) requires only
-> `numpy` and `PyYAML` for its deterministic mode; SQLite (`sqlite3`) is part
-> of Python's standard library.
-
-```
+> Note: the linking pipeline (`search/linking/`) requires only `numpy` and
+> PyYAML for its deterministic mode; SQLite (`sqlite3`) is part of Python's
+> standard library. scikit-learn is **not** required. For the higher-fidelity
+> multilingual embedder, optionally install `sentence-transformers` (see the
+> Semantic Linking Guide).
 
 ## Macula Dataset Integration
 
@@ -219,8 +205,9 @@ The project plans to integrate the [Macula](https://tools.bible/tools/macula-gre
     
 *   **Version Control**: Git (GitLab/GitHub)
     
-*   **Search**: TF-IDF lexical/keyword vectorization via scikit-learn, plus 
-PyYAML for frontmatter parsing (offline, no API). True semantic embeddings planned.
+*   **Search**: SQLite FTS5 (BM25) free-text + metadata queries, via the
+`search/linking/` pipeline (offline, no API). Cross-language semantic
+embeddings are the planned upgrade via a pluggable embedder.
     
 *   **AI Integration**: LLM API (optional, for on-demand assistance)
     

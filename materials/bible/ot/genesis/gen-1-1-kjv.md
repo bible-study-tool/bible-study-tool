@@ -1,44 +1,44 @@
-* * *
-
-## id: gen-1-1-kjv  
-type: material/bible  
-book: book/genesis  
-passage: "Genesis 1:1"  
-tags:  
-- book/genesis  
-- theme/creation  
-- theme/origins  
-- translation/kjv  
-- lang/hebrew  
-- strongs-H7225  
-- strongs-H430  
-- strongs-H1254  
-- xref/fulfillment  
-source: source/bible  
-language: hebrew  
-translation: kjv  
-level: intro  
-status: review  
-created: 2026-08-23  
-updated: 2026-08-24  
-semantic_links:  
-- sl-001  
-- sl-002  
-- sl-003  
-related:  
-- id: gen-1-1-esv  
-- id: gen-1-1-hebrew  
-- id: gen-1-1-lxx  
-cross_references:  
-- type: xref/fulfillment  
-target: "john-1-1"  
-note: "In the beginning parallels the prologue of John - the Word was in the beginning"  
-- type: xref/theme  
-target: "proverbs-8-22-31"  
-note: "Wisdom as master worker at creation - thematic link to Christ as Creator"  
-- type: xref/spirit-prophecy  
-target: "pat-1-1"  
-note: "Patriarchs and Prophets, chapter 1 - the creation account"
+---
+id: gen-1-1-kjv
+type: material/bible
+book: book/genesis
+passage: "Genesis 1:1"
+tags:
+  - book/genesis
+  - theme/creation
+  - theme/origins
+  - translation/kjv
+  - lang/hebrew
+  - strongs-H7225
+  - strongs-H430
+  - strongs-H1254
+  - xref/fulfillment
+source: source/bible
+language: hebrew
+translation: kjv
+level: intro
+status: review
+created: 2026-08-23
+updated: 2026-08-24
+semantic_links:
+  - sl-001
+  - sl-002
+  - sl-003
+related:
+  - id: gen-1-1-esv
+  - id: gen-1-1-hebrew
+  - id: gen-1-1-lxx
+cross_references:
+  - type: xref/fulfillment
+    target: "john-1-1"
+    note: "In the beginning parallels the prologue of John - the Word was in the beginning"
+  - type: xref/theme
+    target: "proverbs-8-22-31"
+    note: "Wisdom as master worker at creation - thematic link to Christ as Creator"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, chapter 1 - the creation account"
+---
 
 # Genesis 1:1 - KJV
 
@@ -49,37 +49,34 @@ note: "Patriarchs and Prophets, chapter 1 - the creation account"
 ### reshit (beginning) - Strong's H7225
 
 *   Transliteration: reshit
-    
+
 *   Definition: beginning, first, chief, firstfruits
-    
+
 *   Usage Count: about 51 times in the OT
-    
+
 *   Semantic Range: temporal beginning (Gen 1:1), chief or primary (Jer 1:5), firstfruits (Exo 23:19), the chief part (Prov 4:7)
-    
+
 *   Note: in Gen 1:1, reshit is used absolutely, suggesting an absolute beginning rather than "God began to create".
-    
 
 ### elohim (God) - Strong's H430
 
 *   Transliteration: elohim
-    
+
 *   Definition: God, gods (plural form taking singular meaning when referring to the one true God)
-    
+
 *   Usage Count: about 2600 times in the OT
-    
+
 *   Note: the plural form with singular verbs is understood as a plural of majesty or intensity in reference to God.
-    
 
 ### bara (to create) - Strong's H1254
 
 *   Transliteration: bara
-    
+
 *   Definition: to create, shape, form
-    
+
 *   Usage Count: about 54 times in the OT
-    
+
 *   Note: used chiefly of divine creative activity; implies creating from nothing or something fundamentally new. The use of bara (rather than asah "to make" or yatsar "to form") emphasizes a uniquely divine act.
-    
 
 ## English and Original-Language Comparison
 
@@ -97,31 +94,28 @@ note: "Patriarchs and Prophets, chapter 1 - the creation account"
 ## Cross-Language Notes
 
 *   Hebrew "bara" (divine create) is rendered in the LXX by "epoiesen" (from poieo, "he made"), the general Greek verb for making; the LXX does not use the specialized verb ktizo here.
-    
+
 *   The semantic link sl-002 therefore pairs the Hebrew "bara" with the Greek "ktizo" (as used in the New Testament), not with the LXX rendering of this verse. This distinction keeps the cross-language mapping accurate: the LXX "made" is the literal translation of Genesis 1:1, while "ktizo" belongs to the wider and later creation vocabulary.
-    
+
 *   Hebrew "reshit" (beginning) with Greek "arche" (beginning, origin) is the base of sl-001 (see semantic-links.json). The LXX uses "en arche" for "in the beginning".
-    
 
 ## Correlations
 
 *   Theme: creation, origins
-    
+
 *   Prophecy: links to Revelation 4:11 (about the act of creation)
-    
+
 *   Spirit of Prophecy: Patriarchs and Prophets, ch. 1
-    
+
 *   NT fulfillment: John 1:1 - "In the beginning was the Word"
-    
 
 ## Study Notes
 
 *   The Hebrew word order is verb-subject-object (bara elohim et), emphasizing the action of creation.
-    
+
 *   "the heaven and the earth" is a merism - two opposites standing for the whole.
-    
+
 *   The particle "et" marks heaven and earth as definite objects of creation.
-    
 
 ## AI Summary
 
