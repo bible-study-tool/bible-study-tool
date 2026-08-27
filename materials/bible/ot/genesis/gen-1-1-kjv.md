@@ -4,6 +4,7 @@ type: material/bible
 book: book/genesis
 passage: "Genesis 1:1"
 tags:
+  - material/bible
   - book/genesis
   - theme/creation
   - theme/origins
