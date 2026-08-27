@@ -49,6 +49,7 @@ bible-study-tool/
 ├── LICENSE              # Code license (MIT)
 ├── LICENSE.content      # Content license (CC BY 4.0)
 ├── NOTICE.md            # Purpose, doctrinal basis, content-sourcing policy
+├── ROADMAP.md           # Goal inventory + sequenced plan
 └── README.md
 ```
 
@@ -195,6 +196,8 @@ The project plans to integrate the [Macula](https://tools.bible/tools/macula-gre
 *   Deterministic vs AI Boundary — Core vs AI layer distinction
     
 *   [AI Prompt Templates](ai-prompts/) — Templates for AI-assisted study tasks
+
+*   [Roadmap](ROADMAP.md) — Goal inventory and sequenced plan
     
 
 ## Technology Stack
