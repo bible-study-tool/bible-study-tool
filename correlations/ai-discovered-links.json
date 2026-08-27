@@ -1,0 +1,22 @@
+{
+  "$schema": "ai-discovered-links/v1",
+  "version": "1.0.0",
+  "last_updated": "2026-08-27",
+  "description": "AI-suggested cross-language semantic links awaiting human review. Deterministic core is never modified.",
+  "rules": {
+    "min_similarity": 0.7,
+    "cross_language_required": true,
+    "allowed_relation_types": [
+      "relation/equivalent",
+      "relation/etymology",
+      "relation/figurative",
+      "relation/metaphor",
+      "relation/semantic-field",
+      "relation/translation-equivalence"
+    ],
+    "contrast_requires_human": true,
+    "output": "correlations/ai-discovered-links.json",
+    "deterministic_core_protected": true
+  },
+  "candidates": []
+}
