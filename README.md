@@ -26,15 +26,11 @@ A **NotebookLM-like** system built on Adventist theological texts — a structur
 ```
 bible-study-tool/
 ├── materials/           # Source documents
-│   ├── bible/           # Bible texts and commentaries
-│   │   ├── ot/          # Old Testament
-│   │   └── nt/          # New Testament
-│   ├── spirit-of-prophecy/  # Ellen G. White writings
-│   ├── commentaries/    # Third-party commentaries
-│   ├── original-languages/  # Hebrew, Greek, Aramaic
-│   ├── lexicons/        # Strong's, Thayer's, BDB
-│   ├── study-guides/    # Sabbath School, devotionals
-│   └── translations/    # Multiple translation versions
+│   └── bible/           # Bible texts and commentaries (present: ot/ only)
+│       └── ot/          # Old Testament
+│           └── genesis/ # Current MVP corpus (Genesis 1:1-3)
+│   # Planned (not yet populated): spirit-of-prophecy/, commentaries/,
+│   # original-languages/, lexicons/, study-guides/, translations/, nt/
 ├── tags/                # Tag taxonomy and indexes
 ├── index/               # Generated indexes (tag → entry, passage → entry)
 ├── correlations/        # Cross-references and semantic links
@@ -44,11 +40,10 @@ bible-study-tool/
 │   ├── DETERMINISTIC_VS_AI.md    # Core vs AI layer boundary
 │   ├── MACULA_INTEGRATION.md     # Macula dataset integration plan
 │   └── SEMANTIC_LINKING_GUIDE.md # Code-level implementation guide
-├── notes/               # Study notes and word studies
 ├── ai-prompts/          # Templates for AI-assisted tasks
-├── search/              # Semantic search engine (Python)
+├── search/              # Search + semantic linking pipeline (Python)
 │   └── linking/         # Semantic linking pipeline (layers b & c)
-├── .gitlab/             # GitLab CI, merge request templates
+├── .gitlab/             # Merge request template
 ├── CONTRIBUTION_STANDARDS.md
 ├── kc-schema.md
 ├── LICENSE              # Code license (MIT)
