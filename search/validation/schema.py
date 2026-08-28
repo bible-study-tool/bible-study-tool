@@ -27,20 +27,6 @@ from pathlib import Path
 
 # Categories whose tag values are exactly ``<category>/<value>``.
 # The taxonomy stores these as {category: {values: [...]}}.
-_CATEGORY_VALUES = {
-    "material",
-    "book",
-    "theme",
-    "language",  # note: tag prefix is 'lang/', category key is 'language'
-    "translation",
-    "genre",
-    "era",
-    "xref",
-    "relation",
-    "level",
-    "status",
-    "ai",
-}
 
 # Maps the on-disk tag prefix to the taxonomy category key.
 _PREFIX_TO_CATEGORY = {
@@ -67,13 +53,19 @@ REQUIRED_FIELDS = {
     "type": "material type from taxonomy",
     "book": "biblical book or category",
     "source": "source attribution",
-    "tags": "at least one theme tag and one category tag",
+    "tags": "must include one material/ tag and one book/ or theme/ tag",
     "status": "draft, review, or final",
     "language": "language of the content",
 }
 
-# type: must be a material/ value. status: must be a status/ value.
-_STATUS_TAGS = {"status/draft", "status/review", "status/final", "status/needs-update"}
+# type: must be a material/ value. status/level bare value sets.
+_STATUS_BARE = {"draft", "review", "final", "needs-update"}
+_LEVEL_BARE = {"intro", "intermediate", "advanced"}
+_LANGS = {"hebrew", "greek", "aramaic", "english"}
+# ISO-8601 date (YYYY-MM-DD), per kc-schema.md.
+_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+# Original-language material types that MUST carry a Strong's tag.
+_ORIGINAL_LANG_TYPES = {"material/original-language", "material/lexicon"}
 
 
 @dataclass
@@ -125,10 +117,6 @@ class Taxonomy:
         return None
 
 
-def _classify_tag(tax: Taxonomy, tag: str) -> str | None:
-    return tax.category_for_tag(tag)
-
-
 def validate_tags(tax: Taxonomy, entry_id: str, tags) -> list[Issue]:
     """Check that all tags conform to the taxonomy and entry-level rules."""
     issues: list[Issue] = []
@@ -141,7 +129,7 @@ def validate_tags(tax: Taxonomy, entry_id: str, tags) -> list[Issue]:
         if not isinstance(tag, str) or not tag:
             issues.append(Issue(entry_id, "malformed-tag", "error", f"invalid tag {tag!r}"))
             continue
-        cat = _classify_tag(tax, tag)
+        cat = tax.category_for_tag(tag)
         if cat is None:
             issues.append(
                 Issue(entry_id, "unknown-tag", "error", f"tag '{tag}' not in taxonomy")
@@ -185,11 +173,13 @@ def validate_tags(tax: Taxonomy, entry_id: str, tags) -> list[Issue]:
     return issues
 
 
-def validate_entry(tax: Taxonomy, entry, all_ids: set[str]) -> list[Issue]:
+def validate_entry(tax: Taxonomy, entry) -> list[Issue]:
     """Validate a single loaded Entry against the schema.
 
     ``entry`` is a ``search.linking.loader.Entry`` (has .id, .frontmatter,
-    .tags, .passage, etc.).
+    .tags, .passage, etc.). Cross-reference *resolvability* (that a target
+    points at a real entry) is F3, not checked here; this validator checks
+    structure and vocabulary.
     """
     issues: list[Issue] = []
     fm = entry.frontmatter or {}
@@ -205,8 +195,10 @@ def validate_entry(tax: Taxonomy, entry, all_ids: set[str]) -> list[Issue]:
     # --- id ---------------------------------------------------------------
     if not eid or eid == "(unnamed)":
         issues.append(Issue(eid, "missing-id", "error", "entry has no id"))
-    # NOTE: id uniqueness across entries is checked by the caller (loader
-    # dedupes by id, so this validator checks the id against the full set).
+    elif not re.match(r"^[a-z0-9][a-z0-9\-]*$", eid):
+        issues.append(
+            Issue(eid, "bad-id-format", "warning", f"id '{eid}' should be lowercase, hyphenated")
+        )
 
     # --- type -------------------------------------------------------------
     etype = fm.get("type")
@@ -215,16 +207,41 @@ def validate_entry(tax: Taxonomy, entry, all_ids: set[str]) -> list[Issue]:
             issues.append(Issue(eid, "bad-type", "error", f"type '{etype}' must be a material/ value"))
         elif not tax.is_valid_value("material", etype):
             issues.append(Issue(eid, "out-of-taxonomy-type", "error", f"type '{etype}' not in taxonomy"))
+        elif etype in _ORIGINAL_LANG_TYPES and not any(
+            isinstance(t, str) and t.startswith("strongs-") for t in fm.get("tags") or []
+        ):
+            issues.append(
+                Issue(
+                    eid,
+                    "missing-strongs-tag",
+                    "error",
+                    f"original-language entry (type '{etype}') must carry a strongs- tag",
+                )
+            )
 
     # --- status -----------------------------------------------------------
     # kc-schema.md documents the status *field* as a bare value
     # (draft|review|final|needs-update), distinct from the status/ tags.
     status = fm.get("status")
     if status:
-        bare = str(status).split("/")[-1]
-        if bare not in {"draft", "review", "final", "needs-update"}:
+        if str(status) not in _STATUS_BARE:
             issues.append(
-                Issue(eid, "bad-status", "error", f"status '{status}' is not a valid status value")
+                Issue(eid, "bad-status", "error", f"status '{status}' is not a valid status value (use a bare draft|review|final|needs-update)")
+            )
+
+    # --- level ------------------------------------------------------------
+    level = fm.get("level")
+    if level and str(level) not in _LEVEL_BARE:
+        issues.append(
+            Issue(eid, "bad-level", "warning", f"level '{level}' is not a valid level (intro|intermediate|advanced)")
+        )
+
+    # --- created / updated (dates) -----------------------------------------
+    for field_name in ("created", "updated"):
+        val = fm.get(field_name)
+        if val and not _DATE_RE.match(str(val)):
+            issues.append(
+                Issue(eid, "bad-date", "warning", f"'{field_name}' must be YYYY-MM-DD, got '{val}'")
             )
 
     # --- book -------------------------------------------------------------
@@ -248,9 +265,18 @@ def validate_entry(tax: Taxonomy, entry, all_ids: set[str]) -> list[Issue]:
                 Issue(eid, "bad-translation", "error", f"translation '{translation}' not in taxonomy")
             )
 
+    # --- source ------------------------------------------------------------
+    # kc-schema.md documents source as 'source/...' (e.g. source/bible). The
+    # taxonomy has no 'source' category, so this is a shape check (warning).
+    source = fm.get("source")
+    if source and not str(source).startswith("source/"):
+        issues.append(
+            Issue(eid, "bad-source", "warning", f"source '{source}' should be a source/ value (e.g. source/bible)")
+        )
+
     # --- language ----------------------------------------------------------
     lang = fm.get("language")
-    if lang and str(lang) not in {"hebrew", "greek", "aramaic", "english"}:
+    if lang and str(lang) not in _LANGS:
         issues.append(Issue(eid, "bad-language", "warning", f"language '{lang}' unusual"))
 
     # --- cross_references structure ---------------------------------------
@@ -263,11 +289,14 @@ def validate_entry(tax: Taxonomy, entry, all_ids: set[str]) -> list[Issue]:
                 if not isinstance(xr, dict):
                     issues.append(Issue(eid, "bad-xref-item", "error", f"cross_references[{i}] must be an object"))
                     continue
-                if "target" not in xr:
-                    issues.append(Issue(eid, "bad-xref-item", "error", f"cross_references[{i}] missing 'target'"))
+                if not xr.get("target"):
+                    issues.append(Issue(eid, "bad-xref-item", "error", f"cross_references[{i}] missing or empty 'target'"))
                 xr_type = xr.get("type")
-                if xr_type and not xr_type.startswith("xref/"):
-                    issues.append(Issue(eid, "bad-xref-type", "error", f"cross_references[{i}] type '{xr_type}' invalid"))
+                if xr_type:
+                    if not xr_type.startswith("xref/"):
+                        issues.append(Issue(eid, "bad-xref-type", "error", f"cross_references[{i}] type '{xr_type}' invalid"))
+                    elif not tax.is_valid_value("xref", xr_type):
+                        issues.append(Issue(eid, "bad-xref-type", "error", f"cross_references[{i}] type '{xr_type}' not in taxonomy"))
 
     # --- semantic_links structure ------------------------------------------
     semlinks = fm.get("semantic_links")
@@ -276,8 +305,16 @@ def validate_entry(tax: Taxonomy, entry, all_ids: set[str]) -> list[Issue]:
 
     # --- related structure -------------------------------------------------
     related = fm.get("related")
-    if related is not None and not isinstance(related, list):
-        issues.append(Issue(eid, "bad-related", "error", "'related' must be a list"))
+    if related is not None:
+        if not isinstance(related, list):
+            issues.append(Issue(eid, "bad-related", "error", "'related' must be a list"))
+        else:
+            for i, r in enumerate(related):
+                if isinstance(r, dict):
+                    if not r.get("id"):
+                        issues.append(Issue(eid, "bad-related", "error", f"related[{i}] missing 'id'"))
+                else:
+                    issues.append(Issue(eid, "bad-related", "error", f"related[{i}] must be an object with an 'id'"))
 
     return issues
 
@@ -285,10 +322,9 @@ def validate_entry(tax: Taxonomy, entry, all_ids: set[str]) -> list[Issue]:
 def validate_all(loader, tax: Taxonomy) -> list[Issue]:
     """Validate every entry in a Loader. Returns all issues."""
     issues: list[Issue] = []
-    all_ids = {e.id for e in loader.entries}
 
     for entry in loader.entries:
-        issues.extend(validate_entry(tax, entry, all_ids))
+        issues.extend(validate_entry(tax, entry))
 
     # Check id uniqueness.
     seen: dict[str, int] = {}
