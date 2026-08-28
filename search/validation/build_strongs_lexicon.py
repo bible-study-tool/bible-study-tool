@@ -76,11 +76,17 @@ def parse_go_file(path: str) -> dict[int, dict]:
         desc = _clean_desc(m.group(3))
         # Extract transliteration: the first parenthetical on the headword line
         # (anchored to the colon so KJV/root parentheticals later in the desc
-        # are not matched).
+        # are not matched). A few headwords carry variant notation in nested
+        # parens (e.g. "(el-o'-ah; rarely (shortened) ...)"); the primary
+        # transliteration is the text before the first ';'. No legitimate
+        # transliteration in the source contains ';' (verified: the only 5
+        # occurrences were all bleed artifacts), so trimming there is safe.
         translit = ""
         tmatch = _TRANSLIT_RE.search(desc)
         if tmatch:
             translit = tmatch.group(2).strip()
+            if ";" in translit:
+                translit = translit.split(";", 1)[0].strip()
         entries[num] = {"num": num, "word": word, "translit": translit, "desc": desc}
     return entries
 
