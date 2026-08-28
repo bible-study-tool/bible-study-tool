@@ -3,7 +3,8 @@
   "source": {
     "dataset": "TBESH.txt",
     "upstream": "https://github.com/STEPBible/STEPBible-Data",
-    "pin": "see data/PROVENANCE.md (commit + blob SHA + SHA-256)"
+    "commit": "efe428a0047bf7b9c3ce2624f60c252c6e435945",
+    "pin": "commit + blob SHAs + SHA-256 in data/PROVENANCE.md"
   },
   "license": "CC BY 4.0",
   "attribution": "STEP Bible (www.STEPBible.org), based on work at Tyndale House Cambridge — CC BY 4.0",
@@ -11,7 +12,7 @@
   "changes_recorded": [
     "Reformatted TSV -> JSON (allowed by licence, data unchanged).",
     "Dropped 0 exact-duplicate rows.",
-    "Skipped 49 genuinely-new extended words (affix numbers >9000, NT/LXX variant numbers >G5624) — outside the original Strong's enumeration.",
+    "Skipped 49 rows outside the enumeration (Hebrew affix numbers H8675-H9999).",
     "BDB lettered sub-entries (e.g. H1254a) are keyed to their base Strong's number (H1254); the verbatim eStrong token is kept per record."
   ],
   "counts": {

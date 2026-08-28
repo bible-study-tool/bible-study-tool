@@ -102,8 +102,8 @@ The STEPBible-derived artifacts regenerate byte-identically as well; their
 current checksums are:
 
 ```
-8670fd015a93a72fc05dce22cda1af5b90f90f1a3be3b2f056dae64fb49ab23f  ../lexicons/tbesh-glosses.json
-6f52a935d8c1b6d8df80665d17fc4782f9393f8dbc5e84a6354e31c569a6d81d  ../lexicons/tbesg-glosses.json
+c8688a08e409daa987ecf04e309ad1da4634d535023bba2394a704135e480a09  ../lexicons/tbesh-glosses.json
+8a4d97cf6d819915241f77a95fd3b926e0d9cb03eab52b05a1af8989eea9044d  ../lexicons/tbesg-glosses.json
 ```
 
 ## How to reproduce
@@ -118,6 +118,10 @@ scripts/fetch_sources.sh --check
 # 3. Regenerate the committed lexicons
 python -m search.validation.build_strongs_lexicon \
   --hebrew data/strongs/hebrew.go --greek data/strongs/greek.go --out-dir lexicons
+
+# 4. Regenerate the STEPBible modern-gloss lexicons
+python -m search.validation.build_stepbible_lexicon \
+  --tbesh data/stepbible/TBESH.txt --tbesg data/stepbible/TBESG.txt --out-dir lexicons
 ```
 
 ## Policy

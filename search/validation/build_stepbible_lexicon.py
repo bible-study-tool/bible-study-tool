@@ -61,8 +61,8 @@ def _canonical_code(letter: str, num: int) -> str | None:
     return f"G{num}" if 1 <= num <= 5624 else None
 
 
-def parse_stepbible_txt(path: str) -> "OrderedDict[str, list[dict]]":
-    """Parse a TBESH/TBESG TSV into {canonical_code: [variant, ...]}.
+def parse_stepbible_txt(path: str) -> tuple["OrderedDict[str, list[dict]]", dict]:
+    """Parse a TBESH/TBESG TSV into ({canonical_code: [variant, ...]}, stats).
 
     Skips the prose header (everything before the first data row). Drops
     exact-duplicate rows (counted in the returned stats). Raises ValueError if
@@ -81,8 +81,10 @@ def parse_stepbible_txt(path: str) -> "OrderedDict[str, list[dict]]":
             if not m:
                 if started:
                     # Prose/section lines between data rows are skipped; a
-                    # line that looks like a row but fails to parse is fatal.
-                    if re.match(r"^[HG]\d+[a-z]*\t", line):
+                    # line that looks like a row (superset of _ROW_RE: allows
+                    # uppercase suffixes, 7+ digits, space-before-tab) but
+                    # fails to parse is fatal — that is format drift.
+                    if re.match(r"^[HG]\d+[a-zA-Z]?[ \t]*\t", line):
                         raise ValueError(
                             f"{path}: malformed data row: {line[:80]!r}"
                         )
@@ -133,8 +135,8 @@ def build(tbesh_path: str, tbesg_path: str, canonical_list_path: str, out_dir: s
 
     attribution = "STEP Bible (www.STEPBible.org), based on work at Tyndale House Cambridge — CC BY 4.0"
 
-    for src_path, canon_set, letter, stem, extra in (
-        (tbesh_path, canon_h, "H", "tbesh-glosses.json", {
+    for src_path, canon_set, letter, stem, expect_full_coverage, extra in (
+        (tbesh_path, canon_h, "H", "tbesh-glosses.json", True, {
             "license_note": (
                 "STEPBible's own file header notes that the Brief lexicon is "
                 "based on Abridged BDB by Online Bible and that 'Permission "
@@ -144,25 +146,53 @@ def build(tbesh_path: str, tbesg_path: str, canonical_list_path: str, out_dir: s
                 "in strongs-lexicon.json remain the deterministic core."
             ),
         }),
-        (tbesg_path, canon_g, "G", "tbesg-glosses.json", {}),
+        (tbesg_path, canon_g, "G", "tbesg-glosses.json", False, {}),
     ):
         entries, stats = parse_stepbible_txt(src_path)
+        if not stats["started"] or not entries:
+            raise ValueError(
+                f"{src_path}: no data rows parsed (started={stats['started']}) — "
+                "source file is empty, truncated, or not the expected format"
+            )
 
-        # Integrity: every emitted code must exist in the canonical list.
+        # Integrity (forward): every emitted code must exist in the canonical
+        # list. (Bounds are the list itself, not hardcoded — _canonical_code
+        # only pre-filters, this check is authoritative.)
         unknown = [c for c in entries if c not in canon_set]
         if unknown:
             raise ValueError(
                 f"{src_path}: {len(unknown)} codes outside the canonical list, "
                 f"e.g. {unknown[:5]}"
             )
+        # Integrity (reverse, drift tripwire): TBESH is expected to cover the
+        # full Hebrew enumeration (BDB sub-entries recover every code); a gap
+        # means the source shrank or the parser regressed.
+        missing = canon_set - set(entries)
+        if expect_full_coverage and missing:
+            raise ValueError(
+                f"{src_path}: expected FULL canonical coverage, {len(missing)} "
+                f"codes uncovered, e.g. {sorted(missing)[:5]}"
+            )
 
         n_records = sum(len(v) for v in entries.values())
+        if letter == "H":
+            skip_note = (
+                f"Skipped {stats['skipped_extended']} rows outside the "
+                "enumeration (Hebrew affix numbers H8675-H9999)."
+            )
+        else:
+            skip_note = (
+                f"Skipped {stats['skipped_extended']} rows outside the "
+                "enumeration (Greek variants G5625-G9999 and extended "
+                "variant numbers G20000+)."
+            )
         payload = {
             "$schema": "stepbible-glosses/v1",
             "source": {
                 "dataset": Path(src_path).name,
                 "upstream": "https://github.com/STEPBible/STEPBible-Data",
-                "pin": "see data/PROVENANCE.md (commit + blob SHA + SHA-256)",
+                "commit": "efe428a0047bf7b9c3ce2624f60c252c6e435945",
+                "pin": "commit + blob SHAs + SHA-256 in data/PROVENANCE.md",
             },
             "license": "CC BY 4.0",
             "attribution": attribution,
@@ -170,9 +200,7 @@ def build(tbesh_path: str, tbesg_path: str, canonical_list_path: str, out_dir: s
             "changes_recorded": [
                 "Reformatted TSV -> JSON (allowed by licence, data unchanged).",
                 f"Dropped {stats['dropped_duplicates']} exact-duplicate rows.",
-                f"Skipped {stats['skipped_extended']} genuinely-new extended "
-                "words (affix numbers >9000, NT/LXX variant numbers >G5624) "
-                "— outside the original Strong's enumeration.",
+                skip_note,
                 "BDB lettered sub-entries (e.g. H1254a) are keyed to their "
                 "base Strong's number (H1254); the verbatim eStrong token is "
                 "kept per record.",
@@ -186,7 +214,10 @@ def build(tbesh_path: str, tbesg_path: str, canonical_list_path: str, out_dir: s
             "entries": dict(entries),
         }
         out_path = out / stem
-        out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        out_path.write_text(
+            json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
         print(
             f"Wrote {len(entries)} {letter}-codes ({n_records} records) "
             f"to {out_path} (dropped {stats['dropped_duplicates']} duplicate rows)"

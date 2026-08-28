@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from search.validation.build_stepbible_lexicon import parse_stepbible_txt
+from search.validation.build_stepbible_lexicon import parse_stepbible_txt, build
 
 HEADER = (
     "TBESH - some title - STEPBible.org CC BY\n"
@@ -78,15 +78,66 @@ class ParseTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 parse_stepbible_txt(str(p))
 
+    def test_build_fail_fast_on_empty_source(self):
+        """A truncated/empty/HTML-error-page source must raise, never emit an
+        empty artifact (the generator must not fail open)."""
+        with tempfile.TemporaryDirectory() as td:
+            src = Path(td) / "TBESH.txt"
+            src.write_text("404: Not Found\n", encoding="utf-8")
+            canon = Path(td) / "canon.json"
+            canon.write_text(json.dumps({"hebrew": ["H1"], "greek": []}), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                build(str(src), str(src), str(canon), str(td))
+
+    def test_build_keeps_subentries_and_records_changes(self):
+        """End-to-end build() on fixtures: lettered sub-entries keyed to the
+        base number, counters recorded, license_note present. Guards the
+        payload-assembly path (parser tests alone cannot catch a writer
+        regression that drops sub-entries)."""
+        with tempfile.TemporaryDirectory() as td:
+            tbesh = Path(td) / "TBESH.txt"
+            tbesh.write_text(
+                HEADER + (
+                    "H1254a\tH1254A =\tH1254A\tבָּרָא\tba.ra\tH:V\tto create\t1) create\n"
+                    "H1254b\tH1254B =\tH1254B\tבָּרָא\tba.ra\tH:V\tto fatten\t1) fatten\n"
+                ),
+                encoding="utf-8",
+            )
+            tbesg = Path(td) / "TBESG.txt"
+            tbesg.write_text(
+                HEADER + (
+                    "G0026\tG0026 =\tG0026\tἀγάπη\tagapē\tN:N-F\tlove\t1) love\n"
+                ),
+                encoding="utf-8",
+            )
+            canon = Path(td) / "canon.json"
+            canon.write_text(
+                json.dumps({"hebrew": ["H1254"], "greek": ["G26"]}), encoding="utf-8"
+            )
+            build(str(tbesh), str(tbesg), str(canon), str(td))
+            art = json.loads((Path(td) / "tbesh-glosses.json").read_text(encoding="utf-8"))
+            self.assertEqual(
+                [r["estrong"] for r in art["entries"]["H1254"]],
+                ["H1254a", "H1254b"],
+            )
+            self.assertEqual(art["counts"]["codes"], 1)
+            self.assertIn("Online Bible", art["license_note"])
+            self.assertTrue(art["changes_recorded"])
+
 
 class ArtifactTests(unittest.TestCase):
     """The committed artifacts must be present, subset-of-canonical, and known-correct."""
 
     @classmethod
     def setUpClass(cls):
-        cls.tbesh = json.load(open("lexicons/tbesh-glosses.json", encoding="utf-8"))
-        cls.tbesg = json.load(open("lexicons/tbesg-glosses.json", encoding="utf-8"))
-        cls.canonical = json.load(open("lexicons/strongs-list.json", encoding="utf-8"))
+        cls.tbesh = cls._load("lexicons/tbesh-glosses.json")
+        cls.tbesg = cls._load("lexicons/tbesg-glosses.json")
+        cls.canonical = cls._load("lexicons/strongs-list.json")
+
+    @staticmethod
+    def _load(path):
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
 
     def test_license_and_attribution(self):
         for art in (self.tbesh, self.tbesg):
@@ -100,13 +151,23 @@ class ArtifactTests(unittest.TestCase):
         canon_g = set(self.canonical["greek"])
         self.assertLessEqual(set(self.tbesh["entries"]), canon_h)
         self.assertLessEqual(set(self.tbesg["entries"]), canon_g)
-        # TBESH covers every Hebrew canonical code (BDB sub-entries recover
-        # full coverage); TBESG remains a genuine subset (some Greek numbers
-        # lack Abbott-Smith lineage in the brief lexicon).
+        # Current upstream state pinned in test_counts_below: TBESH currently
+        # achieves FULL Hebrew coverage (<= keeps the test honest if a future
+        # re-pin improves Greek coverage too).
         self.assertEqual(len(self.tbesh["entries"]), len(canon_h))
-        self.assertLess(len(self.tbesg["entries"]), len(canon_g))
+        self.assertLessEqual(len(self.tbesg["entries"]), len(canon_g))
+
+    def test_counts_below(self):
+        """Pin today's upstream coverage so any re-pin that changes it is
+        reviewed rather than silently accepted (or silently lost)."""
+        self.assertEqual(self.tbesh["counts"]["codes"], 8674)
+        self.assertEqual(self.tbesh["counts"]["records"], 11633)
+        self.assertEqual(self.tbesg["counts"]["codes"], 5523)
 
     def test_known_entries(self):
+        """Pins exact upstream gloss wording INTENTIONALLY: a future re-pin
+        that changes wording should fail here and force a reviewed diff, not
+        silently update the deterministic core's supplementary layer."""
         self.assertEqual(self.tbesh["entries"]["H1"][0]["gloss"], "father")
         self.assertEqual(self.tbesh["entries"]["H430"][0]["gloss"], "God")
         # H1254 has NO plain row — bara exists only as BDB sub-entries a/b.
