@@ -71,10 +71,10 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **E4. AI provenance & confidence tracking** — stronger audit of AI vs human
 
 ### F. Data Integrity & Validation
-- `[ ]` **F1. Schema validator** — validate entry frontmatter against taxonomy + kc-schema
-- `[ ]` **F2. Strong's number verification** — check all H/G tags against canonical list (would've caught the G2532 bug)
-- `[ ]` **F3. Cross-reference integrity checker** — every xref target resolves to a real entry
-- `[ ]` **F4. Broken-link / dead-reference audit**
+- `[x]` **F1. Schema validator** — `search/validation/schema.py` — validate entry frontmatter against taxonomy + kc-schema
+- `[x]` **F2. Strong's number verification** — `search/validation/strongs.py` — format/range now; canonical-list mode when `lexicons/strongs-list.json` exists
+- `[x]` **F3. Cross-reference integrity checker** — `search/validation/xrefs.py` — xref targets resolve
+- `[x]` **F4. Broken-link / dead-reference audit** — `search/validation/audit.py`
 
 ### G. Engineering Infrastructure
 - `[ ]` **G1. CI pipeline** — run tests + validators on every MR (GitLab CI)
@@ -100,11 +100,22 @@ correct Strong's dataset, then expand the corpus safely. The discovery/
 embedding value (C) only pays off once the corpus is large; the UI/app (D) and
 AI assistant (E) depend on a solid data + integrity layer.
 
-### Phase 1 — Data Integrity Foundation *(the load-bearing layer)*
+### Phase 1 — Data Integrity Foundation *(the load-bearing layer)* — ✅ DONE
 1. **F1 — Schema validator** — entry frontmatter vs taxonomy + kc-schema
+   `search/validation/schema.py` — ✅ (reviewed & hardened)
 2. **F2 — Strong's number verification** — canonical H/G list
-3. **F3 — Cross-reference integrity checker** — all xref targets resolve
+   `search/validation/strongs.py` + `build_strongs_list.py` — ✅ (structural
+   mode now; canonical-list mode activates when `lexicons/strongs-list.json`
+   exists — generated from scrollmapper/bible_databases, see A4)
+3. **F3 — Cross-reference integrity checker** — xref targets resolve
+   `search/validation/xrefs.py` — ✅ (malformed=error, forward-ref=warning)
 4. **F4 — Broken-link / dead-reference audit**
+   `search/validation/audit.py` — ✅ (related/semantic_links/links-file/index)
+
+All four exit non-zero on errors and are wired to run as commands (ready for
+CI, see G1). Note: the source of truth for strongs-list.json is
+scrollmapper/bible_databases (MIT), which also serves A6 (translations) and
+the F3 cross-reference source of truth.
 
 ### Phase 2 — Strong's Lexicon Dataset
 5. **A4 — Full Strong's lexicon dataset** — all H####/G#### with definitions,
