@@ -40,8 +40,9 @@ python -m search.validation.build_strongs_lexicon \
 * The raw sources in `data/` (`KJV-osis.json`, `OSHB-v.2.2.zip`, `strongs/*.go`)
   are **third-party and gitignored** — they are downloaded locally to run the
   generator, not committed. See `NOTICE.md` for the content-sourcing policy.
-* Cross-validation performed: all 13,001 Strong's codes attested in the tagged
-  KJV are present in the canonical list (0 missing), confirming completeness.
+* Cross-validation performed: all 14,089 Strong's codes attested in the tagged
+  KJV (8,674 H + 5,415 G) are present in the canonical list (0 missing),
+  confirming completeness.
 
 ## Regeneration
 

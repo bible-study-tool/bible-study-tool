@@ -47,6 +47,25 @@ class ParseGoFileTests(unittest.TestCase):
             self.assertEqual(entries[1]["translit"], "awb")
             self.assertEqual(entries[6]["translit"], "aw-bad'")
 
+    def test_translit_variant_parens_trimmed(self):
+        """Nested variant-notation parens (e.g. "(el-o'-ah; rarely (shortened)")
+        must yield the primary transliteration (text before the first ';'),
+        not bleed prose into the field."""
+        with tempfile.TemporaryDirectory() as td:
+            content = (
+                'package strongs\nvar Hebrew = map[string]*Entry{\n'
+                '\t"x": &Entry{Num: 433, Word: "אֱלוֹהַּהּ", Length: 6, '
+                'Desc: "Strong&apos;s Number H433: elowahh (el-o&apos;-ah; rarely (shortened) '
+                '&gt;eloahh {el-o&apos;-ah}) n-m.\\n1. God"},\n'
+                '\t"y": &Entry{Num: 4731, Word: "מַכָּל", Length: 4, '
+                'Desc: "Strong&apos;s Number H4731: miqqach (mak-kale;) n-m.\\n1. merch"},\n'
+                '}\n'
+            )
+            p = _write_go_file(td, content)
+            entries = parse_go_file(str(p))
+            self.assertEqual(entries[433]["translit"], "el-o'-ah")
+            self.assertEqual(entries[4731]["translit"], "mak-kale")
+
     def test_keeps_commented_duplicates_as_valid_numbers(self):
         """'DUP - SEE ABOVE' commented entries are distinct valid Strong's
         numbers (they share only a Hebrew/Greek spelling KEY with an earlier

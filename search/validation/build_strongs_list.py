@@ -1,16 +1,18 @@
-"""Generate the canonical Strong's list from a Bible-with-Strong's source.
+"""Extract the set of Strong's numbers ATTESTED in a Bible-with-Strong's text.
 
-F2's canonical-list check needs an authoritative set of real Strong's
-numbers. A clean, MIT-licensed source is scrollmapper/bible_databases
-(https://github.com/scrollmapper/bible_databases) — its KJV translation ships
-with Strong's numbers and morphology.
+NOTE — this is NOT the generator for ``lexicons/strongs-list.json``. The
+canonical list used by F2 is the FULL Strong's enumeration (8674 Hebrew +
+5624 Greek) and is produced by ``build_strongs_lexicon.py`` from the pinned
+gmlewis/bible-codes concordance (see ``data/PROVENANCE.md``).
 
-This script extracts every distinct Strong's number actually attested in a
-source file and writes ``lexicons/strongs-list.json`` with shape:
-    {"hebrew": ["H7225", ...], "greek": ["G2532", ...]}
+This script instead extracts the *attestation subset*: every distinct Strong's
+number actually tagged in a source text. The tagged KJV attests 14,089 codes
+(8,674 H + 5,415 G) — 209 valid Greek numbers are unattested and would be
+missing, so its output must never overwrite the canonical list. Its uses are
+usage-count analysis, attestation cross-checks, and cross-reference work.
 
 Usage:
-    python -m search.validation.build_strongs_list --input kjv.json --out lexicons/strongs-list.json
+    python -m search.validation.build_strongs_list --input kjv.json --out attestations.json
 
 Input formats supported (auto-detected by extension):
   * JSON: a list of verse objects, each with a ``text`` field containing

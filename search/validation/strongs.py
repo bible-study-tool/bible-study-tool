@@ -11,10 +11,10 @@ Two layers (option b — structural now, canonical later):
     out-of-range numbers without any external data.
   * **When available:** canonical-list check. If ``lexicons/strongs-list.json``
     (or the path given with ``--list``) exists, each number is checked against
-    the authoritative set of real Strong's numbers. This is the upgrade path:
-    the canonical list can be generated from an MIT-licensed source such as
-    scrollmapper/bible_databases (KJV with Strong's numbers), see
-    ``search/validation/build_strongs_list.py``.
+    the authoritative set of real Strong's numbers — the FULL canonical
+    enumeration (8674 Hebrew + 5624 Greek), generated from the
+    gmlewis/bible-codes concordance by ``build_strongs_lexicon.py`` and pinned
+    with SHA-256 in ``data/PROVENANCE.md``.
 
 This matters because a wrong Strong's number silently corrupts the
 deterministic core — the exact class of error we already caught once

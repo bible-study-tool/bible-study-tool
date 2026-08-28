@@ -77,7 +77,7 @@ re-running the generator:
 
 ```
 f98d6a8c3b0efbbb5657f59c4039e54abdf2917526201e357422468f91f58443  ../lexicons/strongs-list.json
-8af872882f7ea4a2f80c9390d325e3f4840bb63f59edd1b4be7f3b572040ff7b  ../lexicons/strongs-lexicon.json
+0be7dec4386de2f3a06739e2be69aa91ee158dd615e3ad5f7cb641b8347be686  ../lexicons/strongs-lexicon.json
 ```
 
 ## How to reproduce
