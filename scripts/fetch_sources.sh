@@ -22,6 +22,9 @@ GMLEWIS_URL="https://github.com/gmlewis/bible-codes/archive/${GMLEWIS_PIN}.zip"
 SCROLLMAPPER_PIN="e1b254cef86d0e65b1a5d1a94b8b112d0f296a2c"
 SCROLLMAPPER_URL="https://raw.githubusercontent.com/scrollmapper/bible_databases/${SCROLLMAPPER_PIN}/sources/en/KJV/KJV-osis.json"
 OSHB_URL="https://github.com/openscriptures/morphhb/archive/refs/tags/v.2.2.zip"
+STEPBIBLE_PIN="efe428a0047bf7b9c3ce2624f60c252c6e435945"
+TBESH_URL="https://raw.githubusercontent.com/STEPBible/STEPBible-Data/${STEPBIBLE_PIN}/Lexicons/TBESH%20-%20Translators%20Brief%20lexicon%20of%20Extended%20Strongs%20for%20Hebrew%20-%20STEPBible.org%20CC%20BY.txt"
+TBESG_URL="https://raw.githubusercontent.com/STEPBible/STEPBible-Data/${STEPBIBLE_PIN}/Lexicons/TBESG%20-%20Translators%20Brief%20lexicon%20of%20Extended%20Strongs%20for%20Greek%20-%20STEPBible.org%20CC%20BY.txt"
 
 # --- verification (shared by both modes) -------------------------------------
 verify() {
@@ -109,6 +112,11 @@ fetch "$SCROLLMAPPER_URL" "$DATA/KJV-osis.json"
 
 # --- 3. Open Scriptures Hebrew Bible v.2.2 -----------------------------------
 fetch "$OSHB_URL" "$DATA/OSHB-v.2.2.zip"
+
+# --- 4. STEPBible TBESH/TBESG brief lexicons ---------------------------------
+mkdir -p "$DATA/stepbible"
+fetch "$TBESH_URL" "$DATA/stepbible/TBESH.txt"
+fetch "$TBESG_URL" "$DATA/stepbible/TBESG.txt"
 
 # --- verification ------------------------------------------------------------
 verify

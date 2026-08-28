@@ -53,10 +53,13 @@ are **not owned by this project** and are **not redistributed here**:
   `scripts/fetch_sources.sh`): Strong's Concordance (1890, public domain) via
   gmlewis/bible-codes (**Apache-2.0**); KJV-with-Strong's via
   scrollmapper/bible_databases (MIT, KJV public domain); Open Scriptures
-  Hebrew Bible (WLC text public domain, morphology CC BY 4.0). None of these
-  raw sources are redistributed; only derived, public-domain-fact artifacts
-  (`lexicons/*.json`) are committed. See `data/PROVENANCE.md` for pins,
-  checksums, and the full record.
+  Hebrew Bible (WLC text public domain, morphology CC BY 4.0); STEPBible
+  TBESH/TBESG brief lexicons (**CC BY 4.0** — data by www.STEPBible.org based
+  on work at Tyndale House Cambridge; credit "STEP Bible" with a link to
+  www.STEPBible.org). None of these raw sources are redistributed; only
+  derived, attributed artifacts (`lexicons/*.json`) are committed, with our
+  transformation changes recorded in each artifact. See `data/PROVENANCE.md`
+  for pins, checksums, and the full record.
 
 This policy keeps the project a reference and an engine, not a republisher, and
 keeps the material it hosts within clearly-clean territory.

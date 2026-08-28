@@ -18,6 +18,19 @@ The complete concordance: every number -> original word, transliteration, and
 definition (with roots / KJV usage in `desc`). This is the companion to the
 number list, ready for word-study entries.
 
+### `tbesh-glosses.json` / `tbesg-glosses.json` — modern brief glosses (STEPBible, CC BY 4.0)
+Modern scholarly brief glosses keyed to the same Strong's numbers, from
+**TBESH** (Hebrew; BDB-lineage brief glosses) and **TBESG** (Greek;
+Abbott-Smith-based). Data by www.STEPBible.org based on work at Tyndale House
+Cambridge — **credit "STEP Bible"** (www.STEPBible.org), CC BY 4.0. These are
+a *supplementary* modern-gloss layer alongside the Strong's definitions (which
+remain the deterministic core). Hebrew caveat: STEPBible's own header notes
+its brief lexicon derives from Abridged BDB by Online Bible and requests
+permission from Online Bible before applying those definitions in a project —
+recorded in the artifact's `license_note`. Coverage: TBESH 8,674/8,674
+Hebrew codes (BDB sub-entries like H1254a keyed to the base number);
+TBESG 5,523/5,624 Greek codes.
+
 ## How they're generated
 
 From `data/strongs/*.go` (the gmlewis/bible-codes concordance, itself
@@ -30,6 +43,12 @@ scripts/fetch_sources.sh
 python -m search.validation.build_strongs_lexicon \
   --hebrew data/strongs/hebrew.go \
   --greek  data/strongs/greek.go \
+  --out-dir lexicons
+
+# STEPBible modern glosses (TBESH/TBESG)
+python -m search.validation.build_stepbible_lexicon \
+  --tbesh data/stepbible/TBESH.txt \
+  --tbesg data/stepbible/TBESG.txt \
   --out-dir lexicons
 ```
 

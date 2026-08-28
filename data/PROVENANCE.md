@@ -69,6 +69,24 @@ SHA-256:
 02f8711a4bd6ee322e7009beae158a51a63ca61ec4e90250ae261149c616c399  OSHB-v.2.2.zip
 ```
 
+### 4. STEPBible TBESH/TBESG brief lexicons — `stepbible/TBESH.txt`, `stepbible/TBESG.txt`
+
+| Field | Value |
+| --- | --- |
+| Upstream | <https://github.com/STEPBible/STEPBible-Data> |
+| Pinned commit | `efe428a0047bf7b9c3ce2624f60c252c6e435945` (master, 2026-08-21) |
+| Pinned blobs | TBESH `a64990a674d13245ae1e9ed426bc69197c2fbad5`, TBESG `efe271a1dbb73fa01f8fa6e0f164c6687757a9ae` |
+| License | **CC BY 4.0** — data by www.STEPBible.org based on work at Tyndale House Cambridge. Attribution required: credit **"STEP Bible"** linked to <http://www.STEPBible.org>. Changes to the data must be recorded (ours are listed in each artifact's `changes_recorded`). Per the file header, do not redistribute the raw files — they are fetched on demand. |
+| TBESH caveat | STEPBible's own header notes the Brief lexicon is based on *Abridged BDB by Online Bible* and that *"Permission should be gained from Online Bible before these definitions are applied in any project."* Hebrew brief glosses are therefore recorded as **supplementary** (see the artifact's `license_note`); the Strong's definitions in `strongs-lexicon.json` remain the deterministic core. TBESG is clean (Abbott-Smith 1922 is public domain; gaps filled from MiddleLiddel (PD) and Tyndale scholars). |
+| Feeds | `lexicons/tbesh-glosses.json` (8,674 H-codes, 11,633 records) + `lexicons/tbesg-glosses.json` (5,523 G-codes, 5,709 records) via `python -m search.validation.build_stepbible_lexicon` |
+
+SHA-256:
+
+```
+464dccadd95fd8620dd05fa0d7a4caba58ec3c4d5db3ebf38e43d046ca25b591  stepbible/TBESH.txt
+312f723d7b8ef263bbdfb0451c9b8057125804dfff390b6f8544cff2a84b57f4  stepbible/TBESG.txt
+```
+
 ## Generated artifacts (for offline drift detection)
 
 The committed artifacts regenerate byte-identically from the pinned sources
@@ -78,6 +96,14 @@ re-running the generator:
 ```
 f98d6a8c3b0efbbb5657f59c4039e54abdf2917526201e357422468f91f58443  ../lexicons/strongs-list.json
 0be7dec4386de2f3a06739e2be69aa91ee158dd615e3ad5f7cb641b8347be686  ../lexicons/strongs-lexicon.json
+```
+
+The STEPBible-derived artifacts regenerate byte-identically as well; their
+current checksums are:
+
+```
+8670fd015a93a72fc05dce22cda1af5b90f90f1a3be3b2f056dae64fb49ab23f  ../lexicons/tbesh-glosses.json
+6f52a935d8c1b6d8df80665d17fc4782f9393f8dbc5e84a6354e31c569a6d81d  ../lexicons/tbesg-glosses.json
 ```
 
 ## How to reproduce
