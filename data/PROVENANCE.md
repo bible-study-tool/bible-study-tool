@@ -54,6 +54,14 @@ SHA-256:
 e4b94058829cf1c67a29b9af1829916984f1554fb9617e49b88c48706ee4a94e  KJV-osis.json
 ```
 
+Edition caveat (discovered by the corpus fidelity test, `search/corpus/test_corpus.py`):
+this file's Gen 1:2 reads "And the earth was without form **and** void" — no
+comma, where the 1769 Cambridge standard KJV reads "without form**, and** void".
+KJV edition variants exist (Oxford/Cambridge/printing families); the pinned
+scrollmapper reading is authoritative for GENERATED entries, hand-curated
+entries keep their own reading. Compare translations against a standard
+edition when curating.
+
 ### 3. Open Scriptures Hebrew Bible — `OSHB-v.2.2.zip`
 
 | Field | Value |
