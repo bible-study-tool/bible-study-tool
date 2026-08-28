@@ -1,0 +1,74 @@
+# GitLab CI — Bible Study Tool
+#
+# WHAT THIS IS (plain English):
+# Every time someone proposes a change to this repo (a Merge Request), GitLab
+# spins up a clean, throwaway machine and runs the commands below. If any
+# command fails, the change is BLOCKED from being merged. This is the "robot
+# gatekeeper" that enforces the data-integrity foundation (F1-F4) so bad data
+# can never silently reach the deterministic core.
+#
+# The philosophy: the checks we run here are the SAME commands a contributor
+# runs locally. CI just automates them and makes them a hard gate.
+#
+# To run these exact checks locally:
+#   python3 -m search.linking.test_pipeline
+#   python3 -m search.validation.schema   --repo .
+#   python3 -m search.validation.strongs  --repo .
+#   python3 -m search.validation.xrefs    --repo .
+#   python3 -m search.validation.audit    --repo .
+
+# A small, reproducible Python image with numpy and pyyaml preinstalled.
+# sqlite3 (the search index) is part of Python's standard library, so no
+# extra system packages are needed for the core.
+image: python:3.12-slim
+
+stages:
+  - test
+  - validate
+
+# Cache installed dependencies between runs so CI is fast.
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+before_script:
+  - pip install --quiet numpy pyyaml
+
+# ---- STAGE 1: unit & integration tests ----------------------------------
+run-tests:
+  stage: test
+  script:
+    - python -m search.linking.test_pipeline
+    - python -m search.validation.test_schema
+    - python -m search.validation.test_strongs
+    - python -m search.validation.test_xrefs
+    - python -m search.validation.test_audit
+
+# ---- STAGE 2: data-integrity gates ---------------------------------------
+# Each validator exits non-zero on any ERROR, so a data problem fails the job
+# and blocks the merge. Warnings (e.g. forward references) do NOT block.
+
+validate-schema:
+  stage: validate
+  script:
+    - python -m search.validation.schema --repo .
+  # Depends on the whole repo including tags/taxonomy.json.
+
+validate-strongs:
+  stage: validate
+  script:
+    - python -m search.validation.strongs --repo .
+  # Structural mode always runs; if lexicons/strongs-list.json is present the
+  # full canonical-number check runs automatically.
+
+validate-xrefs:
+  stage: validate
+  script:
+    - python -m search.validation.xrefs --repo .
+  # Forward references (to planned entries) are warnings; malformed targets are
+  # errors and will fail here.
+
+validate-audit:
+  stage: validate
+  script:
+    - python -m search.validation.audit --repo .
+  # Broader dead-reference audit over related[]/semantic_links/links files.
