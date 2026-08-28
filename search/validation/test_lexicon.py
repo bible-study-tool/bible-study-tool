@@ -22,12 +22,14 @@ class CleanDescTests(unittest.TestCase):
         self.assertIn("'", d)
 
 
-class ParseGoFileTests(unittest.TestCase):
-    def _write(self, td, content):
-        p = Path(td) / "strongs.go"
-        p.write_text(content, encoding="utf-8")
-        return p
+def _write_go_file(td, content):
+    """Write a minimal strongs/*.go fixture and return its path."""
+    p = Path(td) / "strongs.go"
+    p.write_text(content, encoding="utf-8")
+    return p
 
+
+class ParseGoFileTests(unittest.TestCase):
     def test_parses_entries(self):
         with tempfile.TemporaryDirectory() as td:
             content = (
@@ -38,7 +40,7 @@ class ParseGoFileTests(unittest.TestCase):
                 'Desc: "Strong&apos;s Number H6: abad (aw-bad&#039;) v.\\n1. perish"},\n'
                 '}\n'
             )
-            p = self._write(td, content)
+            p = _write_go_file(td, content)
             entries = parse_go_file(str(p))
             self.assertIn(1, entries)
             self.assertIn(6, entries)
@@ -61,7 +63,7 @@ class ParseGoFileTests(unittest.TestCase):
                 'Length: 2, Desc: "Strong&apos;s Number H3: eb (abe) n-m.\\n1. a green plant"},\n'
                 '}\n'
             )
-            p = self._write(td, content)
+            p = _write_go_file(td, content)
             entries = parse_go_file(str(p))
             # H1, H2, H3 are all distinct valid Strong's numbers.
             self.assertIn(1, entries)
@@ -69,17 +71,18 @@ class ParseGoFileTests(unittest.TestCase):
             self.assertIn(3, entries)
             self.assertEqual(len(entries), 3)
 
-    def _write(self, td, content):
-        p = Path(td) / "strongs.go"
-        p.write_text(content, encoding="utf-8")
-        return p
-
 
 class CanonicalIntegrationTests(unittest.TestCase):
+    @staticmethod
+    def _load(path):
+        """Load a lexicons JSON with an explicitly closed file (no ResourceWarning)."""
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
+
     def test_list_matches_lexicon_counts(self):
         """The committed list and lexicon must agree on counts."""
-        lst = json.load(open("lexicons/strongs-list.json"))
-        lex = json.load(open("lexicons/strongs-lexicon.json"))
+        lst = self._load("lexicons/strongs-list.json")
+        lex = self._load("lexicons/strongs-lexicon.json")
         self.assertEqual(len(lst["hebrew"]), lst["hebrew_count"])
         self.assertEqual(len(lst["greek"]), lst["greek_count"])
         self.assertEqual(len(lst["hebrew"]), len(lex["hebrew"]))
@@ -91,7 +94,7 @@ class CanonicalIntegrationTests(unittest.TestCase):
         data/PROVENANCE.md depend on these exact totals; a bad re-pin that
         dropped entries would still be internally consistent, so pin the
         absolute numbers here."""
-        lst = json.load(open("lexicons/strongs-list.json"))
+        lst = self._load("lexicons/strongs-list.json")
         self.assertEqual(len(lst["hebrew"]), 8674)
         self.assertEqual(len(lst["greek"]), 5624)
         # Boundary numbers must be present.
@@ -101,7 +104,7 @@ class CanonicalIntegrationTests(unittest.TestCase):
             self.assertIn(code, pool, f"{code} must be in the canonical list")
 
     def test_known_codes_in_canonical(self):
-        lst = json.load(open("lexicons/strongs-list.json"))
+        lst = self._load("lexicons/strongs-list.json")
         canon = StrongsCanonical(hebrew=set(lst["hebrew"]), greek=set(lst["greek"]))
         # These are codes used by the current corpus + curated links.
         for code in ("H7225", "H430", "H1254", "H8414", "H7307", "H7363",
@@ -112,7 +115,7 @@ class CanonicalIntegrationTests(unittest.TestCase):
         """F2 in canonical mode must accept the current corpus (0 errors)."""
         from search.linking.loader import Loader
         from search.validation.strongs import validate_all
-        lst = json.load(open("lexicons/strongs-list.json"))
+        lst = self._load("lexicons/strongs-list.json")
         canon = StrongsCanonical(hebrew=set(lst["hebrew"]), greek=set(lst["greek"]))
         loader = Loader(".")
         loader.load_entries()
