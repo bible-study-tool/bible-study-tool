@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bible-study-tool"
+version = "0.1.0"
+description = "Adventist Bible study tool: a deterministic, offline-first knowledge base with cross-language semantic linking."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+keywords = ["bible", "bible-study", "adventist", "concordance", "semantic", "offline"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Religion",
+]
+
+# Core runtime dependencies for the deterministic linking + validation pipeline.
+# scikit-learn is NOT required (the legacy TF-IDF engine was removed).
+dependencies = [
+    "numpy>=1.24",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+# Higher-fidelity multilingual embedder (layer c). Optional.
+ml = [
+    "sentence-transformers>=2.2",
+]
+# Testing.
+test = [
+    "pytest>=8.0",
+]
+
+[tool.setuptools]
+# `search/` is intentionally a namespace package (no __init__.py), so we
+# enumerate the real subpackages explicitly.
+packages = [
+    "search.linking",
+    "search.validation",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["search"]
+addopts = "-q"
+# Ensure `search` is importable regardless of how pytest is invoked
+# (namespace package has no __init__.py; complements the root conftest.py).
+pythonpath = ["."]

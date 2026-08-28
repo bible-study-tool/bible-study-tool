@@ -179,6 +179,18 @@ pip install numpy pyyaml
 > multilingual embedder, optionally install `sentence-transformers` (see the
 > Semantic Linking Guide).
 
+**Running from a checkout.** The tool loads its data (the Markdown corpus in
+`materials/`, the tag taxonomy, `lexicons/`, `correlations/`, and generated
+`index/`) from **relative paths at the repo root**. To work on it, use an
+editable install and run the CLIs from the repo root:
+
+```bash
+pip install -e .[test]
+python -m search.linking.cli --repo . --deterministic   # or any validator/dbindex
+```
+
+Packaging metadata lives in `pyproject.toml`.
+
 ## Macula Dataset Integration
 
 The project plans to integrate the [Macula](https://tools.bible/tools/macula-greek-and-hebrew-linguistic-datasets) datasets (open-licensed Hebrew and Greek linguistic annotation) to enrich original-language data. See Macula Integration Guide for details.

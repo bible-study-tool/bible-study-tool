@@ -18,6 +18,11 @@ __pycache__/
 .env  
 venv/
 .cache/
+*.egg-info/
+.eggs/
+.pytest_cache/
+/build/
+/dist/
 
 # Node (if used later)
 
@@ -44,3 +49,7 @@ index/concordance.json
 index/semantic.db
 index/semantic.db-wal
 index/semantic.db-shm
+
+# Raw external source data (KJV-osis, OSHB, strongs .go files) — large,
+# third-party, and license-clean outputs are committed instead in lexicons/.
+data/
