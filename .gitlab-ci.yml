@@ -4,22 +4,21 @@
 # Every time someone proposes a change to this repo (a Merge Request), GitLab
 # spins up a clean, throwaway machine and runs the commands below. If any
 # command fails, the change is BLOCKED from being merged. This is the "robot
-# gatekeeper" that enforces the data-integrity foundation (F1-F4) so bad data
-# can never silently reach the deterministic core.
+# gatekeeper" that enforces the data-integrity foundation (F1-F4 + the Strong's
+# lexicon) so bad data can never silently reach the deterministic core.
 #
 # The philosophy: the checks we run here are the SAME commands a contributor
 # runs locally. CI just automates them and makes them a hard gate.
 #
 # To run these exact checks locally:
-#   python3 -m search.linking.test_pipeline
-#   python3 -m search.validation.schema   --repo .
-#   python3 -m search.validation.strongs  --repo .
-#   python3 -m search.validation.xrefs    --repo .
-#   python3 -m search.validation.audit    --repo .
+#   python -m pytest                                   # all unit/integration tests
+#   python -m search.validation.schema  --repo .       # F1 schema
+#   python -m search.validation.strongs --repo .       # F2 Strong's
+#   python -m search.validation.xrefs   --repo .       # F3 cross-refs
+#   python -m search.validation.audit   --repo .       # F4 dead-reference audit
 
-# A small, reproducible Python image with numpy and pyyaml preinstalled.
-# sqlite3 (the search index) is part of Python's standard library, so no
-# extra system packages are needed for the core.
+# A small, reproducible Python image. Dependencies come from pyproject.toml
+# (installed below), not ad-hoc pip installs, so the declared deps are gated.
 image: python:3.12-slim
 
 stages:
@@ -30,18 +29,20 @@ stages:
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
+# Install the package in editable mode with its test extras. This exercises
+# pyproject.toml (G5) and provides numpy/PyYAML/pytest to the jobs.
 before_script:
-  - pip install --quiet numpy pyyaml
+  - pip install --quiet --upgrade pip
+  - pip install --quiet -e '.[test]'
 
 # ---- STAGE 1: unit & integration tests ----------------------------------
+# `python -m pytest` auto-discovers every test_*.py under search/ (testpaths
+# in pyproject.toml), so new test files — including the Strong's lexicon tests
+# (test_lexicon.py) — are gated automatically without editing this file.
 run-tests:
   stage: test
   script:
-    - python -m search.linking.test_pipeline
-    - python -m search.validation.test_schema
-    - python -m search.validation.test_strongs
-    - python -m search.validation.test_xrefs
-    - python -m search.validation.test_audit
+    - python -m pytest
 
 # ---- STAGE 2: data-integrity gates ---------------------------------------
 # Each validator exits non-zero on any ERROR, so a data problem fails the job
