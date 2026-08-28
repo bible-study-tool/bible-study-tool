@@ -52,4 +52,6 @@ index/semantic.db-shm
 
 # Raw external source data (KJV-osis, OSHB, strongs .go files) — large,
 # third-party, and license-clean outputs are committed instead in lexicons/.
-data/
+# PROVENANCE.md (the checksum/pinning record) IS committed.
+data/*
+!data/PROVENANCE.md
