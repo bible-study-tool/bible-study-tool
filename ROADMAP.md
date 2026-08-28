@@ -39,7 +39,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **A1. Complete Genesis 1 creation narrative** — v1-31 (full creation week)
 - `[ ]` **A2. Expand OT coverage** — Exodus, Isaiah, Daniel, Psalms (Adventist-prioritized); more word studies
 - `[ ]` **A3. Add NT coverage** — John 1, Hebrews, Revelation, Romans
-- `[ ]` **A4. Full Strong's lexicon dataset** — all H####/G#### (definitions, transliteration, usage counts). *Prerequisite for much else.*
+- `[x]` **A4. Full Strong's lexicon dataset** — `lexicons/strongs-list.json` (canonical 8674 H + 5624 G, F2-verified) + `lexicons/strongs-lexicon.json` (definitions/transliteration/KJV usage); sources pinned in `data/PROVENANCE.md`
 - `[ ]` **A5. Greek word-study expansion** — corpus is currently Hebrew-dominant
 - `[ ]` **A6. Multiple public-domain translations** (KJV/ASV/WEB) bundled; user-supplied model for copyrighted
 - `[ ]` **A7. Spirit of Prophecy integration** — link-out + user-supplied-text model (NOTICE.md)
@@ -81,7 +81,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **G2. Test expansion** — property/consistency tests; golden tests over corpus
 - `[ ]` **G3. Index caching / incremental rebuilds** — avoid full rebuilds as corpus grows
 - `[ ]` **G4. Performance at scale** — benchmark FTS5 + embeddings on large corpus
-- `[ ]` **G5. Packaging / install** — pyproject.toml, dependency pinning, reproducible env
+- `[x]` **G5. Packaging / install** — `pyproject.toml` (deps pinned, namespace packages, pytest config); editable install verified; documented run-from-repo-root workflow
 
 ### H. Governance & Community
 - `[ ]` **H1. Contribution workflow hardening** — complete the Review Stage sections in CONTRIBUTION_STANDARDS.md
@@ -122,22 +122,26 @@ separate skill.
 1. **F1 — Schema validator** — entry frontmatter vs taxonomy + kc-schema
    `search/validation/schema.py` — ✅ (reviewed & hardened)
 2. **F2 — Strong's number verification** — canonical H/G list
-   `search/validation/strongs.py` + `build_strongs_list.py` — ✅ (structural
-   mode now; canonical-list mode activates when `lexicons/strongs-list.json`
-   exists — generated from scrollmapper/bible_databases, see A4)
+   `search/validation/strongs.py` + `build_strongs_lexicon.py` — ✅ (canonical
+   list active: `lexicons/strongs-list.json` — full 8674 Hebrew + 5624 Greek
+   enumeration, generated from gmlewis/bible-codes, pinned in
+   `data/PROVENANCE.md`)
 3. **F3 — Cross-reference integrity checker** — xref targets resolve
    `search/validation/xrefs.py` — ✅ (malformed=error, forward-ref=warning)
 4. **F4 — Broken-link / dead-reference audit**
    `search/validation/audit.py` — ✅ (related/semantic_links/links-file/index)
 
 All four exit non-zero on errors and are wired to run as commands (ready for
-CI, see G1). Note: the source of truth for strongs-list.json is
-scrollmapper/bible_databases (MIT), which also serves A6 (translations) and
-the F3 cross-reference source of truth.
+CI, see G1). The Strong's source of truth is gmlewis/bible-codes
+(Apache-2.0; underlying Strong's Concordance is public domain), pinned with
+SHA-256 in `data/PROVENANCE.md` and fetchable via `scripts/fetch_sources.sh`.
+scrollmapper/bible_databases (MIT) additionally serves A6 (translations).
 
-### Phase 2 — Strong's Lexicon Dataset
+### Phase 2 — Strong's Lexicon Dataset — ✅ DONE
 5. **A4 — Full Strong's lexicon dataset** — all H####/G#### with definitions,
-   transliteration, usage counts. Verified by F2. *Unlocks content + Macula.*
+   transliteration, KJV usage. ✅ `lexicons/strongs-lexicon.json` (8674 H +
+   5624 G, canonical totals pinned by test). F2 verifies corpus tags against
+   it. Unlocks content + Macula.
 
 ### Phase 3 — Corpus Expansion (validated)
 6. **A1 — Complete Genesis 1** (v1-31)
