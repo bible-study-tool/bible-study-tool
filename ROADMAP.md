@@ -77,7 +77,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[x]` **F4. Broken-link / dead-reference audit** — `search/validation/audit.py`
 
 ### G. Engineering Infrastructure
-- `[ ]` **G1. CI pipeline** — run tests + validators on every MR (GitLab CI)
+- `[x]` **G1. CI pipeline** — `.gitlab-ci.yml` — runs tests + F1-F4 validators on every MR; blocks merge on errors
 - `[ ]` **G2. Test expansion** — property/consistency tests; golden tests over corpus
 - `[ ]` **G3. Index caching / incremental rebuilds** — avoid full rebuilds as corpus grows
 - `[ ]` **G4. Performance at scale** — benchmark FTS5 + embeddings on large corpus
@@ -99,6 +99,24 @@ without it. Build validators first as guardrails, then use them to produce a
 correct Strong's dataset, then expand the corpus safely. The discovery/
 embedding value (C) only pays off once the corpus is large; the UI/app (D) and
 AI assistant (E) depend on a solid data + integrity layer.
+
+## CI/CD, in plain English
+
+*"CI" (Continuous Integration)* means: every time someone proposes a change
+(a Merge Request), a clean automated machine runs our checks and blocks the
+change if any fail. It is the "robot gatekeeper" that enforces the
+data-integrity foundation so bad data can't silently reach the deterministic
+core. For this project, CI = *run the test suite + the F1-F4 validators on
+every MR* (see `.gitlab-ci.yml`).
+
+*"CD" (Continuous Delivery)* means: automatically building and shipping the
+software. This project has nothing to deploy yet, so CD is not relevant for
+now — CI is the half we use.
+
+The key point: CI is just automating commands you already run locally. If a
+contributor runs `python -m search.validation.schema --repo .` and it's clean,
+the robot will be too. No extra knowledge needed — CI is a wrapper, not a
+separate skill.
 
 ### Phase 1 — Data Integrity Foundation *(the load-bearing layer)* — ✅ DONE
 1. **F1 — Schema validator** — entry frontmatter vs taxonomy + kc-schema
