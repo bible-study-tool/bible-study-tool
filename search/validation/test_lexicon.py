@@ -85,6 +85,21 @@ class CanonicalIntegrationTests(unittest.TestCase):
         self.assertEqual(len(lst["hebrew"]), len(lex["hebrew"]))
         self.assertEqual(len(lst["greek"]), len(lex["greek"]))
 
+    def test_canonical_totals(self):
+        """The canonical enumeration must be the FULL Strong's set (8674 H /
+        5624 G). F2's out-of-range bounds and the documented fingerprints in
+        data/PROVENANCE.md depend on these exact totals; a bad re-pin that
+        dropped entries would still be internally consistent, so pin the
+        absolute numbers here."""
+        lst = json.load(open("lexicons/strongs-list.json"))
+        self.assertEqual(len(lst["hebrew"]), 8674)
+        self.assertEqual(len(lst["greek"]), 5624)
+        # Boundary numbers must be present.
+        for code in ("H1", "H8674", "G1", "G5624", "H2", "H6791"):
+            letter, num = code[0], int(code[1:])
+            pool = lst["hebrew"] if letter == "H" else lst["greek"]
+            self.assertIn(code, pool, f"{code} must be in the canonical list")
+
     def test_known_codes_in_canonical(self):
         lst = json.load(open("lexicons/strongs-list.json"))
         canon = StrongsCanonical(hebrew=set(lst["hebrew"]), greek=set(lst["greek"]))

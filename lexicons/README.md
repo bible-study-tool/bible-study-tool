@@ -1,29 +1,49 @@
 # Lexicons
 
-Reference data for original-language study. Files here are **curated reference
-data**, not generated artifacts of the pipeline.
+Reference data for original-language study. Files here are **generated from
+license-clean sources and committed** — they are derived, public-domain-facts
+data (Strong's numbers/definitions), not raw third-party text.
 
-## `strongs-list.json` (planned — generated, then committed)
+## Files
 
-The canonical set of valid Strong's numbers, used by the F2 validator
+### `strongs-list.json` — canonical Strong's number set (for F2)
+The authoritative enumeration of valid Strong's numbers: **8674 Hebrew (H1-H8674)
++ 5624 Greek (G1-G5624)**. Used by the F2 validator
 (`search/validation/strongs.py`) to verify every `strongs-H####` / `strongs-G####`
-tag against the authoritative enumeration — catching wrong numbers (the class
-of error that once slipped into the deterministic core, G2532 vs G746).
+tag, catching wrong numbers (the class of error that once slipped into the
+deterministic core: G2532 vs G746).
 
-**How it's produced:** extracted from an MIT-licensed Bible-with-Strong's source
-(e.g. scrollmapper/bible_databases — its KJV ships with Strong's numbers) via:
+### `strongs-lexicon.json` — full Strong's dictionary (for A4 study use)
+The complete concordance: every number -> original word, transliteration, and
+definition (with roots / KJV usage in `desc`). This is the companion to the
+number list, ready for word-study entries.
+
+## How they're generated
+
+From `data/strongs/*.go` (the gmlewis/bible-codes concordance, itself
+sourced from the public-domain Strong's concordance):
 
 ```bash
-python -m search.validation.build_strongs_list \
-  --file <kjv-with-strongs>.json \
-  --out lexicons/strongs-list.json
+# Fetch the pinned sources (checksum-verified; see data/PROVENANCE.md)
+scripts/fetch_sources.sh
+
+python -m search.validation.build_strongs_lexicon \
+  --hebrew data/strongs/hebrew.go \
+  --greek  data/strongs/greek.go \
+  --out-dir lexicons
 ```
 
-**Licensing:** the Strong's *numbers* are a set of public-domain facts; the
-extraction carries no verse text, so it stays clean per `NOTICE.md` (KJV is
-public domain; scrollmapper is MIT).
+## Data provenance & licensing
 
-Until this file exists, F2 runs in **structural mode** (format + plausible
-range only). Once present, F2 upgrades to full canonical verification
-automatically. See ROADMAP A4 for the companion goal of a full Strong's
-*lexicon* (definitions, transliteration, usage counts).
+* **Numbers + definitions** are public-domain facts (original Strong's
+  concordance). The generated JSON carries no Bible verse text.
+* The raw sources in `data/` (`KJV-osis.json`, `OSHB-v.2.2.zip`, `strongs/*.go`)
+  are **third-party and gitignored** — they are downloaded locally to run the
+  generator, not committed. See `NOTICE.md` for the content-sourcing policy.
+* Cross-validation performed: all 13,001 Strong's codes attested in the tagged
+  KJV are present in the canonical list (0 missing), confirming completeness.
+
+## Regeneration
+
+To rebuild after updating the sources, run the command above. Commit the
+resulting `lexicons/*.json` (compact, license-clean) — do not commit `data/`.

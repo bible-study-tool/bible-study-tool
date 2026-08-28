@@ -19,7 +19,7 @@ core's guarantees depend on stable, auditable inputs).
 | Upstream | <https://github.com/gmlewis/bible-codes> |
 | Pinned commit | `c9432716b19d039f06a2aebbd1f10b911c6254b0` (master, 2025-08-27) |
 | Mechanism | `regenerate.sh` runs upstream `cmd/strongs2go` over scraped HTML of <https://www.kingjamesbibleonline.org/strongs-concordance/> |
-| License | MIT (upstream repo). The underlying Strong's Concordance (1890) is public domain. |
+| License | Apache-2.0 (upstream repo, verified at pinned commit). The underlying Strong's Concordance (1890) is public domain. |
 | Feeds | `lexicons/strongs-list.json` + `lexicons/strongs-lexicon.json` via `python -m search.validation.build_strongs_lexicon` |
 
 SHA-256:
@@ -45,7 +45,7 @@ distinct, valid Strong's numbers and are all kept.
 | Upstream | <https://github.com/scrollmapper/bible_databases> |
 | Pinned commit | `e1b254cef86d0e65b1a5d1a94b8b112d0f296a2c` (master, 2026-07-10) |
 | Path | `sources/en/KJV/KJV-osis.json` |
-| License | MIT (upstream repo); KJV text is public domain |
+| License | MIT (upstream repo, verified at pinned commit); KJV text is public domain |
 | Feeds | cross-validation of the Strong's set; future word-occurrence / usage-count work (A4) |
 
 SHA-256:
@@ -60,7 +60,7 @@ e4b94058829cf1c67a29b9af1829916984f1554fb9617e49b88c48706ee4a94e  KJV-osis.json
 | --- | --- |
 | Upstream | <https://github.com/openscriptures/morphhb> |
 | Pinned tag | `v.2.2` (`6a5db284c715`) |
-| License | CC BY 4.0 (per upstream) — Hebrew text + morphology are public domain / CC BY |
+| License | Per upstream: WLC Hebrew text = **public domain**; lemma + morphology annotations = **CC BY 4.0** (attribution required: "Open Scriptures Hebrew Bible Project"). Upstream also warns to avoid NFC normalization of the text — relevant for future A9 corpus work. |
 | Feeds | future original-language corpus work (ROADMAP A9); not yet consumed by code |
 
 SHA-256:
@@ -69,14 +69,25 @@ SHA-256:
 02f8711a4bd6ee322e7009beae158a51a63ca61ec4e90250ae261149c616c399  OSHB-v.2.2.zip
 ```
 
+## Generated artifacts (for offline drift detection)
+
+The committed artifacts regenerate byte-identically from the pinned sources
+(verified). Their checksums are recorded here so drift can be detected without
+re-running the generator:
+
+```
+f98d6a8c3b0efbbb5657f59c4039e54abdf2917526201e357422468f91f58443  ../lexicons/strongs-list.json
+8af872882f7ea4a2f80c9390d325e3f4840bb63f59edd1b4be7f3b572040ff7b  ../lexicons/strongs-lexicon.json
+```
+
 ## How to reproduce
 
 ```bash
 # 1. Fetch the pinned sources into data/ (skips files that already match)
 scripts/fetch_sources.sh
 
-# 2. Verify checksums against this record
-sha256sum -c <(grep -oE '^[0-9a-f]{64}  \S+' data/PROVENANCE.md | sed 's#  #  data/#')
+# 2. Verify checksums only (offline)
+scripts/fetch_sources.sh --check
 
 # 3. Regenerate the committed lexicons
 python -m search.validation.build_strongs_lexicon \
