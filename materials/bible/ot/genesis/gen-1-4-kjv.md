@@ -40,7 +40,7 @@ updated: 2026-08-28
 *   Definition: 1. illumination
 *   Modern Gloss (TBESH): light
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### kho-shek' (darkness) - Strong's H2822
 
@@ -48,7 +48,7 @@ updated: 2026-08-28
 *   Definition: 1. the dark
 *   Modern Gloss (TBESH): darkness
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### tobe (pleasant) - Strong's H2896
 
@@ -56,7 +56,7 @@ updated: 2026-08-28
 *   Definition: 1. good (as an adjective) in the widest sense
 *   Modern Gloss (TBESH): pleasant
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### kee (for) - Strong's H3588
 
@@ -64,7 +64,7 @@ updated: 2026-08-28
 *   Definition: 1. (by implication) very widely used as a relative conjunction or adverb (as below)
 *   Modern Gloss (TBESH): for
 *   Morphology (STEPBible): H:Conj
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -72,7 +72,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### raw-aw' (to see) - Strong's H7200
 
@@ -80,7 +80,7 @@ updated: 2026-08-28
 *   Definition: 1. to see, literally or figuratively (in numerous applications, direct and implied, transitive, intransitive and causative)
 *   Modern Gloss (TBESH): to see: see
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ayth ([Obj.]) - Strong's H853
 
@@ -88,7 +88,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) self
 *   Modern Gloss (TBESH): [Obj.]
 *   Morphology (STEPBible): H:Part
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### baw-dal' (to separate) - Strong's H914
 
@@ -96,7 +96,7 @@ updated: 2026-08-28
 *   Definition: 1. to divide (in variation senses literally or figuratively, separate, distinguish, differ, select, etc.)
 *   Modern Gloss (TBESH): to separate
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### bane (between) - Strong's H996
 
@@ -104,7 +104,7 @@ updated: 2026-08-28
 *   Definition: 1. a distinction
 *   Modern Gloss (TBESH): between
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ## Source Notes
 

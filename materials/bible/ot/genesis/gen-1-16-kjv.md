@@ -41,7 +41,7 @@ updated: 2026-08-28
 *   Definition: 1. great (in any sense)
 *   Modern Gloss (TBESH): great: large
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### yome (day) - Strong's H3117
 
@@ -49,7 +49,7 @@ updated: 2026-08-28
 *   Definition: 1. a day (as the warm hours), whether literal (from sunrise to sunset, or from one sunset to the next), or figurative (a space of time defined by an associated term), (often used adverb)
 *   Modern Gloss (TBESH): day
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ko-kawb' (star) - Strong's H3556
 
@@ -57,7 +57,7 @@ updated: 2026-08-28
 *   Definition: 1. a star (as round or as shining)
 *   Modern Gloss (TBESH): star
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### lah'-yil (night) - Strong's H3915
 
@@ -65,7 +65,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a twist (away of the light), i.e. night
 *   Modern Gloss (TBESH): night
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### maw-ore' (light) - Strong's H3974
 
@@ -73,7 +73,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a luminous body or luminary
 *   Modern Gloss (TBESH): light
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 3
+*   Lemma occurrences in this verse: 3
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -81,7 +81,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### mem-shaw-law' (dominion) - Strong's H4475
 
@@ -89,7 +89,7 @@ updated: 2026-08-28
 *   Definition: 1. rule
 *   Modern Gloss (TBESH): dominion
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### aw-saw' (to make) - Strong's H6213
 
@@ -97,7 +97,7 @@ updated: 2026-08-28
 *   Definition: 1. to do or make, in the broadest sense and widest application (as follows)
 *   Modern Gloss (TBESH): to make: do
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### kaw-tawn' (small) - Strong's H6996
 
@@ -105,7 +105,7 @@ updated: 2026-08-28
 *   Definition: 1. abbreviated, i.e. diminutive, literally (in quantity, size or number) or figuratively (in age or importance)
 *   Modern Gloss (TBESH): small
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### shen-ah'-yim (two) - Strong's H8147
 
@@ -113,7 +113,7 @@ updated: 2026-08-28
 *   Definition: 1. two
 *   Modern Gloss (TBESH): two
 *   Morphology (STEPBible): H:N
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

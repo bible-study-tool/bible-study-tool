@@ -20,7 +20,7 @@ core's guarantees depend on stable, auditable inputs).
 | Pinned commit | `c9432716b19d039f06a2aebbd1f10b911c6254b0` (master, 2025-08-27) |
 | Mechanism | `regenerate.sh` runs upstream `cmd/strongs2go` over scraped HTML of <https://www.kingjamesbibleonline.org/strongs-concordance/> |
 | License | Apache-2.0 (upstream repo, verified at pinned commit). The underlying Strong's Concordance (1890) is public domain. |
-| Feeds | `lexicons/strongs-list.json` + `lexicons/strongs-lexicon.json` via `python -m search.validation.build_strongs_lexicon` |
+|  Feeds | `lexicons/strongs-list.json` + `lexicons/strongs-lexicon.json` via `python -m search.validation.build_strongs_lexicon` |
 
 SHA-256:
 
@@ -46,7 +46,7 @@ distinct, valid Strong's numbers and are all kept.
 | Pinned commit | `e1b254cef86d0e65b1a5d1a94b8b112d0f296a2c` (master, 2026-07-10) |
 | Path | `sources/en/KJV/KJV-osis.json` |
 | License | MIT (upstream repo, verified at pinned commit); KJV text is public domain |
-| Feeds | cross-validation of the Strong's set; future word-occurrence / usage-count work (A4) |
+|  Feeds | cross-validation of the Strong's set; future word-occurrence / usage-count work (A4) |
 
 SHA-256:
 
@@ -69,7 +69,7 @@ edition when curating.
 | Upstream | <https://github.com/openscriptures/morphhb> |
 | Pinned tag | `v.2.2` (`6a5db284c715`) |
 | License | Per upstream: WLC Hebrew text = **public domain**; lemma + morphology annotations = **CC BY 4.0** (attribution required: "Open Scriptures Hebrew Bible Project"). Upstream also warns to avoid NFC normalization of the text — relevant for future A9 corpus work. |
-| Feeds | future original-language corpus work (ROADMAP A9); not yet consumed by code |
+|  Feeds | future original-language corpus work (ROADMAP A9); not yet consumed by code |
 
 SHA-256:
 
@@ -86,7 +86,7 @@ SHA-256:
 | Pinned blobs | TBESH `a64990a674d13245ae1e9ed426bc69197c2fbad5`, TBESG `efe271a1dbb73fa01f8fa6e0f164c6687757a9ae` |
 | License | **CC BY 4.0** — data by www.STEPBible.org based on work at Tyndale House Cambridge. Attribution required: credit **"STEP Bible"** linked to <http://www.STEPBible.org>. Changes to the data must be recorded (ours are listed in each artifact's `changes_recorded`). Per the file header, do not redistribute the raw files — they are fetched on demand. |
 | TBESH caveat | STEPBible's own header notes the Brief lexicon is based on *Abridged BDB by Online Bible* and that *"Permission should be gained from Online Bible before these definitions are applied in any project."* Hebrew brief glosses are therefore recorded as **supplementary** (see the artifact's `license_note`); the Strong's definitions in `strongs-lexicon.json` remain the deterministic core. TBESG is clean (Abbott-Smith 1922 is public domain; gaps filled from MiddleLiddel (PD) and Tyndale scholars). |
-| Feeds | `lexicons/tbesh-glosses.json` (8,674 H-codes, 11,633 records) + `lexicons/tbesg-glosses.json` (5,523 G-codes, 5,709 records) via `python -m search.validation.build_stepbible_lexicon` |
+|  Feeds | `lexicons/tbesh-glosses.json` (8,674 H-codes, 11,633 records) + `lexicons/tbesg-glosses.json` (5,523 G-codes, 5,709 records) via `python -m search.validation.build_stepbible_lexicon` |
 
 SHA-256:
 
@@ -130,6 +130,10 @@ python -m search.validation.build_strongs_lexicon \
 # 4. Regenerate the STEPBible modern-gloss lexicons
 python -m search.validation.build_stepbible_lexicon \
   --tbesh data/stepbible/TBESH.txt --tbesg data/stepbible/TBESG.txt --out-dir lexicons
+
+# 5. Regenerate the Genesis 1:4-31 corpus entries (pinned GENERATION_DATE in
+#    the module keeps output byte-identical; bump it explicitly on re-runs)
+python -m search.corpus.build_genesis1 --repo .
 ```
 
 ## Policy

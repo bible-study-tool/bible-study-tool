@@ -40,7 +40,7 @@ updated: 2026-08-28
 *   Definition: 1. good (as an adjective) in the widest sense
 *   Modern Gloss (TBESH): pleasant
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### yab-baw-shaw' (dry land) - Strong's H3004
 
@@ -48,7 +48,7 @@ updated: 2026-08-28
 *   Definition: 1. dry ground
 *   Modern Gloss (TBESH): dry land
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### yawm (sea) - Strong's H3220
 
@@ -56,7 +56,7 @@ updated: 2026-08-28
 *   Definition: 1. a sea (as breaking in noisy surf) or large body of water
 *   Modern Gloss (TBESH): sea
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -64,7 +64,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### mah'-yim (water) - Strong's H4325
 
@@ -72,7 +72,7 @@ updated: 2026-08-28
 *   Definition: 1. water
 *   Modern Gloss (TBESH): water
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### mik-veh' (Kue) - Strong's H4723
 
@@ -80,7 +80,7 @@ updated: 2026-08-28
 *   Definition: 1. something waited for, i.e. confidence (objective or subjective)
 *   Modern Gloss (TBESH): Kue
 *   Morphology (STEPBible): N:N--L
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### kaw-raw' (to call) - Strong's H7121
 
@@ -88,7 +88,7 @@ updated: 2026-08-28
 *   Definition: 1. to call out to (i.e. properly, address by name, but used in a wide variety of applications)
 *   Modern Gloss (TBESH): to call: call to
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### raw-aw' (to see) - Strong's H7200
 
@@ -96,7 +96,7 @@ updated: 2026-08-28
 *   Definition: 1. to see, literally or figuratively (in numerous applications, direct and implied, transitive, intransitive and causative)
 *   Modern Gloss (TBESH): to see: see
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'-rets (land) - Strong's H776
 
@@ -104,7 +104,7 @@ updated: 2026-08-28
 *   Definition: 1. the earth (at large, or partitively a land)
 *   Modern Gloss (TBESH): land: country/planet
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

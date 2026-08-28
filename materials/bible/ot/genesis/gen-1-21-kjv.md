@@ -45,7 +45,7 @@ updated: 2026-08-28
 *   Definition: 1. (absolutely) to create
 *   Modern Gloss (TBESH): to create
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### gaw-dole' (great) - Strong's H1419
 
@@ -53,7 +53,7 @@ updated: 2026-08-28
 *   Definition: 1. great (in any sense)
 *   Modern Gloss (TBESH): great: large
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### khah'-ee (alive) - Strong's H2416
 
@@ -61,7 +61,7 @@ updated: 2026-08-28
 *   Definition: 1. alive
 *   Modern Gloss (TBESH): alive
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### tobe (pleasant) - Strong's H2896
 
@@ -69,7 +69,7 @@ updated: 2026-08-28
 *   Definition: 1. good (as an adjective) in the widest sense
 *   Modern Gloss (TBESH): pleasant
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### kaw-nawf' (wing) - Strong's H3671
 
@@ -77,7 +77,7 @@ updated: 2026-08-28
 *   Definition: 1. an edge or extremity
 *   Modern Gloss (TBESH): wing
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -85,7 +85,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### mah'-yim (water) - Strong's H4325
 
@@ -93,7 +93,7 @@ updated: 2026-08-28
 *   Definition: 1. water
 *   Modern Gloss (TBESH): water
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### meen (kind) - Strong's H4327
 
@@ -101,7 +101,7 @@ updated: 2026-08-28
 *   Definition: 1. a sort, i.e. species
 *   Modern Gloss (TBESH): kind
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### neh'-fesh (soul) - Strong's H5315
 
@@ -109,7 +109,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a breathing creature, i.e. animal of (abstractly) vitality
 *   Modern Gloss (TBESH): soul
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ofe (bird) - Strong's H5775
 
@@ -117,7 +117,7 @@ updated: 2026-08-28
 *   Definition: 1. a bird (as covered with feathers, or rather as covering with wings), often collectively
 *   Modern Gloss (TBESH): bird
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-aw' (to see) - Strong's H7200
 
@@ -125,7 +125,7 @@ updated: 2026-08-28
 *   Definition: 1. to see, literally or figuratively (in numerous applications, direct and implied, transitive, intransitive and causative)
 *   Modern Gloss (TBESH): to see: see
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-mas' (to creep) - Strong's H7430
 
@@ -133,7 +133,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) to glide swiftly, i.e. to crawl or move with short steps
 *   Modern Gloss (TBESH): to creep
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### shaw-rats' (to swarm) - Strong's H8317
 
@@ -141,7 +141,7 @@ updated: 2026-08-28
 *   Definition: 1. to wriggle
 *   Modern Gloss (TBESH): to swarm
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### tan-neen' (jackal) - Strong's H8577
 
@@ -149,7 +149,7 @@ updated: 2026-08-28
 *   Definition: 1. a marine or land monster, i.e. sea-serpent or jackal
 *   Modern Gloss (TBESH): jackal
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

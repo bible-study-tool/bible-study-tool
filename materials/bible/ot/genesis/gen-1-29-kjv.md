@@ -44,7 +44,7 @@ updated: 2026-08-28
 *   Definition: 1. to exist
 *   Modern Gloss (TBESH): to be
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### hin-nay' (behold) - Strong's H2009
 
@@ -52,7 +52,7 @@ updated: 2026-08-28
 *   Definition: 1. lo!
 *   Modern Gloss (TBESH): behold
 *   Morphology (STEPBible): H:Intj
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### zaw-rah' (to sow) - Strong's H2232
 
@@ -60,7 +60,7 @@ updated: 2026-08-28
 *   Definition: 1. to sow
 *   Modern Gloss (TBESH): to sow
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### zeh'-rah (seed) - Strong's H2233
 
@@ -68,7 +68,7 @@ updated: 2026-08-28
 *   Definition: 1. seed
 *   Modern Gloss (TBESH): seed
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### ok-law' (food) - Strong's H402
 
@@ -76,7 +76,7 @@ updated: 2026-08-28
 *   Definition: 1. food
 *   Modern Gloss (TBESH): food
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -84,7 +84,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### naw-than' (to give) - Strong's H5414
 
@@ -92,7 +92,7 @@ updated: 2026-08-28
 *   Definition: 1. to give, used with greatest latitude of application (put, make, etc.)
 *   Modern Gloss (TBESH): to give: give
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### aw-mar' (to say) - Strong's H559
 
@@ -100,7 +100,7 @@ updated: 2026-08-28
 *   Definition: 1. to say (used with great latitude)
 *   Modern Gloss (TBESH): to say
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ates (tree) - Strong's H6086
 
@@ -108,7 +108,7 @@ updated: 2026-08-28
 *   Definition: 1. a tree (from its firmness)
 *   Modern Gloss (TBESH): tree: wood
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### eh'seb (vegetation) - Strong's H6212
 
@@ -116,7 +116,7 @@ updated: 2026-08-28
 *   Definition: 1. grass (or any tender shoot)
 *   Modern Gloss (TBESH): vegetation
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### paw-neem' (face) - Strong's H6440
 
@@ -124,7 +124,7 @@ updated: 2026-08-28
 *   Definition: 1. the face (as the part that turns)
 *   Modern Gloss (TBESH): face: before
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### per-ee' (fruit) - Strong's H6529
 
@@ -132,7 +132,7 @@ updated: 2026-08-28
 *   Definition: 1. fruit (literally or figuratively)
 *   Modern Gloss (TBESH): fruit
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'-rets (land) - Strong's H776
 
@@ -140,7 +140,7 @@ updated: 2026-08-28
 *   Definition: 1. the earth (at large, or partitively a land)
 *   Modern Gloss (TBESH): land: country/planet
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

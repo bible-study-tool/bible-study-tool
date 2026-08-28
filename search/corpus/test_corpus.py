@@ -101,6 +101,55 @@ class PipelineFidelityTests(unittest.TestCase):
             )
 
 
+class RegenerationTripwireTests(unittest.TestCase):
+    """The committed entries must equal what the generator produces from the
+    pinned sources — byte for byte. This catches hand-edits and partial
+    regeneration, the same drift-tripwire pattern used for the lexicons."""
+
+    @classmethod
+    def setUpClass(cls):
+        from search.corpus.build_genesis1 import build_entry_markdown, load_pinned_sources
+        cls.kjv, cls.lexicon, cls.tbesh, _ = load_pinned_sources(".")
+        cls.build_entry_markdown = staticmethod(build_entry_markdown)
+        gen = next(b for b in cls.kjv["books"] if b["name"] == "Genesis")
+        ch1 = next(c for c in gen["chapters"] if c["chapter"] == 1)
+        cls.verses = {v["verse"]: v for v in ch1["verses"]}
+
+    def test_committed_entries_match_generator_byte_for_byte(self):
+        for v in range(4, 32):
+            path = GENESIS_DIR / f"gen-1-{v}-kjv.md"
+            expected, _ = self.build_entry_markdown(
+                self.verses[v], self.lexicon, self.tbesh
+            )
+            self.assertEqual(                path.read_text(encoding="utf-8"), expected,
+                f"{path.name}: committed content differs from generator output "
+                "(hand-edit or stale regeneration) — re-run "
+                "python -m search.corpus.build_genesis1",
+            )
+
+    def test_word_study_facts_match_lexicons(self):
+        """Every word-study block in the committed entries must be exactly
+        what word_study_block() emits from the committed lexicons — a hand-edit
+        of a Definition/Gloss line fails here."""
+        from search.corpus.build_genesis1 import word_study_block
+        import re
+        block_header = re.compile(r"^### .+ - Strong's ([HG]\d+)$", re.MULTILINE)
+        for v in range(4, 32):
+            path = GENESIS_DIR / f"gen-1-{v}-kjv.md"
+            text = path.read_text(encoding="utf-8")
+            for m in block_header.finditer(text):
+                code = m.group(1)
+                occ_line = re.search(
+                    rf"\*   Lemma occurrences in this verse: (\d+)", text
+                )
+                # Rebuild just this code's block with its source occurrence
+                # count and require verbatim presence.
+                from search.corpus.build_genesis1 import verse_codes
+                _, occ_map, _ = verse_codes(self.verses[v]["text"])
+                block = word_study_block(code, occ_map[code], self.lexicon, self.tbesh)
+                self.assertIn(block, text, f"{path.name}: word block for {code} drifted")
+
+
 class CorpusIntegrityTests(unittest.TestCase):
     """Golden corpus counts + tag canonicality for the whole Genesis chapter."""
 
@@ -142,10 +191,13 @@ class CorpusIntegrityTests(unittest.TestCase):
                 )
 
     def test_corpus_wide_schema_and_canonical_validation(self):
-        """Full pipeline: every Genesis entry passes F1 schema + F2 canonical."""
+        """Full pipeline: every Genesis entry passes F1 schema, F2 canonical
+        Strong's, F3 xref integrity, and F4 dead-reference audit."""
         from search.linking.loader import Loader
         from search.validation.schema import Taxonomy, validate_all as schema_all
         from search.validation.strongs import StrongsCanonical, validate_all as strongs_all
+        from search.validation import xrefs as f3
+        from search.validation import audit as f4
 
         tax = Taxonomy("tags/taxonomy.json")
         loader = Loader(".")
@@ -158,6 +210,12 @@ class CorpusIntegrityTests(unittest.TestCase):
         )
         strongs_issues = [i for i in strongs_all(loader, canon) if i.severity == "error"]
         self.assertEqual(strongs_issues, [], f"F2 errors: {[str(i) for i in strongs_issues]}")
+
+        f3_issues = [i for i in f3.validate_all(loader) if i.severity == "error"]
+        self.assertEqual(f3_issues, [], f"F3 errors: {[str(i) for i in f3_issues]}")
+
+        f4_issues = [i for i in f4.audit_all(loader, ".") if i.severity == "error"]
+        self.assertEqual(f4_issues, [], f"F4 errors: {[str(i) for i in f4_issues]}")
 
 
 if __name__ == "__main__":

@@ -37,7 +37,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### mah'-yim (water) - Strong's H4325
 
@@ -45,7 +45,7 @@ updated: 2026-08-28
 *   Definition: 1. water
 *   Modern Gloss (TBESH): water
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 3
+*   Lemma occurrences in this verse: 3
 
 ### aw-mar' (to say) - Strong's H559
 
@@ -53,7 +53,7 @@ updated: 2026-08-28
 *   Definition: 1. to say (used with great latitude)
 *   Modern Gloss (TBESH): to say
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-kee'-ah (expanse) - Strong's H7549
 
@@ -61,7 +61,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) an expanse, i.e. the firmament or (apparently) visible arch of the sky
 *   Modern Gloss (TBESH): expanse
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### taw'-vek (midst) - Strong's H8432
 
@@ -69,7 +69,7 @@ updated: 2026-08-28
 *   Definition: 1. a bisection
 *   Modern Gloss (TBESH): midst
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### baw-dal' (to separate) - Strong's H914
 
@@ -77,7 +77,7 @@ updated: 2026-08-28
 *   Definition: 1. to divide (in variation senses literally or figuratively, separate, distinguish, differ, select, etc.)
 *   Modern Gloss (TBESH): to separate
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

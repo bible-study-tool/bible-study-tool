@@ -37,7 +37,7 @@ updated: 2026-08-28
 *   Definition: 1. ruddy i.e. a human being (an individual or the species, mankind, etc.)
 *   Modern Gloss (TBESH): man
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### baw-raw' (to create) - Strong's H1254
 
@@ -45,7 +45,7 @@ updated: 2026-08-28
 *   Definition: 1. (absolutely) to create
 *   Modern Gloss (TBESH): to create
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 3
+*   Lemma occurrences in this verse: 3
 
 ### zaw-kawr' (male) - Strong's H2145
 
@@ -53,7 +53,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) remembered, i.e. a male (of man or animals, as being the most noteworthy sex)
 *   Modern Gloss (TBESH): male
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -61,7 +61,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### nek-ay-baw' (female) - Strong's H5347
 
@@ -69,7 +69,7 @@ updated: 2026-08-28
 *   Definition: 1. female (from the sexual form)
 *   Modern Gloss (TBESH): female
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### tseh'-lem (image) - Strong's H6754
 
@@ -77,7 +77,7 @@ updated: 2026-08-28
 *   Definition: 1. a phantom, i.e. (figuratively) illusion, resemblance
 *   Modern Gloss (TBESH): image
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ## Source Notes
 

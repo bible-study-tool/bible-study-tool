@@ -40,7 +40,7 @@ updated: 2026-08-28
 *   Definition: 1. alive
 *   Modern Gloss (TBESH): alive
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### yeh'-rek (green) - Strong's H3418
 
@@ -48,7 +48,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) pallor
 *   Modern Gloss (TBESH): green
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ok-law' (food) - Strong's H402
 
@@ -56,7 +56,7 @@ updated: 2026-08-28
 *   Definition: 1. food
 *   Modern Gloss (TBESH): food
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### neh'-fesh (soul) - Strong's H5315
 
@@ -64,7 +64,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a breathing creature, i.e. animal of (abstractly) vitality
 *   Modern Gloss (TBESH): soul
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ofe (bird) - Strong's H5775
 
@@ -72,7 +72,7 @@ updated: 2026-08-28
 *   Definition: 1. a bird (as covered with feathers, or rather as covering with wings), often collectively
 *   Modern Gloss (TBESH): bird
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'seb (vegetation) - Strong's H6212
 
@@ -80,7 +80,7 @@ updated: 2026-08-28
 *   Definition: 1. grass (or any tender shoot)
 *   Modern Gloss (TBESH): vegetation
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-mas' (to creep) - Strong's H7430
 
@@ -88,7 +88,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) to glide swiftly, i.e. to crawl or move with short steps
 *   Modern Gloss (TBESH): to creep
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'-rets (land) - Strong's H776
 
@@ -96,7 +96,7 @@ updated: 2026-08-28
 *   Definition: 1. the earth (at large, or partitively a land)
 *   Modern Gloss (TBESH): land: country/planet
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### shaw-mah'-yim (heaven) - Strong's H8064
 
@@ -104,7 +104,7 @@ updated: 2026-08-28
 *   Definition: 1. the sky (as aloft
 *   Modern Gloss (TBESH): heaven
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

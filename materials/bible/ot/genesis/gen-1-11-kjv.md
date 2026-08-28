@@ -44,7 +44,7 @@ updated: 2026-08-28
 *   Definition: 1. to sprout
 *   Modern Gloss (TBESH): to sprout
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### deh'-sheh (grass) - Strong's H1877
 
@@ -52,7 +52,7 @@ updated: 2026-08-28
 *   Definition: 1. a sprout
 *   Modern Gloss (TBESH): grass
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### zaw-rah' (to sow) - Strong's H2232
 
@@ -60,7 +60,7 @@ updated: 2026-08-28
 *   Definition: 1. to sow
 *   Modern Gloss (TBESH): to sow
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### zeh'-rah (seed) - Strong's H2233
 
@@ -68,7 +68,7 @@ updated: 2026-08-28
 *   Definition: 1. seed
 *   Modern Gloss (TBESH): seed
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -76,7 +76,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### meen (kind) - Strong's H4327
 
@@ -84,7 +84,7 @@ updated: 2026-08-28
 *   Definition: 1. a sort, i.e. species
 *   Modern Gloss (TBESH): kind
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### aw-mar' (to say) - Strong's H559
 
@@ -92,7 +92,7 @@ updated: 2026-08-28
 *   Definition: 1. to say (used with great latitude)
 *   Modern Gloss (TBESH): to say
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ates (tree) - Strong's H6086
 
@@ -100,7 +100,7 @@ updated: 2026-08-28
 *   Definition: 1. a tree (from its firmness)
 *   Modern Gloss (TBESH): tree: wood
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'seb (vegetation) - Strong's H6212
 
@@ -108,7 +108,7 @@ updated: 2026-08-28
 *   Definition: 1. grass (or any tender shoot)
 *   Modern Gloss (TBESH): vegetation
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### aw-saw' (to make) - Strong's H6213
 
@@ -116,7 +116,7 @@ updated: 2026-08-28
 *   Definition: 1. to do or make, in the broadest sense and widest application (as follows)
 *   Modern Gloss (TBESH): to make: do
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### per-ee' (fruit) - Strong's H6529
 
@@ -124,7 +124,7 @@ updated: 2026-08-28
 *   Definition: 1. fruit (literally or figuratively)
 *   Modern Gloss (TBESH): fruit
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### eh'-rets (land) - Strong's H776
 
@@ -132,7 +132,7 @@ updated: 2026-08-28
 *   Definition: 1. the earth (at large, or partitively a land)
 *   Modern Gloss (TBESH): land: country/planet
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### ash-er' (which) - Strong's H834
 
@@ -140,7 +140,7 @@ updated: 2026-08-28
 *   Definition: 1. who, which, what, that
 *   Modern Gloss (TBESH): which
 *   Morphology (STEPBible): H:RelP
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

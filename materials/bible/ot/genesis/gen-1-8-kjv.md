@@ -39,7 +39,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) dawn (as the break of day)
 *   Modern Gloss (TBESH): morning
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### yome (day) - Strong's H3117
 
@@ -47,7 +47,7 @@ updated: 2026-08-28
 *   Definition: 1. a day (as the warm hours), whether literal (from sunrise to sunset, or from one sunset to the next), or figurative (a space of time defined by an associated term), (often used adverb)
 *   Modern Gloss (TBESH): day
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -55,7 +55,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'-reb (evening) - Strong's H6153
 
@@ -63,7 +63,7 @@ updated: 2026-08-28
 *   Definition: 1. dusk
 *   Modern Gloss (TBESH): evening
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### kaw-raw' (to call) - Strong's H7121
 
@@ -71,7 +71,7 @@ updated: 2026-08-28
 *   Definition: 1. to call out to (i.e. properly, address by name, but used in a wide variety of applications)
 *   Modern Gloss (TBESH): to call: call to
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-kee'-ah (expanse) - Strong's H7549
 
@@ -79,7 +79,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) an expanse, i.e. the firmament or (apparently) visible arch of the sky
 *   Modern Gloss (TBESH): expanse
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### shaw-mah'-yim (heaven) - Strong's H8064
 
@@ -87,7 +87,7 @@ updated: 2026-08-28
 *   Definition: 1. the sky (as aloft
 *   Modern Gloss (TBESH): heaven
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### shay-nee' (second) - Strong's H8145
 
@@ -95,7 +95,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) second (the ordinal number)
 *   Modern Gloss (TBESH): second
 *   Morphology (STEPBible): H:N
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

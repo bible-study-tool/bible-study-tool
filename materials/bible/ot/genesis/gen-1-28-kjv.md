@@ -46,7 +46,7 @@ updated: 2026-08-28
 *   Definition: 1. to kneel
 *   Modern Gloss (TBESH): to bless
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### daw-gaw' (fish) - Strong's H1710
 
@@ -54,7 +54,7 @@ updated: 2026-08-28
 *   Definition: 1. fish
 *   Modern Gloss (TBESH): fish
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### khah'-ee (alive) - Strong's H2416
 
@@ -62,7 +62,7 @@ updated: 2026-08-28
 *   Definition: 1. alive
 *   Modern Gloss (TBESH): alive
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### yawm (sea) - Strong's H3220
 
@@ -70,7 +70,7 @@ updated: 2026-08-28
 *   Definition: 1. a sea (as breaking in noisy surf) or large body of water
 *   Modern Gloss (TBESH): sea
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### kaw-bash' (to subdue) - Strong's H3533
 
@@ -78,7 +78,7 @@ updated: 2026-08-28
 *   Definition: 1. to tread down
 *   Modern Gloss (TBESH): to subdue
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -86,7 +86,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### maw-lay' (to fill) - Strong's H4390
 
@@ -94,7 +94,7 @@ updated: 2026-08-28
 *   Definition: 1. to fill or (intransitively) be full of, in a wide application (literally and figuratively)
 *   Modern Gloss (TBESH): to fill
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### aw-mar' (to say) - Strong's H559
 
@@ -102,7 +102,7 @@ updated: 2026-08-28
 *   Definition: 1. to say (used with great latitude)
 *   Modern Gloss (TBESH): to say
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ofe (bird) - Strong's H5775
 
@@ -110,7 +110,7 @@ updated: 2026-08-28
 *   Definition: 1. a bird (as covered with feathers, or rather as covering with wings), often collectively
 *   Modern Gloss (TBESH): bird
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### paw-raw' (be fruitful) - Strong's H6509
 
@@ -118,7 +118,7 @@ updated: 2026-08-28
 *   Definition: 1. to bear fruit (literally or figuratively)
 *   Modern Gloss (TBESH): be fruitful
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-baw' (to multiply) - Strong's H7235
 
@@ -126,7 +126,7 @@ updated: 2026-08-28
 *   Definition: 1. to increase (in whatever respect)
 *   Modern Gloss (TBESH): to multiply
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-daw' (to rule) - Strong's H7287
 
@@ -134,7 +134,7 @@ updated: 2026-08-28
 *   Definition: 1. to tread down, i.e. subjugate
 *   Modern Gloss (TBESH): to rule
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-mas' (to creep) - Strong's H7430
 
@@ -142,7 +142,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) to glide swiftly, i.e. to crawl or move with short steps
 *   Modern Gloss (TBESH): to creep
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'-rets (land) - Strong's H776
 
@@ -150,7 +150,7 @@ updated: 2026-08-28
 *   Definition: 1. the earth (at large, or partitively a land)
 *   Modern Gloss (TBESH): land: country/planet
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### shaw-mah'-yim (heaven) - Strong's H8064
 
@@ -158,7 +158,7 @@ updated: 2026-08-28
 *   Definition: 1. the sky (as aloft
 *   Modern Gloss (TBESH): heaven
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

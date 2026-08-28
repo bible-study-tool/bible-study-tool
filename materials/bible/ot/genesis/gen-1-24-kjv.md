@@ -40,7 +40,7 @@ updated: 2026-08-28
 *   Definition: 1. alive
 *   Modern Gloss (TBESH): alive
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### yaw-tsaw' (to come out) - Strong's H3318
 
@@ -48,7 +48,7 @@ updated: 2026-08-28
 *   Definition: 1. to go out
 *   Modern Gloss (TBESH): to come out: come
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -56,7 +56,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### meen (kind) - Strong's H4327
 
@@ -64,7 +64,7 @@ updated: 2026-08-28
 *   Definition: 1. a sort, i.e. species
 *   Modern Gloss (TBESH): kind
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### neh'-fesh (soul) - Strong's H5315
 
@@ -72,7 +72,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a breathing creature, i.e. animal of (abstractly) vitality
 *   Modern Gloss (TBESH): soul
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### aw-mar' (to say) - Strong's H559
 
@@ -80,7 +80,7 @@ updated: 2026-08-28
 *   Definition: 1. to say (used with great latitude)
 *   Modern Gloss (TBESH): to say
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### reh'-mes (creeping) - Strong's H7431
 
@@ -88,7 +88,7 @@ updated: 2026-08-28
 *   Definition: 1. a reptile or any other rapidly moving animal
 *   Modern Gloss (TBESH): creeping
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'-rets (land) - Strong's H776
 
@@ -96,7 +96,7 @@ updated: 2026-08-28
 *   Definition: 1. the earth (at large, or partitively a land)
 *   Modern Gloss (TBESH): land: country/planet
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### be-hay-maw' (animal) - Strong's H929
 
@@ -104,7 +104,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a dumb beast
 *   Modern Gloss (TBESH): animal
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

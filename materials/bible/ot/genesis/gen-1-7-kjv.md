@@ -40,7 +40,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) set upright
 *   Modern Gloss (TBESH): right
 *   Morphology (STEPBible): H:Adv
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -48,7 +48,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### mah'-yim (water) - Strong's H4325
 
@@ -56,7 +56,7 @@ updated: 2026-08-28
 *   Definition: 1. water
 *   Modern Gloss (TBESH): water
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### al (upon) - Strong's H5921
 
@@ -64,7 +64,7 @@ updated: 2026-08-28
 *   Definition: 1. above, over, upon, or against (yet always in this last relation with a downward aspect) in a great variety of applications (as follow)
 *   Modern Gloss (TBESH): upon
 *   Morphology (STEPBible): H:Prep
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### aw-saw' (to make) - Strong's H6213
 
@@ -72,7 +72,7 @@ updated: 2026-08-28
 *   Definition: 1. to do or make, in the broadest sense and widest application (as follows)
 *   Modern Gloss (TBESH): to make: do
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-kee'-ah (expanse) - Strong's H7549
 
@@ -80,7 +80,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) an expanse, i.e. the firmament or (apparently) visible arch of the sky
 *   Modern Gloss (TBESH): expanse
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 3
+*   Lemma occurrences in this verse: 3
 
 ### ash-er' (which) - Strong's H834
 
@@ -88,7 +88,7 @@ updated: 2026-08-28
 *   Definition: 1. who, which, what, that
 *   Modern Gloss (TBESH): which
 *   Morphology (STEPBible): H:RelP
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### takh'-ath (underneath) - Strong's H8478
 
@@ -96,7 +96,7 @@ updated: 2026-08-28
 *   Definition: 1. the bottom (as depressed)
 *   Modern Gloss (TBESH): underneath: under
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### baw-dal' (to separate) - Strong's H914
 
@@ -104,7 +104,7 @@ updated: 2026-08-28
 *   Definition: 1. to divide (in variation senses literally or figuratively, separate, distinguish, differ, select, etc.)
 *   Modern Gloss (TBESH): to separate
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

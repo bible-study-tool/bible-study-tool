@@ -40,7 +40,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) dawn (as the break of day)
 *   Modern Gloss (TBESH): morning
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ore (light) - Strong's H216
 
@@ -48,7 +48,7 @@ updated: 2026-08-28
 *   Definition: 1. illumination
 *   Modern Gloss (TBESH): light
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ekh-awd' (one) - Strong's H259
 
@@ -56,7 +56,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) united, i.e. one
 *   Modern Gloss (TBESH): one
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### kho-shek' (darkness) - Strong's H2822
 
@@ -64,7 +64,7 @@ updated: 2026-08-28
 *   Definition: 1. the dark
 *   Modern Gloss (TBESH): darkness
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### yome (day) - Strong's H3117
 
@@ -72,7 +72,7 @@ updated: 2026-08-28
 *   Definition: 1. a day (as the warm hours), whether literal (from sunrise to sunset, or from one sunset to the next), or figurative (a space of time defined by an associated term), (often used adverb)
 *   Modern Gloss (TBESH): day
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### lah'-yil (night) - Strong's H3915
 
@@ -80,7 +80,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a twist (away of the light), i.e. night
 *   Modern Gloss (TBESH): night
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -88,7 +88,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'-reb (evening) - Strong's H6153
 
@@ -96,7 +96,7 @@ updated: 2026-08-28
 *   Definition: 1. dusk
 *   Modern Gloss (TBESH): evening
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### kaw-raw' (to call) - Strong's H7121
 
@@ -104,7 +104,7 @@ updated: 2026-08-28
 *   Definition: 1. to call out to (i.e. properly, address by name, but used in a wide variety of applications)
 *   Modern Gloss (TBESH): to call: call to
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ## Source Notes
 

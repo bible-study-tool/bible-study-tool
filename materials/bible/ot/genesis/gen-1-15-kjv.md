@@ -36,7 +36,7 @@ updated: 2026-08-28
 *   Definition: 1. to be (causative, make) luminous (literally and metaphorically)
 *   Modern Gloss (TBESH): to light
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### maw-ore' (light) - Strong's H3974
 
@@ -44,7 +44,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a luminous body or luminary
 *   Modern Gloss (TBESH): light
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-kee'-ah (expanse) - Strong's H7549
 
@@ -52,7 +52,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) an expanse, i.e. the firmament or (apparently) visible arch of the sky
 *   Modern Gloss (TBESH): expanse
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'-rets (land) - Strong's H776
 
@@ -60,7 +60,7 @@ updated: 2026-08-28
 *   Definition: 1. the earth (at large, or partitively a land)
 *   Modern Gloss (TBESH): land: country/planet
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### shaw-mah'-yim (heaven) - Strong's H8064
 
@@ -68,7 +68,7 @@ updated: 2026-08-28
 *   Definition: 1. the sky (as aloft
 *   Modern Gloss (TBESH): heaven
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

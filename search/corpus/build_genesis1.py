@@ -86,15 +86,17 @@ def clean_verse_text(raw: str) -> str:
     return _WS_RE.sub(" ", text).strip()
 
 
-def verse_codes(raw_text: str) -> list[str]:
-    """Distinct Strong's codes in a verse, in canonical form, first-seen order.
+def verse_codes(raw_text: str) -> tuple[list[str], dict[str, int], list[str]]:
+    """Distinct Strong's codes in a verse + per-code lemma counts + skipped.
 
+    Returns (codes_in_first_seen_order, {code: lemma_token_count}, skipped).
     Multi-lemma words ('strong:H0853 strong:H07200') contribute every lemma.
     Codes outside the canonical enumeration are counted and skipped (defensive:
     the pinned KJV is expected to contain none).
     """
     seen: dict[str, int] = {}
     skipped: list[str] = []
+    n_attributes = raw_text.count("strong:")
     for letter, num_s in _LEMMA_RE.findall(raw_text):
         num = int(num_s)
         code = f"{letter}{num}"
@@ -103,6 +105,16 @@ def verse_codes(raw_text: str) -> list[str]:
             continue
         seen.setdefault(code, 0)
         seen[code] += 1
+    # Fail-fast against silent lemma drop: every 'strong:' attribute in the
+    # verse must have been parsed (a future source writing unpadded 'strong:H1'
+    # would otherwise vanish from tags and word studies without a trace).
+    n_parsed = sum(1 for letter, num_s in _LEMMA_RE.findall(raw_text))
+    if n_parsed + len(skipped) != n_attributes:
+        raise ValueError(
+            f"lemma parse mismatch: {n_attributes} 'strong:' attributes but "
+            f"{n_parsed} parsed + {len(skipped)} skipped — source format "
+            "changed; regenerate after review."
+        )
     return list(seen), seen, skipped
 
 
@@ -144,6 +156,8 @@ def word_study_block(code: str, occurrences: int, lexicon: dict, tbesh: dict) ->
     title_word = translit or code
     definition = strongs_definition(lex_entry) if lex_entry else ""
 
+    # Deterministic "primary record" convention: when a code has multiple
+    # TBESH records (e.g. H226 sign/indicator), file-order [0] is used.
     tbesh_variants = tbesh.get("entries", {}).get(code, [])
     gloss = _short_gloss(tbesh_variants[0]["gloss"]) if tbesh_variants else ""
     morph = tbesh_variants[0].get("morph", "") if tbesh_variants else ""
@@ -159,7 +173,7 @@ def word_study_block(code: str, occurrences: int, lexicon: dict, tbesh: dict) ->
         lines.append(f"*   Modern Gloss ({src}): {tbesh_variants[0]['gloss']}")
     if morph:
         lines.append(f"*   Morphology (STEPBible): {morph}")
-    lines.append(f"*   Occurrences in this verse: {occurrences}")
+    lines.append(f"*   Lemma occurrences in this verse: {occurrences}")
     return "\n".join(lines)
 
 

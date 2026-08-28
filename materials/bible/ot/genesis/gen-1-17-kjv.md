@@ -37,7 +37,7 @@ updated: 2026-08-28
 *   Definition: 1. to be (causative, make) luminous (literally and metaphorically)
 *   Modern Gloss (TBESH): to light
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -45,7 +45,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### naw-than' (to give) - Strong's H5414
 
@@ -53,7 +53,7 @@ updated: 2026-08-28
 *   Definition: 1. to give, used with greatest latitude of application (put, make, etc.)
 *   Modern Gloss (TBESH): to give: give
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-kee'-ah (expanse) - Strong's H7549
 
@@ -61,7 +61,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) an expanse, i.e. the firmament or (apparently) visible arch of the sky
 *   Modern Gloss (TBESH): expanse
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'-rets (land) - Strong's H776
 
@@ -69,7 +69,7 @@ updated: 2026-08-28
 *   Definition: 1. the earth (at large, or partitively a land)
 *   Modern Gloss (TBESH): land: country/planet
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### shaw-mah'-yim (heaven) - Strong's H8064
 
@@ -77,7 +77,7 @@ updated: 2026-08-28
 *   Definition: 1. the sky (as aloft
 *   Modern Gloss (TBESH): heaven
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

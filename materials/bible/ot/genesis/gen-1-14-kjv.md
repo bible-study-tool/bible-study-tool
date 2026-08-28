@@ -42,7 +42,7 @@ updated: 2026-08-28
 *   Definition: 1. a signal (literally or figuratively), as a flag, beacon, monument, omen, prodigy, evidence, etc
 *   Modern Gloss (TBESH): sign: miraculous
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### yome (day) - Strong's H3117
 
@@ -50,7 +50,7 @@ updated: 2026-08-28
 *   Definition: 1. a day (as the warm hours), whether literal (from sunrise to sunset, or from one sunset to the next), or figurative (a space of time defined by an associated term), (often used adverb)
 *   Modern Gloss (TBESH): day
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 2
+*   Lemma occurrences in this verse: 2
 
 ### lah'-yil (night) - Strong's H3915
 
@@ -58,7 +58,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a twist (away of the light), i.e. night
 *   Modern Gloss (TBESH): night
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### maw-ore' (light) - Strong's H3974
 
@@ -66,7 +66,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a luminous body or luminary
 *   Modern Gloss (TBESH): light
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### mo-ade' (meeting) - Strong's H4150
 
@@ -74,7 +74,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) an appointment, i.e. a fixed time or season
 *   Modern Gloss (TBESH): meeting: time appointed
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -82,7 +82,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### aw-mar' (to say) - Strong's H559
 
@@ -90,7 +90,7 @@ updated: 2026-08-28
 *   Definition: 1. to say (used with great latitude)
 *   Modern Gloss (TBESH): to say
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-kee'-ah (expanse) - Strong's H7549
 
@@ -98,7 +98,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) an expanse, i.e. the firmament or (apparently) visible arch of the sky
 *   Modern Gloss (TBESH): expanse
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### shaw-mah'-yim (heaven) - Strong's H8064
 
@@ -106,7 +106,7 @@ updated: 2026-08-28
 *   Definition: 1. the sky (as aloft
 *   Modern Gloss (TBESH): heaven
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### shaw-neh' (year) - Strong's H8141
 
@@ -114,7 +114,7 @@ updated: 2026-08-28
 *   Definition: 1. a year (as a revolution of time)
 *   Modern Gloss (TBESH): year
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### baw-dal' (to separate) - Strong's H914
 
@@ -122,7 +122,7 @@ updated: 2026-08-28
 *   Definition: 1. to divide (in variation senses literally or figuratively, separate, distinguish, differ, select, etc.)
 *   Modern Gloss (TBESH): to separate
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

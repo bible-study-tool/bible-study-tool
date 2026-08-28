@@ -35,7 +35,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) dawn (as the break of day)
 *   Modern Gloss (TBESH): morning
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### yome (day) - Strong's H3117
 
@@ -43,7 +43,7 @@ updated: 2026-08-28
 *   Definition: 1. a day (as the warm hours), whether literal (from sunrise to sunset, or from one sunset to the next), or figurative (a space of time defined by an associated term), (often used adverb)
 *   Modern Gloss (TBESH): day
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'-reb (evening) - Strong's H6153
 
@@ -51,7 +51,7 @@ updated: 2026-08-28
 *   Definition: 1. dusk
 *   Modern Gloss (TBESH): evening
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### reb-ee-ee' (fourth) - Strong's H7243
 
@@ -59,7 +59,7 @@ updated: 2026-08-28
 *   Definition: 1. fourth
 *   Modern Gloss (TBESH): fourth
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

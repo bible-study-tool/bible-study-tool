@@ -45,7 +45,7 @@ updated: 2026-08-28
 *   Definition: 1. alive
 *   Modern Gloss (TBESH): alive
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -53,7 +53,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### mah'-yim (water) - Strong's H4325
 
@@ -61,7 +61,7 @@ updated: 2026-08-28
 *   Definition: 1. water
 *   Modern Gloss (TBESH): water
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### neh'-fesh (soul) - Strong's H5315
 
@@ -69,7 +69,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a breathing creature, i.e. animal of (abstractly) vitality
 *   Modern Gloss (TBESH): soul
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### aw-mar' (to say) - Strong's H559
 
@@ -77,7 +77,7 @@ updated: 2026-08-28
 *   Definition: 1. to say (used with great latitude)
 *   Modern Gloss (TBESH): to say
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### uph (to fly) - Strong's H5774
 
@@ -85,7 +85,7 @@ updated: 2026-08-28
 *   Definition: Strong's Number H5774: עוף
 *   Modern Gloss (TBESH): to fly
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ofe (bird) - Strong's H5775
 
@@ -93,7 +93,7 @@ updated: 2026-08-28
 *   Definition: 1. a bird (as covered with feathers, or rather as covering with wings), often collectively
 *   Modern Gloss (TBESH): bird
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### al (upon) - Strong's H5921
 
@@ -101,7 +101,7 @@ updated: 2026-08-28
 *   Definition: 1. above, over, upon, or against (yet always in this last relation with a downward aspect) in a great variety of applications (as follow)
 *   Modern Gloss (TBESH): upon
 *   Morphology (STEPBible): H:Prep
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### paw-neem' (face) - Strong's H6440
 
@@ -109,7 +109,7 @@ updated: 2026-08-28
 *   Definition: 1. the face (as the part that turns)
 *   Modern Gloss (TBESH): face: before
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-kee'-ah (expanse) - Strong's H7549
 
@@ -117,7 +117,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) an expanse, i.e. the firmament or (apparently) visible arch of the sky
 *   Modern Gloss (TBESH): expanse
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### eh'-rets (land) - Strong's H776
 
@@ -125,7 +125,7 @@ updated: 2026-08-28
 *   Definition: 1. the earth (at large, or partitively a land)
 *   Modern Gloss (TBESH): land: country/planet
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### shaw-mah'-yim (heaven) - Strong's H8064
 
@@ -133,7 +133,7 @@ updated: 2026-08-28
 *   Definition: 1. the sky (as aloft
 *   Modern Gloss (TBESH): heaven
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### shaw-rats' (to swarm) - Strong's H8317
 
@@ -141,7 +141,7 @@ updated: 2026-08-28
 *   Definition: 1. to wriggle
 *   Modern Gloss (TBESH): to swarm
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### sheh'-rets (swarm) - Strong's H8318
 
@@ -149,7 +149,7 @@ updated: 2026-08-28
 *   Definition: 1. a swarm, i.e. active mass of minute animals
 *   Modern Gloss (TBESH): swarm
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 

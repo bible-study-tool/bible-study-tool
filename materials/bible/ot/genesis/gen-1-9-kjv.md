@@ -41,7 +41,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) united, i.e. one
 *   Modern Gloss (TBESH): one
 *   Morphology (STEPBible): H:A
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### yab-baw-shaw' (dry land) - Strong's H3004
 
@@ -49,7 +49,7 @@ updated: 2026-08-28
 *   Definition: 1. dry ground
 *   Modern Gloss (TBESH): dry land
 *   Morphology (STEPBible): H:N-F
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### ale (to(wards)) - Strong's H413
 
@@ -57,7 +57,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) denoting motion towards, but occasionally used of a quiescent position, i.e. near, with or among
 *   Modern Gloss (TBESH): to(wards)
 *   Morphology (STEPBible): H:Prep
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### el-o-heem' (God) - Strong's H430
 
@@ -65,7 +65,7 @@ updated: 2026-08-28
 *   Definition: 1. gods in the ordinary sense
 *   Modern Gloss (TBESH): God
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### mah'-yim (water) - Strong's H4325
 
@@ -73,7 +73,7 @@ updated: 2026-08-28
 *   Definition: 1. water
 *   Modern Gloss (TBESH): water
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### maw-kome' (place) - Strong's H4725
 
@@ -81,7 +81,7 @@ updated: 2026-08-28
 *   Definition: 1. (properly) a standing, i.e. a spot
 *   Modern Gloss (TBESH): place
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### aw-mar' (to say) - Strong's H559
 
@@ -89,7 +89,7 @@ updated: 2026-08-28
 *   Definition: 1. to say (used with great latitude)
 *   Modern Gloss (TBESH): to say
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### kaw-vaw' (to await) - Strong's H6960
 
@@ -97,7 +97,7 @@ updated: 2026-08-28
 *   Definition: 1. to bind together (perhaps by twisting), i.e. collect
 *   Modern Gloss (TBESH): to await
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### raw-aw' (to see) - Strong's H7200
 
@@ -105,7 +105,7 @@ updated: 2026-08-28
 *   Definition: 1. to see, literally or figuratively (in numerous applications, direct and implied, transitive, intransitive and causative)
 *   Modern Gloss (TBESH): to see: see
 *   Morphology (STEPBible): H:V
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ### shaw-mah'-yim (heaven) - Strong's H8064
 
@@ -113,7 +113,7 @@ updated: 2026-08-28
 *   Definition: 1. the sky (as aloft
 *   Modern Gloss (TBESH): heaven
 *   Morphology (STEPBible): H:N-M
-*   Occurrences in this verse: 1
+*   Lemma occurrences in this verse: 1
 
 ## Source Notes
 
