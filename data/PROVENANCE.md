@@ -120,6 +120,12 @@ The OSHB morphology artifact regenerates byte-identically as well:
 efd17409d6ab378789b0e332a10894e6e9145d37f14ed3951d9723d45754e4eb  ../lexicons/morphology-genesis1.json
 ```
 
+The cross-source Agreement Ledger regenerates byte-identically as well:
+
+```
+b4c7467cf058d93da3fc6cd162a7825e173bdfdff4197e476534813351f18bbd  ../correlations/agreement-ledger.json
+```
+
 ## How to reproduce
 
 ```bash
@@ -143,6 +149,9 @@ python -m search.corpus.build_genesis1 --repo .
 
 # 6. Regenerate the Genesis 1 morphology layer from the extracted OSHB XML
 python -m search.corpus.build_morphology --repo .
+
+# 7. Regenerate the cross-source Agreement Ledger
+python -c "from search.agreement.compare import write_ledger; write_ledger('.')"
 ```
 
 ## Policy

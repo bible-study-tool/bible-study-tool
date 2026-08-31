@@ -177,39 +177,45 @@ class ArtifactTests(unittest.TestCase):
 
 
 class ProvenanceChecksumGateTests(unittest.TestCase):
-    """Offline drift gate: every committed lexicon artifact's SHA-256 must
+    """Offline drift gate: every committed generated artifact's SHA-256 must
     match the checksum recorded in data/PROVENANCE.md. CI cannot run
     fetch_sources.sh (data/ is gitignored), so this test IS the artifact
-    integrity gate in the pipeline."""
+    integrity gate in the pipeline. Covers lexicons/*.json and any
+    correlations/ artifact recorded with a '../' path."""
 
     def test_all_committed_artifacts_match_provenance(self):
         import hashlib
         import re
         prov = Path("data/PROVENANCE.md").read_text(encoding="utf-8")
         recorded = {
-            Path(name).name: sha
+            name: sha
             for sha, name in re.findall(
-                r"^([0-9a-f]{64})  \.\./lexicons/([A-Za-z0-9._-]+\.json)$",
+                r"^([0-9a-f]{64})  \.\./([A-Za-z0-9._/-]+)$",
                 prov,
                 re.MULTILINE,
             )
         }
-        self.assertGreaterEqual(len(recorded), 5, "PROVENANCE artifact section incomplete")
-        for fname, sha in recorded.items():
-            path = Path("lexicons") / fname
-            self.assertTrue(path.exists(), f"{fname} recorded but missing")
+        self.assertGreaterEqual(len(recorded), 6, "PROVENANCE artifact section incomplete")
+        for name, sha in recorded.items():
+            path = Path(name)
+            self.assertTrue(path.exists(), f"{name} recorded but missing")
             actual = hashlib.sha256(path.read_bytes()).hexdigest()
             self.assertEqual(
                 actual, sha,
-                f"{fname}: committed file does not match PROVENANCE checksum "
+                f"{name}: committed file does not match PROVENANCE checksum "
                 "(hand-edit or stale regeneration)",
             )
-        # And conversely: no committed artifact goes unrecorded.
+        # And conversely: no committed generated artifact goes unrecorded.
         for p in Path("lexicons").glob("*.json"):
             self.assertIn(
-                p.name, recorded,
-                f"{p.name} committed but not recorded in PROVENANCE.md",
+                p.as_posix(), recorded,
+                f"{p.as_posix()} committed but not recorded in PROVENANCE.md",
             )
+        ledger = Path("correlations/agreement-ledger.json")
+        self.assertIn(
+            ledger.as_posix(), recorded,
+            "agreement-ledger.json committed but not recorded in PROVENANCE.md",
+        )
 
 
 if __name__ == "__main__":
