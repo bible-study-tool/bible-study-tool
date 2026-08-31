@@ -61,5 +61,10 @@ are **not owned by this project** and are **not redistributed here**:
   transformation changes recorded in each artifact. See `data/PROVENANCE.md`
   for pins, checksums, and the full record.
 
+* **Morphology layer** (`lexicons/morphology-genesis1.json`): derived from
+  the Open Scriptures Hebrew Bible (CC BY 4.0) — attribution to the
+  **Open Scriptures Hebrew Bible Project** (https://hb.openscriptures.org);
+  WLC text therein is public domain (Groves Center).
+
 This policy keeps the project a reference and an engine, not a republisher, and
 keeps the material it hosts within clearly-clean territory.

@@ -114,6 +114,12 @@ c8688a08e409daa987ecf04e309ad1da4634d535023bba2394a704135e480a09  ../lexicons/tb
 8a4d97cf6d819915241f77a95fd3b926e0d9cb03eab52b05a1af8989eea9044d  ../lexicons/tbesg-glosses.json
 ```
 
+The OSHB morphology artifact regenerates byte-identically as well:
+
+```
+efd17409d6ab378789b0e332a10894e6e9145d37f14ed3951d9723d45754e4eb  ../lexicons/morphology-genesis1.json
+```
+
 ## How to reproduce
 
 ```bash
@@ -134,6 +140,9 @@ python -m search.validation.build_stepbible_lexicon \
 # 5. Regenerate the Genesis 1:4-31 corpus entries (pinned GENERATION_DATE in
 #    the module keeps output byte-identical; bump it explicitly on re-runs)
 python -m search.corpus.build_genesis1 --repo .
+
+# 6. Regenerate the Genesis 1 morphology layer from the extracted OSHB XML
+python -m search.corpus.build_morphology --repo .
 ```
 
 ## Policy
