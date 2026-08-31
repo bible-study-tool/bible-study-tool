@@ -37,6 +37,32 @@ class KjvOsisAdapterTests(unittest.TestCase):
                  if f["fact_type"] == FACT_VERSE_TEXT and f["key"] == "Gen.1.1")
         self.assertEqual(f["value"], "In the beginning God created the heaven and the earth.")
 
+    def test_verse_text_fidelity_vs_committed_entries(self):
+        """Pipeline-fidelity pattern: verse_text facts must equal the KJV
+        quotes in all 31 committed entries — EXCEPT the pinned Gen.1.2
+        KJV-edition variant (curated entry reads 'The earth was without
+        form, and void'; pinned source reads 'And the earth was without form
+        and void'; see search/corpus/test_corpus.py and data/PROVENANCE.md).
+        The variant stays visible; any OTHER divergence fails."""
+        for v in range(1, 32):
+            path = Path("materials/bible/ot/genesis") / f"gen-1-{v}-kjv.md"
+            quote = next(
+                (l[2:].strip() for l in path.read_text(encoding="utf-8").splitlines()
+                 if l.startswith("> ")),
+            )
+            fact = next(f for f in self.facts
+                        if f["fact_type"] == FACT_VERSE_TEXT and f["key"] == f"Gen.1.{v}")
+            if v == 2:
+                normalized = quote.replace(
+                    "The earth was without form, and void",
+                    "And the earth was without form and void",
+                    1,
+                )
+                self.assertEqual(fact["value"], normalized, f"Gen.1.{v}")
+                self.assertNotEqual(fact["value"], quote)  # variant stays visible
+            else:
+                self.assertEqual(fact["value"], quote, f"Gen.1.{v}")
+
     def test_word_multiset_known_value(self):
         """Gen 1:1 lemma tokens: H07225, H0430, H0853+H01254, H08064, H0853, H0776."""
         f = next(f for f in self.facts
@@ -51,6 +77,14 @@ class KjvOsisAdapterTests(unittest.TestCase):
         self.assertEqual(len(merged), 1)
         self.assertEqual(merged[0]["codes"], ["H853", "H1254"])
         self.assertEqual(merged[0]["text"], "created")
+
+    def test_word_detail_agrees_with_multiset_all_verses(self):
+        """The two-path invariant, asserted for every verse (not just v1)."""
+        for f in self.facts:
+            if f["fact_type"] != FACT_WORD_STRONGS:
+                continue
+            flat = sorted(c for w in f["meta"]["words"] for c in w["codes"])
+            self.assertEqual(flat, f["value"], f["key"])
 
     def test_multiset_equals_verse_codes_expansion(self):
         """The adapter's multiset must equal the corpus generator's occurrence
@@ -107,13 +141,43 @@ class OshbAdapterTests(unittest.TestCase):
     def test_consistent_with_committed_morphology_records(self):
         for fact in self.facts:
             vnum = fact["key"].split(".")[-1]
-            artifact_bases = sorted(
-                r["base"] for r in self.artifact["verses"][vnum] if r["base"]
-            )
+            artifact_records = self.artifact["verses"][vnum]
+            artifact_bases = sorted(r["base"] for r in artifact_records if r["base"])
             self.assertEqual(fact["value"], artifact_bases, fact["key"])
+            # Document order and stable ids must match the artifact exactly
+            # (the meta is S4's alignment substrate — pin it).
+            self.assertEqual(
+                [w["id"] for w in fact["meta"]["words"]],
+                [r["id"] for r in artifact_records],
+                fact["key"],
+            )
+            self.assertEqual(
+                [w["i"] for w in fact["meta"]["words"]],
+                list(range(1, len(artifact_records) + 1)),
+                fact["key"],
+            )
+
+    def test_meta_carries_homonym_and_variant_fields(self):
+        """S4 needs the OSHB homonym attr (n) and lemma suffix — e.g. the
+        '1254 a' record must expose suffix 'a' in meta."""
+        v1 = next(f for f in self.facts if f["key"] == "Gen.1.1")
+        bara = v1["meta"]["words"][1]
+        self.assertEqual(bara["suffix"], "a")
+        self.assertEqual(bara["prefixes"], [])
+        reshith = v1["meta"]["words"][0]
+        self.assertEqual(reshith["prefixes"], ["b"])
+        self.assertIsNotNone(reshith["n"])
 
 
 class LexiconAdapterTests(unittest.TestCase):
+    # Exactly the codes whose Strong's desc lacks a numbered definition
+    # (verified against the committed lexicon; 3 Hebrew + 1 + 100 Greek).
+    NO_DEFINITION = (
+        {"H2492", "H5774", "H7114"}
+        | {"G2717"}
+        | {f"G{n}" for n in range(3203, 3303)}
+    )
+
     def test_strongs_covers_full_canonical(self):
         facts = strongs_gloss_facts(".")
         self.assertEqual(len(facts), 14298)
@@ -123,6 +187,20 @@ class LexiconAdapterTests(unittest.TestCase):
         # 'to create, shape, form' is human text, not the lexicon's).
         self.assertEqual(by_key["H1254"], "1. (absolutely) to create")
         self.assertIn("G746", by_key)
+
+    def test_no_definition_codes_are_marked(self):
+        """Scraper-header 'glosses' must be flagged no_definition so S2 emits
+        no_reading — never a manufactured disagreement. Includes H5774 ('to
+        fly'), which IS a Genesis 1 word."""
+        facts = strongs_gloss_facts(".")
+        for f in facts:
+            expected = "no_definition" if f["key"] in self.NO_DEFINITION else "definition"
+            self.assertEqual(f["meta"]["gloss_status"], expected, f["key"])
+        self.assertEqual(len(self.NO_DEFINITION), 104)
+        # The verbatim header is still kept as the value (lossless).
+        h5774 = next(f for f in facts if f["key"] == "H5774")
+        self.assertEqual(h5774["meta"]["gloss_status"], "no_definition")
+        self.assertIn("Strong's Number H5774", h5774["value"])
 
     def test_tbesh_covers_all_hebrew(self):
         facts = tbesh_gloss_facts(".")
@@ -137,6 +215,15 @@ class LexiconAdapterTests(unittest.TestCase):
         by_key = {f["key"]: f["value"] for f in facts}
         self.assertEqual(by_key["G746"], "beginning")
         self.assertEqual(by_key["G26"], "love")
+
+    def test_primary_record_is_lexical_head(self):
+        """Pins the [0]-is-head convention on known multi-variant codes: H1
+        (father vs part-of compounds), H1254 (create/fatten), H226
+        (sign: miraculous vs indicator)."""
+        by_key = {f["key"]: f["value"] for f in tbesh_gloss_facts(".")}
+        self.assertEqual(by_key["H1"], "father")
+        self.assertEqual(by_key["H1254"], "to create")
+        self.assertEqual(by_key["H226"], "sign: miraculous")
 
 
 class RegistryTests(unittest.TestCase):

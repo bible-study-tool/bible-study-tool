@@ -10,21 +10,37 @@ Sources (ids are stable and appear in the ledger):
   strongs          Strong's lexicon artifact    (lexicon_gloss)
   tbesh / tbesg    STEPBible brief glosses      (lexicon_gloss)
 
+Per-source meta schema (deliberately asymmetric — sources differ; documented
+so S4 alignment consumes both knowingly):
+  kjv-osis word_strongs meta.words[i] = {i, codes[], text}   (English span)
+  oshb      word_strongs meta.words[i] = {i, codes[], text (WLC), morph, id,
+                                           n (homonym attr), suffix, prefixes}
+
 Design rules:
   * Adapters REUSE the existing generators' parsers (never re-implement):
     clean_verse_text/verse_codes from build_genesis1, parse_book_xml from
     build_morphology, strongs_definition for gloss extraction.
   * Every adapter is deterministic and fails fast on malformed input (the
-    reused parsers already fail fast).
+    reused parsers already fail fast); adapters additionally enforce their own
+    invariants (word-detail vs multiset agreement, skipped-code rejection).
   * Phase-1 scope: Genesis 1 for verse/word facts (documented; whole-OT is a
-    later scaling step). Lexicon facts cover the full canonical enumeration.
+    later scaling step — the OSHB path is hardcoded to Gen.xml and the
+    ADAPTERS callables take only (repo)). Lexicon facts cover the full
+    canonical enumeration.
   * The word_strongs value is the verse-level SORTED MULTISET (duplicates
     kept) — segmentation-neutral across sources; per-word detail (ordinals,
     word text, morph) is preserved in meta for the S4 alignment phase.
+  * lexicon_gloss values are VERBATIM; extraction status is marked in
+    meta['gloss_status']: 'definition' (a real 'N. ...' core line) or
+    'no_definition' (the source has no numbered definition — the value is the
+    scraper header line, NOT a comparable reading; S2 must emit no_reading for
+    these, never disagree). Known set: {H2492, H5774, H7114} ∪ {G2717} ∪
+    {G3203..G3302} = 104 codes.
 """
 
 from __future__ import annotations
 
+import html
 import json
 import re
 from pathlib import Path
@@ -81,7 +97,12 @@ def kjv_osis_facts(repo: str = ".", chapter: int = 1) -> list[dict]:
         key = f"Gen.{chapter}.{v}"
 
         text = clean_verse_text(raw)
-        codes, occ, _skipped = verse_codes(raw)  # fail-fast, attribute-checked
+        codes, occ, skipped = verse_codes(raw)  # fail-fast, attribute-checked
+        if skipped:
+            raise ValueError(
+                f"{key}: non-canonical Strong's codes {skipped} — source changed; "
+                "regenerate after review."
+            )
         multiset = sorted(c for c, n in occ.items() for _ in range(n))
 
         words = []
@@ -91,7 +112,21 @@ def kjv_osis_facts(repo: str = ".", chapter: int = 1) -> list[dict]:
                 for letter, num in re.findall(r"strong:([HG])(\d{4,5})", m.group(1))
             ]
             words.append(
-                {"i": i, "codes": word_codes, "text": m.group(2).strip()}
+                {
+                    "i": i,
+                    "codes": word_codes,
+                    # Unescaped to match clean_verse_text's entity handling.
+                    "text": html.unescape(m.group(2)).strip(),
+                }
+            )
+
+        # Two-path invariant: the <w> word-detail path and the verse_codes
+        # regex path must agree exactly, or the multiset and meta would
+        # silently diverge on a future re-pin (e.g. attribute reordering).
+        flat = sorted(c for w in words for c in w["codes"])
+        if flat != multiset:
+            raise ValueError(
+                f"{key}: word detail {flat} disagrees with verse multiset {multiset}"
             )
 
         facts.append(_fact(FACT_VERSE_TEXT, KJV_OSIS, key, text))
@@ -125,7 +160,7 @@ def oshb_facts(repo: str = ".", chapter: int = 1) -> list[dict]:
         by_verse.setdefault(rec["osisID"], []).append(rec)
 
     facts: list[dict] = []
-    for osis_id in sorted(by_verse):
+    for osis_id in sorted(by_verse, key=lambda k: int(k.rsplit(".", 1)[1])):
         words = by_verse[osis_id]
         multiset = sorted(r["base"] for r in words if r["base"])
         meta_words = [
@@ -135,6 +170,9 @@ def oshb_facts(repo: str = ".", chapter: int = 1) -> list[dict]:
                 "text": r["wlc"],
                 "morph": r["morph"],
                 "id": r["id"],
+                "n": r["n"],
+                "suffix": r["suffix"],
+                "prefixes": r["prefixes"],
             }
             for i, r in enumerate(words, start=1)
         ]
@@ -163,13 +201,28 @@ def strongs_gloss_facts(repo: str = ".") -> list[dict]:
     """lexicon_gloss facts from the Strong's lexicon artifact.
 
     Gloss = the core '1. ...' definition line (same extraction the corpus
-    generator uses, so the ledger cannot drift from the entries).
+    generator uses, so the ledger cannot drift from the entries). Entries
+    whose desc has NO numbered definition (104 known codes — scraper headers
+    without content) carry meta['gloss_status'] = 'no_definition' so S2 emits
+    no_reading instead of manufacturing a nonsense disagreement.
     """
     lex = _load_lexicon(Path(repo) / "lexicons/strongs-lexicon.json")
-    return [
-        _fact(FACT_LEXICON_GLOSS, STRONGS, code, strongs_definition(entry))
-        for code, entry in sorted(lex.items())
-    ]
+    facts = []
+    for code, entry in sorted(lex.items()):
+        has_definition = any(
+            re.match(r"^\d+\.", ln.strip())
+            for ln in entry.get("desc", "").splitlines()
+        )
+        facts.append(
+            _fact(
+                FACT_LEXICON_GLOSS,
+                STRONGS,
+                code,
+                strongs_definition(entry),
+                {"gloss_status": "definition" if has_definition else "no_definition"},
+            )
+        )
+    return facts
 
 
 def _stepbible_gloss_facts(source_id: str, filename: str, repo: str) -> list[dict]:
@@ -182,7 +235,9 @@ def _stepbible_gloss_facts(source_id: str, filename: str, repo: str) -> list[dic
         variants = entries[code]
         # Primary-record convention (file order [0]), matching the corpus
         # generator so both layers read the same gloss for the same code.
-        gloss = variants[0].get("gloss", "") if variants else ""
+        # Strict access: a missing gloss key is a data error, not an empty
+        # reading (the codebase's fail-fast religion).
+        gloss = variants[0]["gloss"]
         facts.append(_fact(FACT_LEXICON_GLOSS, source_id, code, gloss))
     return facts
 
