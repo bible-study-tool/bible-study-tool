@@ -123,7 +123,7 @@ efd17409d6ab378789b0e332a10894e6e9145d37f14ed3951d9723d45754e4eb  ../lexicons/mo
 The cross-source Agreement Ledger regenerates byte-identically as well:
 
 ```
-b4c7467cf058d93da3fc6cd162a7825e173bdfdff4197e476534813351f18bbd  ../correlations/agreement-ledger.json
+bb44368bb338a5d47a2ec61b9621f431536114e99f95b5721e2f3c42361cc283  ../correlations/agreement-ledger.json
 ```
 
 ## How to reproduce

@@ -195,7 +195,19 @@ class ProvenanceChecksumGateTests(unittest.TestCase):
                 re.MULTILINE,
             )
         }
-        self.assertGreaterEqual(len(recorded), 6, "PROVENANCE artifact section incomplete")
+        # Exact inventory pin: removing any artifact from PROVENANCE must
+        # fail here, not slide under a floor.
+        self.assertEqual(
+            set(recorded),
+            {
+                "lexicons/strongs-list.json",
+                "lexicons/strongs-lexicon.json",
+                "lexicons/tbesh-glosses.json",
+                "lexicons/tbesg-glosses.json",
+                "lexicons/morphology-genesis1.json",
+                "correlations/agreement-ledger.json",
+            },
+        )
         for name, sha in recorded.items():
             path = Path(name)
             self.assertTrue(path.exists(), f"{name} recorded but missing")
@@ -205,16 +217,25 @@ class ProvenanceChecksumGateTests(unittest.TestCase):
                 f"{name}: committed file does not match PROVENANCE checksum "
                 "(hand-edit or stale regeneration)",
             )
-        # And conversely: no committed generated artifact goes unrecorded.
-        for p in Path("lexicons").glob("*.json"):
-            self.assertIn(
-                p.as_posix(), recorded,
-                f"{p.as_posix()} committed but not recorded in PROVENANCE.md",
-            )
-        ledger = Path("correlations/agreement-ledger.json")
-        self.assertIn(
-            ledger.as_posix(), recorded,
-            "agreement-ledger.json committed but not recorded in PROVENANCE.md",
+        # Generated artifacts must ALL be recorded: every lexicons/*.json,
+        # plus any correlations/*.json outside the hand-curated/review set
+        # (a future generated artifact committed without a PROVENANCE entry
+        # fails loudly here).
+        hand_curated = {
+            "correlations/semantic-links.json",
+            "correlations/semantic-links-index.json",
+            # Review queue: regenerated with merge-preservation + human edits;
+            # deliberately NOT byte-checksummed.
+            "correlations/ai-discovered-links.json",
+        }
+        generated = {p.as_posix() for p in Path("lexicons").glob("*.json")}
+        generated |= {
+            p.as_posix() for p in Path("correlations").glob("*.json")
+            if p.as_posix() not in hand_curated
+        }
+        self.assertEqual(
+            generated, set(recorded),
+            "generated-artifact inventory diverged from PROVENANCE.md",
         )
 
 

@@ -85,7 +85,8 @@ def _compare_verse_text(key: str, readings: dict) -> dict:
     rows = [{"source": s, "value": f["value"]} for s, f in sorted(readings.items())]
     if len(rows) < 2:
         return _row(key, "one-sided", rows,
-                    note="single source — comparison begins with A6 translations")
+                    note="single source — cross-translation comparison arrives "
+                         "with additional verse_text sources")
     values = {r["value"] for r in rows}
     return _row(key, "agree" if len(values) == 1 else "disagree", rows)
 
@@ -94,7 +95,10 @@ def _compare_word_strongs(key: str, readings: dict) -> dict:
     rows = [{"source": s, "value": f["value"]} for s, f in sorted(readings.items())]
     if len(rows) < 2:
         return _row(key, "one-sided", rows)
-    values = {json.dumps(r["value"]) for r in rows}
+    # Defensive sort: multiset equality must not depend on the adapter
+    # pre-sorting (a future adapter emitting document-order lists would
+    # otherwise silently degrade this to list equality).
+    values = {json.dumps(sorted(r["value"])) for r in rows}
     return _row(key, "agree" if len(values) == 1 else "disagree", rows)
 
 
@@ -116,7 +120,15 @@ def _compare_gloss(key: str, readings: dict) -> dict:
     normalized = {r["normalized"] for r in comparable}
     # Policy (a): gloss phrasing differences are 'info' (side-by-side
     # readings), never 'disagree'.
-    return _row(key, "agree" if len(normalized) == 1 else "info", rows)
+    status = "agree" if len(normalized) == 1 else "info"
+    note = None
+    if status == "agree" and any(":" in r["value"] or ";" in r["value"]
+                                 for r in comparable):
+        # Sense-truncation caveat: a multi-sense gloss truncated to its first
+        # segment can match a single-sense reading (e.g. 'common: unsanctified'
+        # vs 'common'). Verbatim readings remain side-by-side for review.
+        note = "agree after sense truncation (first ';' / ':' segment)"
+    return _row(key, status, rows, note=note)
 
 
 _COMPARATORS = {
@@ -176,7 +188,10 @@ def build_ledger(repo: str = ".") -> dict:
                 "Gloss phrasing differences between sources of different eras "
                 "are expected nuance (info readings), not findings. "
                 "Disagreement is reserved for objective-equality facts. "
-                "Nothing is auto-resolved; readings are verbatim."
+                "Nothing is auto-resolved; readings are verbatim. Caveat: "
+                "'agree' for glosses is computed on the first ';'/':' segment, "
+                "so a multi-sense gloss truncated to its first sense can agree "
+                "with a single-sense reading — consult the verbatim readings."
             ),
         },
         "sources": _SOURCES,

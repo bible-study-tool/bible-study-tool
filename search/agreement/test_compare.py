@@ -157,6 +157,25 @@ class LedgerArtifactTests(unittest.TestCase):
         # G2717: strongs no_definition only -> no_reading.
         self.assertEqual(by_key["G2717"]["status"], "no_reading")
 
+    def test_sort_key_numeric_order(self):
+        """Gen.1.2 must sort before Gen.1.10; H2 before H10 (protects the
+        committed artifact's row order against refactors)."""
+        from search.agreement.compare import _sort_key
+        self.assertLess(_sort_key("Gen.1.2"), _sort_key("Gen.1.10"))
+        self.assertLess(_sort_key("H2"), _sort_key("H10"))
+        self.assertLess(_sort_key("Gen.1.1"), _sort_key("H1"))
+
+    def test_known_info_row_normalized_values(self):
+        """Pins the normalization behavior into an artifact row: H7676
+        (Sabbath) — strongs multi-sense phrase vs tbesh single gloss."""
+        by_key = {r["key"]: r for r in self.ledger["comparisons"][FACT_LEXICON_GLOSS]}
+        row = by_key["H7676"]
+        self.assertEqual(row["status"], "info")
+        norm = {r["source"]: r.get("normalized") for r in row["readings"]}
+        self.assertIsNotNone(norm["strongs"])
+        self.assertEqual(norm["tbesh"], "sabbath")
+        self.assertNotEqual(norm["strongs"], norm["tbesh"])
+
     def test_regeneration_byte_identical(self):
         """Byte-level drift tripwire (not just structural): the committed
         ledger must equal a fresh build byte for byte."""
