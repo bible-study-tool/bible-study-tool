@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# verify_all.sh — ONE command to run every integrity gate locally.
+#
+# Contributors: run this before every Merge Request. It runs the exact checks
+# CI runs, with a human-readable remedy for each failure. CI fails on the
+# same things; if this passes locally, the robot gatekeeper passes too.
+#
+# What is gated (and why):
+#   1. Test suite (pytest)         — includes the byte-regeneration tripwires
+#                                    and the PROVENANCE checksum gate.
+#   2. F1-F4 data validators       — schema, Strong's, cross-refs, dead links.
+#   3. Source checksums (--check)  — only when the raw sources are present
+#                                    locally (data/ is gitignored; on a fresh
+#                                    clone the PROVENANCE gate in pytest
+#                                    already covers the committed artifacts).
+#
+# Rules of thumb:
+#   * Entry/curated Markdown (materials/) is HAND content — validators give
+#     you specific errors; fix the entry.
+#   * lexicons/*.json, correlations/agreement-ledger.json and generated
+#     corpus entries are GENERATED — never hand-edit; regenerate with the
+#     command printed in the failure message.
+#   * A failed ledger/corpus tripwire after a SOURCE re-pin is the review
+#     gate working: inspect the diff, then regenerate and commit together
+#     with the updated data/PROVENANCE.md checksum.
+
+set -uo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT"
+
+FAILURES=()
+
+run_step() { # run_step <label> <command...>
+  local label="$1"; shift
+  echo
+  echo "━━━ $label ━━━"
+  if "$@"; then
+    echo "✔ $label: OK"
+  else
+    echo "✘ $label: FAILED — see above"
+    FAILURES+=("$label")
+  fi
+}
+
+echo "Bible Study Tool — full local verification"
+echo "repo: $REPO_ROOT"
+
+# --- 1. full test suite (includes all tripwires + checksum gates) -----------
+run_step "Test suite (pytest, includes regeneration tripwires + checksum gate)" \
+  python -m pytest
+
+# --- 2. F1-F4 data-integrity validators --------------------------------------
+run_step "F1 schema validator"   python -m search.validation.schema  --repo .
+run_step "F2 Strong's validator" python -m search.validation.strongs --repo .
+run_step "F3 cross-ref validator" python -m search.validation.xrefs  --repo .
+run_step "F4 dead-ref audit"     python -m search.validation.audit   --repo .
+
+# --- 3. raw-source checksums (only when the sources are present) -------------
+if [[ -f data/KJV-osis.json ]]; then
+  run_step "Raw source checksums (fetch_sources.sh --check)" \
+    bash scripts/fetch_sources.sh --check
+else
+  echo
+  echo "━━━ Raw source checksums ━━━"
+  echo "– SKIP: raw sources not present (data/ is gitignored). The committed"
+  echo "  artifacts were still checksum-verified by the PROVENANCE gate in"
+  echo "  pytest. To fetch sources locally: bash scripts/fetch_sources.sh"
+fi
+
+# --- summary -----------------------------------------------------------------
+echo
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+if [[ ${#FAILURES[@]} -eq 0 ]]; then
+  echo "ALL CHECKS PASSED ✔"
+  exit 0
+fi
+echo "FAILED: ${#FAILURES[@]} check(s): ${FAILURES[*]}"
+echo
+echo "Remedies:"
+echo "  * Validator failures name the entry and the rule — fix the Markdown."
+echo "  * GENERATED artifacts are never hand-edited: regenerate with the"
+echo "    command in the failure message (lexicons: build_strongs_lexicon /"
+echo "    build_stepbible_lexicon / build_morphology; ledger:"
+echo "    search.agreement.compare.write_ledger; corpus:"
+echo "    build_genesis1), then commit with the updated"
+echo "    data/PROVENANCE.md checksums."
+echo "  * If a SOURCE was re-pinned, the agreement-ledger tripwire is the"
+echo "    review gate: inspect the ledger diff before regenerating."
+exit 1

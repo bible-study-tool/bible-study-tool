@@ -34,15 +34,21 @@ bible-study-tool/
 ├── tags/                # Tag taxonomy and indexes
 ├── index/               # Generated indexes (tag → entry, passage → entry)
 ├── correlations/        # Cross-references and semantic links
-│   ├── semantic-links.json       # Curated cross-language relationships
-│   ├── semantic-links-index.json # Quick lookup index
-│   ├── ai-discovered-links.json  # AI-suggested links awaiting review
-│   ├── DETERMINISTIC_VS_AI.md    # Core vs AI layer boundary
-│   ├── MACULA_INTEGRATION.md     # Macula dataset integration plan
-│   └── SEMANTIC_LINKING_GUIDE.md # Code-level implementation guide
+│   ├── agreement-ledger.json      # Cross-source agreement ledger (generated)
+│   ├── semantic-links.json        # Curated cross-language relationships
+│   ├── semantic-links-index.json  # Quick lookup index
+│   ├── ai-discovered-links.json   # AI-suggested links awaiting review
+│   ├── DETERMINISTIC_VS_AI.md     # Core vs AI layer boundary
+│   ├── MACULA_INTEGRATION.md      # Macula dataset integration plan
+│   └── SEMANTIC_LINKING_GUIDE.md  # Code-level implementation guide
+├── lexicons/            # Generated lexical artifacts (Strong's, STEPBible glosses, morphology)
+├── scripts/             # fetch_sources.sh, verify_all.sh
 ├── ai-prompts/          # Templates for AI-assisted tasks
-├── search/              # Search + semantic linking pipeline (Python)
-│   └── linking/         # Semantic linking pipeline (layers b & c)
+├── search/              # Search, linking, corpus + agreement layers (Python)
+│   ├── linking/         # Semantic linking pipeline (layers b & c)
+│   ├── validation/      # F1-F4 data-integrity validators + lexicon builders
+│   ├── corpus/          # Deterministic corpus/morphology generators
+│   └── agreement/       # Source Agreement Layer (facts, comparison, ledger)
 ├── .gitlab/             # Merge request template
 ├── CONTRIBUTION_STANDARDS.md
 ├── kc-schema.md
@@ -244,3 +250,15 @@ translation texts are linked to rather than bundled.
 ## Contributing
 
 See [Contribution Standards](CONTRIBUTION_STANDARDS.md) for guidelines.
+Before every Merge Request, run the full local verification:
+
+```bash
+scripts/verify_all.sh
+```
+
+It runs the test suite, the F1-F4 data-integrity validators, and the source
+checksums — the exact checks CI runs — and prints a remedy for each failure.
+Hand-authored content (`materials/`) is validated by the F1-F4 validators;
+generated artifacts (`lexicons/`, the agreement ledger, generated corpus
+entries) are never hand-edited — regenerate them with the commands printed in
+their failure messages (see Contribution Standards for the full workflow).

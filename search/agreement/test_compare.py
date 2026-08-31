@@ -183,7 +183,17 @@ class LedgerArtifactTests(unittest.TestCase):
             write_ledger(".", out_path=Path(td) / "ledger.json")
             committed = LEDGER_PATH.read_text(encoding="utf-8")
             fresh = (Path(td) / "ledger.json").read_text(encoding="utf-8")
-            self.assertEqual(fresh, committed)
+            self.assertEqual(
+                fresh, committed,
+                "Agreement ledger drifted from its generator. This file is "
+                "GENERATED — do not hand-edit. If a pinned SOURCE changed, "
+                "review the ledger diff (it is the golden baseline: new "
+                "disagreements must be reviewed before they enter the "
+                "deterministic base), then regenerate: python -c \"from "
+                "search.agreement.compare import write_ledger; "
+                "write_ledger('.')\" and commit artifact + updated "
+                "data/PROVENANCE.md checksum together.",
+            )
 
 
 if __name__ == "__main__":

@@ -70,6 +70,54 @@ Every entry MUST include:
 6.  When multiple interpretations exist, present them with appropriate nuance
     
 
+## Local Verification (run before every Merge Request)
+
+One command runs every check CI runs, with a remedy printed for each failure:
+
+```bash
+scripts/verify_all.sh
+```
+
+What it runs, and what each gate means for you:
+
+1. **Test suite (pytest)** — includes the data-integrity gates below plus the
+   *regeneration tripwires* and the *PROVENANCE checksum gate*.
+2. **F1-F4 validators** — schema, Strong's numbers, cross-references, and
+   dead-reference audit over the whole corpus.
+3. **Raw-source checksums** — only when the raw sources are present locally
+   (`data/` is gitignored; a fresh clone skips this step automatically, and
+   the committed artifacts are still verified by the checksum gate).
+
+### Hand content vs. generated artifacts
+
+The two classes of files have different rules:
+
+* **Hand content** — everything under `materials/` you author or curate. The
+  F1-F4 validators give you specific, actionable errors (missing field, tag
+  not in taxonomy, malformed cross-reference). Fix the entry; never touch the
+  generated artifacts to make an error go away.
+* **Generated artifacts** — `lexicons/*.json`,
+  `correlations/agreement-ledger.json`, and the generated corpus entries
+  (`materials/bible/ot/genesis/gen-1-4..31-kjv.md`). These are **never
+  hand-edited**: each has a generator, a byte-identical-regeneration test, and
+  a recorded checksum in `data/PROVENANCE.md`. If a test says an artifact
+  drifted, regenerate it with the command printed in the failure message and
+  commit the artifact together with its updated checksum.
+
+### The agreement-ledger golden baseline
+
+`correlations/agreement-ledger.json` records what every source says about
+every shared key, and where sources agree or differ. It is a **golden
+baseline**: if a pinned *source* is re-pinned and its facts change, the
+ledger tripwire fails CI **by design** — that is the review gate that stops
+silent upstream changes from entering the deterministic core. The workflow:
+inspect the ledger diff (what changed and why), review the new disagreements,
+then regenerate and commit the ledger together with its updated
+`data/PROVENANCE.md` checksum. Disagreements themselves are *findings* for
+human review — never auto-resolved — and gloss phrasing differences between
+sources of different eras are recorded as side-by-side `info` readings, not
+failures.
+
 ## Review Workflow
 
 ### 1. Draft Stage

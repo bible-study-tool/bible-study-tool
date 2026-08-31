@@ -173,7 +173,13 @@ class ArtifactTests(unittest.TestCase):
             fresh = (Path(td) / "morphology-genesis1.json").read_text(
                 encoding="utf-8"
             )
-            self.assertEqual(fresh, committed)
+            self.assertEqual(
+                fresh, committed,
+                "Morphology artifact drifted from its generator. This file is "
+                "GENERATED — do not hand-edit. Regenerate with: python -m "
+                "search.corpus.build_morphology --repo . (then update the "
+                "data/PROVENANCE.md checksum).",
+            )
 
 
 class ProvenanceChecksumGateTests(unittest.TestCase):
