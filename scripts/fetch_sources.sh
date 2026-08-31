@@ -112,6 +112,27 @@ fetch "$SCROLLMAPPER_URL" "$DATA/KJV-osis.json"
 
 # --- 3. Open Scriptures Hebrew Bible v.2.2 -----------------------------------
 fetch "$OSHB_URL" "$DATA/OSHB-v.2.2.zip"
+# The OSHB generator reads per-book XML; extract them from the zip (idempotent).
+if [[ ! -f "$DATA/oshb/Gen.xml" ]]; then
+  echo "[xtr ] OSHB-v.2.2.zip -> data/oshb/"
+  python3 - "$DATA" <<'PYEOF'
+import os, sys, zipfile
+data = sys.argv[1]
+z = zipfile.ZipFile(os.path.join(data, "OSHB-v.2.2.zip"))
+os.makedirs(os.path.join(data, "oshb"), exist_ok=True)
+count = 0
+for n in z.namelist():
+    if n.startswith("__MACOSX") or n.endswith("/"):
+        continue
+    dest = os.path.join(data, "oshb", os.path.basename(n))
+    with z.open(n) as src, open(dest, "wb") as out:
+        out.write(src.read())
+    count += 1
+print(f"[xtr ] extracted {count} files")
+PYEOF
+else
+  echo "[skip] oshb/*.xml already extracted"
+fi
 
 # --- 4. STEPBible TBESH/TBESG brief lexicons ---------------------------------
 mkdir -p "$DATA/stepbible"

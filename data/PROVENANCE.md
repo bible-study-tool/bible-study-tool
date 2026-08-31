@@ -69,7 +69,7 @@ edition when curating.
 | Upstream | <https://github.com/openscriptures/morphhb> |
 | Pinned tag | `v.2.2` (`6a5db284c715`) |
 | License | Per upstream: WLC Hebrew text = **public domain**; lemma + morphology annotations = **CC BY 4.0** (attribution required: "Open Scriptures Hebrew Bible Project"). Upstream also warns to avoid NFC normalization of the text — relevant for future A9 corpus work. |
-|  Feeds | future original-language corpus work (ROADMAP A9); not yet consumed by code |
+| Feeds | the deterministic **Hebrew morphology layer** (`lexicons/morphology-genesis1.json` via `search/corpus/build_morphology.py`): per-word lemma with prefix/suffix decomposition (e.g. `b/7225`), ETCBC morphology codes, stable word IDs, WLC text. Extracted per-book XML lives in `data/oshb/` (gitignored; reproduced by `scripts/fetch_sources.sh`). |
 
 SHA-256:
 
