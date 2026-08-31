@@ -126,6 +126,13 @@ The cross-source Agreement Ledger regenerates byte-identically as well:
 bb44368bb338a5d47a2ec61b9621f431536114e99f95b5721e2f3c42361cc283  ../correlations/agreement-ledger.json
 ```
 
+The word-level apparatus (Genesis 1, kjv-osis <-> oshb) regenerates
+byte-identically as well:
+
+```
+f44edf54f42682fd8c6d82533625624b0c6ee71d3af72bdf65d27927f2dff344  ../correlations/apparatus-genesis1.json
+```
+
 ## How to reproduce
 
 ```bash
@@ -152,6 +159,9 @@ python -m search.corpus.build_morphology --repo .
 
 # 7. Regenerate the cross-source Agreement Ledger
 python -c "from search.agreement.compare import write_ledger; write_ledger('.')"
+
+# 8. Regenerate the word-level apparatus (Genesis 1)
+python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.')"
 ```
 
 ## Policy

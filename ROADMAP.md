@@ -87,7 +87,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **S1. Fact model + source adapters** — typed facts (`verse_text`, `word_strongs`, `lexicon_gloss`) extracted from each pinned source (KJV-osis, OSHB, strongs-lexicon, TBESH/TBESG); adapter counts reconcile with sources
 - `[x]` **S2. Comparison engine + Agreement Ledger** — `correlations/agreement-ledger.json`: per-key readings from every source, `agree|disagree|one-sided` status, summary stats; phase 1 = lexicon gloss comparison (Strong's <-> TBESH/TBESG, all codes) + per-verse Strong's multisets (KJV-osis <-> OSHB, Genesis 1)
 - `[x]` **S3. CI golden-baseline gate + review workflow + verify_all.sh** — new disagreement on re-pin forces review; corpus-vs-source divergences are soft findings, never CI walls; single human-friendly verification command
-- `[ ]` **S4. Apparatus view + word-level alignment** (later) — per-unit witness sets emerging as a ledger view; full word-position alignment algorithm
+- `[x]` **S4. Apparatus view + word-level alignment** — `correlations/apparatus-genesis1.json`: per-verse token alignment (order-free per-code pairing; matched correspondence table + 94 concrete omissions with WLC text/position/morph). Full positional sequence alignment remains future
 
 ### H. Governance & Community
 - `[ ]` **H1. Contribution workflow hardening** — complete the Review Stage sections in CONTRIBUTION_STANDARDS.md
