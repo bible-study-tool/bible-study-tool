@@ -41,6 +41,9 @@ OSIS_NS = {"osis": "http://www.bibletechnologies.net/2003/OSIS/namespace"}
 _LEMMA_SUFFIX_RE = re.compile(r"^(?P<head>.*?)(?:\s+(?P<suffix>[a-z]))?$")
 
 # ETCBC/OSHB morphology code shape: 'H' + letters/digits/slashes.
+# (Hebrew entries only; if scope ever widens, Aramaic words use 'A'-prefixed
+# codes — e.g. the two Aramaic words at Gen 31:47, morph 'ANp' — and would
+# need their own branch.)
 _MORPH_RE = re.compile(r"^H[A-Za-z0-9/]+$")
 
 # A single prefix/segment: 1-2 lowercase letters (ETCBC preformat morphemes).
@@ -63,6 +66,10 @@ def decompose_lemma(lemma: str) -> dict:
     m = _LEMMA_SUFFIX_RE.match(lemma)
     suffix = m.group("suffix")
     head = m.group("head")
+    if " " in head:
+        # e.g. '1254 a b' — multiple trailing tokens would decompose
+        # ambiguously; fail fast rather than guess.
+        raise ValueError(f"unrecognized OSHB lemma (multi-token head): {lemma!r}")
     parts = head.split("/")
     prefixes: list[str] = []
     base: str | None = None
@@ -86,20 +93,18 @@ def decompose_lemma(lemma: str) -> dict:
 def parse_book_xml(path: str, chapter: int) -> list[dict]:
     """Parse one OSHB book XML and return word records for one chapter, in order.
 
-    Raises ValueError if any word has a malformed morphology code or an
-    unrecognized lemma form (both would silently corrupt the layer).
+    Selects exactly ``Book.CHAPTER.N`` verses (e.g. Gen.1.1..Gen.1.31) and
+    iterates their <w> children in document order. Raises ValueError if any
+    word has a malformed morphology code, an unrecognized lemma form, or empty
+    text (all would silently corrupt the layer).
     """
     root = ET.parse(path).getroot()
     records: list[dict] = []
-    chapter_ref = f"Gen.{chapter}"
+    prefix = f"Gen.{chapter}"
     for verse in root.iter(f"{{{OSIS_NS['osis']}}}verse"):
         osis_id = verse.get("osisID", "")
-        if osis_id != chapter_ref and not osis_id.startswith(chapter_ref + "."):
-            if not osis_id.startswith("Gen."):
-                continue
-            verse_num = osis_id.split(".")
-            if len(verse_num) < 3 or verse_num[1] != str(chapter):
-                continue
+        if osis_id != prefix and not osis_id.startswith(prefix + "."):
+            continue
         for w in verse.iter(f"{{{OSIS_NS['osis']}}}w"):
             lemma = w.get("lemma", "")
             morph = w.get("morph", "")

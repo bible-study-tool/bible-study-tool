@@ -161,14 +161,55 @@ class ArtifactTests(unittest.TestCase):
             )
 
     def test_regeneration_byte_identical(self):
-        """Drift tripwire: committed artifact must equal a fresh build."""
+        """Drift tripwire: committed artifact must equal a fresh build — at
+        the BYTE level (not just structurally), so formatting drift also
+        fails and the PROVENANCE checksum stays authoritative."""
         from search.corpus.build_morphology import build
         with tempfile.TemporaryDirectory() as td:
-            fresh = build(".", out_dir=td)
-            committed = json.loads(
-                Path("lexicons/morphology-genesis1.json").read_text(encoding="utf-8")
+            build(".", out_dir=td)
+            committed = Path("lexicons/morphology-genesis1.json").read_text(
+                encoding="utf-8"
             )
-            self.assertEqual(committed, fresh)
+            fresh = (Path(td) / "morphology-genesis1.json").read_text(
+                encoding="utf-8"
+            )
+            self.assertEqual(fresh, committed)
+
+
+class ProvenanceChecksumGateTests(unittest.TestCase):
+    """Offline drift gate: every committed lexicon artifact's SHA-256 must
+    match the checksum recorded in data/PROVENANCE.md. CI cannot run
+    fetch_sources.sh (data/ is gitignored), so this test IS the artifact
+    integrity gate in the pipeline."""
+
+    def test_all_committed_artifacts_match_provenance(self):
+        import hashlib
+        import re
+        prov = Path("data/PROVENANCE.md").read_text(encoding="utf-8")
+        recorded = {
+            Path(name).name: sha
+            for sha, name in re.findall(
+                r"^([0-9a-f]{64})  \.\./lexicons/([A-Za-z0-9._-]+\.json)$",
+                prov,
+                re.MULTILINE,
+            )
+        }
+        self.assertGreaterEqual(len(recorded), 5, "PROVENANCE artifact section incomplete")
+        for fname, sha in recorded.items():
+            path = Path("lexicons") / fname
+            self.assertTrue(path.exists(), f"{fname} recorded but missing")
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            self.assertEqual(
+                actual, sha,
+                f"{fname}: committed file does not match PROVENANCE checksum "
+                "(hand-edit or stale regeneration)",
+            )
+        # And conversely: no committed artifact goes unrecorded.
+        for p in Path("lexicons").glob("*.json"):
+            self.assertIn(
+                p.name, recorded,
+                f"{p.name} committed but not recorded in PROVENANCE.md",
+            )
 
 
 if __name__ == "__main__":
