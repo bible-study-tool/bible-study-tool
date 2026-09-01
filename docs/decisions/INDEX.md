@@ -14,6 +14,8 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-0006](ADR-0006-provenance-and-generated-artifacts.md) | Source pinning + generated-artifact discipline | Accepted |
 | [ADR-0007](ADR-0007-source-agreement-layer.md) | Source Agreement Layer (facts → ledger → apparatus) | Accepted |
 | [ADR-0008](ADR-0008-future-architecture-and-packaging.md) | Future architecture & packaging direction (3-tier engine, tiered distribution) | Proposed |
+| [ADR-0009](ADR-0009-corpus-expansion-model.md) | Corpus expansion model — whole-book pipeline, per-chapter work packages | Proposed |
+| [ADR-0010](ADR-0010-wordgraph.md) | The WordGraph — a lemma-centric lexical knowledge graph (evolution of Strong's) | Proposed |
 
 ## When to write one
 

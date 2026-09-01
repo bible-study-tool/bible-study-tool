@@ -36,8 +36,9 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 ## Goal Inventory
 
 ### A. Corpus & Content
-- `[x]` **A1. Complete Genesis 1 creation narrative** — v1-31 (all 31 skeletons generated; v1-31 curated across WP-001..WP-006 with status: review). **A1 follow-up (next):** Genesis 2:1-3 — the seventh-day Sabbath — is the natural next corpus extension (new work package)
-- `[ ]` **A2. Expand OT coverage** — Exodus, Isaiah, Daniel, Psalms (Adventist-prioritized); more word studies
+- `[x]` **A1. Complete Genesis 1 creation narrative** — v1-31 (all 31 skeletons generated; v1-31 curated across WP-001..WP-006 with status: review) — **MVP scope closed**
+- `[~]` **A2. Complete the book of Genesis, chapter by chapter** (per ADR-0009: whole-book pipeline, per-chapter WPs) — Genesis 2 in progress (WP-007 skeletons, WP-008 curation); then expand to the wider OT (Exodus, Isaiah, Daniel, Psalms)
+- `[ ]` **A10. WordGraph lexical knowledge graph** (ADR-0010) — lemma-centric spine (token id / lexeme + homograph index / Strong's legacy crosswalk); aggregate-first dictionary (Strong's, BDB, TBESH/TBESG, OSHB morph, SDBH senses); deterministic word-study generation; per-book artifacts (`lexicons/wordgraph-*.json`); makes computation *more* deterministic as data grows. WP-009 builds it for Genesis; WP-010 is the draft engine that consumes it.
 - `[ ]` **A3. Add NT coverage** — John 1, Hebrews, Revelation, Romans
 - `[x]` **A4. Full Strong's lexicon dataset** — `lexicons/strongs-list.json` (canonical 8674 H + 5624 G, F2-verified) + `lexicons/strongs-lexicon.json` (definitions/transliteration/KJV usage); sources pinned in `data/PROVENANCE.md`
 - `[ ]` **A5. Greek word-study expansion** — corpus is currently Hebrew-dominant
@@ -47,7 +48,8 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **A9. Original-language text corpus** — Masoretic Hebrew, LXX Greek as structured data
 
 ### B. Macula / Linguistic Data Integration
-- `[ ]` **B1. Phase 1: reference integration** — download datasets, Strong's↔Macula mapping
+- `[~]` **B0. WordGraph foundation** (ADR-0010) — lemma-centric lexical knowledge graph, seeded for Genesis (WP-009); the substrate that Macula integration will enrich (WP-010 draft engine consumes it)
+- `[ ]` **B1. Phase 1: reference integration** — download datasets, Strong's↔Macula mapping (rides on the WordGraph crosswalk)
 - `[ ]` **B2. Phase 2: automated lookup** — Text-Fabric script (Strong's → Macula annotations)
 - `[ ]` **B3. Phase 3: semantic enrichment** — use Macula roles/syntax to enrich semantic-links + translation-equivalence
 
@@ -150,8 +152,8 @@ scrollmapper/bible_databases (MIT) additionally serves A6 (translations).
    it. Unlocks content + Macula.
 
 ### Phase 3 — Corpus Expansion (validated)
-6. **A1 — Complete Genesis 1** (v1-31) — ✅ skeletons generated; v1-31 curated (WP-001..WP-006); **next: Genesis 2:1-3 (Sabbath) as the A1 follow-up package**
-7. **A2 — Expand OT** (Exodus, Isaiah, Daniel, Psalms)
+6. **A1 — Complete Genesis 1** (v1-31) — ✅ done (MVP scope; WP-001..WP-006)
+7. **A2 — Complete Genesis book + OT expansion** — per ADR-0009 (whole-book pipeline, per-chapter WPs): Genesis 2 next (WP-007..WP-008), then Genesis 3+ chapter by chapter, then Exodus, Isaiah, Daniel, Psalms
 8. **A3 — Add NT** (John 1, Hebrews, Revelation, Romans)
 9. **A5 — Greek word-study expansion**
 10. **A6 — Public-domain translations** (KJV/ASV/WEB); document user-supplied model
