@@ -99,10 +99,7 @@ def validate_cross_references(entry, entry_index: dict[str, str]) -> list[Issue]
             )
             continue
         # Resolvability.
-        resolved = target.strip() in entry_index
-        if not resolved and kind == "entry":
-            resolved = target in entry_index
-        if resolved:
+        if target.strip() in entry_index:
             continue
         issues.append(
             Issue(entry.id, "unresolved-xref-target", "warning",

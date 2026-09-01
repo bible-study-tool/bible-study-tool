@@ -147,9 +147,6 @@ class RegenerationTripwireTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             for m in block_header.finditer(text):
                 code = m.group(1)
-                occ_line = re.search(
-                    rf"\*   Lemma occurrences in this verse: (\d+)", text
-                )
                 # Rebuild just this code's block with its source occurrence
                 # count and require verbatim presence.
                 from search.corpus.build_genesis1 import verse_codes

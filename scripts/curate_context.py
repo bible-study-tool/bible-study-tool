@@ -24,6 +24,8 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
+_NUM_LINE_RE = re.compile(r"^\d+\.")
+
 
 def find_repo_root() -> Path:
     current = Path.cwd()
@@ -174,12 +176,13 @@ def build_briefing(
                     )
 
         # Lexicon items present in this verse
-        matched_codes: list[str] = []
-        if app_entry:
-            for m in app_entry.get("matched", []):
-                c = m.get("code")
-                if c and c not in matched_codes:
-                    matched_codes.append(c)
+        matched_codes = (
+            list(dict.fromkeys(
+                m["code"] for m in app_entry.get("matched", []) if m.get("code")
+            ))
+            if app_entry
+            else []
+        )
 
         if matched_codes:
             lines.append("* **Key Lexemes in Verse:**")
@@ -190,15 +193,16 @@ def build_briefing(
                 lemma = st.get("word", "")
                 translit = st.get("translit", "")
                 desc = st.get("desc", "")
+
                 # Extract first definition line
+                lines_desc = [l.strip() for l in desc.splitlines() if l.strip()]
                 defn = ""
-                for line in desc.splitlines():
-                    if re.match(r"^\d+\.", line.strip()):
-                        defn = line.strip()
+                for line in lines_desc:
+                    if _NUM_LINE_RE.match(line):
+                        defn = line
                         break
-                if not defn:
-                    lines_desc = [l.strip() for l in desc.splitlines() if l.strip()]
-                    defn = lines_desc[1] if len(lines_desc) > 1 else (lines_desc[0] if lines_desc else "")
+                if not defn and lines_desc:
+                    defn = lines_desc[1] if len(lines_desc) > 1 else lines_desc[0]
 
                 lines.append(
                     f"  - **{code}** (`{lemma}` / *{translit}*): modern: *\"{gloss}\"* | strongs: *{defn}*"
@@ -231,7 +235,10 @@ def main():
         verses = parse_verse_range(args.verses)
 
     if not verses:
-        print("Error: Specify either --wp <WP-XXX> or --verses <range> (e.g. 9..13)", file=sys.stderr)
+        if args.wp:
+            print(f"Error: Could not resolve work package '{args.wp}' or extract scope.", file=sys.stderr)
+        else:
+            print("Error: Specify either --wp <WP-XXX> or --verses <range> (e.g. 9..13)", file=sys.stderr)
         sys.exit(1)
 
     briefing = build_briefing(repo_root, args.chapter, verses, wp_file)

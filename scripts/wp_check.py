@@ -96,8 +96,9 @@ def resolve_wp_files(repo_root: Path, wp_name: str) -> tuple[Path | None, list[P
 def check_entry_ai_markers(path: Path, content: str) -> list[str]:
     """Verify AI comments are properly opened and closed."""
     errors = []
-    # Strip inline code spans (e.g. `<!-- AI-GENERATED -->`) before checking real HTML comments
-    code_stripped = re.sub(r"`[^`]*`", "", content)
+    # Strip multiline code blocks and inline backtick spans before checking real HTML comments
+    code_stripped = re.sub(r"```[\s\S]*?```", "", content)
+    code_stripped = re.sub(r"`[^`\n]*`", "", code_stripped)
 
     open_count = code_stripped.count("<!-- AI-GENERATED -->")
     close_count = code_stripped.count("<!-- END AI-GENERATED -->")
@@ -208,29 +209,21 @@ def run_wp_check(repo_root: Path, target_wp: Path | None, files: list[Path]) -> 
     loader = Loader(str(repo_root))
     loader.load_entries()
     tax = Taxonomy(str(repo_root / "tags/taxonomy.json"))
-
-    schema_errs = [i for i in schema_all(loader, tax) if i.severity == "error"]
-    for err in schema_errs:
-        if any(f.stem in err.entry_id for f in files):
-            all_errors.append(f"{err.entry_id} (F1 Schema): {err.message}")
-
     canon = StrongsCanonical(
         hebrew=set(canonical["hebrew"]), greek=set(canonical["greek"])
     )
-    strongs_errs = [i for i in strongs_all(loader, canon) if i.severity == "error"]
-    for err in strongs_errs:
-        if any(f.stem in err.entry_id for f in files):
-            all_errors.append(f"{err.entry_id} (F2 Strong's): {err.message}")
 
-    xref_errs = [i for i in f3.validate_all(loader) if i.severity == "error"]
-    for err in xref_errs:
-        if any(f.stem in err.entry_id for f in files):
-            all_errors.append(f"{err.entry_id} (F3 Xrefs): {err.message}")
-
-    audit_errs = [i for i in f4.audit_all(loader, str(repo_root)) if i.severity == "error"]
-    for err in audit_errs:
-        if any(f.stem in err.entry_id for f in files):
-            all_errors.append(f"{err.entry_id} (F4 Audit): {err.message}")
+    target_stems = {f.stem for f in files}
+    stages = [
+        ("F1 Schema", schema_all(loader, tax)),
+        ("F2 Strong's", strongs_all(loader, canon)),
+        ("F3 Xrefs", f3.validate_all(loader)),
+        ("F4 Audit", f4.audit_all(loader, str(repo_root))),
+    ]
+    for stage_name, issues in stages:
+        for err in issues:
+            if err.severity == "error" and any(stem in err.entry_id for stem in target_stems):
+                all_errors.append(f"{err.entry_id} ({stage_name}): {err.message}")
 
     print()
     if all_errors:
