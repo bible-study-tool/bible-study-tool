@@ -23,9 +23,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "psalms-95-5"
+    note: "The sea is his, and he made it: and his hands formed the dry land"
+  - type: xref/theme
+    target: "jonah-1-9"
+    note: "I fear the LORD, the God of heaven, which hath made the sea and the dry land"
+  - type: xref/parallel
+    target: "psalms-33-7"
+    note: "He gathereth the waters of the sea together as an heap: he layeth up the depth in storehouses"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:10 - KJV
@@ -106,6 +119,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, naming of Earth and Seas, divine evaluation
+*   OT: Psalm 95:5 — "The sea is his, and he made it: and his hands formed the dry land" (direct creational reflection on Day 3 naming)
+*   OT: Jonah 1:9 — "I fear the LORD, the God of heaven, which hath made the sea and the dry land" (confession of Yahweh as maker of both spheres)
+*   OT: Psalm 33:7 — "He gathereth the waters of the sea together as an heap"
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The earth was invested with a robe of light... sea and land were assigned their boundaries"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Triple Naming Pattern Completed:** Genesis 1 contains three explicit divine naming sequences: Day 1 (Day/Night, v5), Day 2 (Heaven, v8), and Day 3 (Earth/Seas, v10). God names the dry land *erets* (H776) and the gathered waters *yammim* (plural of *yam*, H3220). In ancient Near Eastern thought, naming signifies supreme lordship and definition of function. Neither the sea nor the earth are self-existent or deified; both are named creatures of the one true God.
+*   **The Concept of Gathering (*miqveh*, H4723):** The "gathering together of the waters" (*u-lemiqveh hammayim*) uses the noun *miqveh*, derived from *qawah* (H6960 in v9). In biblical Hebrew, *miqveh* denotes a reservoir, gathering pool, or collection basin (cf. Exodus 7:19; Leviticus 11:36), highlighting purposeful geological structuring.
+*   **The Return of the Divine Appraisal ("It Was Good", H2896):** Verse 10 concludes with "and God saw that it was good" (*wayyar Elohim ki-tov*). Day 2 lacked this pronouncement because the division of waters was not yet complete. With the waters gathered into seas and dry land established, the marine-terrestrial order is affirmed as good. Consequently, Day 3 contains two "good" evaluations (v10 for the physical domain and v12 for the plant kingdom).
+*   **Apparatus Note:** The causal particle *ki* (H3588, "that") in the clause "that it was good" is present in the Hebrew WLC/OSHB text, but merged into the English clause in scrollmapper KJV-osis tagging (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.10`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -113,5 +143,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-003;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

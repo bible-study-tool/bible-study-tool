@@ -27,9 +27,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "matthew-7-16-18"
+    note: "Do men gather grapes of thorns, or figs of thistles? Every good tree bringeth forth good fruit — creational kind stability as spiritual principle"
+  - type: xref/theme
+    target: "luke-6-43-44"
+    note: "For every tree is known by his own fruit"
+  - type: xref/theme
+    target: "galatians-6-7"
+    note: "Whatsoever a man soweth, that shall he also reap — the creational law of reproduction after kind"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:12 - KJV
@@ -142,6 +155,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, fulfillment of plant creation, double evaluation
+*   NT: Matthew 7:16-18 — "Do men gather grapes of thorns, or figs of thistles? Even so every good tree bringeth forth good fruit" (Christ's teaching on moral fruits grounded in creational botany)
+*   NT: Luke 6:43-44 — "For every tree is known by his own fruit"
+*   NT: Galatians 6:7 — "Be not deceived; God is not mocked: for whatsoever a man soweth, that shall he also reap" (Pauline application of the seed-after-its-kind law)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The earth was clad with a mantle of green... every plant was laden with fragrance"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Immediate Realization of Botanical Order:** Verse 12 records the exact, detailed execution of the command in verse 11: "And the earth brought forth grass..." (*wattotse ha'arets deshe*, from *yatsa* H3318). The creation of flora occurs fully formed and mature, possessing seed within itself for ongoing propagation.
+*   **Double Occurrence of "After His Kind" (*le-minehu*, H4327):** The phrase is repeated twice in verse 12 (for seed-bearing herbs and for fruit-bearing trees), reinforcing the law of genetic continuity and species integrity across the botanical realm.
+*   **The Second "Good" of Day 3 (*ki-tov*, H2896):** With the successful establishment of the botanical kingdom, God inspects the created plant life and pronounces it "good". This makes Day 3 unique as the only day prior to Day 6 that contains a double divine appraisal (v10 for the physical earth and seas; v12 for the plant kingdom), reflecting the completion of the terrestrial foundation.
+*   **Apparatus & Tagging Alignment:** The causal conjunction *ki* (H3588) in the appraisal clause and the relative pronoun *asher* (H834) are present in the Hebrew WLC text but omitted in scrollmapper KJV-osis tagging (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.12`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -149,5 +179,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-003;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

@@ -24,9 +24,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/parallel
+    target: "psalms-104-5-9"
+    note: "Who laid the foundations of the earth... the waters stood above the mountains... unto the place which thou hast founded for them"
+  - type: xref/theme
+    target: "proverbs-8-29"
+    note: "When he gave to the sea his decree, that the waters should not pass his commandment"
+  - type: xref/parallel
+    target: "job-38-8-11"
+    note: "Who shut up the sea with doors... and said, Hitherto shalt thou come, but no further"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:9 - KJV
@@ -115,6 +128,24 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, gathering of waters, emergence of dry land
+*   OT: Psalm 104:5-9 — "Who laid the foundations of the earth... the waters stood above the mountains... they go down by the valleys unto the place which thou hast founded for them" (poetic commentary on the Day 3 gathering of waters)
+*   OT: Proverbs 8:29 — "When he gave to the sea his decree, that the waters should not pass his commandment" (divine boundary setting)
+*   OT: Job 38:8-11 — "Or who shut up the sea with doors, when it brake forth... and prescribed for it my decree"
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The earth came forth from the hand of its Maker... hills, mountains, and plains were diversified"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Command Formula and the Third Day:** "And God said, Let the waters under the heaven be gathered together..." (*wayyomer Elohim yiqqawu hammayim mittakhat hashamayim*). This introduces the first of two creative fiats on Day 3 (vv. 9-10 hydro-geological formation, vv. 11-13 botanical life).
+*   **The Gathering of the Waters (*yiqqawu*, H6960):** The verb *qawah* (H6960, "to collect, gather, await") is the verbal root underlying *miqveh* ("gathering / reservoir", v10). The command gathers the undifferentiated surface waters into "one place" (*maqom echad*, H4725 H259), indicating a globally interconnected oceanic reservoir network.
+*   **The Emergence of Dry Land (*yabbashah*, H3004):** The noun *yabbashah* refers to terrestrial dry ground (distinct from *erets* as the global planet or general land). The emergence of dry ground completes the spatial separation initiated on Day 2, establishing a stable terrestrial platform capable of supporting biological vegetation (v11) and terrestrial fauna/man (Day 6).
+*   **The Confirmation Formula (*wayehi-khen*, H1961 H3651):** "And it was so" confirms the immediate, permanent establishment of the planetary boundaries between marine basins and continents.
+*   **Apparatus & Source Tagging Alignment:** In the Hebrew text (OSHB), the phrase *mittakhat* (H8478, "from underneath") and the closing formula *wayehi-khen* (H1961 H3651) are attested with full morphology, whereas in scrollmapper's KJV-osis tagging they are untagged/merged into the English text spans (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.9`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -122,5 +153,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-003;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

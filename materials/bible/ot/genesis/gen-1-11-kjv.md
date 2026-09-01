@@ -27,9 +27,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "hebrews-11-3"
+    note: "Through faith we understand that the worlds were framed by the word of God — the origin of plant life by divine command"
+  - type: xref/parallel
+    target: "mark-4-26-29"
+    note: "So is the kingdom of God, as if a man should cast seed into the ground... the earth bringeth forth fruit of herself"
+  - type: xref/theme
+    target: "psalms-104-14"
+    note: "He causeth the grass to grow for the cattle, and herb for the service of man"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:11 - KJV
@@ -142,6 +155,26 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:RelP
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, plant life, botanical kinds, seed reproduction
+*   NT: Hebrews 11:3 — "the worlds were framed by the word of God, so that things which are seen were not made of things which do appear" (botanical origins rooted in the divine fiat)
+*   NT: Mark 4:26-29 — "first the blade, then the ear, after that the full corn in the ear" (creational plant design as kingdom parable)
+*   OT: Psalm 104:14 — "He causeth the grass to grow for the cattle, and herb for the service of man"
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The earth brought forth grass, the herb yielding seed, and the fruit tree yielding fruit"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Command for Organic Flora:** "And God said, Let the earth bring forth grass..." (*wayyomer Elohim tadshe ha'arets deshe*). Following the establishment of the dry land in vv. 9-10, this second decree of Day 3 introduces biological life to the planet. While the earth is commanded to bring forth (*tadshe*, cognate verb to *deshe*), the generative origin is the divine fiat, not spontaneous abiogenesis.
+*   **Threefold Botanical Taxonomy:** The text categorizes vegetation into three broad groups:
+    1. *deshe* (H1877): tender sprouts, grasses, and ground cover.
+    2. *esev mazria zera* (H6212, H2232, H2233): seed-bearing herbs, grains, and flowering vegetation.
+    3. *ets peri oseh peri* (H6086, H6529, H6213): fruit-bearing trees with internal seeds.
+*   **"After His Kind" (*le-mino*, H4327):** This is the first occurrence of the noun *min* ("kind, sort, species") in Scripture, recurring 10 times throughout Genesis 1 (vv. 11, 12, 21, 24, 25). In Seventh-day Adventist creation theology and biblical biology, *min* represents fixed biological boundaries with internal reproductive stability ("whose seed is in itself"). The text indicates polyphyletic creation (multiple distinct created kinds) rather than common descent from a single primordial ancestor. Per NOTICE.md, this fixity-of-kinds concept is articulated as the biblical/Adventist hermeneutic alongside modern taxonomic discussions.
+*   **Apparatus & Untagged Particles:** In the Hebrew text (OSHB), the confirmation formula *wayehi-khen* (H1961 H3651) and the spatial preposition *al* (H5921, "upon the earth") are present, but are omitted/merged in scrollmapper KJV-osis tagging (see `correlations/apparatus-genesis1.json`, key `Gen.1.11`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -149,5 +182,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-003;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.
