@@ -19,9 +19,19 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "psalms-136-7-9"
+    note: "To him that made great lights: for his mercy endureth for ever — the sun to rule by day, the moon and stars to rule by night"
+  - type: xref/parallel
+    target: "matthew-5-45"
+    note: "He maketh his sun to rise on the evil and on the good — the luminaries as expressions of creational common grace"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:15 - KJV
@@ -70,6 +80,21 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, luminaries, divine fulfillment
+*   OT: Psalm 136:7-9 — "To him that made great lights... The sun to rule by day... The moon and stars to rule by night: for his mercy endureth for ever"
+*   NT: Matthew 5:45 — "He maketh his sun to rise on the evil and on the good" (the luminaries as creational common grace)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "God... called into existence the sun and the moon to divide the day and the night"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **"And It Was So" (*wayehi ken*, H1961 H3651):** The formula of divine fulfillment — what God decrees comes to pass. The light-bearers are not merely commanded but actually become "for lights in the firmament." This refrain (also v7, v9, v11) marks the seamless correspondence between divine word and creational result.
+*   **The Purpose Clause — "To Give Light upon the Earth" (H215; H776):** The luminaries exist for the earth. Their light is directed downward, toward the life of Day 3 (the vegetation that requires it) and, later, toward humanity. The purpose clause is repeated in v17, framing v16 as the center of the Day-4 account: creation is functionally integrated, and the "greater light" serves rather than dominates.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, the verb *hayah* (H1961, "were" / "was"), the adverb *ken* (H3651, "so"), and the preposition *al* (H5921, "upon") are left untagged/merged into the surrounding word spans — four Hebrew tokens with no direct Strong's tag in the markup (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.15`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -77,5 +102,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-004;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

@@ -1,6 +1,6 @@
 # WP-004: Curate Genesis 1:14-19 (Day 4 — luminaries, appointed times)
 
-status: open
+status: done
 scope: gen-1-14-kjv.md .. gen-1-19-kjv.md (six drafts)
 priority: medium
 
@@ -24,15 +24,15 @@ mo'adim connects directly to the appointed feasts and the Sabbath.
 
 ## Tasks
 
-- [ ] Cross-references: Psalm 104:19 (He appointed the moon for mo'adim),
+- [x] Cross-references: Psalm 104:19 (He appointed the moon for mo'adim),
       Genesis 1:14 <-> Leviticus 23 (appointed feasts), Psalm 19:1-6
       (the heavens declare), Isaiah 66:23 (Sabbath + new moon in the new
       earth).
-- [ ] Study notes: Day 1 light vs Day 4 luminaries (already flagged in
+- [x] Study notes: Day 1 light vs Day 4 luminaries (already flagged in
       gen-1-3 — carry the nuance); mo'adim as cultic-calendar anchor;
       the greater/lesser light pairing with the H853 object markers the
       English never shows (use the apparatus rows as the textual hook).
-- [ ] AI markers; `status: review`; `updated: <today>`; human review recorded.
+- [x] AI markers; `status: review`; `updated: <today>`; human review recorded.
 
 ## Conventions that apply
 
@@ -40,9 +40,15 @@ Same as WP-001; consider theme/sabbath tags where genuinely warranted.
 
 ## Acceptance criteria
 
-- [ ] verify_all.sh green; six entries `status: review`; AI marked; skeleton
+- [x] verify_all.sh green; six entries `status: review`; AI marked; skeleton
       byte-identical except status/updated; human review recorded.
 
 ## Notes / findings
 
-(appended during work)
+- Day 4 curated 2026-09-01: six entries moved draft -> review (gen-1-14..19).
+- theme/sabbath added to gen-1-14 (mo'adim anchor) and gen-1-19 (day-boundary
+  formula -> Sabbath reckoning), per WP brief.
+- Subagent review (project-reviewer) passed after fixes: two factual wording
+  corrections (gen-1-19 triad wording; gen-1-15 apparatus phrasing), one
+  apparatus enumeration fix (gen-1-14 H1961 x2), theological hedging added
+  (gen-1-14 mo'adim synthesis; gen-1-16 "exemplified in Christ").

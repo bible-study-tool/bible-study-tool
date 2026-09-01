@@ -14,7 +14,7 @@ exist and are byte-verified — curation ADDS interpretive content
 | [WP-001](WP-001-gen1-day1-completion.md) | v4-5 | Day 1 completion (light; first naming) | done |
 | [WP-002](WP-002-gen1-day2.md) | v6-8 | Day 2 (firmament, waters) | done |
 | [WP-003](WP-003-gen1-day3.md) | v9-13 | Day 3 (dry land, seed-bearing plants) | done |
-| [WP-004](WP-004-gen1-day4.md) | v14-19 | Day 4 (luminaries, appointed times) | open |
+| [WP-004](WP-004-gen1-day4.md) | v14-19 | Day 4 (luminaries, appointed times) | done |
 | [WP-005](WP-005-gen1-day5.md) | v20-23 | Day 5 (sea creatures, birds) | open |
 | [WP-006](WP-006-gen1-day6.md) | v24-31 | Day 6 (land animals, humanity, dominion) | open |
 

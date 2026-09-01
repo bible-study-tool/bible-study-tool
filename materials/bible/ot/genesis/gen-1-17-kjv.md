@@ -20,9 +20,19 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/parallel
+    target: "psalms-8-3"
+    note: "When I consider thy heavens, the work of thy fingers, the moon and the stars, which thou hast ordained"
+  - type: xref/theme
+    target: "psalms-148-3"
+    note: "Praise ye him, sun and moon: praise him, all ye stars of light — the luminaries summoned to worship the Creator"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:17 - KJV
@@ -79,6 +89,21 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, divine placement and appointment
+*   OT: Psalm 8:3 — "When I consider thy heavens, the work of thy fingers, the moon and the stars, which thou hast ordained"
+*   OT: Psalm 148:3 — "Praise ye him, sun and moon: praise him, all ye stars of light"
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — the luminaries placed in the heavens as God's appointed servants
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **"God Set Them" (*wayyitten*, H5414):** The verb *natan* ("to give, put, set") — God *gives* the lights their place, as he later gives the land (Deut 1:8) and gives Israel his laws. Placement is appointment: the luminaries are stationed in the *raqia* (H7549), the expanse structured on Day 2. The firmament of Day 2 is now inhabited by the light-bearers of Day 4.
+*   **The Repeated Purpose Clause (H215; H776):** "To give light upon the earth" repeats v15 almost verbatim, bracketing v16 as the center of the Day-4 account. The light of the luminaries is directed earthward, serving the vegetation of Day 3 and preparing the life of Days 5 and 6 — a functionally integrated creation.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, the preposition *al* (H5921, "upon") and the object marker with pronominal suffix *et* + *-ham* (H853, "them") are left untagged. The English "them" hides the H853 marker that resumes the two great lights of v16 as the objects of God's placement (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.17`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -86,5 +111,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-004;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

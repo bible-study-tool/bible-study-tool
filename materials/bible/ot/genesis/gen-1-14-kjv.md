@@ -8,6 +8,7 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/sabbath
   - translation/kjv
   - lang/hebrew
   - strongs-H226
@@ -25,9 +26,25 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "psalms-104-19"
+    note: "He appointed the moon for seasons (mo'adim): the sun knoweth his going down"
+  - type: xref/theme
+    target: "leviticus-23"
+    note: "The feasts of the LORD, holy convocations — the appointed times (mo'adim) of the cultic calendar"
+  - type: xref/theme
+    target: "psalms-19-1-6"
+    note: "The heavens declare the glory of God; and the firmament sheweth his handywork"
+  - type: xref/theme
+    target: "isaiah-66-23"
+    note: "From one new moon to another, and from one sabbath to another — the creational calendar in the new earth"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:14 - KJV
@@ -124,6 +141,24 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, luminaries, appointed times (mo'adim), the cultic calendar
+*   OT: Psalm 104:19 — "He appointed the moon for seasons: the sun knoweth his going down" (creation psalm using the Day-4 vocabulary)
+*   OT: Leviticus 23 — the appointed feasts (mo'adim) of the LORD, anchored to the Day-4 appointment of times
+*   OT: Psalm 19:1-6 — "The heavens declare the glory of God; and the firmament sheweth his handywork"
+*   OT: Isaiah 66:23 — "From one new moon to another, and from one sabbath to another, shall all flesh come to worship before me" (the creational calendar in the new earth)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — the luminaries appointed "for signs, and for seasons, and for days, and years"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Signs and Seasons (*oth*, H226; *mo'adim*, H4150):** The luminaries are given a fourfold function — "for signs, and for seasons, and for days, and years." *Oth* (H226) is a signal or marker, the same word used of the rainbow (Gen 9:12) and the Sabbath (Exod 31:13, 17). *Mo'ed* (H4150) is the appointed time — the very word used for the appointed feasts of Israel (Leviticus 23:2, 4). The connection between the Day-4 appointments and the later cultic calendar is a synthesis drawn by biblical writers themselves (cf. Psalm 104:19) and is presented here with that nuance, keeping the creational appointment distinct from its later cultic application.
+*   **Day 1 Light vs Day 4 Luminaries (carrying the nuance from gen-1-3):** The light of Day 1 (H216, *or*) existed before the luminaries of Day 4 (H3974, *ma'or* — "a luminous body"). The Hebrew lexical distinction between light itself and a light-bearer is collapsed in the English "light." In Adventist tradition the Day-1 light has often been read as the presence/glory of God; as noted in gen-1-3 and gen-1-4, this is an interpretive tradition and is presented here with nuance, not as settled fact.
+*   **The Firmament Placement and the Division Motif (*raqia*, H7549; *badal*, H914):** The lights are set "in the firmament" — the expanse structured on Day 2 — and their work is "to divide the day from the night," reusing the Day-1 division verb *badal* (v4). Day 4 fills and operationalizes the boundaries established on Days 1 and 2: the light-bearers inhabit the realm their light was already dividing.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, both occurrences of *hayah* (H1961 — the jussive *yehi*, "let there be," and *weyihyu*, "and let them be") and the two occurrences of *ben* (H996, "between") are left untagged, so these Hebrew tokens carry no direct Strong's tag in the markup (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.14`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -131,5 +166,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-004;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.
