@@ -27,9 +27,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "genesis-9-3"
+    note: "Every moving thing that liveth shall be meat for you — the dietary change after the flood (compare)"
+  - type: xref/theme
+    target: "genesis-2-16"
+    note: "Of every tree of the garden thou mayest freely eat — the provision of food confirmed in Eden"
+  - type: xref/theme
+    target: "daniel-1-12"
+    note: "Prove thy servants, I beseech thee, ten days; and let them give us pulse to eat, and water to drink — the plant diet in practice"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:29 - KJV
@@ -142,6 +155,22 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the plant-based diet, divine provision
+*   OT: Genesis 9:3 — "Every moving thing that liveth shall be meat for you" (the dietary change after the flood)
+*   OT: Genesis 2:16 — "Of every tree of the garden thou mayest freely eat" (the provision of food confirmed in Eden)
+*   OT: Daniel 1:12 — "Let them give us pulse to eat, and water to drink" (the plant diet in practice)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "For meat, God gave man the fruits of the earth"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **"Behold, I Have Given You" (H2009, *hinneh*; H5414, *nathan*):** The emphatic particle *hinneh* ("behold") introduces the divine grant. The plant diet is a gift, not a deprivation — every seed-bearing herb and fruit tree is given "to you it shall be for meat" (*oklah*, H402). The verb *nathan* ("to give") frames the whole as provision.
+*   **The Pre-Fall Diet — an Interpretation, Not a Command:** Verse 29 presents the original diet as plant-based — "every herb bearing seed... and every tree... yielding seed." This is the pre-Fall state of the creation order. Genesis 9:3 records a post-Flood change ("Every moving thing that liveth shall be meat for you"), which the text presents as an accommodation of the divine gift. That the original diet was vegetarian, and that this reflects the peace of the original creation, is an interpretive position — one the Adventist health emphasis has built upon — and is offered here as interpretation, not as a universal moral command (see NOTICE.md).
+*   **The Lexical Emphasis of "All" (H3605, *kol*):** The word *kol* ("all") is lexically emphatic in this verse — "every herb... every tree... all the earth." The eight apparatus omissions in this verse (three *kol*, two *asher* "which," the *al* "upon," and two *et*) show the Hebrew's comprehensive scope being flattened in the KJV-osis markup (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.29`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -149,5 +178,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-006;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

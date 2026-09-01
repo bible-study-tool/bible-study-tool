@@ -29,9 +29,28 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "psalms-8-5-6"
+    note: "For thou hast made him a little lower than the angels... Thou madest him to have dominion over the works of thy hands — the dominion psalm"
+  - type: xref/theme
+    target: "genesis-5-1-2"
+    note: "In the day that God created man, in the likeness of God made he him — the image restated"
+  - type: xref/theme
+    target: "colossians-1-15-17"
+    note: "Who is the image of the invisible God, the firstborn of every creature — Christ the image"
+  - type: xref/theme
+    target: "genesis-1-1"
+    note: "In the beginning God created — the Elohim of v1 deliberates as 'Let us make man' here"
+  - type: xref/theme
+    target: "acts-17-26"
+    note: "And hath made of one blood all nations of men — the unity of humanity rooted in the one created man"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:26 - KJV
@@ -160,6 +179,24 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, imago Dei, the divine council, dominion
+*   OT: Psalm 8:5-6 — "Thou hast made him a little lower than the angels... Thou madest him to have dominion over the works of thy hands" (the dominion psalm)
+*   OT: Genesis 5:1-2 — "In the day that God created man, in the likeness of God made he him" (the image restated)
+*   NT: Colossians 1:15-17 — "Who is the image of the invisible God" (Christ the image)
+*   OT: Genesis 1:1 — "In the beginning God created" (the Elohim who creates now deliberates)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "God said, Let us make man in our image"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **"Let Us Make Man" (*na'aseh adam*):** The first person plural is one of the most debated phrases in the creation account. Three main readings are offered: (1) the **plural of majesty** — the royal "we" of a sovereign; (2) the **heavenly council** — God addressing the angelic host (cf. 1 Kings 22:19; Job 1:6); (3) the **Trinitarian** reading — the plurality of the Godhead deliberating (cf. Gen 3:22, 11:7). Each has proponents and difficulties; per NOTICE.md the framework presents these with nuance rather than dogmatism, noting that the New Testament identifies Christ as the agent of creation (John 1:3; Col 1:16) and that the plural connects to the plural form *Elohim* of v1 (see gen-1-1).
+*   **Image (*tselem*, H6754) and Likeness (*demuth*, H1823):** *Tselem* (a "phantom, resemblance") and *demuth* ("likeness") together define the divine intent for humanity. In the ancient Near East, the king was the "image" of his god — the ruler who represented the deity on earth. Genesis democratizes this: the image belongs to all humanity, male and female (v27), and designates the role of representing God's rule over creation.
+*   **Dominion as Representation (H7287, *radah*):** "Let them have dominion" — the verb *radah* ("to rule, tread down") is the human task that flows from the image. Humanity rules *as* God's image: not as an independent sovereign but as a vice-regent. This is the seed of the biblical dominion theology that Psalm 8 celebrates and that Christian tradition has read through Christ, the true Image (Col 1:15).
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, two occurrences of *kol* (H3605, "all" — "over all the earth") and the preposition *al* (H5921, "upon") are left untagged (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.26`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -167,5 +204,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-006;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

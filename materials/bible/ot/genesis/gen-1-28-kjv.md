@@ -29,9 +29,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "psalms-8-6-8"
+    note: "Thou madest him to have dominion over the works of thy hands... All sheep and oxen, yea, and the beasts of the field — the dominion psalm"
+  - type: xref/theme
+    target: "genesis-1-22"
+    note: "And God blessed them, saying, Be fruitful, and multiply — the blessing first given to the animals, now extended to humanity"
+  - type: xref/theme
+    target: "genesis-9-1-2"
+    note: "And God blessed Noah and his sons... and the fear of you shall be upon every beast — the blessing renewed after the flood"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:28 - KJV
@@ -160,6 +173,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the human blessing, dominion as stewardship
+*   OT: Psalm 8:6-8 — "Thou madest him to have dominion over the works of thy hands" (the dominion psalm)
+*   OT: Genesis 1:22 — "And God blessed them, saying, Be fruitful, and multiply" (the blessing first given to the animals, now extended to humanity)
+*   OT: Genesis 9:1-2 — "And God blessed Noah and his sons... and the fear of you shall be upon every beast" (the blessing renewed after the flood)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "God blessed the man and the woman... and gave them dominion"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Human Blessing (*barak*, H1288):** The blessing that first fell on the sea creatures (v22) is now spoken over humanity — "God blessed them." The creation order is one of blessing: the divine word over the creatures of Day 5 is extended, with added responsibilities, to the image-bearers of Day 6.
+*   **"Be Fruitful, and Multiply, and Replenish the Earth" (H6509, H7235, H4390):** The *peru u-revu* commission is renewed verbatim from v22, now with the addition *u-mil'u* ("and fill/replenish"). The mandate to fill the earth is paired with the call to subdue it — abundance and cultivation belong together.
+*   **"Subdue" (*kabash*, H3533) and "Have Dominion" (*radah*, H7287):** *Kabash* ("to tread down, subjugate") and *radah* ("to rule") together define the human role over the earth and its creatures. In Adventist environmental-stewardship reading, this is not a license to exploit but a charge to tend — the earth is God's (Ps 24:1), humanity is its steward, and the fall corrupts this trust (Rom 8:20-22). The mandate is best read in the context of the garden to be "dressed and kept" (Gen 2:15).
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, the *kol* (H3605, "every" — "every living thing"), the preposition *al* (H5921, "over"), and two object markers *et* (H853, "them," "the fish") are left untagged (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.28`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -167,5 +197,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-006;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

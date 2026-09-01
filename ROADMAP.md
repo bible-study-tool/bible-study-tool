@@ -36,7 +36,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 ## Goal Inventory
 
 ### A. Corpus & Content
-- `[~]` **A1. Complete Genesis 1 creation narrative** — v1-31 (all 31 skeletons generated; v1-23 curated across WP-001..WP-005 with status: review; v24-31 awaiting curation in WP-006)
+- `[x]` **A1. Complete Genesis 1 creation narrative** — v1-31 (all 31 skeletons generated; v1-31 curated across WP-001..WP-006 with status: review). **A1 follow-up (next):** Genesis 2:1-3 — the seventh-day Sabbath — is the natural next corpus extension (new work package)
 - `[ ]` **A2. Expand OT coverage** — Exodus, Isaiah, Daniel, Psalms (Adventist-prioritized); more word studies
 - `[ ]` **A3. Add NT coverage** — John 1, Hebrews, Revelation, Romans
 - `[x]` **A4. Full Strong's lexicon dataset** — `lexicons/strongs-list.json` (canonical 8674 H + 5624 G, F2-verified) + `lexicons/strongs-lexicon.json` (definitions/transliteration/KJV usage); sources pinned in `data/PROVENANCE.md`
@@ -150,7 +150,7 @@ scrollmapper/bible_databases (MIT) additionally serves A6 (translations).
    it. Unlocks content + Macula.
 
 ### Phase 3 — Corpus Expansion (validated)
-6. **A1 — Complete Genesis 1** (v1-31) — ✅ skeletons generated; v1-23 curated (WP-001..WP-005); v24-31 curation pending (WP-006)
+6. **A1 — Complete Genesis 1** (v1-31) — ✅ skeletons generated; v1-31 curated (WP-001..WP-006); **next: Genesis 2:1-3 (Sabbath) as the A1 follow-up package**
 7. **A2 — Expand OT** (Exodus, Isaiah, Daniel, Psalms)
 8. **A3 — Add NT** (John 1, Hebrews, Revelation, Romans)
 9. **A5 — Greek word-study expansion**

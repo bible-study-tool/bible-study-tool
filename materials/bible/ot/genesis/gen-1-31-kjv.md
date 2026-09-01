@@ -24,9 +24,25 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "exodus-20-8-11"
+    note: "For in six days the LORD made heaven and earth... and rested the seventh day — the Sabbath commandment anchored in the creation week"
+  - type: xref/theme
+    target: "genesis-2-1-3"
+    note: "And on the seventh day God ended his work which he had made — the natural continuation of the creation week"
+  - type: xref/theme
+    target: "genesis-1-4"
+    note: "And God saw the light, that it was good — the repeated divine appraisal culminating here in 'very good'"
+  - type: xref/theme
+    target: "1-timothy-4-4"
+    note: "For every creature of God is good — the creation pronounced good by the Creator"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:31 - KJV
@@ -115,6 +131,24 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the "very good" verdict, the sixth day, the Sabbath setup
+*   OT: Exodus 20:8-11 — "For in six days the LORD made heaven and earth... and rested the seventh day" (the Sabbath commandment anchored in the creation week)
+*   OT: Genesis 2:1-3 — "And on the seventh day God ended his work" (the natural continuation)
+*   OT: Genesis 1:4 — "And God saw the light, that it was good" (the repeated appraisal culminating in "very good")
+*   NT: 1 Timothy 4:4 — "For every creature of God is good" (the creation pronounced good)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "God looked upon all that he had made, and pronounced it very good"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **"Very Good" (*tov me'od*, H2896 + H3966):** The final appraisal is emphatic: not merely *tov* ("good," the refrain of v4, v10, v12, v18, v21, v25) but *tov me'od* — "very good." The whole of creation, crowned by humanity in the divine image, receives the Creator's full approval. In the Adventist reading — and in the broader biblical-theological tradition — the emphatic verdict is read together with the creation narrative's own witness: the original order as depicted contains no hint of flaw, decay, or death, a foundational observation for understanding the biblical narrative of sin, suffering, and redemption (offered here as interpretation, consistent with the framing at gen-1-29).
+*   **"Behold" (*hinneh*, H2009):** The particle recurs from v29 ("Behold, I have given you"), framing the entire creation week as a gift to be beheld and received.
+*   **The Sixth Day and the Sabbath Setup:** "The evening and the morning were the sixth day" completes the six working days. The day-boundary formula (v5, v8, v13, v19, v23, v31) here prepares the transition to Genesis 2:1-3 — the seventh day, the day of rest. This is the natural next corpus extension (see ROADMAP A1 follow-up): the Sabbath of Genesis 2:1-3 is the culminating institution of the creation week, later enshrined in the fourth commandment (Exod 20:8-11).
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, five Hebrew tokens are left untagged: two *wayehi* (H1961), *wehinneh* (H2009, "and behold"), *kol* (H3605, "every"), and *et* (H853) (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.31`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -122,5 +156,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-006;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.
