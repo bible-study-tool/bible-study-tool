@@ -70,18 +70,27 @@ Every entry MUST include:
 6.  When multiple interpretations exist, present them with appropriate nuance
     
 
-## Local Verification (run before every Merge Request)
+## Local Verification & Tooling (run before every Merge Request)
 
+### Work package pre-flight check
+For contributors working on specific work packages, run the fast deterministic pre-flight check:
+```bash
+python scripts/wp_check.py --wp WP-003
+```
+This checks AI comment boundaries (`<!-- AI-GENERATED -->` ... `<!-- END AI-GENERATED -->`), verifies that verse quotes and Strong's definitions match canonical lexicons with zero drift, and runs F1–F4 validators on the scoped files.
+
+### Full verification harness
 One command runs every check CI runs, with a remedy printed for each failure:
 
 ```bash
-scripts/verify_all.sh
+bash scripts/verify_all.sh
 ```
 
 What it runs, and what each gate means for you:
 
 1. **Test suite (pytest)** — includes the data-integrity gates below plus the
-   *regeneration tripwires* and the *PROVENANCE checksum gate*.
+   *regeneration tripwires* and the *PROVENANCE checksum gate*. Always invoked
+   via `python -m pytest`.
 2. **F1-F4 validators** — schema, Strong's numbers, cross-references, and
    dead-reference audit over the whole corpus.
 3. **Raw-source checksums** — only when the raw sources are present locally

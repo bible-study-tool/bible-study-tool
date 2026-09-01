@@ -252,15 +252,21 @@ translation texts are linked to rather than bundled.
 See [Contribution Standards](CONTRIBUTION_STANDARDS.md) for guidelines and
 [docs/WORKFLOW.md](docs/WORKFLOW.md) for the explicit working method (session
 start, step-by-step execution with subagent review, ADRs, work packages).
-`AGENTS.md` is the thin charter every session loads. Before every Merge
-Request, run `scripts/verify_all.sh`.
-Before every Merge Request, run the full local verification:
+`AGENTS.md` is the thin charter every session loads.
 
+For work package curation, use the deterministic tooling:
 ```bash
-scripts/verify_all.sh
+# 1. Extract concise curation context
+python scripts/curate_context.py --wp WP-003
+
+# 2. Pre-flight check scoped entries
+python scripts/wp_check.py --wp WP-003
+
+# 3. Run full local verification
+bash scripts/verify_all.sh
 ```
 
-It runs the test suite, the F1-F4 data-integrity validators, and the source
+`bash scripts/verify_all.sh` runs the test suite, the F1-F4 data-integrity validators, and the source
 checksums — the exact checks CI runs — and prints a remedy for each failure.
 Hand-authored content (`materials/`) is validated by the F1-F4 validators;
 generated artifacts (`lexicons/`, the agreement ledger, generated corpus

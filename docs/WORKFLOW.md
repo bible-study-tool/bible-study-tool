@@ -90,24 +90,38 @@ ADR-0001 (deterministic-vs-AI), ADR-0007 (agreement-layer status policy).
 
 Work packages live in `docs/wp/` (index in `docs/wp/INDEX.md`). A package is
 self-contained: it lists the verses, the files to edit, the data sources to
-use, the conventions, and the acceptance criteria. A session doing curation
-needs **only** AGENTS.md + the package file.
+use, the conventions, and the acceptance criteria.
 
-For each verse in the package (see `docs/wp/TEMPLATE.md` for the skeleton):
+The streamlined curation cycle:
 
-1. Read the generated draft (`materials/bible/ot/genesis/gen-1-N-kjv.md`,
-   `status: draft`) and its supporting rows: the apparatus
-   (`correlations/apparatus-genesis1.json`, which Hebrew words the English
-   hides), the gloss side-by-side (`correlations/agreement-ledger.json`,
-   lexicon_gloss section), and the lexicons.
-2. Write the interpretive content: cross-references, study notes, theological
-   connections (per `CONTRIBUTION_STANDARDS.md`). AI-assisted drafting is
-   fine — **mark every AI-generated block** `<!-- AI-GENERATED -->` …
-   `<!-- END AI-GENERATED -->`, set `status: review` when done, and leave
-   promotion to `final` to human review.
-3. Verify + review + commit per Example 2. Never edit the generated
-   skeleton's deterministic parts (verse text, Strong's tags) by hand — if a
-   fact is wrong, that's a source issue: fix the source, regenerate.
+1. **Extract targeted context** (avoids reading raw multi-thousand-line JSONs):
+   ```bash
+   python scripts/curate_context.py --wp WP-003   # or --verses 9..13
+   ```
+   This generates a concise, consolidated brief with KJV verse quotes, exact
+   apparatus omissions (WLC Hebrew, morph, Strong's), and lexical definitions.
+
+2. **Write the interpretive content**: cross-references, study notes, theological
+   connections (per `CONTRIBUTION_STANDARDS.md` and `NOTICE.md`). AI-assisted drafting
+   is fine — **mark every AI-generated block** `<!-- AI-GENERATED -->` …
+   `<!-- END AI-GENERATED -->`, set `status: review` and `updated: <today>` in frontmatter,
+   and leave promotion to `final` to human review.
+   Never edit the generated skeleton's deterministic parts (verse text quote,
+   Strong's tags, word study blocks) by hand.
+
+3. **Pre-flight verify**:
+   ```bash
+   python scripts/wp_check.py --wp WP-003
+   ```
+   Deterministically verifies AI tag balance, skeleton invariance against lexicons,
+   and scoped F1-F4 schema rules in milliseconds.
+
+4. **Verify + review + commit**:
+   ```bash
+   bash scripts/verify_all.sh
+   ```
+   Run subagent review via `.opencode/agent/project-reviewer.md`, update the work package status,
+   and commit per repo conventions.
 
 ## Example 5 — A source was re-pinned (the golden-baseline tripwire)
 
