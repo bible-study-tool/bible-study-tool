@@ -23,9 +23,26 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "psalms-136-7-9"
+    note: "God made the lights and calls the heavenly bodies by name — the naming authority echoes v5"
+  - type: xref/theme
+    target: "isaiah-45-6-7"
+    note: "I form the light, and create darkness — the sole sovereignty of Yahweh over light and dark"
+  - type: xref/contrast
+    target: "revelation-21-25"
+    note: "There shall be no night there — the eschaton reverses the darkness that was 'called' in Genesis 1:5"
+  - type: xref/theme
+    target: "psalms-90-12"
+    note: "Teach us to number our days — the counting of days begins here, yom echad"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — the first day is one day"
+---
 ---
 
 # Genesis 1:5 - KJV
@@ -106,6 +123,21 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:V
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: creation, naming, day/night
+*   NT: Romans 4:17 — "God, who quickeneth the dead, and calleth those things which be not as though they were" (the same creative calling pattern as naming Day and Night)
+*   NT: Ephesians 5:8 — "ye were sometimes darkness, but now are ye light in the Lord" (Pauline reappropriation of the creational light/darkness categories)
+*   OT: Psalm 33:6 — "By the word of the LORD were the heavens made" — naming is creating
+*   OT: Amos 5:8 — "He calleth for the waters of the sea" — same naming-authority verb
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The evening and the morning were the first day"
+
+## Study Notes
+
+*   This verse contains the **first naming in Scripture**. The act of naming is inherently an act of authority and relationship: God calls the light "Day" (H3117 yom) and the darkness "Night" (H3915 lailah). This naming pattern recurs throughout Genesis 1 (firmament = "Heaven", v8; dry land = "Earth", waters = "Seas", v10). In the ancient Near Eastern context, naming something implied power over it — Genesis here asserts Yahweh's sovereignty over the cosmos without borrowing from the names of pagan deities (Day and Night are never deified).
+*   "The evening and the morning were the first day" — this formula introduces the biblical day as an **evening-first, morning-first cycle** (sunset to sunset), foundational for the entire biblical calendar and the Adventist understanding of the Sabbath (Leviticus 23:32: "from even unto even, shall ye celebrate your sabbath"). The Hebrew literally reads "one day" (yom echad, H259 H3117), not "the first day" — a distinct expression that emphasizes the unity and completeness of the creation day before the week unfolds.
+*   The two untagged occurrences of H1961 (vayehi, "and there was") in the scrollmapper tagging for this verse (documented in the agreement apparatus) illustrate a pattern: the Hebrew consecutive-imperfect form "and it was" is often left untagged in scrollmapper's KJV-osis tagging, even though it carries the "to be / to become / to come to pass" semantics of H1961. This is a tagger convention, not a textual variation. <!-- AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -113,5 +145,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-001;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

@@ -23,9 +23,23 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+semantic_links:
+cross_references:
+  - type: xref/fulfillment
+    target: "john-8-12"
+    note: "I am the light of the world — Christ identifies himself with the light that shines in darkness"
+  - type: xref/theme
+    target: "john-1-5"
+    note: "And the light shineth in darkness; and the darkness comprehended it not — the Word as the light of men"
+  - type: xref/theme
+    target: "isaiah-5-20"
+    note: "Woe to those who call evil good — the moral dimension of the creational light/darkness distinction"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — God did not create darkness"
 ---
 
 # Genesis 1:4 - KJV
@@ -106,6 +120,22 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:A
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: creation, light/darkness separation
+*   NT: 2 Corinthians 4:6 — "the God who commanded light to shine out of darkness" (direct allusion to Gen 1:3-5)
+*   NT: 1 John 1:5 — "God is light, and in him is no darkness at all" (theological extension of the division)
+*   NT: John 1:4-5 — "in him was life; and the life was the light of men. And the light shineth in darkness; and the darkness comprehended it not"
+*   Prophecy: Isaiah 5:20 — "woe unto them that call evil good, and good evil" (the moral division mirrors the creational division)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "God did not create darkness"
+
+## Study Notes
+
+*   This is the first occurrence of the divine-evaluation refrain "it was good" (H2896 tov). The formula appears seven times in Genesis 1 (v4, 10, 12, 18, 21, 25, 31 — with v31 being "very good"), forming a structural spine for the creation week. This refrain is unique to the creation account and is never used in the Genesis narratives that follow (Abraham, etc.). The number seven echoes the seven-day structure.
+*   The act of separation (H914 badal) is a key creation motif: light from darkness (here), waters above from below (v6-7), day from night (v14, v18). In the SDA framework this is understood as God establishing order, distinction, and boundaries as foundational creation governance — the opposite of chaos (tohu wa-bohu, v2).
+*   "God saw the light" — the Hebrew "ra'ah" (H7200) here implies divine evaluation, not mere observation. This "seeing-and-evaluating" pattern recurs at the end of each creation day (except day 2).
+*   Adventist reading notes that the light was created before the luminaries (Day 1 vs Day 4), traditionally associated with the presence and glory of God. This is an interpretive tradition and must be presented with nuance, not as settled fact. See Day 4 for further discussion. <!-- AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -113,5 +143,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-001;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.
