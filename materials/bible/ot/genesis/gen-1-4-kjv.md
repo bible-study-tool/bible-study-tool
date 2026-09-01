@@ -130,10 +130,12 @@ cross_references:
 
 ## Study Notes
 
+<!-- AI-GENERATED -->
 *   This is the first occurrence of the divine-evaluation refrain "it was good" (H2896 tov). The formula appears seven times in Genesis 1 (v4, 10, 12, 18, 21, 25, 31 — with v31 being "very good"), forming a structural spine for the creation week. This refrain is unique to the creation account and is never used in the Genesis narratives that follow (Abraham, etc.). The number seven echoes the seven-day structure.
 *   The act of separation (H914 badal) is a key creation motif: light from darkness (here), waters above from below (v6-7), day from night (v14, v18). In the SDA framework this is understood as God establishing order, distinction, and boundaries as foundational creation governance — the opposite of chaos (tohu wa-bohu, v2).
 *   "God saw the light" — the Hebrew "ra'ah" (H7200) here implies divine evaluation, not mere observation. This "seeing-and-evaluating" pattern recurs at the end of each creation day (except day 2).
-*   Adventist reading notes that the light was created before the luminaries (Day 1 vs Day 4), traditionally associated with the presence and glory of God. This is an interpretive tradition and must be presented with nuance, not as settled fact. See Day 4 for further discussion. <!-- AI-GENERATED -->
+*   Adventist reading notes that the light was created before the luminaries (Day 1 vs Day 4), traditionally associated with the presence and glory of God. This is an interpretive tradition and must be presented with nuance, not as settled fact. See Day 4 for further discussion.
+<!-- END AI-GENERATED -->
 
 ## Source Notes
 

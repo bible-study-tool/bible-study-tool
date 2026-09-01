@@ -1,0 +1,242 @@
+#!/usr/bin/env python3
+"""curate_context.py — Generate a compact, deterministic curation briefing.
+
+Compresses thousands of lines of apparatus JSON, agreement ledgers, and
+lexicons into a focused, human-and-LLM-readable ~50-80 line briefing for a
+specific work package or verse range.
+
+Usage:
+    python scripts/curate_context.py --wp WP-003
+    python scripts/curate_context.py --verses 9..13
+    python scripts/curate_context.py --verses 9,10,11,12,13 --chapter 1
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+# Ensure repo root is in sys.path
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
+
+def find_repo_root() -> Path:
+    current = Path.cwd()
+    for p in [current, *current.parents]:
+        if (p / "ROADMAP.md").exists() and (p / "materials").exists():
+            return p
+    return current
+
+
+def parse_verse_range(range_str: str) -> list[int]:
+    """Parse '9..13', '9-13', or '9,10,11' into a list of ints."""
+    s = range_str.strip()
+    if ".." in s:
+        start, end = s.split("..", 1)
+        return list(range(int(start), int(end) + 1))
+    if "-" in s and not s.startswith("-"):
+        start, end = s.split("-", 1)
+        return list(range(int(start), int(end) + 1))
+    if "," in s:
+        return [int(x.strip()) for x in s.split(",") if x.strip()]
+    return [int(s)]
+
+
+def find_wp_file(repo_root: Path, wp_query: str) -> tuple[Path | None, list[int]]:
+    """Resolve a work package name like 'WP-003' or 'WP-003-gen1-day3.md'."""
+    wp_dir = repo_root / "docs" / "wp"
+    query = wp_query.strip().removesuffix(".md")
+
+    target_file = None
+    if (wp_dir / f"{query}.md").exists():
+        target_file = wp_dir / f"{query}.md"
+    else:
+        for p in sorted(wp_dir.glob("*.md")):
+            if p.stem.startswith(query) or query in p.stem:
+                target_file = p
+                break
+
+    verses: list[int] = []
+    if target_file and target_file.exists():
+        text = target_file.read_text(encoding="utf-8")
+
+        # 1. Check scope line for range, e.g. "scope: gen-1-9-kjv.md .. gen-1-13-kjv.md"
+        range_scope = re.search(r"^scope:\s*gen-\d+-(\d+)-kjv(?:\.md)?\s*\.\.\s*gen-\d+-(\d+)-kjv(?:\.md)?", text, re.MULTILINE)
+        if range_scope:
+            start, end = int(range_scope.group(1)), int(range_scope.group(2))
+            verses = list(range(start, end + 1))
+        else:
+            # 2. Check scope line for comma-separated list
+            scope_match = re.search(r"^scope:\s*(.+)$", text, re.MULTILINE)
+            if scope_match:
+                scope_str = scope_match.group(1)
+                for v_match in re.finditer(r"gen-\d+-(\d+)-kjv", scope_str):
+                    verses.append(int(v_match.group(1)))
+
+        # 3. Fallback: scan for "v9-13" or "v9..13" or "Genesis 1:9-13" in title
+        if not verses:
+            title_match = re.search(r"v(\d+)[-–\.]+(\d+)", text)
+            if title_match:
+                start, end = int(title_match.group(1)), int(title_match.group(2))
+                verses = list(range(start, end + 1))
+
+    return target_file, sorted(set(verses))
+
+
+def load_json(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    with open(path, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def build_briefing(
+    repo_root: Path,
+    chapter: int,
+    verses: list[int],
+    wp_file: Path | None = None,
+) -> str:
+    # Load data artifacts
+    apparatus_path = repo_root / f"correlations/apparatus-genesis{chapter}.json"
+    apparatus_data = load_json(apparatus_path) if apparatus_path.exists() else {}
+    apparatus_by_key = {
+        v.get("key", ""): v for v in apparatus_data.get("verses", [])
+    }
+
+    lex_payload = load_json(repo_root / "lexicons/strongs-lexicon.json")
+    strongs_lex = {**lex_payload.get("hebrew", {}), **lex_payload.get("greek", {})}
+
+    tbesh_payload = load_json(repo_root / "lexicons/tbesh-glosses.json")
+    tbesh_entries = tbesh_payload.get("entries", {})
+
+    lines: list[str] = []
+    lines.append(f"# Curation Briefing — Genesis {chapter}:{min(verses)}-{max(verses)}")
+    if wp_file:
+        lines.append(f"**Work Package:** `{wp_file.name}`")
+    lines.append("")
+
+    # If WP file exists, extract high-level tasks/xrefs
+    if wp_file:
+        wp_text = wp_file.read_text(encoding="utf-8")
+        tasks_section = re.search(r"## Tasks\s*\n(.*?)(?=\n## |\Z)", wp_text, re.DOTALL)
+        if tasks_section:
+            lines.append("## Work Package Requirements")
+            lines.append(tasks_section.group(1).strip())
+            lines.append("")
+
+    for v in verses:
+        entry_path = repo_root / f"materials/bible/ot/genesis/gen-{chapter}-{v}-kjv.md"
+        app_key = f"Gen.{chapter}.{v}"
+        app_entry = apparatus_by_key.get(app_key, {})
+
+        lines.append(f"---")
+        lines.append(f"## Genesis {chapter}:{v} (`gen-{chapter}-{v}-kjv.md`)")
+
+        # Read current draft verse text and status
+        if entry_path.exists():
+            entry_content = entry_path.read_text(encoding="utf-8")
+            status_match = re.search(r"^status:\s*(\w+)", entry_content, re.MULTILINE)
+            status = status_match.group(1) if status_match else "unknown"
+            quote_match = re.search(r"^>\s*(.+)$", entry_content, re.MULTILINE)
+            quote = quote_match.group(1) if quote_match else ""
+            lines.append(f"* **Current Status:** `{status}`")
+            lines.append(f"* **KJV Text:** > {quote}")
+        else:
+            lines.append(f"* **Entry file not found at:** `{entry_path}`")
+
+        # Apparatus summary (Omissions & Alignments)
+        if app_entry:
+            counts = app_entry.get("counts", {})
+            omissions = app_entry.get("omissions", [])
+            lines.append(
+                f"* **Apparatus Alignment:** {counts.get('matched', 0)} matched tokens, "
+                f"{len(omissions)} untagged/omitted in KJV-osis."
+            )
+            if omissions:
+                lines.append("  * **Untagged Hebrew Tokens in Source:**")
+                for om in omissions:
+                    code = om.get("code", "")
+                    oshb = om.get("oshb", {})
+                    wlc = oshb.get("wlc", "")
+                    morph = oshb.get("morph", "")
+                    lex_info = strongs_lex.get(code, {})
+                    lemma = lex_info.get("word", "")
+                    tbesh_list = tbesh_entries.get(code, [])
+                    tbesh_gloss = tbesh_list[0].get("gloss", "") if tbesh_list else ""
+                    lines.append(
+                        f"    - `{code}` ({lemma} / \"{tbesh_gloss}\"): "
+                        f"WLC Hebrew `{wlc}`, morph `{morph}`"
+                    )
+
+        # Lexicon items present in this verse
+        matched_codes: list[str] = []
+        if app_entry:
+            for m in app_entry.get("matched", []):
+                c = m.get("code")
+                if c and c not in matched_codes:
+                    matched_codes.append(c)
+
+        if matched_codes:
+            lines.append("* **Key Lexemes in Verse:**")
+            for code in matched_codes:
+                st = strongs_lex.get(code, {})
+                tb_list = tbesh_entries.get(code, [])
+                gloss = tb_list[0].get("gloss", "") if tb_list else ""
+                lemma = st.get("word", "")
+                translit = st.get("translit", "")
+                desc = st.get("desc", "")
+                # Extract first definition line
+                defn = ""
+                for line in desc.splitlines():
+                    if re.match(r"^\d+\.", line.strip()):
+                        defn = line.strip()
+                        break
+                if not defn:
+                    lines_desc = [l.strip() for l in desc.splitlines() if l.strip()]
+                    defn = lines_desc[1] if len(lines_desc) > 1 else (lines_desc[0] if lines_desc else "")
+
+                lines.append(
+                    f"  - **{code}** (`{lemma}` / *{translit}*): modern: *\"{gloss}\"* | strongs: *{defn}*"
+                )
+
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Generate a compact curation briefing from apparatus and lexicons."
+    )
+    parser.add_argument("--wp", help="Work package name or path (e.g. WP-003)")
+    parser.add_argument("--verses", help="Verse range (e.g. 9..13 or 9-13)")
+    parser.add_argument("--chapter", type=int, default=1, help="Genesis chapter (default: 1)")
+    args = parser.parse_args()
+
+    repo_root = find_repo_root()
+    wp_file = None
+    verses = []
+
+    if args.wp:
+        wp_file, wp_verses = find_wp_file(repo_root, args.wp)
+        if wp_verses:
+            verses = wp_verses
+
+    if args.verses:
+        verses = parse_verse_range(args.verses)
+
+    if not verses:
+        print("Error: Specify either --wp <WP-XXX> or --verses <range> (e.g. 9..13)", file=sys.stderr)
+        sys.exit(1)
+
+    briefing = build_briefing(repo_root, args.chapter, verses, wp_file)
+    print(briefing)
+
+
+if __name__ == "__main__":
+    main()

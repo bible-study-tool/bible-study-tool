@@ -116,16 +116,24 @@ class RegenerationTripwireTests(unittest.TestCase):
         cls.verses = {v["verse"]: v for v in ch1["verses"]}
 
     def test_committed_entries_match_generator_byte_for_byte(self):
-        for v in range(9, 32):
+        """Uncurated (status: draft) entries must equal what the generator
+        produces from the pinned sources — byte for byte. This catches hand-edits
+        and partial regeneration on draft skeletons."""
+        for v in range(1, 32):
             path = GENESIS_DIR / f"gen-1-{v}-kjv.md"
-            expected, _ = self.build_entry_markdown(
-                self.verses[v], self.lexicon, self.tbesh
-            )
-            self.assertEqual(                path.read_text(encoding="utf-8"), expected,
-                f"{path.name}: committed content differs from generator output "
-                "(hand-edit or stale regeneration) — re-run "
-                "python -m search.corpus.build_genesis1",
-            )
+            if not path.exists():
+                continue
+            text = path.read_text(encoding="utf-8")
+            if "status: draft" in text:
+                expected, _ = self.build_entry_markdown(
+                    self.verses[v], self.lexicon, self.tbesh
+                )
+                self.assertEqual(
+                    text, expected,
+                    f"{path.name}: draft skeleton differs from generator output "
+                    "(hand-edit or stale regeneration) — re-run "
+                    "python -m search.corpus.build_genesis1",
+                )
 
     def test_word_study_facts_match_lexicons(self):
         """Every word-study block in the committed entries must be exactly
@@ -164,25 +172,22 @@ class CorpusIntegrityTests(unittest.TestCase):
         files = sorted(GENESIS_DIR.glob("gen-1-*-kjv.md"))
         self.assertEqual(len(files), 31, "Genesis 1 must have exactly 31 entries")
 
-    def test_new_entries_are_draft_skeletons(self):
-        """Generated-but-uncurated entries must still be status: draft with
-        the pinned generation date. Curated entries (v4-5 WP-001, v6-8 WP-002)
-        are checked in test_curated_entries_status below."""
-        for v in range(9, 32):
-            text = (GENESIS_DIR / f"gen-1-{v}-kjv.md").read_text(encoding="utf-8")
-            self.assertIn("status: draft", text, f"gen-1-{v}")
-            self.assertIn(f"created: {GENERATION_DATE}", text, f"gen-1-{v}")
-            self.assertNotIn("cross_references:", text, f"gen-1-{v}")
-            self.assertNotIn("semantic_links:", text, f"gen-1-{v}")
-            self.assertNotIn("AI Summary", text, f"gen-1-{v}")
-
-    def test_curated_entries_status(self):
-        """Curated v1-3 (original MVP), v4-5 (WP-001), and v6-8 (WP-002) are
-        status: review with their WP's update date, cross-references present,
-        AI markers."""
-        for v in (1, 2, 3, 4, 5, 6, 7, 8):
-            text = (GENESIS_DIR / f"gen-1-{v}-kjv.md").read_text(encoding="utf-8")
-            self.assertIn("status: review", text, f"gen-1-{v}")
+    def test_corpus_entry_lifecycle_and_invariants(self):
+        """Every Genesis 1 entry is either status: draft (unmodified skeleton)
+        or status: review/final (curated with cross-references and valid update)."""
+        files = sorted(GENESIS_DIR.glob("gen-1-*-kjv.md"))
+        self.assertEqual(len(files), 31, "Genesis 1 must have exactly 31 entries")
+        for p in files:
+            text = p.read_text(encoding="utf-8")
+            if "status: draft" in text:
+                self.assertIn(f"created: {GENERATION_DATE}", text, f"{p.name}: draft creation date")
+                self.assertNotIn("cross_references:", text, f"{p.name}: uncurated draft should not have xrefs")
+                self.assertNotIn("AI Summary", text, f"{p.name}: uncurated draft should not have AI summary")
+            elif "status: review" in text or "status: final" in text:
+                self.assertIn("cross_references:", text, f"{p.name}: curated entry must include cross_references")
+                self.assertIn("updated:", text, f"{p.name}: curated entry must include updated date")
+            else:
+                self.fail(f"{p.name}: unrecognized entry status")
 
     def test_all_tags_in_canonical_list(self):
         for p in GENESIS_DIR.glob("gen-1-*-kjv.md"):

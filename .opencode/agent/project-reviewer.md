@@ -15,10 +15,9 @@ tests or the implementer's summary.
 ## Review protocol
 
 1. **Claims vs reality.** Re-run the key commands yourself where possible:
-   `python -m pytest` (report the exact count), the F1-F4 validators
-   (`python -m search.validation.{schema,strongs,xrefs,audit} --repo .` — all
-   must exit 0), `bash scripts/fetch_sources.sh --check` when raw sources are
-   present. Report exact counts and exit codes, not impressions.
+   - For work packages: `python scripts/wp_check.py --wp <WP-XXX>` (validates scoped AI markers, skeleton preservation, and F1-F4 gates).
+   - Full suite: `bash scripts/verify_all.sh` (or `python -m pytest` — always invoke via `python -m pytest`, never bare `pytest` which may point to an isolated environment).
+   - Report exact test counts and exit codes, not impressions.
 2. **Data questions come from artifacts, not memory.** Spot-check generated
    artifacts (lexicons/*.json, correlations/*.json) against the pinned raw
    sources in data/ and against the recorded SHA-256 in data/PROVENANCE.md.

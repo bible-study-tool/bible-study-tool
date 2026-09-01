@@ -43,7 +43,6 @@ cross_references:
     target: "pat-1-1"
     note: "Patriarchs and Prophets, Chapter 1 — the first day is one day"
 ---
----
 
 # Genesis 1:5 - KJV
 
@@ -134,9 +133,11 @@ cross_references:
 
 ## Study Notes
 
+<!-- AI-GENERATED -->
 *   This verse contains the **first naming in Scripture**. The act of naming is inherently an act of authority and relationship: God calls the light "Day" (H3117 yom) and the darkness "Night" (H3915 lailah). This naming pattern recurs throughout Genesis 1 (firmament = "Heaven", v8; dry land = "Earth", waters = "Seas", v10). In the ancient Near Eastern context, naming something implied power over it — Genesis here asserts Yahweh's sovereignty over the cosmos without borrowing from the names of pagan deities (Day and Night are never deified).
 *   "The evening and the morning were the first day" — this formula introduces the biblical day as an **evening-first, morning-first cycle** (sunset to sunset), foundational for the entire biblical calendar and the Adventist understanding of the Sabbath (Leviticus 23:32: "from even unto even, shall ye celebrate your sabbath"). The Hebrew literally reads "one day" (yom echad, H259 H3117), not "the first day" — a distinct expression that emphasizes the unity and completeness of the creation day before the week unfolds.
-*   The two untagged occurrences of H1961 (vayehi, "and there was") in the scrollmapper tagging for this verse (documented in the agreement apparatus) illustrate a pattern: the Hebrew consecutive-imperfect form "and it was" is often left untagged in scrollmapper's KJV-osis tagging, even though it carries the "to be / to become / to come to pass" semantics of H1961. This is a tagger convention, not a textual variation. <!-- AI-GENERATED -->
+*   The two untagged occurrences of H1961 (vayehi, "and there was") in the scrollmapper tagging for this verse (documented in the agreement apparatus) illustrate a pattern: the Hebrew consecutive-imperfect form "and it was" is often left untagged in scrollmapper's KJV-osis tagging, even though it carries the "to be / to become / to come to pass" semantics of H1961. This is a tagger convention, not a textual variation.
+<!-- END AI-GENERATED -->
 
 ## Source Notes
 
