@@ -17,7 +17,8 @@ man, and the creation of the woman.
 ## Inputs (read these first)
 
 - Entries: `materials/bible/ot/genesis/gen-2-1-kjv.md` .. `gen-2-25-kjv.md`
-  (skeletons from WP-007; `status: draft`)
+  (skeletons from WP-007; `status: draft`; curated on top of the WP-010
+  draft-engine output where the word-study blocks are WordGraph-assembled)
 - Apparatus rows: `correlations/apparatus-genesis2.json` -> keys Gen.2.1..2.25
   (which Hebrew words the English hides)
 - Curated neighbors: whole of Genesis 1 (`gen-1-1-kjv.md` .. `gen-1-31-kjv.md`,
