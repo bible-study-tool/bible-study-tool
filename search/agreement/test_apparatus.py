@@ -127,5 +127,81 @@ class ApparatusArtifactTests(unittest.TestCase):
             )
 
 
+class Genesis2ApparatusTests(unittest.TestCase):
+    """The Genesis-2 apparatus (WP-007): 25 verses; the first *additions*
+    appear here (Genesis 1 had zero) — documented scrollmapper tagging
+    quirks, pinned explicitly."""
+
+    GENESIS2_PATH = Path("correlations/apparatus-genesis2.json")
+
+    @classmethod
+    def setUpClass(cls):
+        cls.app = json.loads(cls.GENESIS2_PATH.read_text(encoding="utf-8"))
+        cls.by_key = {v["key"]: v for v in cls.app["verses"]}
+
+    def test_counts(self):
+        s = self.app["summary"]
+        self.assertEqual(s["verses"], 25)
+        self.assertEqual(s["additions"], 3)
+
+    def test_schema(self):
+        self.assertEqual(self.app["$schema"], "apparatus-genesis2/v1")
+
+    def test_token_reconciliation_per_verse(self):
+        for v in self.app["verses"]:
+            c = v["counts"]
+            self.assertEqual(c["matched"] + c["omissions"], c["oshb_tokens"], v["key"])
+            self.assertEqual(c["matched"] + c["additions"], c["kjv_osis_tokens"], v["key"])
+
+    def test_all_omissions_are_function_words(self):
+        """Genesis 2 extends the function-word family: the Genesis-1 set plus
+        negation (H3808), 'from' (H4480), 'to' (H413), pronouns (H1931,
+        H8033), 'before' (H5048), 'what' (H4100), and the contextual
+        H905 ('alone', Gen 2:18) and H120 ('the man' merged into scrollmapper's
+        H121 span, Gen 2:21)."""
+        fn = FUNCTION_WORDS | {
+            "H3808", "H4480", "H413", "H1931", "H8033", "H5048", "H4100", "H905",
+            "H120",
+        }
+        for v in self.app["verses"]:
+            for o in v["omissions"]:
+                self.assertIn(o["code"], fn, (v["key"], o))
+
+    def test_additions_are_the_documented_quirks(self):
+        """Pinned: the three kjv-osis additions are the periphrastic
+        double-tags and the proper-name reading (see PROVENANCE caveat 3)."""
+        adds = {}
+        for v in self.app["verses"]:
+            for a in v["additions"]:
+                adds.setdefault(v["key"], []).append(a["code"])
+        self.assertEqual(adds, {
+            "Gen.2.9": ["H6779"],      # 'made ... to grow' double-tag
+            "Gen.2.21": ["H121", "H5307"],  # 'upon Adam' + 'to fall'
+        })
+
+    def test_genesis2_pivots(self):
+        """Gen 2:17 (the command): kjv misses the negation and 'from' markers
+        OSHB tags — the 'thou shalt not eat' clause's Hebrew connectives."""
+        v = self.by_key["Gen.2.17"]
+        om = [o["code"] for o in v["omissions"]]
+        self.assertIn("H3808", om)
+        self.assertIn("H4480", om)
+
+    def test_regeneration_byte_identical(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            write_apparatus(".", out_path=Path(td) / "app.json", chapters=(2,))
+            committed = self.GENESIS2_PATH.read_text(encoding="utf-8")
+            fresh = (Path(td) / "app.json").read_text(encoding="utf-8")
+            self.assertEqual(
+                fresh, committed,
+                "Genesis-2 apparatus drifted from its generator. Regenerate: "
+                "python -c \"from search.agreement.apparatus import "
+                "write_apparatus; write_apparatus('.', "
+                "out_path='correlations/apparatus-genesis2.json', "
+                "chapters=(2,))\" (then update data/PROVENANCE.md).",
+            )
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

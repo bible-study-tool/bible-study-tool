@@ -1,4 +1,4 @@
-"""Generate Genesis 1:4-31 entries — deterministic draft skeletons.
+"""Generate deterministic draft skeletons for Genesis chapters (book-level).
 
 Everything emitted here is derived from pinned sources (data/PROVENANCE.md):
 
@@ -11,6 +11,10 @@ Everything emitted here is derived from pinned sources (data/PROVENANCE.md):
                           lexicons/tbesh-glosses.json (STEPBible CC BY 4.0,
                           supplementary: modern brief gloss + morphology).
 
+Scope (per ADR-0009): any Genesis chapter, e.g. chapter 1 verses 4-31
+(generated; verses 1-3 are the hand-curated MVP entries, never touched) or
+chapter 2 verses 1-25 (whole chapter, all generated).
+
 What is deliberately NOT generated: cross-references, theological notes,
 AI summaries, translation-comparison tables. Those require human curation
 (CONTRIBUTION_STANDARDS.md review workflow) and would be AI-generated content
@@ -18,8 +22,9 @@ needing review. The result is a verified, complete, factual skeleton that a
 curator can enrich.
 
 Idempotence: output is a pure function of the pinned sources + the pinned
-GENERATION_DATE constant, so regeneration is byte-identical. The three
-curated entries (gen-1-1/2/3) are never touched — only verses 4-31 are written.
+GENERATION_DATE constant, so regeneration is byte-identical. The
+GENERATION_DATE stamps the pinned source state, not the wall-clock date —
+new chapters generated from the same pinned sources carry the same stamp.
 """
 
 from __future__ import annotations
@@ -41,7 +46,13 @@ _MAX_HEBREW = 8674
 _MAX_GREEK = 5624
 
 # OSIS markup of the scrollmapper KJV-osis file.
-_LEMMA_RE = re.compile(r"strong:([HG])(\d{4,5})")
+# NOTE: scrollmapper writes codes WITHOUT canonical zero-padding in places
+# (e.g. H068 for H68, H01 for H1 — 9,257 verses across the file; Genesis 1
+# happens to be fully padded like H0430). The numeric value is unambiguous,
+# so codes are normalized to the canonical unpadded form at parse time
+# (int() strips leading zeros, matching lexicons/strongs-list.json keys).
+# Truly malformed attributes (no digits) still fail the attribute-count check.
+_LEMMA_RE = re.compile(r"strong:([HG])(\d{1,5})")
 _TAG_RE = re.compile(r"<[^>]+>")
 _WS_RE = re.compile(r"\s+")
 # KJV marginal/study apparatus: <note> elements (wrapping <catchWord> and
@@ -99,6 +110,10 @@ def verse_codes(raw_text: str) -> tuple[list[str], dict[str, int], list[str]]:
     n_attributes = raw_text.count("strong:")
     for letter, num_s in _LEMMA_RE.findall(raw_text):
         num = int(num_s)
+        # Canonical unpadded form (int() strips source leading zeros, e.g.
+        # H0430 -> H430; H068 -> H68): matches lexicons/strongs-list.json
+        # keys. A no-op for already-canonical codes, so regeneration of the
+        # seeded Genesis-1 entries stays byte-identical.
         code = f"{letter}{num}"
         if (letter == "H" and num > _MAX_HEBREW) or (letter == "G" and num > _MAX_GREEK):
             skipped.append(code)
@@ -177,33 +192,49 @@ def word_study_block(code: str, occurrences: int, lexicon: dict, tbesh: dict) ->
     return "\n".join(lines)
 
 
-def build_entry_markdown(verse: dict, lexicon: dict, tbesh: dict) -> tuple[str, list[str]]:
+def build_entry_markdown(
+    verse: dict,
+    lexicon: dict,
+    tbesh: dict,
+    book_label: str = "Genesis",
+    book_code: str = "gen",
+    book_tag: str = "book/genesis",
+    chapter: int = 1,
+) -> tuple[str, list[str]]:
     """Render one entry. Returns (markdown, codes); raises if any code is
-    missing from both lexicons (a fact we must not fabricate)."""
+    missing from both lexicons (a fact we must not fabricate).
+
+    ``book_code`` is the filename/id prefix (e.g. 'gen'); ``book_tag`` is the
+    taxonomy book tag (e.g. 'book/genesis') — they differ and must stay
+    separate.
+    """
     v = verse["verse"]
     raw = verse["text"]
     text = clean_verse_text(raw)
     codes, occurrences_map, skipped = verse_codes(raw)
     if skipped:
         raise ValueError(
-            f"Genesis 1:{v} contains non-canonical Strong's codes {skipped} — "
-            "source changed; regenerate after review."
+            f"{book_label} {chapter}:{v} contains non-canonical Strong's codes "
+            f"{skipped} — source changed; regenerate after review."
         )
 
     # Facts check: every code must have a Strong's lexicon entry (definition).
     missing = [c for c in codes if c not in lexicon]
     if missing:
-        raise ValueError(f"Genesis 1:{v}: codes missing from strongs-lexicon.json: {missing}")
+        raise ValueError(
+            f"{book_label} {chapter}:{v}: codes missing from "
+            f"strongs-lexicon.json: {missing}"
+        )
 
-    tags = ["material/bible", "book/genesis", "theme/creation", "theme/origins",
+    tags = ["material/bible", book_tag, "theme/creation", "theme/origins",
             "translation/kjv", "lang/hebrew"] + [f"strongs-{c}" for c in sorted(codes)]
 
     fm = "\n".join([
         "---",
-        f"id: gen-1-{v}-kjv",
+        f"id: {book_code}-{chapter}-{v}-kjv",
         "type: material/bible",
-        "book: book/genesis",
-        f'passage: "Genesis 1:{v}"',
+        f"book: {book_tag}",
+        f'passage: "{book_label} {chapter}:{v}"',
         "tags:",
         *(f"  - {t}" for t in tags),
         "source: source/bible",
@@ -218,7 +249,7 @@ def build_entry_markdown(verse: dict, lexicon: dict, tbesh: dict) -> tuple[str, 
 
     body = "\n".join([
         "",
-        f"# Genesis 1:{v} - KJV",
+        f"# {book_label} {chapter}:{v} - KJV",
         "",
         f"> {text}",
         "",
@@ -240,39 +271,78 @@ def build_entry_markdown(verse: dict, lexicon: dict, tbesh: dict) -> tuple[str, 
     return fm + "\n" + body, codes
 
 
-def generate(repo: str = ".", out_subdir: str = "materials/bible/ot/genesis") -> list[str]:
-    """Generate entries for Genesis 1:4-31. Returns written paths."""
+def generate(
+    repo: str = ".",
+    out_subdir: str = "materials/bible/ot/genesis",
+    book_label: str = "Genesis",
+    book_code: str = "gen",
+    book_tag: str = "book/genesis",
+    chapter: int = 1,
+    verses: tuple[int, int] = (4, 31),
+) -> list[str]:
+    """Generate entries for one Genesis chapter. Returns written paths.
+
+    Defaults reproduce the Genesis 1:4-31 MVP output byte-for-byte. The
+    canonical list is authoritative: refuse to emit tags outside it.
+    """
     kjv, lexicon, tbesh, canonical = load_pinned_sources(repo)
 
-    # The canonical list is authoritative: refuse to emit tags outside it.
     canon_h, canon_g = set(canonical["hebrew"]), set(canonical["greek"])
 
     gen = next(b for b in kjv["books"] if b["name"] == "Genesis")
-    ch1 = next(c for c in gen["chapters"] if c["chapter"] == 1)
-    verses = {v["verse"]: v for v in ch1["verses"]}
+    ch = next(c for c in gen["chapters"] if c["chapter"] == chapter)
+    verses_map = {v["verse"]: v for v in ch["verses"]}
 
     written: list[str] = []
     out_dir = Path(repo) / out_subdir
-    for v in range(4, 32):
-        verse = verses.get(v)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    start, end = verses
+    for v in range(start, end + 1):
+        verse = verses_map.get(v)
         if verse is None:
-            raise ValueError(f"Genesis 1:{v} missing from pinned KJV-osis source")
-        md, codes = build_entry_markdown(verse, lexicon, tbesh)
+            raise ValueError(f"Genesis {chapter}:{v} missing from pinned KJV-osis source")
+        md, codes = build_entry_markdown(
+            verse, lexicon, tbesh,
+            book_label=book_label, book_code=book_code, book_tag=book_tag,
+            chapter=chapter,
+        )
         bad = [c for c in codes if c not in canon_h and c not in canon_g]
         if bad:
-            raise ValueError(f"Genesis 1:{v}: tags outside canonical list: {bad}")
-        path = out_dir / f"gen-1-{v}-kjv.md"
+            raise ValueError(f"Genesis {chapter}:{v}: tags outside canonical list: {bad}")
+        path = out_dir / f"{book_code}-{chapter}-{v}-kjv.md"
         path.write_text(md, encoding="utf-8")
         written.append(str(path))
     return written
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="Generate Genesis 1:4-31 draft entries")
+    parser = argparse.ArgumentParser(
+        description="Generate Genesis chapter draft entries (deterministic skeletons)"
+    )
     parser.add_argument("--repo", default=".")
+    parser.add_argument("--book", default="Genesis", help="Book label (default: Genesis)")
+    parser.add_argument("--book-code", default="gen", help="Book id code (default: gen)")
+    parser.add_argument("--book-tag", default="book/genesis", help="Taxonomy book tag (default: book/genesis)")
+    parser.add_argument("--chapter", type=int, default=1)
+    parser.add_argument(
+        "--verses", default="4-31",
+        help="Verse range as START-END (default 4-31; use 1-25 for a whole chapter)",
+    )
     args = parser.parse_args(argv)
-    written = generate(args.repo)
-    print(f"Wrote {len(written)} entries (Genesis 1:4-31) — deterministic draft skeletons")
+    start_s, _, end_s = args.verses.partition("-")
+    verses = (int(start_s), int(end_s))
+    written = generate(
+        args.repo,
+        book_label=args.book,
+        book_code=args.book_code,
+        book_tag=args.book_tag,
+        chapter=args.chapter,
+        verses=verses,
+    )
+    print(
+        f"Wrote {len(written)} entries (Genesis {args.chapter}:{args.verses}) — "
+        "deterministic draft skeletons"
+    )
     return 0
 
 

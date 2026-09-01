@@ -2,9 +2,10 @@
 
 Source: Open Scriptures Hebrew Bible v2.2 (CC BY 4.0, pinned in
 data/PROVENANCE.md; extracted per-book XML in data/oshb/). This generator
-parses the OSIS <w> word elements for Genesis 1 and emits
-``lexicons/morphology-genesis1.json`` — the word-level Morphology+Lemma layer
-that sits directly above the base text and Strong's numbers:
+parses the OSIS <w> word elements for the requested Genesis chapter(s) and
+emits ``lexicons/morphology-genesis{chapters}.json`` — the word-level
+Morphology+Lemma layer that sits directly above the base text and Strong's
+numbers:
 
   * WLC Hebrew word text (verbatim, including maqqef joins)
   * OSHB lemma VERBATIM, plus a decomposition:
@@ -129,7 +130,17 @@ def parse_book_xml(path: str, chapter: int) -> list[dict]:
     return records
 
 
-def build(repo: str = ".", oshb_dir: str | None = None, out_dir: str = "lexicons") -> dict:
+def _artifact_stem(chapters: tuple[int, ...]) -> str:
+    """'morphology-genesis1' for (1,), 'morphology-genesis1-2' for (1, 2)."""
+    return "morphology-genesis" + "-".join(str(c) for c in chapters)
+
+
+def build(
+    repo: str = ".",
+    oshb_dir: str | None = None,
+    out_dir: str = "lexicons",
+    chapters: tuple[int, ...] = (1,),
+) -> dict:
     oshb_path = Path(oshb_dir) if oshb_dir else Path(repo) / "data/oshb"
     gen_xml = oshb_path / "Gen.xml"
     if not gen_xml.exists():
@@ -142,10 +153,14 @@ def build(repo: str = ".", oshb_dir: str | None = None, out_dir: str = "lexicons
     canon_h = set(canonical["hebrew"])
 
     verses: dict[str, list[dict]] = {}
-    for chapter in (1,):
+    for chapter in chapters:
         for rec in parse_book_xml(str(gen_xml), chapter):
             vnum = rec["osisID"].split(".")[-1]
-            verses.setdefault(vnum, []).append(rec)
+            # Single-chapter artifacts keep plain verse-number keys (matches
+            # the seeded morphology-genesis1.json byte-for-byte); multi-
+            # chapter artifacts prefix the chapter to avoid key collisions.
+            key = f"{chapter}.{vnum}" if len(chapters) > 1 else vnum
+            verses.setdefault(key, []).append(rec)
 
     # Integrity: every base Strong's number must be in the canonical list.
     unknown = sorted(
@@ -161,10 +176,11 @@ def build(repo: str = ".", oshb_dir: str | None = None, out_dir: str = "lexicons
     prefix_only = sum(1 for words in verses.values() for r in words if not r["base"])
     ids = [r["id"] for words in verses.values() for r in words]
     if len(ids) != len(set(ids)):
-        raise ValueError("duplicate OSHB word ids in Genesis 1 — layer would be ambiguous")
+        raise ValueError("duplicate OSHB word ids — layer would be ambiguous")
 
+    stem = _artifact_stem(chapters)
     payload = {
-        "$schema": "morphology-genesis1/v1",
+        "$schema": f"{stem}/v1",
         "source": {
             "dataset": "Open Scriptures Hebrew Bible v2.2 (per-book OSIS XML)",
             "upstream": "https://github.com/openscriptures/morphhb",
@@ -184,7 +200,7 @@ def build(repo: str = ".", oshb_dir: str | None = None, out_dir: str = "lexicons
         },
         "verses": verses,
     }
-    out_path = Path(out_dir) / "morphology-genesis1.json"
+    out_path = Path(out_dir) / f"{stem}.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(
         json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
@@ -201,8 +217,13 @@ def main(argv=None) -> int:
     parser.add_argument("--repo", default=".")
     parser.add_argument("--oshb-dir", default=None)
     parser.add_argument("--out-dir", default="lexicons")
+    parser.add_argument(
+        "--chapters", default="1",
+        help="Comma-separated Genesis chapters (default: 1)",
+    )
     args = parser.parse_args(argv)
-    build(args.repo, args.oshb_dir, args.out_dir)
+    chapters = tuple(int(c) for c in args.chapters.split(","))
+    build(args.repo, args.oshb_dir, args.out_dir, chapters)
     return 0
 
 

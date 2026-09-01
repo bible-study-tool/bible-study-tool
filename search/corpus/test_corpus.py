@@ -155,6 +155,74 @@ class RegenerationTripwireTests(unittest.TestCase):
                 self.assertIn(block, text, f"{path.name}: word block for {code} drifted")
 
 
+class Genesis2SkeletonTests(unittest.TestCase):
+    """Genesis 2 (WP-007, ADR-0009 book-level expansion): 25 generated
+    skeletons, byte-identical to the generator, all status: draft."""
+
+    @classmethod
+    def setUpClass(cls):
+        from search.corpus.build_genesis1 import build_entry_markdown, load_pinned_sources
+        cls.kjv, cls.lexicon, cls.tbesh, _ = load_pinned_sources(".")
+        cls.build_entry_markdown = staticmethod(build_entry_markdown)
+        gen = next(b for b in cls.kjv["books"] if b["name"] == "Genesis")
+        ch2 = next(c for c in gen["chapters"] if c["chapter"] == 2)
+        cls.verses = {v["verse"]: v for v in ch2["verses"]}
+
+    def test_genesis_2_is_complete(self):
+        files = sorted(GENESIS_DIR.glob("gen-2-*-kjv.md"))
+        self.assertEqual(len(files), 25, "Genesis 2 must have exactly 25 entries")
+
+    def test_all_draft_and_matching_generator_byte_for_byte(self):
+        for v in range(1, 26):
+            path = GENESIS_DIR / f"gen-2-{v}-kjv.md"
+            text = path.read_text(encoding="utf-8")
+            self.assertIn("status: draft", text, f"{path.name}: not a draft skeleton")
+            expected, _ = self.build_entry_markdown(
+                self.verses[v], self.lexicon, self.tbesh, chapter=2
+            )
+            self.assertEqual(
+                text, expected,
+                f"{path.name}: draft skeleton differs from generator output "
+                "(hand-edit or stale regeneration) — re-run "
+                "python -m search.corpus.build_genesis1 --chapter 2 --verses 1-25",
+            )
+
+    def test_word_study_facts_match_lexicons(self):
+        """Every word-study block in the committed Genesis-2 entries must be
+        exactly what word_study_block() emits from the committed lexicons."""
+        from search.corpus.build_genesis1 import verse_codes, word_study_block
+        import re
+        block_header = re.compile(r"^### .+ - Strong's ([HG]\d+)$", re.MULTILINE)
+        for v in range(1, 26):
+            path = GENESIS_DIR / f"gen-2-{v}-kjv.md"
+            text = path.read_text(encoding="utf-8")
+            for m in block_header.finditer(text):
+                code = m.group(1)
+                _, occ_map, _ = verse_codes(self.verses[v]["text"])
+                block = word_study_block(code, occ_map[code], self.lexicon, self.tbesh)
+                self.assertIn(block, text, f"{path.name}: word block for {code} drifted")
+
+    def test_genesis_2_verses_match_pinned_source(self):
+        for v in range(1, 26):
+            path = GENESIS_DIR / f"gen-2-{v}-kjv.md"
+            quote = next(
+                (l for l in path.read_text(encoding="utf-8").splitlines() if l.startswith("> ")),
+                "",
+            )[2:].strip()
+            self.assertEqual(
+                quote, clean_verse_text(self.verses[v]["text"]),
+                f"Genesis 2:{v}: entry quote does not match pinned source",
+            )
+
+    def test_unpadded_code_normalization(self):
+        """The pinned source writes unpadded codes (H068, H01); the generator
+        must normalize to canonical unpadded form (H68, H1)."""
+        v12 = GENESIS_DIR.joinpath("gen-2-12-kjv.md").read_text(encoding="utf-8")
+        self.assertIn("strongs-H68", v12)
+        v24 = GENESIS_DIR.joinpath("gen-2-24-kjv.md").read_text(encoding="utf-8")
+        self.assertIn("strongs-H1", v24)
+
+
 class CorpusIntegrityTests(unittest.TestCase):
     """Golden corpus counts + tag canonicality for the whole Genesis chapter."""
 

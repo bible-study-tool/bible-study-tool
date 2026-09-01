@@ -118,20 +118,46 @@ The OSHB morphology artifact regenerates byte-identically as well:
 
 ```
 efd17409d6ab378789b0e332a10894e6e9145d37f14ed3951d9723d45754e4eb  ../lexicons/morphology-genesis1.json
+bb914375dcaba57d4379afb0dcba40d4740218915277a13be270927e564a68b0  ../lexicons/morphology-genesis2.json
 ```
 
-The cross-source Agreement Ledger regenerates byte-identically as well:
+The cross-source Agreement Ledger regenerates byte-identically as well
+(verse/word facts for Genesis chapters 1-2; lexicon gloss facts full-canonical):
 
 ```
-bb44368bb338a5d47a2ec61b9621f431536114e99f95b5721e2f3c42361cc283  ../correlations/agreement-ledger.json
+025723001a0204c55fc7c03d1b81c55a45f520581c2b615876a927d5bcc01253  ../correlations/agreement-ledger.json
 ```
 
-The word-level apparatus (Genesis 1, kjv-osis <-> oshb) regenerates
-byte-identically as well:
+The word-level apparatus (kjv-osis <-> oshb) regenerates byte-identically as
+well:
 
 ```
 5ae9100bbb7f80ab1fe8a992bfab3871ec87b6655876267c1b238f4fb789f33b  ../correlations/apparatus-genesis1.json
+4f678a8264262f0796a13e0ac49cc040bc3acaaefd7c6b493e66d1a5cab32616  ../correlations/apparatus-genesis2.json
 ```
+
+## Source edition caveats (discovered by the corpus fidelity tests)
+
+1. **Gen 1:2 comma variant** — scrollmapper KJV-osis reads "without form and
+   void" (no comma); the 1769 Cambridge standard reads "without form, and
+   void". The pinned source stays authoritative for generated entries; the
+   hand-curated entry (typed from a different printing) is human content and
+   stays untouched (see `search/corpus/test_corpus.py`).
+2. **Unpadded Strong's codes** — scrollmapper writes codes without canonical
+   zero-padding in places (e.g. `strong:H068` for H68, `strong:H01` for H1;
+   9,257 verses across the file; Genesis 1 happens to be fully padded like
+   `H0430`). The numeric value is unambiguous, so the parsers normalize to
+   the canonical unpadded form (`int()` strips leading zeros, matching
+   `lexicons/strongs-list.json` keys). Genesis 2's first occurrences: H068
+   (Gen 2:12 "stone") and H01 (Gen 2:24, span "his father"). Truly malformed
+   attributes still fail the fail-fast attribute-count check.
+3. **Genesis 2 apparatus additions** — the first *additions* (kjv-osis
+   tokens absent from OSHB) appear in Genesis 2 (Genesis 1 had zero):
+   periphrastic double-tagging (Gen 2:9 H6779 on "made" and "to grow";
+   Gen 2:21 H5307 twice in "caused... to fall") and the proper-name reading
+   (Gen 2:21 "upon Adam" tagged H121 where OSHB reads H120 "the man").
+   Documented in `correlations/apparatus-genesis2.json` (key Gen.2.9 /
+   Gen.2.21); these are tagging quirks, not source corruption.
 
 ## How to reproduce
 
@@ -150,18 +176,21 @@ python -m search.validation.build_strongs_lexicon \
 python -m search.validation.build_stepbible_lexicon \
   --tbesh data/stepbible/TBESH.txt --tbesg data/stepbible/TBESG.txt --out-dir lexicons
 
-# 5. Regenerate the Genesis 1:4-31 corpus entries (pinned GENERATION_DATE in
-#    the module keeps output byte-identical; bump it explicitly on re-runs)
-python -m search.corpus.build_genesis1 --repo .
+# 5. Regenerate the corpus entries (pinned GENERATION_DATE in the module
+#    keeps output byte-identical; bump it explicitly on re-runs)
+python -m search.corpus.build_genesis1 --repo .                 # Genesis 1:4-31
+python -m search.corpus.build_genesis1 --repo . --chapter 2 --verses 1-25  # Genesis 2
 
-# 6. Regenerate the Genesis 1 morphology layer from the extracted OSHB XML
-python -m search.corpus.build_morphology --repo .
+# 6. Regenerate the OSHB morphology layers from the extracted XML
+python -m search.corpus.build_morphology --repo .               # Genesis 1
+python -m search.corpus.build_morphology --repo . --chapters 2  # Genesis 2
 
-# 7. Regenerate the cross-source Agreement Ledger
-python -c "from search.agreement.compare import write_ledger; write_ledger('.')"
+# 7. Regenerate the cross-source Agreement Ledger (Genesis 1-2 verse facts)
+python -c "from search.agreement.compare import write_ledger; write_ledger('.', chapters=(1,2))"
 
-# 8. Regenerate the word-level apparatus (Genesis 1)
-python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.')"
+# 8. Regenerate the word-level apparatus
+python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.')"  # Genesis 1
+python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.', out_path='correlations/apparatus-genesis2.json', chapters=(2,))"  # Genesis 2
 ```
 
 ## Policy

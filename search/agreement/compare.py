@@ -153,9 +153,15 @@ _SOURCES = {
 }
 
 
-def build_ledger(repo: str = ".") -> dict:
-    """Compare every fact key across sources and assemble the ledger."""
-    idx = index_facts(collect_all(repo))
+def build_ledger(repo: str = ".", chapters: tuple[int, ...] = (1,)) -> dict:
+    """Compare every fact key across sources and assemble the ledger.
+
+    ``chapters`` scopes the verse/word facts to the given Genesis chapters
+    (lexicon gloss facts are full-canonical regardless). Default (1,)
+    reproduces the seeded ledger; the committed artifact is regenerated with
+    chapters=(1, 2) to include the Genesis 2 rows.
+    """
+    idx = index_facts(collect_all(repo, chapters))
 
     sections: dict[str, list[dict]] = {}
     for fact_type, comparator in _COMPARATORS.items():
@@ -201,8 +207,9 @@ def build_ledger(repo: str = ".") -> dict:
 
 
 def write_ledger(repo: str = ".",
-                 out_path: str | Path = "correlations/agreement-ledger.json") -> dict:
-    ledger = build_ledger(repo)
+                 out_path: str | Path = "correlations/agreement-ledger.json",
+                 chapters: tuple[int, ...] = (1,)) -> dict:
+    ledger = build_ledger(repo, chapters)
     path = Path(out_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(

@@ -178,9 +178,10 @@ class LedgerArtifactTests(unittest.TestCase):
 
     def test_regeneration_byte_identical(self):
         """Byte-level drift tripwire (not just structural): the committed
-        ledger must equal a fresh build byte for byte."""
+        ledger must equal a fresh build byte for byte. The committed artifact
+        covers Genesis chapters 1-2 for verse/word facts."""
         with tempfile.TemporaryDirectory() as td:
-            write_ledger(".", out_path=Path(td) / "ledger.json")
+            write_ledger(".", out_path=Path(td) / "ledger.json", chapters=(1, 2))
             committed = LEDGER_PATH.read_text(encoding="utf-8")
             fresh = (Path(td) / "ledger.json").read_text(encoding="utf-8")
             self.assertEqual(
@@ -191,9 +192,31 @@ class LedgerArtifactTests(unittest.TestCase):
                 "disagreements must be reviewed before they enter the "
                 "deterministic base), then regenerate: python -c \"from "
                 "search.agreement.compare import write_ledger; "
-                "write_ledger('.')\" and commit artifact + updated "
-                "data/PROVENANCE.md checksum together.",
+                "write_ledger('.', chapters=(1,2))\" and commit artifact + "
+                "updated data/PROVENANCE.md checksum together.",
             )
+
+    def test_genesis2_rows_present(self):
+        """WP-007: the ledger now carries Gen 2:1-25 word_strongs rows."""
+        by_key = {r["key"]: r for r in self.ledger["comparisons"][FACT_WORD_STRONGS]}
+        for v in range(1, 26):
+            self.assertIn(f"Gen.2.{v}", by_key, f"Gen.2.{v} missing from ledger")
+
+    def test_genesis2_known_disagreements(self):
+        """Pinned golden-baseline rows: Gen 2:9 (kjv double-tags H6779 on the
+        periphrastic 'made ... to grow'), Gen 2:21 (H121 proper-name reading
+        vs OSHB H120 'the man'), Gen 2:24 (unpadded H01 normalized to H1 on
+        both sides, disagree only on the function words)."""
+        by_key = {r["key"]: r for r in self.ledger["comparisons"][FACT_WORD_STRONGS]}
+        v9 = {r["source"]: r["value"] for r in by_key["Gen.2.9"]["readings"]}
+        self.assertEqual(v9["kjv-osis"].count("H6779"), 2)
+        self.assertEqual(v9["oshb"].count("H6779"), 1)
+        v21 = {r["source"]: r["value"] for r in by_key["Gen.2.21"]["readings"]}
+        self.assertIn("H121", v21["kjv-osis"])
+        self.assertIn("H120", v21["oshb"])
+        v24 = {r["source"]: r["value"] for r in by_key["Gen.2.24"]["readings"]}
+        self.assertEqual(v24["kjv-osis"].count("H1"), 1)
+        self.assertEqual(v24["oshb"].count("H1"), 1)
 
 
 if __name__ == "__main__":

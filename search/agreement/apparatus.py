@@ -36,6 +36,7 @@ from collections import Counter
 from pathlib import Path
 
 from search.agreement.facts import (
+    OSHB,
     collect_all,
     index_facts,
     FACT_WORD_STRONGS,
@@ -114,13 +115,31 @@ def align_verse(key: str, kjv_fact: dict, oshb_fact: dict) -> dict:
     }
 
 
-def build_apparatus(repo: str = ".") -> dict:
-    """Build the full Genesis-1 apparatus from the S1 fact layer."""
-    idx = index_facts(collect_all(repo))[FACT_WORD_STRONGS]
+def _verse_sort_key(key: str) -> tuple[int, int]:
+    """'Gen.1.16' -> (1, 16); chapter-aware so mixed-chapter builds sort
+    correctly (Gen.1.9 before Gen.1.10, Gen.1.31 before Gen.2.1)."""
+    _, ch, v = key.split(".")
+    return (int(ch), int(v))
+
+
+def build_apparatus(repo: str = ".", chapters: tuple[int, ...] = (1,)) -> dict:
+    """Build the apparatus for the given Genesis chapters from the S1 fact
+    layer. Default (1,) reproduces the seeded apparatus-genesis1.json."""
+    idx = index_facts(collect_all(repo, chapters))[FACT_WORD_STRONGS]
     verses = []
-    for key in sorted(idx, key=lambda k: int(k.rsplit(".", 1)[1])):
+    for key in sorted(idx, key=_verse_sort_key):
         readings = idx[key]
         verses.append(align_verse(key, readings["kjv-osis"], readings["oshb"]))
+
+    # Prefix-only OSHB words (no Strong's number) are excluded from alignment;
+    # the count is computed from the facts so the prose stays exact per scope.
+    oshb_facts = collect_all(repo, chapters)[OSHB]
+    n_prefix_only = sum(
+        1
+        for fact in oshb_facts
+        for w in fact["meta"]["words"]
+        if not w["codes"]
+    )
 
     omissions_by_code = Counter(o["code"] for v in verses for o in v["omissions"])
     summary = {
@@ -136,20 +155,21 @@ def build_apparatus(repo: str = ".") -> dict:
         },
     }
 
+    label = "-".join(str(c) for c in chapters)
     return {
-        "$schema": "apparatus-genesis1/v1",
+        "$schema": f"apparatus-genesis{label}/v1",
         "alignment": (
             "Order-free, per-code occurrence pairing (k-th occurrence of a "
             "code in kjv-osis pairs with the k-th in oshb). Matched pairs "
             "assert 'same lexeme attested in this verse', not word-order "
             "correspondence. Surplus occurrences become omissions/additions; "
             "the omissions themselves are exact. Excluded from alignment on "
-            "both sides: tokens with no Strong's number (7 OSHB prefix-only "
-            "words in Genesis 1) — counts and omissions cover coded tokens "
-            "only. Quirk: scrollmapper sometimes merges the object marker "
-            "H853 into a verb span (e.g. 'created' carries H853+H1254), so "
-            "matched H853 pairs show the verb's English span against the "
-            "standalone Hebrew word et."
+            "both sides: tokens with no Strong's number "
+            f"({n_prefix_only} OSHB prefix-only words in Genesis {label}) — "
+            "counts and omissions cover coded tokens only. Quirk: scrollmapper "
+            "sometimes merges the object marker H853 into a verb span (e.g. "
+            "'created' carries H853+H1254), so matched H853 pairs show the "
+            "verb's English span against the standalone Hebrew word et."
         ),
         "sources": {
             "kjv-osis": "scrollmapper tagged KJV (English spans; some lemmas merged)",
@@ -163,8 +183,9 @@ def build_apparatus(repo: str = ".") -> dict:
 def write_apparatus(
     repo: str = ".",
     out_path: str | Path = "correlations/apparatus-genesis1.json",
+    chapters: tuple[int, ...] = (1,),
 ) -> dict:
-    apparatus = build_apparatus(repo)
+    apparatus = build_apparatus(repo, chapters)
     path = Path(out_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -177,3 +198,24 @@ def write_apparatus(
     )
     print(f"  omissions by code: {s['omissions_by_code']}")
     return apparatus
+
+
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Build the word-level apparatus for Genesis chapter(s)"
+    )
+    parser.add_argument("--repo", default=".")
+    parser.add_argument(
+        "--chapters", default="1",
+        help="Comma-separated Genesis chapters (default: 1)",
+    )
+    parser.add_argument(
+        "--out", default=None,
+        help="Output path (default: correlations/apparatus-genesis{chapters}.json)",
+    )
+    args = parser.parse_args(argv)
+    chapters = tuple(int(c) for c in args.chapters.split(","))
+    label = "-".join(str(c) for c in chapters)
+    out_path = args.out or f"correlations/apparatus-genesis{label}.json"
+    write_apparatus(args.repo, out_path=out_path, chapters=chapters)
+    return 0

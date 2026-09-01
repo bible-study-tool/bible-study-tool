@@ -1,6 +1,6 @@
 # WP-007: Book-level pipeline generalization + Genesis 2 skeletons (ADR-0009, part 1)
 
-status: open
+status: done
 scope: pipeline generalization (per ADR-0009) + Genesis 2 skeleton generation (gen-2-1..25)
 priority: high
 
@@ -81,4 +81,26 @@ new checksums; all regeneration tripwires + tests are green.
 
 ## Notes / findings
 
-(appended during work)
+- Done 2026-09-01. All 25 Genesis 2 skeletons generated (status: draft);
+  morphology-genesis2.json (25 verses/328 words), apparatus-genesis2.json
+  (25 verses, 257 matched, 67 omissions, 3 additions), ledger extended with
+  Gen 2 rows (chapters=(1,2)). PROVENANCE updated (9 artifacts).
+- **Unpadded Strong's codes**: scrollmapper writes unpadded codes (H068, H01)
+  across 9,257 verses of the whole file; Genesis 1 happened to be fully
+  padded. Parsers normalize to canonical unpadded form via int() — no-op for
+  already-canonical codes, so Genesis 1 output stays byte-identical.
+  Documented in PROVENANCE caveat 2.
+- **First apparatus additions** (Genesis 1 had zero): Gen 2:9 H6779
+  periphrastic double-tag ("made... to grow"); Gen 2:21 H121 proper-name
+  reading ("upon Adam" vs OSHB H120 "the man") + H5307 double-tag. Golden
+  baseline reviewed and accepted (documented scrollmapper tagging quirks,
+  pinned by tests).
+- New omission function-words beyond Genesis 1: H3808, H4480, H413, H1931,
+  H8033, H5048, H4100, H905 ("alone"), H120 ("the man" merged into H121 span).
+- `python scripts/wp_check.py --wp WP-007` exits 1 ("no files resolved") —
+  expected: WP-007 is an engineering package with no `status: review` scope;
+  F1-F4 run green over all 56 entries inside verify_all.sh. (Noted for future
+  reviewers.)
+- Subagent review: PASS (188 tests, byte-identity of Genesis 1 verified
+  against the old generator, all artifacts regenerate byte-identically). One
+  should-fix applied (generate() now mkdirs the output dir).

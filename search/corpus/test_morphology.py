@@ -182,6 +182,72 @@ class ArtifactTests(unittest.TestCase):
             )
 
 
+class Genesis2ArtifactTests(unittest.TestCase):
+    """The committed Genesis-2 morphology artifact must match the pinned
+    sources (WP-007, ADR-0009 book-level expansion)."""
+
+    @classmethod
+    def setUpClass(cls):
+        with open("lexicons/morphology-genesis2.json", encoding="utf-8") as fh:
+            cls.art = json.load(fh)
+        with open("lexicons/strongs-list.json", encoding="utf-8") as fh:
+            cls.canonical = json.load(fh)
+        cls.canon_h = set(cls.canonical["hebrew"])
+
+    def test_counts(self):
+        self.assertEqual(self.art["counts"]["verses"], 25)
+        self.assertEqual(self.art["counts"]["words"], sum(
+            len(w) for w in self.art["verses"].values()
+        ))
+
+    def test_schema(self):
+        self.assertEqual(self.art["$schema"], "morphology-genesis2/v1")
+
+    def test_known_words(self):
+        """Genesis 2:1 word-level facts: 'finished' (kalah H3615) and the
+        host (tsaba H6635), pinned from the source."""
+        v1 = self.art["verses"]["1"]
+        self.assertEqual(len(v1), 5)
+        self.assertEqual([w["base"] for w in v1],
+                         ["H3615", "H8064", "H776", "H3605", "H6635"])
+
+    def test_unpadded_lemma_normalization(self):
+        """OSHB lemmas are canonically unpadded in Genesis 2 (H1 father at
+        2:24, H68 stone at 2:12) — they must already be canonical here (the
+        OSHB side needs no normalization; this pins the KJV-side quirk
+        handling end-to-end via the apparatus/ledger tests)."""
+        v24 = {r["id"]: r for r in self.art["verses"]["24"]}
+        self.assertIn("H1", [r["base"] for r in self.art["verses"]["24"]])
+        self.assertIn("H68", [r["base"] for r in self.art["verses"]["12"]])
+
+    def test_every_base_in_canonical(self):
+        for words in self.art["verses"].values():
+            for r in words:
+                if r["base"]:
+                    self.assertIn(r["base"], self.canon_h, r)
+
+    def test_ids_unique(self):
+        ids = [r["id"] for words in self.art["verses"].values() for r in words]
+        self.assertEqual(len(ids), len(set(ids)))
+
+    def test_regeneration_byte_identical(self):
+        from search.corpus.build_morphology import build
+        with tempfile.TemporaryDirectory() as td:
+            build(".", out_dir=td, chapters=(2,))
+            committed = Path("lexicons/morphology-genesis2.json").read_text(
+                encoding="utf-8"
+            )
+            fresh = (Path(td) / "morphology-genesis2.json").read_text(
+                encoding="utf-8"
+            )
+            self.assertEqual(
+                fresh, committed,
+                "Genesis-2 morphology artifact drifted from its generator. "
+                "Regenerate: python -m search.corpus.build_morphology --repo . "
+                "--chapters 2 (then update the data/PROVENANCE.md checksum).",
+            )
+
+
 class ProvenanceChecksumGateTests(unittest.TestCase):
     """Offline drift gate: every committed generated artifact's SHA-256 must
     match the checksum recorded in data/PROVENANCE.md. CI cannot run
@@ -211,8 +277,10 @@ class ProvenanceChecksumGateTests(unittest.TestCase):
                 "lexicons/tbesh-glosses.json",
                 "lexicons/tbesg-glosses.json",
                 "lexicons/morphology-genesis1.json",
+                "lexicons/morphology-genesis2.json",
                 "correlations/agreement-ledger.json",
                 "correlations/apparatus-genesis1.json",
+                "correlations/apparatus-genesis2.json",
             },
         )
         for name, sha in recorded.items():

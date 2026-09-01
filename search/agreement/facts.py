@@ -23,10 +23,9 @@ Design rules:
   * Every adapter is deterministic and fails fast on malformed input (the
     reused parsers already fail fast); adapters additionally enforce their own
     invariants (word-detail vs multiset agreement, skipped-code rejection).
-  * Phase-1 scope: Genesis 1 for verse/word facts (documented; whole-OT is a
-    later scaling step — the OSHB path is hardcoded to Gen.xml and the
-    ADAPTERS callables take only (repo)). Lexicon facts cover the full
-    canonical enumeration.
+  * Phase-1 scope: Genesis chapters for verse/word facts (the OSHB path is
+    hardcoded to Gen.xml; the adapters take (repo, chapter)). Lexicon facts
+    cover the full canonical enumeration.
   * The word_strongs value is the verse-level SORTED MULTISET (duplicates
     kept) — segmentation-neutral across sources; per-word detail (ordinals,
     word text, morph) is preserved in meta for the S4 alignment phase.
@@ -107,9 +106,13 @@ def kjv_osis_facts(repo: str = ".", chapter: int = 1) -> list[dict]:
 
         words = []
         for i, m in enumerate(_W_RE.finditer(raw), start=1):
+            # Canonical unpadded normalization (int() strips source leading
+            # zeros, e.g. H0430 -> H430), identical to verse_codes in
+            # build_genesis1 (scrollmapper also writes unpadded codes such as
+            # H068 in places).
             word_codes = [
                 f"{letter}{int(num)}"
-                for letter, num in re.findall(r"strong:([HG])(\d{4,5})", m.group(1))
+                for letter, num in re.findall(r"strong:([HG])(\d{1,5})", m.group(1))
             ]
             words.append(
                 {
@@ -254,19 +257,24 @@ def tbesg_gloss_facts(repo: str = ".") -> list[dict]:
 # registry
 # --------------------------------------------------------------------------
 
-ADAPTERS = {
-    KJV_OSIS: kjv_osis_facts,
-    OSHB: oshb_facts,
-    STRONGS: strongs_gloss_facts,
-    TBESH: tbesh_gloss_facts,
-    TBESG: tbesg_gloss_facts,
-}
-
-
-def collect_all(repo: str = ".") -> dict[str, list[dict]]:
+def collect_all(repo: str = ".", chapters: tuple[int, ...] = (1,)) -> dict[str, list[dict]]:
     """Run every adapter. Returns {source_id: [fact, ...]} in deterministic
-    (adapter-defined) order."""
-    return {source: adapter(repo) for source, adapter in ADAPTERS.items()}
+    (adapter-defined) order.
+
+    ``chapters`` scopes the verse/word facts (kjv-osis, oshb) to the given
+    Genesis chapters; lexicon facts are chapter-independent (full canonical
+    enumeration). Default (1,) reproduces the seeded Genesis-1 facts.
+    """
+    verse_facts = {
+        KJV_OSIS: [f for c in chapters for f in kjv_osis_facts(repo, c)],
+        OSHB: [f for c in chapters for f in oshb_facts(repo, c)],
+    }
+    return {
+        **verse_facts,
+        STRONGS: strongs_gloss_facts(repo),
+        TBESH: tbesh_gloss_facts(repo),
+        TBESG: tbesg_gloss_facts(repo),
+    }
 
 
 def index_facts(all_facts: dict[str, list[dict]]) -> dict[str, dict[str, dict[str, dict]]]:
