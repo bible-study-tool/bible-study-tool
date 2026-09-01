@@ -81,10 +81,10 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **G2. Test expansion** — property/consistency tests; golden tests over corpus
 - `[ ]` **G3. Index caching / incremental rebuilds** — avoid full rebuilds as corpus grows
 - `[ ]` **G4. Performance at scale** — benchmark FTS5 + embeddings on large corpus
-- `[x]` **G5. Packaging / install** — `pyproject.toml` (deps pinned, namespace packages, pytest config); editable install verified; documented run-from-repo-root workflow
+- `[x]` **G5. Packaging / install** + session-portability infra (AGENTS.md charter, .opencode/ reviewer agent + /verify command, scripts/status.py briefing, docs/decisions/ ADRs, docs/wp/ work packages, docs/WORKFLOW.md) — `pyproject.toml` (deps pinned, namespace packages, pytest config); editable install verified; documented run-from-repo-root workflow
 
 ### S. Source Agreement Layer *(new — cross-source comparison as first-class data)*
-- `[ ]` **S1. Fact model + source adapters** — typed facts (`verse_text`, `word_strongs`, `lexicon_gloss`) extracted from each pinned source (KJV-osis, OSHB, strongs-lexicon, TBESH/TBESG); adapter counts reconcile with sources
+- `[x]` **S1. Fact model + source adapters** — typed facts (`verse_text`, `word_strongs`, `lexicon_gloss`) extracted from each pinned source (KJV-osis, OSHB, strongs-lexicon, TBESH/TBESG); adapter counts reconcile with sources
 - `[x]` **S2. Comparison engine + Agreement Ledger** — `correlations/agreement-ledger.json`: per-key readings from every source, `agree|disagree|one-sided` status, summary stats; phase 1 = lexicon gloss comparison (Strong's <-> TBESH/TBESG, all codes) + per-verse Strong's multisets (KJV-osis <-> OSHB, Genesis 1)
 - `[x]` **S3. CI golden-baseline gate + review workflow + verify_all.sh** — new disagreement on re-pin forces review; corpus-vs-source divergences are soft findings, never CI walls; single human-friendly verification command
 - `[x]` **S4. Apparatus view + word-level alignment** — `correlations/apparatus-genesis1.json`: per-verse token alignment (order-free per-code pairing; matched correspondence table + 94 concrete omissions with WLC text/position/morph). Full positional sequence alignment remains future

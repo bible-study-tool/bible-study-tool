@@ -249,7 +249,11 @@ translation texts are linked to rather than bundled.
 
 ## Contributing
 
-See [Contribution Standards](CONTRIBUTION_STANDARDS.md) for guidelines.
+See [Contribution Standards](CONTRIBUTION_STANDARDS.md) for guidelines and
+[docs/WORKFLOW.md](docs/WORKFLOW.md) for the explicit working method (session
+start, step-by-step execution with subagent review, ADRs, work packages).
+`AGENTS.md` is the thin charter every session loads. Before every Merge
+Request, run `scripts/verify_all.sh`.
 Before every Merge Request, run the full local verification:
 
 ```bash
