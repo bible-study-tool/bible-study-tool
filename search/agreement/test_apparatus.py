@@ -101,7 +101,12 @@ class ApparatusArtifactTests(unittest.TestCase):
         om = [o for o in v["omissions"] if o["code"] == "H853"]
         self.assertEqual(len(om), 4)
         for o in om:
-            self.assertEqual(o["oshb"]["morph"], ("HC/To" if "וְ" in o["oshb"]["wlc"] else "HTo"))
+            # vav-prefixed forms carry the conjunction morph HC/To; the rest
+            # are the plain article-object-marker HTo. (Vav+sheva pinned as
+            # codepoints: no NFC composite exists, but keep the discipline.)
+            vav = "\u05d5\u05b0"
+            expected = "HC/To" if o["oshb"]["wlc"].startswith(vav) else "HTo"
+            self.assertEqual(o["oshb"]["morph"], expected)
 
     def test_no_omissions_in_agree_verses(self):
         """The two multiset-agree verses must have zero omissions."""

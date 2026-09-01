@@ -130,7 +130,7 @@ The word-level apparatus (Genesis 1, kjv-osis <-> oshb) regenerates
 byte-identically as well:
 
 ```
-f44edf54f42682fd8c6d82533625624b0c6ee71d3af72bdf65d27927f2dff344  ../correlations/apparatus-genesis1.json
+5ae9100bbb7f80ab1fe8a992bfab3871ec87b6655876267c1b238f4fb789f33b  ../correlations/apparatus-genesis1.json
 ```
 
 ## How to reproduce

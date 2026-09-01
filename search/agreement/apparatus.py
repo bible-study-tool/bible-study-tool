@@ -42,38 +42,36 @@ from search.agreement.facts import (
 )
 
 
-def _tokens_kjv(fact: dict) -> list[dict]:
-    """Flatten kjv-osis word detail into per-token records."""
+def _flatten_tokens(meta_words: list[dict], fields_map: dict[str, str]) -> list[dict]:
+    """Shared token flattening: one record per Strong's-coded token, in
+    document order. ``fields_map`` maps token-field -> word-meta-field (they
+    differ, e.g. kjv 'text' is surfaced as 'span_text')."""
     tokens = []
     n = 0
-    for w in fact["meta"]["words"]:
+    for w in meta_words:
         for code in w["codes"]:
             n += 1
-            tokens.append(
-                {"code": code, "span_text": w["text"], "word_i": w["i"], "token_i": n}
-            )
+            token = {"code": code, "word_i": w["i"], "token_i": n}
+            for tok_key, word_key in fields_map.items():
+                token[tok_key] = w[word_key]
+            tokens.append(token)
     return tokens
+
+
+def _tokens_kjv(fact: dict) -> list[dict]:
+    """Flatten kjv-osis word detail into per-token records."""
+    return _flatten_tokens(fact["meta"]["words"], {"span_text": "text"})
 
 
 def _tokens_oshb(fact: dict) -> list[dict]:
-    """Flatten oshb word detail into per-token records (prefix-only words
-    contribute no code and are excluded — they have no Strong's number)."""
-    tokens = []
-    n = 0
-    for w in fact["meta"]["words"]:
-        for code in w["codes"]:
-            n += 1
-            tokens.append(
-                {
-                    "code": code,
-                    "wlc": w["text"],
-                    "morph": w["morph"],
-                    "id": w["id"],
-                    "word_i": w["i"],
-                    "token_i": n,
-                }
-            )
-    return tokens
+    """Flatten oshb word detail into per-token records.
+
+    Prefix-only words (null base) carry no Strong's code and are excluded —
+    they contribute no token to the alignment or to the omissions.
+    """
+    return _flatten_tokens(
+        fact["meta"]["words"], {"wlc": "text", "morph": "morph", "id": "id"}
+    )
 
 
 def align_verse(key: str, kjv_fact: dict, oshb_fact: dict) -> dict:
@@ -145,7 +143,13 @@ def build_apparatus(repo: str = ".") -> dict:
             "code in kjv-osis pairs with the k-th in oshb). Matched pairs "
             "assert 'same lexeme attested in this verse', not word-order "
             "correspondence. Surplus occurrences become omissions/additions; "
-            "the omissions themselves are exact."
+            "the omissions themselves are exact. Excluded from alignment on "
+            "both sides: tokens with no Strong's number (7 OSHB prefix-only "
+            "words in Genesis 1) — counts and omissions cover coded tokens "
+            "only. Quirk: scrollmapper sometimes merges the object marker "
+            "H853 into a verb span (e.g. 'created' carries H853+H1254), so "
+            "matched H853 pairs show the verb's English span against the "
+            "standalone Hebrew word et."
         ),
         "sources": {
             "kjv-osis": "scrollmapper tagged KJV (English spans; some lemmas merged)",
