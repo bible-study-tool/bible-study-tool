@@ -28,10 +28,10 @@ from pathlib import Path
 
 from .schema import Issue
 
-# Entry-id shape: lowercase, starts with a letter, hyphen-separated segments.
-_ENTRY_ID_RE = re.compile(r"^[a-z][a-z0-9\-]*$")
-# Passage shape: "Book Chapter:Verse" (optionally with ranges), e.g. John 1:1.
-_PASSAGE_RE = re.compile(r"^[A-Za-z][A-Za-z0-9 ]* \d+:\d+(?:[-–]\d+)?$")
+# Entry-id shape: lowercase alphanumeric with at least one letter, hyphen-separated segments (e.g. john-1-1, 2peter-3-5-7).
+_ENTRY_ID_RE = re.compile(r"^(?=.*[a-z])[a-z0-9]+(?:-[a-z0-9]+)+$")
+# Passage shape: "Book Chapter:Verse" (optionally with ranges), e.g. John 1:1 or 2 Peter 3:5-7.
+_PASSAGE_RE = re.compile(r"^[0-9A-Za-z][A-Za-z0-9 ]* \d+:\d+(?:[-–]\d+)?$")
 
 
 def classify_target(target: str) -> str:

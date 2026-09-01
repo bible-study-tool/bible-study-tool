@@ -23,9 +23,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/parallel
+    target: "2peter-3-5-7"
+    note: "By the word of God the heavens were of old, and the earth standing out of the water and in the water — apostolic reflection on the antediluvian waters"
+  - type: xref/theme
+    target: "genesis-7-11"
+    note: "All the fountains of the great deep broken up, and the windows of heaven were opened — the Flood and the waters above the firmament"
+  - type: xref/theme
+    target: "psalms-104-2-3"
+    note: "Who stretchest out the heavens like a curtain, who layeth the beams of his chambers in the waters"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:7 - KJV
@@ -106,6 +119,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, waters above and below, divine execution
+*   NT: 2 Peter 3:5-7 — "by the word of God the heavens were of old, and the earth standing out of the water and in the water" (apostolic reflection on the antediluvian world and the primeval separation of waters)
+*   OT: Genesis 7:11 — "the same day were all the fountains of the great deep broken up, and the windows of heaven were opened" (the Flood as the release of the waters separated on Day 2)
+*   OT: Psalm 104:2-3 — "Who stretchest out the heavens like a curtain: Who layeth the beams of his chambers in the waters" (poetic depiction of the heavenly expanse and upper waters)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 & Chapter 7 — the atmospheric conditions and water canopy of the antediluvian world
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **"And God made" (*wayya'as Elohim*, H6213 H430):** Following the decree of verse 6, verse 7 records the execution (*asah*, "to fashion, make, form"). While Day 1 highlighted instantaneous fiat ("Let there be light: and there was light"), Day 2 combines the command with the descriptive verb of making, demonstrating divine craftsmanship in establishing the physical order of the atmosphere.
+*   **"Waters above the firmament" — Adventist & Theological Perspectives:** In the Seventh-day Adventist creation-theology tradition and conservative creationist literature, the "waters above the firmament" (*hammayim asher me'al laraqiya*) have frequently been understood in connection with a pre-Flood atmospheric moisture canopy or upper hydrological shield. This canopy model is cited in classic Adventist exposition (e.g., Patriarchs and Prophets, pp. 96-97; SDABC Vol. 1) as contributing to the uniform, temperate global climate before the Genesis Flood, when "the windows of heaven were opened" (Genesis 7:11). Per NOTICE.md, this is an interpretive understanding: other Christian and biblical scholars understand the phrase phenomenologically as rain-bearing clouds and atmospheric moisture. Presenting both nuances respects the biblical text while articulating the distinctive Adventist hermeneutic.
+*   **"And it was so" (*wayehi-khen*, H1961 H3651):** This confirmation formula appears six times in Genesis 1 (vv. 7, 9, 11, 15, 24, 30). It signals the complete, stable fulfillment and endurance of the Creator's fiat.
+*   **Apparatus & Tagging Observations:** In the apparatus alignment against the Hebrew OSHB, scrollmapper KJV-osis omits the particle *et* (H853, direct object marker before *haraqiya*), two occurrences of the preposition *beyn* (H996, "between" / "from"), and *vayehi* (H1961 in the closing formula). These omitted codes reflect translator span grouping rather than manuscript differences.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -113,5 +143,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-002;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

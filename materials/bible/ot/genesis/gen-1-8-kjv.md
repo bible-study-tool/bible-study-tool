@@ -22,9 +22,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/parallel
+    target: "psalms-19-1"
+    note: "The heavens declare the glory of God; and the firmament sheweth his handywork — pairing of shamayim and raqiya"
+  - type: xref/theme
+    target: "ezekiel-1-22-26"
+    note: "And the likeness of the firmament upon the heads of the living creature was as the colour of the terrible crystal — prophetic visionary use of raqiya"
+  - type: xref/theme
+    target: "psalms-8-3-4"
+    note: "When I consider thy heavens, the work of thy fingers — divine craftsmanship of the heavens"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:8 - KJV
@@ -97,6 +110,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, naming of heaven, second day
+*   OT: Psalm 19:1 — "The heavens declare the glory of God; and the firmament sheweth his handywork" (explicit pairing of *shamayim* and *raqiya*)
+*   OT: Ezekiel 1:22-26 — "And the likeness of the firmament upon the heads of the living creature was as the colour of the terrible crystal" (prophetic visionary use of *raqiya* beneath the divine throne)
+*   OT: Psalm 8:3-4 — "When I consider thy heavens, the work of thy fingers, the moon and the stars, which thou hast ordained"
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — the ordering of the atmosphere and the daily creation cycle
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Naming of Heaven (*shamayim*, H8064):** God calls the firmament (*raqiya*, H7549) "Heaven" (*shamayim*). This is the second divine naming act in Genesis 1 (following Day and Night in v5). In biblical usage, *shamayim* encompasses three distinct realms: (1) the atmospheric sky where clouds form and birds fly (Gen 1:20; Jer 4:25); (2) the celestial/stellar heaven where the sun, moon, and stars reside (Gen 1:14-17; Ps 8:3); and (3) the dwelling place of God, the "third heaven" (2 Cor 12:2; 1 Kings 8:27). Here in verse 8, *shamayim* specifically designates the atmospheric sky created on Day 2.
+*   **The Day Formula and Ordinal Numbering (*yom sheni*, H3117 H8145):** Verse 8 concludes with the recurring day-closing formula: "And the evening and the morning were the second day" (*wayehi-erev wayehi-voqer yom sheni*). Note the shift in grammatical form: Day 1 used the cardinal numeral *yom echad* ("one day" / "day one", H259), whereas Day 2 initiates the use of the ordinal numeral *sheni* ("second", H8145), establishing the sequential numbering that culminates in the Sabbath (*yom hash-shevi'i*, Gen 2:2-3).
+*   **The Absence of the "Good" Evaluation:** Day 2 is the only day of creation week that lacks the divine appraisal formula "and God saw that it was good" (*wayyar Elohim ki-tov*). In both Adventist commentary (e.g., SDABC) and historical Jewish exegesis (e.g., Rashi), this is understood not as a deficiency in Day 2's work, but because the division and organization of the waters was incomplete until Day 3, when the waters under heaven were gathered into seas and dry land emerged (vv. 9-10). Consequently, Day 3 receives a double pronouncement of "good" (vv. 10, 12).
+*   **Apparatus Note:** In the Hebrew text, the phrase "and there was evening and there was morning" contains two occurrences of the verb *wayehi* (H1961), which are omitted from Strong's tagging in the KJV-osis source (see `correlations/apparatus-genesis1.json`, key `Gen.1.8`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -104,5 +134,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-002;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

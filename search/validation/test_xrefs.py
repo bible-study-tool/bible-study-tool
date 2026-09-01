@@ -23,13 +23,17 @@ class ClassifyTargetTests(unittest.TestCase):
     def test_entry_id(self):
         self.assertEqual(classify_target("john-1-1"), "entry")
         self.assertEqual(classify_target("gen-1-1-kjv"), "entry")
+        self.assertEqual(classify_target("2peter-3-5-7"), "entry")
+        self.assertEqual(classify_target("1cor-13-1"), "entry")
 
     def test_passage(self):
         self.assertEqual(classify_target("John 1:1"), "passage")
         self.assertEqual(classify_target("Genesis 1:1"), "passage")
+        self.assertEqual(classify_target("2 Peter 3:5-7"), "passage")
+        self.assertEqual(classify_target("1 Corinthians 13:1"), "passage")
 
     def test_malformed(self):
-        for bad in ("", "garbage!!!", "John 1", "1:1", "John:1:1", "a b c"):
+        for bad in ("", "garbage!!!", "John 1", "1:1", "John:1:1", "a b c", "1-1"):
             self.assertEqual(classify_target(bad), "malformed", f"{bad!r} should be malformed")
 
 
@@ -37,6 +41,7 @@ class NormalizeTests(unittest.TestCase):
     def test_passage_to_id(self):
         self.assertEqual(normalize_passage_to_id("John 1:1"), "john-1-1")
         self.assertEqual(normalize_passage_to_id("Genesis 1:1"), "genesis-1-1")
+        self.assertEqual(normalize_passage_to_id("2 Peter 3:5-7"), "2-peter-3-5")
 
 
 class XrefValidationTests(unittest.TestCase):
