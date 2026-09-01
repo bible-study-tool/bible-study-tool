@@ -28,9 +28,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "psalms-104-25-26"
+    note: "There is that leviathan, whom thou hast made to play therein — the sea monster as a creature, not a rival god"
+  - type: xref/theme
+    target: "job-41-1"
+    note: "Canst thou draw out leviathan with an hook? — the Creator's sovereignty over the great sea creature"
+  - type: xref/theme
+    target: "psalms-104-30"
+    note: "Thou sendest forth thy spirit, they are created — the dependence of all living creatures on the Creator"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:21 - KJV
@@ -151,6 +164,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the sea creatures, divine sovereignty over the deep
+*   OT: Psalm 104:25-26 — "There is that leviathan, whom thou hast made to play therein" (the sea monster as God's creature)
+*   OT: Job 41:1 — "Canst thou draw out leviathan with an hook?" (Yahweh's speech from the whirlwind)
+*   OT: Psalm 104:30 — "Thou sendest forth thy spirit, they are created" (all living creatures dependent on the Creator)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "God created great whales... and every winged fowl"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **"God Created" (*bara*, H1254) — the Verb of Divine Creation:** In Genesis 1 the verb *bara* ("to create") is used in only three verses — of the cosmos (v1), of the sea creatures and birds (v21), and of humanity (v27, where it appears three times). Its use here sets the animal life of Day 5 alongside the two great acts of divine origination — the living creatures are not an emergent accident but a direct creative act of God.
+*   **"Great Whales" (*tannin*, H8577) — the Sea Monster Demystified:** The KJV "great whales" renders *tannin*, the Hebrew word for the sea monster (elsewhere "serpent," Exod 7:9; "dragon," Isa 27:1; "dragons," Ps 74:13; the distinct lexeme *livyathan*, "leviathan," appears at Ps 74:14 and Job 41:1). In the ancient Near East the chaos-sea monster was a feared deity; here it is the first creature listed among God's handiwork, and Psalm 104:26 pictures it as God's plaything. The deep is not a rival — it is a habitat.
+*   **"After Their Kind" (*min*, H4327):** The phrase *le-min* ("after its kind") appears twice in this verse, establishing the boundary of reproductive order. The same formula governs the plants of Day 3 (v11-12) and the animals of Day 6 (v24-25): creation reproduces within divinely fixed kinds.
+*   **Apparatus Note:** This verse carries one of the heaviest omission sets of the chapter — seven Hebrew tokens left untagged in scrollmapper KJV-osis: *ki* (H3588, "that"), two occurrences of *kol* (H3605, "every"), *asher* (H834, "which"), and three occurrences of the object marker *et* (H853) (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.21`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -158,5 +188,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-005;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

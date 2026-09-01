@@ -28,9 +28,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "psalms-104-24-25"
+    note: "O Lord, how manifold are thy works!... So is this great and wide sea, wherein are things creeping innumerable — the creational psalm echoing Day 5"
+  - type: xref/theme
+    target: "ezekiel-47-9-10"
+    note: "Every thing that liveth, which moveth, whithersoever the rivers shall come, shall live — the waters teeming with life"
+  - type: xref/parallel
+    target: "genesis-2-7"
+    note: "And man became a living soul (nephesh chayyah) — the same phrase first used of the sea creatures here"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:20 - KJV
@@ -151,6 +164,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the living creature (nephesh chayyah), the teeming waters
+*   OT: Psalm 104:24-25 — "O Lord, how manifold are thy works!... So is this great and wide sea, wherein are things creeping innumerable" (the creational psalm)
+*   OT: Ezekiel 47:9-10 — "Every thing that liveth, which moveth, whithersoever the rivers shall come, shall live" (the waters teeming with life, restored in the sanctuary vision)
+*   OT: Genesis 2:7 — "And man became a living soul" (nephesh chayyah applied to humanity, echoing this verse)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "God... caused the waters to bring forth abundantly the moving creature that hath life"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The First "Living Soul" (*nephesh chayyah*, H5315 + H2416):** This is the first occurrence in Scripture of the phrase *nephesh chayyah* — here applied to the sea creatures and (in v21, v24) to the animals and birds. It is a foundational text for understanding the biblical meaning of "soul": a *nephesh* is a living being, not a disembodied immortal essence. The same phrase is later applied to humanity (Gen 2:7). This biblical-exegetical observation — that the soul is the living creature, and that animals are called souls before man is called a soul — carries the weight of the conditional-immortality position, which is to be weighed against the full witness of Scripture (see NOTICE.md doctrinal basis).
+*   **The Waters "Bring Forth Abundantly" (*sharats*, H8317):** The verb *sharats* means to swarm, teem, or wriggle — the waters themselves are summoned to produce an active, abundant mass of life (*sherets*, H8318). Creation is not passive: the elements are commanded to participate in the fecundity of the Creator.
+*   **Fowl That May Fly (*uph*, H5774; *oph*, H5775):** The bird is defined by its mode of motion — the verb *uph* ("to fly") and the noun *oph* ("bird") share the root. The KJV-osis skeleton notes that H5774 is one of the no-definition Strong's codes; the TBESH gloss "to fly" supplies the sense (see `lexicons/tbesh-glosses.json`).
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, the preposition *al* (H5921, "upon") before "the face of the firmament" is left untagged — the other occurrence ("above the earth") carries its tag (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.20`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -158,5 +188,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-005;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

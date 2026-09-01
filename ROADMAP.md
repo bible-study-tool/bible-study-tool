@@ -36,7 +36,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 ## Goal Inventory
 
 ### A. Corpus & Content
-- `[~]` **A1. Complete Genesis 1 creation narrative** — v1-31 (all 31 skeletons generated; v1-19 curated across WP-001..WP-004 with status: review; v20-31 awaiting curation in WP-005..WP-006)
+- `[~]` **A1. Complete Genesis 1 creation narrative** — v1-31 (all 31 skeletons generated; v1-23 curated across WP-001..WP-005 with status: review; v24-31 awaiting curation in WP-006)
 - `[ ]` **A2. Expand OT coverage** — Exodus, Isaiah, Daniel, Psalms (Adventist-prioritized); more word studies
 - `[ ]` **A3. Add NT coverage** — John 1, Hebrews, Revelation, Romans
 - `[x]` **A4. Full Strong's lexicon dataset** — `lexicons/strongs-list.json` (canonical 8674 H + 5624 G, F2-verified) + `lexicons/strongs-lexicon.json` (definitions/transliteration/KJV usage); sources pinned in `data/PROVENANCE.md`
@@ -150,7 +150,7 @@ scrollmapper/bible_databases (MIT) additionally serves A6 (translations).
    it. Unlocks content + Macula.
 
 ### Phase 3 — Corpus Expansion (validated)
-6. **A1 — Complete Genesis 1** (v1-31) — ✅ skeletons generated; v1-19 curated (WP-001..WP-004); v20-31 curation pending (WP-005..WP-006)
+6. **A1 — Complete Genesis 1** (v1-31) — ✅ skeletons generated; v1-23 curated (WP-001..WP-005); v24-31 curation pending (WP-006)
 7. **A2 — Expand OT** (Exodus, Isaiah, Daniel, Psalms)
 8. **A3 — Add NT** (John 1, Hebrews, Revelation, Romans)
 9. **A5 — Greek word-study expansion**

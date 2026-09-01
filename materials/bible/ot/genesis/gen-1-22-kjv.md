@@ -24,9 +24,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "genesis-1-28"
+    note: "And God blessed them... Be fruitful, and multiply — the same blessing extended to humanity on Day 6"
+  - type: xref/theme
+    target: "psalms-104-30"
+    note: "Thou sendest forth thy spirit, they are created: and thou renewest the face of the earth"
+  - type: xref/theme
+    target: "genesis-9-1"
+    note: "And God blessed Noah and his sons, and said unto them, Be fruitful, and multiply — the blessing renewed after the flood"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 1:22 - KJV
@@ -115,6 +128,22 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the first blessing, divine fecundity
+*   OT: Genesis 1:28 — "And God blessed them... Be fruitful, and multiply" (the same blessing extended to humanity on Day 6)
+*   OT: Psalm 104:30 — "Thou sendest forth thy spirit, they are created: and thou renewest the face of the earth"
+*   OT: Genesis 9:1 — "And God blessed Noah and his sons, and said unto them, Be fruitful, and multiply" (the blessing renewed after the flood)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "God blessed the living creatures he had made"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The First Blessing (*barak*, H1288):** Verse 22 is the first occurrence of *barak* ("to bless") in Scripture — and it is spoken to the animal creation before any word of judgment has entered the narrative. Blessing is the creation's default; curse arrives only with sin (Gen 3:14, 17). The same blessing pattern recurs for humanity (v28), for Noah (Gen 9:1), and for Abraham (Gen 12:2).
+*   **"Be Fruitful, and Multiply" (*parah*, H6509; *rabah*, H7235):** The paired imperatives *peru u-revu* — "be fruitful and multiply" — are the divine commission to abundance. They recur verbatim in the blessing of humanity (v28) and of Noah (Gen 9:1, 7), binding the animal and human realms into one creational economy of life.
+*   **The Object Markers (H853):** The apparatus row for v22 shows two omissions of the object marker *et* (H853) — the objects of the blessing ("them") and of the filling ("the waters") are marked in the Hebrew but untagged in scrollmapper KJV-osis (documented in `correlations/apparatus-genesis1.json`, key `Gen.1.22`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -122,5 +151,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-005;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.
