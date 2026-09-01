@@ -282,6 +282,7 @@ class ProvenanceChecksumGateTests(unittest.TestCase):
                 "lexicons/tbesg-glosses.json",
                 "lexicons/morphology-genesis1.json",
                 "lexicons/morphology-genesis2.json",
+                "lexicons/wordgraph-genesis.json",
                 "correlations/agreement-ledger.json",
                 "correlations/apparatus-genesis1.json",
                 "correlations/apparatus-genesis2.json",
@@ -306,8 +307,12 @@ class ProvenanceChecksumGateTests(unittest.TestCase):
             # Review queue: regenerated with merge-preservation + human edits;
             # deliberately NOT byte-checksummed.
             "correlations/ai-discovered-links.json",
+            # WordGraph homograph notes: HAND content (reviewed input consumed
+            # by the generator) — deliberately NOT byte-checksummed.
+            "lexicons/wordgraph-notes-genesis.json",
         }
-        generated = {p.as_posix() for p in Path("lexicons").glob("*.json")}
+        generated = {p.as_posix() for p in Path("lexicons").glob("*.json")
+                     if p.as_posix() not in hand_curated}
         generated |= {
             p.as_posix() for p in Path("correlations").glob("*.json")
             if p.as_posix() not in hand_curated

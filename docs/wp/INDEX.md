@@ -18,7 +18,7 @@ exist and are byte-verified — curation ADDS interpretive content
 | [WP-005](WP-005-gen1-day5.md) | v20-23 | Day 5 (sea creatures, birds) | done |
 | [WP-006](WP-006-gen1-day6.md) | v24-31 | Day 6 (land animals, humanity, dominion) | done |
 | [WP-007](WP-007-gen2-pipeline.md) | Gen 2 (25 verses) | Book-level pipeline generalization + Genesis 2 skeletons (ADR-0009) | done |
-| [WP-009](WP-009-wordgraph.md) | WordGraph | Build the WordGraph lexical knowledge graph for Genesis (ADR-0010) | open |
+| [WP-009](WP-009-wordgraph.md) | WordGraph | Build the WordGraph lexical knowledge graph for Genesis (ADR-0010) | done |
 | [WP-010](WP-010-draft-engine.md) | Draft engine | Deterministic word-study draft engine consuming the WordGraph (ADR-0010) | open |
 | [WP-008](WP-008-gen2-sabbath.md) | Gen 2:1-25 | Curate Genesis 2 — Eden, the man and woman, the seventh-day Sabbath (ADR-0009) | open |
 

@@ -1,6 +1,6 @@
 # WP-009: Build the WordGraph lexical knowledge graph for Genesis (ADR-0010)
 
-status: open
+status: done
 scope: wordgraph-genesis.json (Genesis 1-2) — the lemma-centric spine + aggregate-first dictionary
 priority: high
 
@@ -108,5 +108,26 @@ are unchanged.
 - **Glosses** reference the agreement-ledger status (single source of truth).
 - Scope discipline (agreed): Genesis 1-2 only; cross-translation equivalence
   deferred to the C-pillar.
+
+### Implementation outcome (2026-09-01)
+
+- `search/corpus/build_wordgraph.py` + `search/corpus/test_wordgraph.py`
+  (11 tests); `lexicons/wordgraph-genesis.json` (183 lexemes, 751 tokens,
+  schema wordgraph-genesis/v1).
+- Curated homograph candidates extracted to `lexicons/wordgraph-notes-genesis.json`
+  (HAND content, reviewed; consumed by the generator with fail-fast on
+  missing file) — per the WP convention letter (subagent should-fix #1).
+- Generator consumes committed artifacts only (runs in CI); OSHB n-attr
+  stored verbatim as counts; token ids fail-fast (no silent drops);
+  dead accumulators removed; TBESG dropped from consumed (Genesis 1-2 is all
+  Hebrew).
+- `data/PROVENANCE.md`: new checksum `ce944b12...` + reproduction step 9;
+  inventory pin now 10 generated artifacts; `wordgraph-notes-genesis.json`
+  added to the hand-curated set (gate fix: lexicons glob now also excludes
+  hand content).
+- Verification: 199 tests local (ALL CHECKS PASSED); 157 passed / 42 skipped
+  in fresh clone (WordGraph tests run in CI); subagent review PASS after the
+  three should-fixes (notes file extraction, fail-fast on id/n, dead
+  declaration cleanup).
 
 (appended during work)

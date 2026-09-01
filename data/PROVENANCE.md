@@ -136,6 +136,13 @@ well:
 4f678a8264262f0796a13e0ac49cc040bc3acaaefd7c6b493e66d1a5cab32616  ../correlations/apparatus-genesis2.json
 ```
 
+The WordGraph lexical knowledge graph (ADR-0010) regenerates byte-identically
+as well (consumes committed artifacts only — no raw sources):
+
+```
+ce944b124abaeee502cf214be87e3ad5da61493a48fbb0cb8a7d531fc5a6d2fa  ../lexicons/wordgraph-genesis.json
+```
+
 ## Source edition caveats (discovered by the corpus fidelity tests)
 
 1. **Gen 1:2 comma variant** — scrollmapper KJV-osis reads "without form and
@@ -191,6 +198,9 @@ python -c "from search.agreement.compare import write_ledger; write_ledger('.', 
 # 8. Regenerate the word-level apparatus
 python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.')"  # Genesis 1
 python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.', out_path='correlations/apparatus-genesis2.json', chapters=(2,))"  # Genesis 2
+
+# 9. Regenerate the WordGraph lexical knowledge graph (ADR-0010)
+python -m search.corpus.build_wordgraph --repo .
 ```
 
 ## Policy
