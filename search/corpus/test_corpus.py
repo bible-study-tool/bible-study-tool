@@ -116,7 +116,7 @@ class RegenerationTripwireTests(unittest.TestCase):
         cls.verses = {v["verse"]: v for v in ch1["verses"]}
 
     def test_committed_entries_match_generator_byte_for_byte(self):
-        for v in range(4, 32):
+        for v in range(6, 32):
             path = GENESIS_DIR / f"gen-1-{v}-kjv.md"
             expected, _ = self.build_entry_markdown(
                 self.verses[v], self.lexicon, self.tbesh
@@ -165,20 +165,23 @@ class CorpusIntegrityTests(unittest.TestCase):
         self.assertEqual(len(files), 31, "Genesis 1 must have exactly 31 entries")
 
     def test_new_entries_are_draft_skeletons(self):
-        """Generated entries (4-31) must be status: draft with the pinned
-        generation date and NO fabricated cross-references/semantic links."""
-        for v in range(4, 32):
+        """Generated-but-uncursed entries must still be status: draft with
+        the pinned generation date. Curated entries (v4-5, WP-001) are
+        checked in test_curated_entries_status below."""
+        for v in range(6, 32):
             text = (GENESIS_DIR / f"gen-1-{v}-kjv.md").read_text(encoding="utf-8")
-            self.assertIn("status: draft", text)
-            self.assertIn(f"created: {GENERATION_DATE}", text)
-            self.assertNotIn("cross_references:", text)
-            self.assertNotIn("semantic_links:", text)
-            self.assertNotIn("AI Summary", text)
+            self.assertIn("status: draft", text, f"gen-1-{v}")
+            self.assertIn(f"created: {GENERATION_DATE}", text, f"gen-1-{v}")
+            self.assertNotIn("cross_references:", text, f"gen-1-{v}")
+            self.assertNotIn("semantic_links:", text, f"gen-1-{v}")
+            self.assertNotIn("AI Summary", text, f"gen-1-{v}")
 
-    def test_curated_entries_untouched_status(self):
-        for v in (1, 2, 3):
+    def test_curated_entries_status(self):
+        """Curated v1-3 (original MVP) and v4-5 (WP-001) are status: review
+        with their WP's update date, cross-references present, AI markers."""
+        for v in (1, 2, 3, 4, 5):
             text = (GENESIS_DIR / f"gen-1-{v}-kjv.md").read_text(encoding="utf-8")
-            self.assertIn("status: review", text)
+            self.assertIn("status: review", text, f"gen-1-{v}")
 
     def test_all_tags_in_canonical_list(self):
         for p in GENESIS_DIR.glob("gen-1-*-kjv.md"):

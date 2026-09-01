@@ -26,7 +26,6 @@ level: intro
 status: review
 created: 2026-08-28
 updated: 2026-09-01
-semantic_links:
 cross_references:
   - type: xref/fulfillment
     target: "john-8-12"
