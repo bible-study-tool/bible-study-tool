@@ -1,6 +1,6 @@
 # ADR-0010: The WordGraph — a lemma-centric lexical knowledge graph
 
-**Status:** Proposed · **Date:** 2026-09-01
+**Status:** Accepted · **Date:** 2026-09-01
 
 ## Context
 

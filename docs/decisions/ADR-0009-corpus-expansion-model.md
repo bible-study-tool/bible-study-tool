@@ -1,6 +1,6 @@
 # ADR-0009: Corpus expansion model — whole-book pipeline, per-chapter work packages
 
-**Status:** Proposed · **Date:** 2026-09-01
+**Status:** Accepted · **Date:** 2026-09-01
 
 ## Context
 
