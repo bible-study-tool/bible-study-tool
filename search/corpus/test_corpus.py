@@ -11,6 +11,7 @@ from search.corpus.build_genesis1 import (
     clean_verse_text,
     load_pinned_sources,
 )
+from search.testutil import require_raw_sources
 
 GENESIS_DIR = Path("materials/bible/ot/genesis")
 
@@ -42,6 +43,7 @@ class CleanTextTests(unittest.TestCase):
                 )
 
 
+@require_raw_sources()
 class PipelineFidelityTests(unittest.TestCase):
     """The extraction pipeline applied to the CURATED verses (1-3) must
     reproduce the hand-curated entries' KJV quotes exactly — proving the
@@ -101,6 +103,7 @@ class PipelineFidelityTests(unittest.TestCase):
             )
 
 
+@require_raw_sources()
 class RegenerationTripwireTests(unittest.TestCase):
     """The committed entries must equal what the generator produces from the
     pinned sources — byte for byte. This catches hand-edits and partial
@@ -155,6 +158,7 @@ class RegenerationTripwireTests(unittest.TestCase):
                 self.assertIn(block, text, f"{path.name}: word block for {code} drifted")
 
 
+@require_raw_sources()
 class Genesis2SkeletonTests(unittest.TestCase):
     """Genesis 2 (WP-007, ADR-0009 book-level expansion): 25 generated
     skeletons, byte-identical to the generator, all status: draft."""

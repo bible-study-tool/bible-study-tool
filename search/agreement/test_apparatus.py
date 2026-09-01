@@ -8,6 +8,7 @@ import unittest
 from pathlib import Path
 
 from search.agreement.apparatus import build_apparatus, write_apparatus
+from search.testutil import require_raw_sources
 
 APPARATUS_PATH = Path("correlations/apparatus-genesis1.json")
 
@@ -113,6 +114,7 @@ class ApparatusArtifactTests(unittest.TestCase):
         for key in ("Gen.1.1", "Gen.1.4"):
             self.assertEqual(self.by_key[key]["counts"]["omissions"], 0)
 
+    @require_raw_sources()
     def test_regeneration_byte_identical(self):
         with tempfile.TemporaryDirectory() as td:
             write_apparatus(".", out_path=Path(td) / "app.json")
@@ -187,6 +189,7 @@ class Genesis2ApparatusTests(unittest.TestCase):
         self.assertIn("H3808", om)
         self.assertIn("H4480", om)
 
+    @require_raw_sources()
     def test_regeneration_byte_identical(self):
         import tempfile
         with tempfile.TemporaryDirectory() as td:

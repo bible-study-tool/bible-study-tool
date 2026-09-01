@@ -8,6 +8,7 @@ import unittest
 from pathlib import Path
 
 from search.corpus.build_morphology import decompose_lemma, parse_book_xml
+from search.testutil import require_raw_sources
 
 FIXTURE_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <osis xmlns="http://www.bibletechnologies.net/2003/OSIS/namespace">
@@ -144,6 +145,7 @@ class ArtifactTests(unittest.TestCase):
         self.assertEqual([w["base"] for w in v1],
                          ["H7225", "H1254", "H430", "H853", "H8064", "H853", "H776"])
 
+    @require_raw_sources()
     def test_word_counts_match_source(self):
         """Word count per verse must equal the <w> element count in the XML."""
         import xml.etree.ElementTree as ET
@@ -160,6 +162,7 @@ class ArtifactTests(unittest.TestCase):
                 f"Gen.1.{vnum}: artifact word count != source",
             )
 
+    @require_raw_sources()
     def test_regeneration_byte_identical(self):
         """Drift tripwire: committed artifact must equal a fresh build — at
         the BYTE level (not just structurally), so formatting drift also
@@ -230,6 +233,7 @@ class Genesis2ArtifactTests(unittest.TestCase):
         ids = [r["id"] for words in self.art["verses"].values() for r in words]
         self.assertEqual(len(ids), len(set(ids)))
 
+    @require_raw_sources()
     def test_regeneration_byte_identical(self):
         from search.corpus.build_morphology import build
         with tempfile.TemporaryDirectory() as td:

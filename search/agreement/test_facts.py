@@ -19,8 +19,10 @@ from search.agreement.facts import (
     FACT_VERSE_TEXT,
     FACT_WORD_STRONGS,
 )
+from search.testutil import require_raw_sources
 
 
+@require_raw_sources()
 class KjvOsisAdapterTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -101,6 +103,7 @@ class KjvOsisAdapterTests(unittest.TestCase):
             self.assertEqual(by_key[key]["value"], expected, key)
 
 
+@require_raw_sources()
 class OshbAdapterTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -226,6 +229,7 @@ class LexiconAdapterTests(unittest.TestCase):
         self.assertEqual(by_key["H226"], "sign: miraculous")
 
 
+@require_raw_sources()
 class RegistryTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

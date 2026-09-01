@@ -19,6 +19,7 @@ from search.agreement.facts import (
     FACT_LEXICON_GLOSS,
     FACT_WORD_STRONGS,
 )
+from search.testutil import require_raw_sources
 
 LEDGER_PATH = Path("correlations/agreement-ledger.json")
 
@@ -86,6 +87,7 @@ class EngineTests(unittest.TestCase):
                          "agree")
 
 
+@require_raw_sources()
 class LedgerArtifactTests(unittest.TestCase):
     """The committed ledger must match the facts and the policy."""
 

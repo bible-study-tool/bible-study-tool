@@ -7,6 +7,7 @@ from pathlib import Path
 
 from scripts.curate_context import build_briefing, find_wp_file, parse_verse_range
 from scripts.wp_check import check_entry_ai_markers, resolve_wp_files, run_wp_check
+from search.testutil import require_raw_sources
 
 
 class CurateContextTests(unittest.TestCase):
@@ -53,6 +54,7 @@ class WpCheckTests(unittest.TestCase):
         errs = check_entry_ai_markers(Path("dummy.md"), unbalanced)
         self.assertTrue(len(errs) > 0)
 
+    @require_raw_sources()
     def test_run_wp_check_on_existing_curated_wps(self):
         repo_root = Path(".")
         for wp_name in ("WP-001", "WP-002"):
