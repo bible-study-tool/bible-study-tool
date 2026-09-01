@@ -87,4 +87,26 @@ are unchanged.
 
 ## Notes / findings
 
+### Design (agreed with user 2026-09-01, before implementation)
+
+- **Lexeme identity**: Strong's code for the pilot (Genesis 1-2, ~183 lexemes);
+  homograph-suffixed (`H1254.1`/`H1254.2`) only when a split is actually
+  needed. Full ETCBC-style numbering arrives with Macula/BHSA — the schema is
+  forward-compatible (per ADR-0010 three-layer stack).
+- **OSHB `n` attribute**: stored verbatim as counts per value, NEVER as
+  identity — it proved unreliable as a homograph signal (H216 "light" gets
+  n=0 AND n=1 in the same verse; H2896 flips with no sense pattern; H7307 has
+  none). It is real data worth keeping, not a discriminator.
+- **TBESH variants**: kept verbatim (variant lists). The generator never
+  decides which sense applies — the review workflow does (deterministic core
+  never guesses).
+- **Homograph field = the ONE curated human input**: seeded all `unresolved`
+  (option A, agreed) with candidate senses listed; a split is made only when a
+  conflicting occurrence appears in scope (e.g. H7673 "keep" in Exodus), at
+  which point the review makes the call with real context. Theological prose
+  per lexeme: DEFERRED indefinitely (thin human layer per user's goal).
+- **Glosses** reference the agreement-ledger status (single source of truth).
+- Scope discipline (agreed): Genesis 1-2 only; cross-translation equivalence
+  deferred to the C-pillar.
+
 (appended during work)
