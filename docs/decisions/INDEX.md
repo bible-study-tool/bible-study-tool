@@ -13,6 +13,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-0005](ADR-0005-data-integrity-precedes-scale.md) | Data integrity precedes scale (validators + CI) | Accepted |
 | [ADR-0006](ADR-0006-provenance-and-generated-artifacts.md) | Source pinning + generated-artifact discipline | Accepted |
 | [ADR-0007](ADR-0007-source-agreement-layer.md) | Source Agreement Layer (facts → ledger → apparatus) | Accepted |
+| [ADR-0008](ADR-0008-future-architecture-and-packaging.md) | Future architecture & packaging direction (3-tier engine, tiered distribution) | Proposed |
 
 ## When to write one
 
