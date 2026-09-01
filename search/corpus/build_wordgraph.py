@@ -198,9 +198,18 @@ def build(repo: str = ".") -> dict:
         )
 
     scope_chapters = [1, 2]
+    # Verses derived from the artifacts (never hardcoded): the distinct
+    # osisIDs across the morphology layers.
+    n_verses = len(
+        {
+            occ["passage"]
+            for lexeme in lexemes
+            for occ in lexeme["occurrences"]
+        }
+    )
     payload = {
         "$schema": "wordgraph-genesis/v1",
-        "scope": {"book": "genesis", "chapters": scope_chapters, "verses": 56},
+        "scope": {"book": "genesis", "chapters": scope_chapters, "verses": n_verses},
         "generated_from": [
             "lexicons/morphology-genesis1.json",
             "lexicons/morphology-genesis2.json",
@@ -227,6 +236,9 @@ def build(repo: str = ".") -> dict:
             "conflicting occurrence appears in scope.",
             "Theological prose per lexeme deferred indefinitely (thin human "
             "layer).",
+            "TBESG (Greek glosses) intentionally not consumed: Genesis 1-2 is "
+            "all-Hebrew — the Greek gloss layer applies when a Greek-scope "
+            "book is added.",
         ],
         "lexemes": lexemes,
     }

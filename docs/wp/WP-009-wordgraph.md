@@ -125,9 +125,17 @@ are unchanged.
   inventory pin now 10 generated artifacts; `wordgraph-notes-genesis.json`
   added to the hand-curated set (gate fix: lexicons glob now also excludes
   hand content).
+- `python scripts/wp_check.py --wp WP-009` exits 1 ("no files resolved") —
+  expected: WP-009 is an infra package with no `status: review` scope; the
+  gate for infra WPs is `pytest` + `verify_all.sh` (wp_check is N/A).
 - Verification: 199 tests local (ALL CHECKS PASSED); 157 passed / 42 skipped
   in fresh clone (WordGraph tests run in CI); subagent review PASS after the
   three should-fixes (notes file extraction, fail-fast on id/n, dead
   declaration cleanup).
+- Follow-up sweep (all remaining reviewer points closed): TBESG honesty-rule
+  added; `scope.verses` now DERIVED from artifacts (not hardcoded) + test
+  pin; `import os` moved to module level; wp_check N/A noted; M6 confirmed
+  absent from repo. New artifact checksum `d7842e14...`. 200 tests local /
+  158+42 in clone.
 
 (appended during work)

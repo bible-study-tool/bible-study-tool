@@ -7,6 +7,7 @@ raw data/ sources) — so these tests run in CI (fresh clone) as well.
 from __future__ import annotations
 
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -26,7 +27,19 @@ class WordGraphArtifactTests(unittest.TestCase):
         self.assertEqual(self.graph["$schema"], "wordgraph-genesis/v1")
         self.assertEqual(self.graph["scope"]["book"], "genesis")
         self.assertEqual(self.graph["scope"]["chapters"], [1, 2])
+        # Derived from the artifacts (not hardcoded): 31 Gen-1 + 25 Gen-2
+        # distinct osisIDs.
         self.assertEqual(self.graph["scope"]["verses"], 56)
+
+    def test_verses_count_derived_from_occurrences(self):
+        """The scope verses count must equal the distinct occurrence passages
+        (no hardcoded drift)."""
+        passages = {
+            occ["passage"]
+            for l in self.graph["lexemes"]
+            for occ in l["occurrences"]
+        }
+        self.assertEqual(len(passages), self.graph["scope"]["verses"])
 
     def test_lexeme_count(self):
         self.assertEqual(len(self.graph["lexemes"]), 183)
@@ -136,7 +149,6 @@ class WordGraphArtifactTests(unittest.TestCase):
         """The graph must build from committed artifacts alone (runs in CI)."""
         with tempfile.TemporaryDirectory() as td:
             # The committed artifacts are symlinked; raw data/ is absent.
-            import os
             for rel in ("lexicons", "correlations"):
                 src = Path(rel)
                 dst = Path(td) / rel
@@ -150,7 +162,6 @@ class WordGraphArtifactTests(unittest.TestCase):
         """The curated homograph candidates come from the reviewed notes file
         (hand content), not the generator — a code edit must not be needed
         for a data change."""
-        import tempfile, os
         notes = json.loads(
             Path("lexicons/wordgraph-notes-genesis.json").read_text(encoding="utf-8")
         )

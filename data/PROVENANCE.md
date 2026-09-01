@@ -140,7 +140,7 @@ The WordGraph lexical knowledge graph (ADR-0010) regenerates byte-identically
 as well (consumes committed artifacts only — no raw sources):
 
 ```
-ce944b124abaeee502cf214be87e3ad5da61493a48fbb0cb8a7d531fc5a6d2fa  ../lexicons/wordgraph-genesis.json
+d7842e149a48af32a5b27d655e263734b96426c4a69f8af4af51a2a6a269bef7  ../lexicons/wordgraph-genesis.json
 ```
 
 ## Source edition caveats (discovered by the corpus fidelity tests)
