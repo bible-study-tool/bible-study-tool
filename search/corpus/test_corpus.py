@@ -160,8 +160,8 @@ class RegenerationTripwireTests(unittest.TestCase):
 
 @require_raw_sources()
 class Genesis2SkeletonTests(unittest.TestCase):
-    """Genesis 2 (WP-007, ADR-0009 book-level expansion): 25 generated
-    skeletons, byte-identical to the generator, all status: draft."""
+    """Genesis 2 (WP-007..WP-008): 25 entries; drafts byte-identical to the
+    generator, curated entries with cross_references + updated date."""
 
     @classmethod
     def setUpClass(cls):
@@ -176,20 +176,39 @@ class Genesis2SkeletonTests(unittest.TestCase):
         files = sorted(GENESIS_DIR.glob("gen-2-*-kjv.md"))
         self.assertEqual(len(files), 25, "Genesis 2 must have exactly 25 entries")
 
-    def test_all_draft_and_matching_generator_byte_for_byte(self):
+    def test_corpus_entry_lifecycle_and_invariants(self):
+        """Every Genesis 2 entry is either a draft skeleton (byte-identical
+        to the generator) or curated (status: review/final with
+        cross_references + updated date)."""
+        from search.corpus.build_genesis1 import GENERATION_DATE
         for v in range(1, 26):
             path = GENESIS_DIR / f"gen-2-{v}-kjv.md"
             text = path.read_text(encoding="utf-8")
-            self.assertIn("status: draft", text, f"{path.name}: not a draft skeleton")
-            expected, _ = self.build_entry_markdown(
-                self.verses[v], self.lexicon, self.tbesh, chapter=2
-            )
-            self.assertEqual(
-                text, expected,
-                f"{path.name}: draft skeleton differs from generator output "
-                "(hand-edit or stale regeneration) — re-run "
-                "python -m search.corpus.build_genesis1 --chapter 2 --verses 1-25",
-            )
+            if "status: draft" in text:
+                self.assertIn(f"created: {GENERATION_DATE}", text, f"{path.name}: draft creation date")
+                self.assertNotIn("cross_references:", text, f"{path.name}: uncurated draft should not have xrefs")
+                expected, _ = self.build_entry_markdown(
+                    self.verses[v], self.lexicon, self.tbesh, chapter=2
+                )
+                self.assertEqual(
+                    text, expected,
+                    f"{path.name}: draft skeleton differs from generator output "
+                    "(hand-edit or stale regeneration) — re-run "
+                    "python -m search.corpus.build_genesis1 --chapter 2 --verses 1-25",
+                )
+            elif "status: review" in text or "status: final" in text:
+                self.assertIn("cross_references:", text, f"{path.name}: curated entry must include cross_references")
+                self.assertIn("updated:", text, f"{path.name}: curated entry must include updated date")
+                # Skeleton invariance for curated entries: the verse quote
+                # and word-study blocks must still match the generator.
+                expected, expected_codes = self.build_entry_markdown(
+                    self.verses[v], self.lexicon, self.tbesh, chapter=2
+                )
+                for line in expected.splitlines():
+                    if line.startswith("> ") or line.startswith("### "):
+                        self.assertIn(line, text, f"{path.name}: curated entry drifted from generator skeleton ({line[:40]})")
+            else:
+                self.fail(f"{path.name}: unrecognized entry status")
 
     def test_word_study_facts_match_lexicons(self):
         """Every word-study block in the committed Genesis-2 entries must be

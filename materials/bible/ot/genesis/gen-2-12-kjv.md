@@ -21,9 +21,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "exodus-25-7"
+    note: "Onyx stones, and stones to be set in the ephod, and in the breastplate — the onyx of Havilah among the sanctuary treasures"
+  - type: xref/theme
+    target: "numbers-11-7"
+    note: "And the manna was as coriander seed, and the colour thereof as the colour of bdellium"
+  - type: xref/theme
+    target: "genesis-2-11"
+    note: "The name of the first is Pison... where there is gold — the wealth of Havilah named here"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 2:12 - KJV
@@ -88,6 +101,22 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the gold of Havilah, the wealth of Eden's world
+*   OT: Exodus 25:7 — "Onyx stones, and stones to be set in the ephod, and in the breastplate" (the onyx of Havilah among the sanctuary treasures)
+*   OT: Numbers 11:7 — "And the manna was as coriander seed, and the colour thereof as the colour of bdellium"
+*   OT: Genesis 2:11 — "The name of the first is Pison... where there is gold" (the wealth of Havilah)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The gold of Havilah was good"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Good Gold of Havilah (*zahab*, H2091; *tov*, H2896):** "The gold of that land is good" — the same word *tov* ("good") used of creation's verdict (1:4, 1:10...) describes the land's gold. The original world is rich: its minerals are pure and valuable. The detail anticipates the later treasury of the sanctuary, where gold and onyx serve the worship of God (Exod 25).
+*   **Bdellium and Onyx (*bedolach*, H916; *shoham*, H7718):** Two precious materials are named with the gold. *Bedolach* (bdellium — also used of manna's appearance, Num 11:7) and *shoham* (onyx — later set in the high priest's garments, Exod 28:9-20). The vocabulary of Eden's wealth reappears in the vocabulary of the sanctuary: the first world's treasures become the materials of worship.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, the *sham* (H8033, "there") is left untagged (documented in `correlations/apparatus-genesis2.json`, key `Gen.2.12`). Note also the unpadded-code quirk: the source writes H068 for this verse's "stone" (H68) — normalized per PROVENANCE caveat 2.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -95,5 +124,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-008;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

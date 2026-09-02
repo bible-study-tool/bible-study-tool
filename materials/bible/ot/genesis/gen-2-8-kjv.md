@@ -25,9 +25,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "genesis-2-15"
+    note: "And the LORD God took the man, and put him into the garden of Eden to dress it and to keep it — the man's placement in the garden"
+  - type: xref/theme
+    target: "genesis-3-23-24"
+    note: "Therefore the LORD God sent him forth from the garden of Eden... and he placed at the east of the garden of Eden Cherubims"
+  - type: xref/theme
+    target: "isaiah-51-3"
+    note: "For the LORD shall comfort Zion... and he will make her wilderness like Eden"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 2:8 - KJV
@@ -124,6 +137,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:RelP
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the garden of Eden, the man's home
+*   OT: Genesis 2:15 — "And the LORD God took the man, and put him into the garden of Eden to dress it and to keep it"
+*   OT: Genesis 3:23-24 — "Therefore the LORD God sent him forth from the garden of Eden... and he placed at the east of the garden of Eden Cherubims"
+*   OT: Isaiah 51:3 — "For the LORD shall comfort Zion... and he will make her wilderness like Eden"
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "God planted a garden eastward in Eden"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Garden Planted (*nata*, H5193; *gan*, H1588):** "The LORD God planted a garden" — the first gardener is God himself. The garden (*gan*) is a fenced, enclosed space (the root suggests protection); Eden (*eden*, H5731, "delight") is the region, the garden its center. The LORD God is both Creator and gardener: the same hands that formed the man plant his home.
+*   **"Eastward in Eden" (*qedem*, H6924):** The garden is placed "eastward" (*miqqedem*). The direction recurs at the gate of the garden after the Fall (3:24: "east of the garden of Eden") and orients the geography of the rivers (2:10-14). The Hebrew *qedem* also means "front/antiquity" — the east is the place of beginnings, fitting for the garden of origins.
+*   **"There He Put the Man" (*sum*, H7760):** The verb *sum* ("to put, set, place") — the same verb used of setting the luminaries in the firmament (1:17). The man is placed in the garden as the luminaries are placed in the sky: positioned by God in a prepared environment. The garden is not the man's achievement but God's gift.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, one object marker *et* (H853) is left untagged (documented in `correlations/apparatus-genesis2.json`, key `Gen.2.8`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -131,5 +161,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-008;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

@@ -23,9 +23,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "genesis-2-10"
+    note: "And a river went out of Eden... and became into four heads — the first river of the four"
+  - type: xref/theme
+    target: "genesis-25-18"
+    note: "And they dwelt from Havilah unto Shur — the land of Havilah in later Genesis"
+  - type: xref/theme
+    target: "genesis-10-7"
+    note: "And the sons of Cush; Seba, and Havilah, and Sabtah... Sheba, and Dedan — Havilah in the table of nations"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 2:11 - KJV
@@ -106,6 +119,22 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:RelP
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the first river (Pison), the land of Havilah
+*   OT: Genesis 2:10 — "And a river went out of Eden... and became into four heads" (the first river of the four)
+*   OT: Genesis 25:18 — "And they dwelt from Havilah unto Shur" (the land of Havilah in later Genesis)
+*   OT: Genesis 10:7 — "And the sons of Cush; Seba, and Havilah, and Sabtah... Sheba, and Dedan" (Havilah in the table of nations)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The first river was Pison"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Pison, the First River (*Pishon*, H6376):** The first of the four heads is Pison ("dispersive" per the Strong's gloss). The river encircles "the whole land of Havilah" (*Chavilah*, H2341) — a land known for gold. The precise identification of Pison is debated in scholarship (associations with the Indus, the Nile headwaters, or a changed post-Flood landscape have been proposed); the text itself does not resolve it. The point the narrative preserves is the abundance of the original world: gold, bdellium, and onyx are named as its wealth (2:12).
+*   **Naming as Geography (*shem*, H8034):** "The name of the first is Pison" — the naming of the rivers anchors the Eden narrative in real geography, the same way the naming of the creatures (2:19-20) anchors the man's dominion. The first world is not a mythic nowhere: it has rivers, lands, and names that later Scripture continues to use.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, the *kol* (H3605, "whole"), the *sham* (H8033, "there"), and one object marker *et* (H853) are left untagged (documented in `correlations/apparatus-genesis2.json`, key `Gen.2.11`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -113,5 +142,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-008;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

@@ -21,9 +21,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "genesis-2-14"
+    note: "And the name of the third river is Hiddekel... And the fourth river is Euphrates — the four rivers of Eden"
+  - type: xref/theme
+    target: "genesis-10-6-8"
+    note: "And the sons of Ham; Cush... and Cush begat Nimrod — Cush/Ethiopia in the table of nations"
+  - type: xref/theme
+    target: "2-kings-19-9"
+    note: "And when he heard say of Tirhakah king of Ethiopia — Ethiopia in later Scripture"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 2:13 - KJV
@@ -88,6 +101,22 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the second river (Gihon), the land of Ethiopia
+*   OT: Genesis 2:14 — "And the name of the third river is Hiddekel... And the fourth river is Euphrates" (the four rivers of Eden)
+*   OT: Genesis 10:6-8 — "And the sons of Ham; Cush... and Cush begat Nimrod" (Cush/Ethiopia in the table of nations)
+*   OT: 2 Kings 19:9 — "And when he heard say of Tirhakah king of Ethiopia" (Ethiopia in later Scripture)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The second river was Gihon"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Gihon, the Second River (*Gichon*, H1521):** The second river is Gihon ("stream/bursting forth" per the gloss), which "compasseth the whole land of Ethiopia" (*Cush*, H3568). The name Gihon reappears in Israel's history as the spring beside Jerusalem (1 Kings 1:33) — a possible echo of the Edenic river in the city of the temple. The identification of Eden's Gihon with the later spring is debated; the text itself links the river to the land of Cush.
+*   **The Land of Cush (*Cush*, H3568):** The Hebrew *Cush* is rendered "Ethiopia" in the KJV (the region south of Egypt). The same land appears in the table of nations (10:6-8) as the territory of Ham's descendants. The geography of Eden thus reaches into Africa: the four rivers frame the known world of the ancient reader.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, the *hu* (H1931, "the same"), the *kol* (H3605, "whole"), and one object marker *et* (H853) are left untagged (documented in `correlations/apparatus-genesis2.json`, key `Gen.2.13`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -95,5 +124,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-008;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

@@ -29,9 +29,25 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "genesis-3-22"
+    note: "Lest he put forth his hand, and take also of the tree of life, and eat, and live for ever — the tree of life after the Fall"
+  - type: xref/theme
+    target: "revelation-2-7"
+    note: "To him that overcometh will I give to eat of the tree of life, which is in the midst of the paradise of God"
+  - type: xref/theme
+    target: "revelation-22-2"
+    note: "In the midst of the street of it, and on either side of the river, was there the tree of life"
+  - type: xref/theme
+    target: "proverbs-3-18"
+    note: "She is a tree of life to them that lay hold upon her — wisdom as the tree of life"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 2:9 - KJV
@@ -160,6 +176,24 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the tree of life, the tree of knowledge
+*   OT: Genesis 3:22 — "Lest he put forth his hand, and take also of the tree of life, and eat, and live for ever"
+*   NT: Revelation 2:7 — "To him that overcometh will I give to eat of the tree of life, which is in the midst of the paradise of God"
+*   NT: Revelation 22:2 — "In the midst of the street of it, and on either side of the river, was there the tree of life"
+*   OT: Proverbs 3:18 — "She is a tree of life to them that lay hold upon her" (wisdom as the tree of life)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The tree of life in the midst of the garden"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Two Trees (*ets*, H6086):** In the midst of the garden stand two trees: "the tree of life" (*ets hachayyim*) and "the tree of knowledge of good and evil" (*ets hada'at tov vara*). The tree of life is the gift of enduring life (3:22; Rev 2:7, 22:2); the tree of knowledge is the boundary of the covenant (2:16-17). Both are literal trees in the narrative, laden with symbolic meaning that Scripture itself develops.
+*   **"Pleasant to the Sight and Good for Food" (H2530, H4758, H2896, H3978):** The trees of the garden are described in aesthetic and nutritional terms — *chemdah* (desirable), *mar'eh* (appearance/sight), *tov* (good), *ma'akal* (food). The garden is a place of delight, not mere utility: creation is good to see and good to eat. The same language of delight recurs in the description of the forbidden tree (3:6), where desire itself becomes the entry point of sin.
+*   **The Tree of Knowledge of Good and Evil (*da'at*, H1847; *tov*, H2896; *ra*, H7451):** The tree's name defines the moral boundary of the covenant: the knowledge of good and evil is the prerogative of God (cf. 3:5, 3:22). The tree is not evil in itself — it is the *boundary* that makes obedience meaningful. The Adventist reading, consistent with the biblical text, understands the prohibition as a test of trust: the man was free to eat of every tree, and the one prohibition defined the covenant relationship.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, the *kol* (H3605, "every") is left untagged, and the periphrastic "made... to grow" carries H6779 twice (the aligner records one as an addition — see PROVENANCE caveat 3; documented in `correlations/apparatus-genesis2.json`, key `Gen.2.9`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -167,5 +201,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-008;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

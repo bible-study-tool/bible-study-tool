@@ -29,9 +29,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "genesis-1-11-12"
+    note: "Let the earth bring forth grass... and it was so — the vegetation of Day 3, here narrated from the pre-rain perspective"
+  - type: xref/theme
+    target: "genesis-2-7"
+    note: "And the LORD God formed man of the dust of the ground — the man who is to till the ground"
+  - type: xref/theme
+    target: "genesis-2-15"
+    note: "And the LORD God took the man, and put him into the garden of Eden to dress it and to keep it"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 2:5 - KJV
@@ -160,6 +173,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the pre-rain world, the man's vocation
+*   OT: Genesis 1:11-12 — "Let the earth bring forth grass... and it was so" (the vegetation of Day 3, narrated here from the pre-rain perspective)
+*   OT: Genesis 2:7 — "And the LORD God formed man of the dust of the ground" (the man who is to till the ground)
+*   OT: Genesis 2:15 — "And the LORD God took the man, and put him into the garden of Eden to dress it and to keep it"
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The earth was without rain, but a mist watered the ground"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Pre-Rain World (*matar*, H4305):** "The LORD God had not caused it to rain upon the earth" — the original creation was watered differently from the post-Flood world (cf. 2:6's mist; 7:12's first rain at the Flood). This is a textual observation about the created order's design: the earth's first irrigation came from below, not from the sky — a detail that marks the pre-Fall world as ordered differently from ours.
+*   **"There Was Not a Man to Till the Ground" (*adam*, H120; *adamah*, H127):** The wordplay is deliberate: *adam* (man) is to till the *adamah* (ground/soil). The absence of the man is presented as the missing piece — the creation of vegetation (Day 3) anticipates the man who will cultivate it (2:15). The Hebrew links the human vocation to the soil from which the man is taken (2:7).
+*   **"Before It Grew" (*tsamach*, H6779):** The verb *tsamach* ("to sprout, spring up") describes vegetation coming forth. The verse's careful sequence — plants before rain, plants before the man — frames the garden as a prepared place: God's provision precedes the human worker.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, the *yihyeh* (H1961, "was"), two *kol* (H3605, "every"), the *al* (H5921, "upon"), and one object marker *et* (H853) are left untagged (documented in `correlations/apparatus-genesis2.json`, key `Gen.2.5`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -167,5 +197,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-008;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

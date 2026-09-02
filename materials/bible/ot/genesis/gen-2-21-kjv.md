@@ -25,9 +25,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "genesis-2-7"
+    note: "And the LORD God formed man of the dust of the ground... and man became a living soul — the forming of the man, here paralleled in the making of the woman"
+  - type: xref/theme
+    target: "1-corinthians-11-8-9"
+    note: "For the man is not of the woman; but the woman of the man... the woman for the man — Paul's reading of the creation order"
+  - type: xref/theme
+    target: "genesis-3-20"
+    note: "And Adam called his wife's name Eve; because she was the mother of all living — the woman named after the Fall"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 2:21 - KJV
@@ -124,6 +137,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the deep sleep, the rib
+*   OT: Genesis 2:7 — "And the LORD God formed man of the dust of the ground... and man became a living soul" (the forming of the man, here paralleled in the making of the woman)
+*   NT: 1 Corinthians 11:8-9 — "For the man is not of the woman; but the woman of the man... the woman for the man" (Paul's reading of the creation order)
+*   OT: Genesis 3:20 — "And Adam called his wife's name Eve; because she was the mother of all living"
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The LORD God caused a deep sleep to fall upon Adam"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Deep Sleep (*tardemah*, H8639):** The LORD causes "a deep sleep" to fall upon the man. The same word recurs at Genesis 15:12 (the sleep that fell on Abram) and 1 Samuel 26:12 (the sleep of Saul's camp). The deep sleep is the divine anesthesia of the narrative: the man's first surgery happens without his awareness. The man contributes nothing to the making of the woman — she is wholly the LORD's work, as the man himself was (2:7).
+*   **"He Took One of His Ribs" (*tsela*, H6763; *laqach*, H3947):** The Hebrew *tsela* ("rib, side") is the word from which the woman is built. The narrative's choice of the *side* (not the head, not the feet) has been read across the tradition as signifying equality: the woman is taken from the man's side — neither above nor below him. The text itself does not comment on the symbolism; the reading is traditional and is offered here as such, with the plain narrative point that the woman is of the same substance as the man.
+*   **"Closed Up the Flesh Instead Thereof" (*sagar*, H5462; *basar*, H1320):** The LORD closes the flesh where the rib was taken — the man is left whole. The detail underscores the divine care of the surgery: nothing is left unfinished. The same verb *sagar* is used of shutting the door of the ark (7:16) — the LORD's closing is complete and final.
+*   **Apparatus Note:** Gen 2:21 carries two kjv-osis additions in the apparatus: the periphrastic "caused... to fall" tags H5307 twice (OSHB attests once), and "upon Adam" is tagged H121 (the proper name) where OSHB reads H120 ("the man") — see PROVENANCE caveat 3 and `correlations/apparatus-genesis2.json`, key `Gen.2.21`. The verse also leaves the *al* (H5921, "upon") and *tachtav* (H8478, "instead thereof") untagged.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -131,5 +161,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-008;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

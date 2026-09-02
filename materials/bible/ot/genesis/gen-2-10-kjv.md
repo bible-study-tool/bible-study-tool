@@ -22,9 +22,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "psalms-46-4"
+    note: "There is a river, the streams whereof shall make glad the city of God — the river of God's presence"
+  - type: xref/theme
+    target: "revelation-22-1"
+    note: "And he shewed me a pure river of water of life, clear as crystal, proceeding out of the throne of God"
+  - type: xref/theme
+    target: "ezekiel-47-1-12"
+    note: "Every thing that liveth, which moveth, whithersoever the rivers shall come, shall live — the river of the sanctuary"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 2:10 - KJV
@@ -97,6 +110,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the river of Eden, the garden's irrigation
+*   OT: Psalm 46:4 — "There is a river, the streams whereof shall make glad the city of God"
+*   NT: Revelation 22:1 — "And he shewed me a pure river of water of life, clear as crystal, proceeding out of the throne of God"
+*   OT: Ezekiel 47:1-12 — "Every thing that liveth, which moveth, whithersoever the rivers shall come, shall live" (the river of the sanctuary)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "A river went out of Eden to water the garden"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The River of Eden (*nahar*, H5104):** "A river went out of Eden to water the garden" — the garden's irrigation is supplied by a river flowing out of Eden. The river's four-way division (2:11-14) frames the geography of the original world. In the prophetic and apocalyptic literature, the river of Eden becomes the river of the sanctuary (Ezek 47) and the river of life in the new earth (Rev 22:1) — the water of God's presence that makes glad his city.
+*   **"Parted, and Became into Four Heads" (*parad*, H6504; *rosh*, H7218):** The single river divides into four "heads" (*rosh*, also "heads/sources"). The four rivers — Pison, Gihon, Hiddekel (Tigris), and Euphrates (2:11-14) — are named in a geography that ancient readers could locate: two of them (Tigris and Euphrates) frame Mesopotamia. The garden's location is thereby anchored to real geography, though its precise site is not recoverable from the text.
+*   **The Watering of the Garden (*shaqah*, H8248):** The same verb used of the mist (2:6) and of the garden: the river "waters" the garden. The created order is a system of provision — mist, river, and rain all serve the life of the garden and its gardener. This is a textual observation about the coherence of the creation narrative.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, the *hayah* (H1961, "and became"), the *misham* (H8033, "from thence"), and one object marker *et* (H853) are left untagged (documented in `correlations/apparatus-genesis2.json`, key `Gen.2.10`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -104,5 +134,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-008;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

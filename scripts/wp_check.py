@@ -170,8 +170,13 @@ def run_wp_check(repo_root: Path, target_wp: Path | None, files: list[Path]) -> 
 
     kjv, lexicon, tbesh, canonical = load_pinned_sources(str(repo_root))
     gen = next(b for b in kjv["books"] if b["name"] == "Genesis")
-    ch1 = next(c for c in gen["chapters"] if c["chapter"] == 1)
-    verses_by_num = {v["verse"]: v for v in ch1["verses"]}
+    # Chapter-aware: parse gen-{ch}-{v}-kjv from each file stem so the
+    # skeleton check runs against the right chapter (fixes the chapter-1
+    # hardcode that silently skipped chapter 2+ entries).
+    verses_by_chapter = {
+        c["chapter"]: {v["verse"]: v for v in c["verses"]}
+        for c in gen["chapters"]
+    }
 
     all_errors: list[str] = []
 
@@ -182,8 +187,12 @@ def run_wp_check(repo_root: Path, target_wp: Path | None, files: list[Path]) -> 
             continue
 
         content = p.read_text(encoding="utf-8")
-        v_match = re.search(r"gen-1-(\d+)-kjv", p.stem)
-        v_num = int(v_match.group(1)) if v_match else None
+        v_match = re.search(r"gen-(\d+)-(\d+)-kjv", p.stem)
+        if v_match:
+            ch_num = int(v_match.group(1))
+            v_num = int(v_match.group(2))
+        else:
+            ch_num, v_num = None, None
 
         # Check frontmatter status and updated date
         if "status: review" not in content and "status: final" not in content:
@@ -197,10 +206,10 @@ def run_wp_check(repo_root: Path, target_wp: Path | None, files: list[Path]) -> 
         for e in ai_errs:
             all_errors.append(f"{p.name}: {e}")
 
-        # Check skeleton invariance
-        if v_num and v_num in verses_by_num:
+        # Check skeleton invariance (chapter-aware)
+        if ch_num is not None and ch_num in verses_by_chapter and v_num in verses_by_chapter[ch_num]:
             skel_errs = check_entry_skeleton(
-                p, content, verses_by_num[v_num], lexicon, tbesh
+                p, content, verses_by_chapter[ch_num][v_num], lexicon, tbesh
             )
             for e in skel_errs:
                 all_errors.append(f"{p.name}: {e}")

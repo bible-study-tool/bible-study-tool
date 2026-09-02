@@ -37,7 +37,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
 ### A. Corpus & Content
 - `[x]` **A1. Complete Genesis 1 creation narrative** — v1-31 (all 31 skeletons generated; v1-31 curated across WP-001..WP-006 with status: review) — **MVP scope closed**
-- `[~]` **A2. Complete the book of Genesis, chapter by chapter** (per ADR-0009: whole-book pipeline, per-chapter WPs) — Genesis 2 skeletons done (WP-007); **WP-009 (WordGraph) + WP-010 (draft engine) precede WP-008 (Genesis 2 curation)** so the first large-chapter package is curated on the new deterministic cost model; then expand to the wider OT (Exodus, Isaiah, Daniel, Psalms)
+- `[~]` **A2. Complete the book of Genesis, chapter by chapter** (per ADR-0009: whole-book pipeline, per-chapter WPs) — Genesis 2 curated (WP-008, incl. the seventh-day Sabbath); Genesis 3 skeletons engine-generated (WP-010 demo) — **next: curate Genesis 3** (new WP); then expand to the wider OT (Exodus, Isaiah, Daniel, Psalms)
 - `[~]` **A10. WordGraph lexical knowledge graph** (ADR-0010) — lemma-centric spine (token id / lexeme + homograph index / Strong's legacy crosswalk); aggregate-first dictionary; deterministic word-study generation; per-book artifacts (`lexicons/wordgraph-*.json`); makes computation *more* deterministic as data grows. **Genesis 1-3 WordGraph done (WP-009); draft engine done (WP-010)** — Genesis 3 skeletons engine-generated; next chapters consume the engine.
 - `[ ]` **A3. Add NT coverage** — John 1, Hebrews, Revelation, Romans
 - `[x]` **A4. Full Strong's lexicon dataset** — `lexicons/strongs-list.json` (canonical 8674 H + 5624 G, F2-verified) + `lexicons/strongs-lexicon.json` (definitions/transliteration/KJV usage); sources pinned in `data/PROVENANCE.md`

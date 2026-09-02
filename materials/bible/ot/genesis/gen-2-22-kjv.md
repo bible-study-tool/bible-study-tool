@@ -22,9 +22,25 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "genesis-2-21"
+    note: "And the LORD God caused a deep sleep to fall upon Adam... and he took one of his ribs — the taking that precedes the building"
+  - type: xref/theme
+    target: "genesis-1-27"
+    note: "Male and female created he them — the pair created from the beginning, here built from the man"
+  - type: xref/theme
+    target: "genesis-3-20"
+    note: "And Adam called his wife's name Eve; because she was the mother of all living"
+  - type: xref/theme
+    target: "1-timothy-2-13"
+    note: "For Adam was first formed, then Eve — the order of the creation of the pair"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 2:22 - KJV
@@ -97,6 +113,24 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the building of the woman, the presentation to the man
+*   OT: Genesis 2:21 — "And the LORD God caused a deep sleep to fall upon Adam... and he took one of his ribs" (the taking that precedes the building)
+*   OT: Genesis 1:27 — "Male and female created he them" (the pair created from the beginning, here built from the man)
+*   OT: Genesis 3:20 — "And Adam called his wife's name Eve; because she was the mother of all living"
+*   NT: 1 Timothy 2:13 — "For Adam was first formed, then Eve" (the order of the creation of the pair)
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "The rib which the LORD God had taken from man, made he a woman"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **"Made He a Woman" (*banah*, H1129):** The verb is *banah* — "to build." The woman is not merely formed (*yatsar*, as the man and the animals) but *built*: "the rib... made he a woman." The building verb suggests structure and completion — the woman is the most carefully constructed being of the narrative. The same verb later describes the building of houses (Deut 8:12) and the building of the sanctuary (Exod 40). The woman is the LORD's masterpiece among the works of creation.
+*   **"Brought Her Unto the Man" (*bo*, H935):** The LORD himself brings the woman to the man — the first wedding, performed by God. The man's first sight of the woman (2:23) is of God's gift. The presentation parallels the bringing of the animals (2:19) — but where the animals were brought for naming, the woman is brought for union. The narrative marks the difference: the animals are named; the woman is received.
+*   **The Woman from the Man (*min-ha-adam*, H4480 H120):** The phrase "from man" (*min-ha'adam*) sets the ground of the woman's identity: she is of the man's own substance, the "flesh of his flesh" (2:23). The man's own naming of her (2:23: *ishshah*, "woman") celebrates the correspondence. Paul draws on this order in 1 Corinthians 11:8-9 and 1 Timothy 2:13 — readings that follow the narrative's sequence, presented here per NOTICE.md's framework.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, the *el* (H413, "unto"), the *min* (H4480, "from"), the *asher* (H834, "which"), and one object marker *et* (H853) are left untagged (documented in `correlations/apparatus-genesis2.json`, key `Gen.2.22`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -104,5 +138,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-008;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

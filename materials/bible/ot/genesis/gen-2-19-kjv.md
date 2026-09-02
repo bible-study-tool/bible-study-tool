@@ -29,9 +29,25 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-01
+cross_references:
+  - type: xref/theme
+    target: "genesis-1-24-25"
+    note: "Let the earth bring forth the living creature... and God made the beast of the earth — the animals of Day 6, here formed before the man's eyes"
+  - type: xref/theme
+    target: "genesis-1-26-28"
+    note: "And let them have dominion over... every living thing — the naming as the exercise of dominion"
+  - type: xref/theme
+    target: "psalms-8-6-8"
+    note: "Thou madest him to have dominion over the works of thy hands... all sheep and oxen, yea, and the beasts of the field"
+  - type: xref/theme
+    target: "genesis-2-20"
+    note: "And Adam gave names to all cattle... but for Adam there was not found an help meet for him"
+  - type: xref/spirit-prophecy
+    target: "pat-1-1"
+    note: "Patriarchs and Prophets, Chapter 1 — The Creation"
 ---
 
 # Genesis 2:19 - KJV
@@ -160,6 +176,24 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: creation, the naming of the animals, the man's first work
+*   OT: Genesis 1:24-25 — "Let the earth bring forth the living creature... and God made the beast of the earth" (the animals of Day 6, here formed before the man's eyes)
+*   OT: Genesis 1:26-28 — "And let them have dominion over... every living thing" (the naming as the exercise of dominion)
+*   OT: Psalm 8:6-8 — "Thou madest him to have dominion over the works of thy hands... all sheep and oxen, yea, and the beasts of the field"
+*   OT: Genesis 2:20 — "And Adam gave names to all cattle... but for Adam there was not found an help meet for him"
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 1 — "God brought the animals to Adam to see what he would call them"
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Formation Before the Man (*yatsar*, H3335):** "Out of the ground the LORD God formed every beast of the field" — the same verb used of the man (2:7). The animals are formed from the same *adamah* as the man, and they are brought to him. The scene is a divine presentation: the LORD brings the creatures to the man "to see what he would call them."
+*   **The Naming as Dominion (*qara*, H7121; *shem*, H8034):** The man names every living creature — and "whatsoever Adam called every living creature, that was the name thereof." Naming in the ancient world was an act of authority and definition (cf. 1:5, 1:8, 1:10: God names). The man's naming of the animals is the first exercise of the dominion given in 1:26-28: he rules by understanding and ordering, not by force. This is the biblical pattern of stewardship — the ruler who knows and names what he tends.
+*   **"To See What He Would Call Them" (*ra'ah*, H7200):** The divine purpose clause is striking: the LORD brings the animals so the man's naming can unfold. The Creator delegates the naming — the man participates in the ordering of the world. The scene also sets up the discovery of 2:20: among all the named creatures, "there was not found an help meet for him" — the animals are not the man's counterpart.
+*   **Apparatus Note:** In scrollmapper KJV-osis tagging, three *kol* (H3605, "every"), the *mah* (H4100, "what"), the *el* (H413, "unto"), the *min* (H4480, "of/from"), the *asher* (H834, "which"), and the *we-et* (H853, object marker) are left untagged (documented in `correlations/apparatus-genesis2.json`, key `Gen.2.19`).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -167,5 +201,5 @@ updated: 2026-08-28
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's,
   public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references and study notes added per WP-008;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.
