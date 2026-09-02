@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -41,10 +42,14 @@ from pathlib import Path
 _CONSUMED = (
     "lexicons/morphology-genesis1.json",
     "lexicons/morphology-genesis2.json",
+    "lexicons/morphology-genesis3.json",
     "lexicons/strongs-list.json",
     "lexicons/strongs-lexicon.json",
     "lexicons/tbesh-glosses.json",
     "correlations/agreement-ledger.json",
+    "correlations/apparatus-genesis1.json",
+    "correlations/apparatus-genesis2.json",
+    "correlations/apparatus-genesis3.json",
 )
 # The curated, REVIEWED homograph candidate file (hand content, separate from
 # the generated artifact — per WP-009 convention). The generator consumes it;
@@ -56,7 +61,7 @@ def _load(repo: str, rel: str) -> dict:
     path = Path(repo) / rel
     if not path.exists():
         raise FileNotFoundError(f"WordGraph input missing: {path} — run the "
-                                "Genesis 1-2 pipeline first (WP-007)")
+                                "Genesis pipeline first (WP-007)")
     return json.loads(path.read_text(encoding="utf-8"))
 
 
@@ -103,6 +108,40 @@ def _homograph_seed(code: str, candidates: dict) -> dict:
     }
 
 
+def _short_gloss(gloss: str) -> str:
+    """First gloss segment for the word-study title (split on ';' / ':') —
+    MUST match the convention in build_genesis1.word_study_block."""
+    for sep in (";", ":"):
+        if sep in gloss:
+            gloss = gloss.split(sep, 1)[0].strip()
+    return gloss
+
+
+def _word_study_record(lexicon: dict, tbesh: dict, code: str) -> dict:
+    """The word-study block-source sub-record: everything the draft engine
+    needs to render one '### word - Strong's CODE' block, derived with the
+    EXACT conventions of build_genesis1.word_study_block (lexicon-first
+    translit, TBESH[0] primary record, _short_gloss title split). The engine
+    consumes ONLY the graph — never the raw lexicons directly."""
+    lex_entry = lexicon.get(code, {})
+    translit = lex_entry.get("translit", "")
+    tbesh_variants = tbesh.get("entries", {}).get(code, [])
+    if not translit and tbesh_variants:
+        translit = tbesh_variants[0].get("translit", "")
+    definition = _strongs_definition(lex_entry) if lex_entry else ""
+    gloss = _short_gloss(tbesh_variants[0]["gloss"]) if tbesh_variants else ""
+    morph = tbesh_variants[0].get("morph", "") if tbesh_variants else ""
+    source_label = "TBESH" if code.startswith("H") else "TBESG"
+    return {
+        "translit": translit,
+        "definition": definition,
+        "gloss": gloss,              # short form (title)
+        "gloss_full": tbesh_variants[0]["gloss"] if tbesh_variants else "",
+        "morph": morph,
+        "source_label": source_label,
+    }
+
+
 def _gloss_record(lexicon: dict, tbesh: dict, ledger_gloss: dict, code: str) -> dict:
     """Assemble the gloss record for one lexeme."""
     rec = {}
@@ -118,8 +157,17 @@ def _gloss_record(lexicon: dict, tbesh: dict, ledger_gloss: dict, code: str) -> 
 
 
 def build(repo: str = ".") -> dict:
-    m1 = _load(repo, "lexicons/morphology-genesis1.json")
-    m2 = _load(repo, "lexicons/morphology-genesis2.json")
+    # The Genesis chapters in scope: derived from the consumed morphology
+    # artifacts (morphology-genesis{N}.json).
+    scope_chapters = sorted(
+        int(re.search(r"morphology-genesis(\d+)\.json$", f).group(1))
+        for f in _CONSUMED
+        if re.search(r"morphology-genesis(\d+)\.json$", f)
+    )
+    morph_layers = [
+        _load(repo, f"lexicons/morphology-genesis{ch}.json")
+        for ch in scope_chapters
+    ]
     canonical = _load(repo, "lexicons/strongs-list.json")
     lexicon_payload = _load(repo, "lexicons/strongs-lexicon.json")
     lexicon = {**lexicon_payload.get("hebrew", {}), **lexicon_payload.get("greek", {})}
@@ -130,14 +178,15 @@ def build(repo: str = ".") -> dict:
 
     canon_all = set(canonical["hebrew"]) | set(canonical["greek"])
 
-    # Accumulate per-lexeme data across both morphology artifacts.
-    # key: canonical Strong's code (unpadded, as in the morphology base).
+    # ------------------------------------------------------------------
+    # 1. OSHB-attested lexemes (from the morphology layers).
+    # ------------------------------------------------------------------
     morph_counts: dict[str, Counter] = {}
     n_attr_counts: dict[str, Counter] = {}
     occurrences: dict[str, list[dict]] = {}
     attestation: dict[str, Counter] = {}
 
-    for morph in (m1, m2):
+    for morph in morph_layers:
         for vkey, words in morph["verses"].items():
             for w in words:
                 base = w["base"]
@@ -165,20 +214,59 @@ def build(repo: str = ".") -> dict:
                 )
                 attestation.setdefault(base, Counter())[w["osisID"]] += 1
 
+    # ------------------------------------------------------------------
+    # 2. kjv-osis-attested codes NOT in OSHB (true kjv-only lexemes). The
+    #    apparatus 'additions' record kjv-osis tokens absent from OSHB in the
+    #    aligner; MOST are aligner misses (the code IS OSHB-attested at that
+    #    verse, e.g. H6779@Gen.2.9) but a genuine reading difference (e.g.
+    #    H121 'Adam' vs OSHB H120 'the man' at Gen 2:21) also surfaces here.
+    #    We therefore: (a) merge apparatus additions into the lexeme's
+    #    occurrence/attestation when the code is OSHB-attested elsewhere
+    #    (recorded with source=kjv-osis), and (b) create a record with
+    #    oshb_attested=false for codes with NO OSHB attestation at all.
+    #    The engine must never KeyError on a real verse.
+    # ------------------------------------------------------------------
+    kjv_only: dict[str, Counter] = {}
+    for ch in scope_chapters:
+        app = _load(repo, f"correlations/apparatus-genesis{ch}.json")
+        for v in app["verses"]:
+            for a in v.get("additions", []):
+                kjv_only.setdefault(a["code"], Counter())[v["key"]] += 1
+
+    # ------------------------------------------------------------------
+    # 3. Assemble lexemes (OSHB-attested first, then kjv-only).
+    # ------------------------------------------------------------------
     lexemes = []
-    for code in sorted(occurrences):
-        mcounts = dict(sorted(morph_counts[code].items()))
-        ncounts = dict(sorted(n_attr_counts[code].items()))
-        # occurrence index: group by passage, deterministic order
+    for code in sorted(set(occurrences) | set(kjv_only)):
+        oshb_attested = code in occurrences
+        mcounts = dict(sorted(morph_counts[code].items())) if oshb_attested else {}
+        ncounts = dict(sorted(n_attr_counts[code].items())) if oshb_attested else {}
         occ_by_passage: dict[str, dict] = {}
-        for occ in occurrences[code]:
-            p = occ["passage"]
+        if oshb_attested:
+            for occ in occurrences[code]:
+                p = occ["passage"]
+                if p not in occ_by_passage:
+                    occ_by_passage[p] = {"passage": p, "token_ids": [], "wlc": [],
+                                         "source": "oshb"}
+                occ_by_passage[p]["token_ids"].extend(occ["token_ids"])
+                occ_by_passage[p]["wlc"].extend(occ["wlc"])
+        # Merge kjv-osis attestation (apparatus additions) — the tokens exist
+        # in the English but not in OSHB at that verse.
+        for p in sorted(kjv_only.get(code, {})):
             if p not in occ_by_passage:
-                occ_by_passage[p] = {"passage": p, "token_ids": [], "wlc": []}
-            occ_by_passage[p]["token_ids"].extend(occ["token_ids"])
-            occ_by_passage[p]["wlc"].extend(occ["wlc"])
+                occ_by_passage[p] = {"passage": p, "token_ids": [], "wlc": [],
+                                     "source": "kjv-osis"}
+            elif occ_by_passage[p]["source"] != "kjv-osis":
+                # OSHB also attests at this verse (aligner miss) — both
+                # sources are recorded; the kjv-osis attestation is additive.
+                occ_by_passage[p]["source"] = "oshb+kjv-osis"
         occ_list = [
-            {"passage": p, "token_ids": o["token_ids"], "wlc": o["wlc"]}
+            {
+                "passage": p,
+                "token_ids": o["token_ids"],
+                "wlc": o["wlc"],
+                "source": o["source"],
+            }
             for p, o in sorted(occ_by_passage.items())
         ]
         n_verses = len(occ_list)
@@ -188,8 +276,10 @@ def build(repo: str = ".") -> dict:
             {
                 "id": code,
                 "strongs": [code],
+                "oshb_attested": oshb_attested,
                 "oshb_homonyms": ncounts,
                 "glosses": _gloss_record(lexicon, tbesh, ledger_gloss, code),
+                "word_study": _word_study_record(lexicon, tbesh, code),
                 "morphology": mcounts,
                 "attestation": {"verses": n_verses, "tokens": n_tokens},
                 "occurrences": occ_list,
@@ -197,7 +287,6 @@ def build(repo: str = ".") -> dict:
             }
         )
 
-    scope_chapters = [1, 2]
     # Verses derived from the artifacts (never hardcoded): the distinct
     # osisIDs across the morphology layers.
     n_verses = len(
@@ -213,10 +302,14 @@ def build(repo: str = ".") -> dict:
         "generated_from": [
             "lexicons/morphology-genesis1.json",
             "lexicons/morphology-genesis2.json",
+            "lexicons/morphology-genesis3.json",
             "lexicons/strongs-list.json",
             "lexicons/strongs-lexicon.json",
             "lexicons/tbesh-glosses.json",
             "correlations/agreement-ledger.json",
+            "correlations/apparatus-genesis1.json",
+            "correlations/apparatus-genesis2.json",
+            "correlations/apparatus-genesis3.json",
             "lexicons/wordgraph-notes-genesis.json",
         ],
         "identity_model": (
@@ -239,6 +332,13 @@ def build(repo: str = ".") -> dict:
             "TBESG (Greek glosses) intentionally not consumed: Genesis 1-2 is "
             "all-Hebrew — the Greek gloss layer applies when a Greek-scope "
             "book is added.",
+            "kjv-osis attestation (apparatus additions) is merged into lexeme "
+            "occurrences with an explicit 'source' per passage (oshb | "
+            "kjv-osis | oshb+kjv-osis). Most additions are aligner misses "
+            "(the code IS OSHB-attested at that verse); a lexeme attested "
+            "ONLY by kjv-osis is recorded with oshb_attested=false and its "
+            "attestation comes from the apparatus, so the draft engine never "
+            "KeyErrors on a real verse.",
         ],
         "lexemes": lexemes,
     }

@@ -282,10 +282,12 @@ class ProvenanceChecksumGateTests(unittest.TestCase):
                 "lexicons/tbesg-glosses.json",
                 "lexicons/morphology-genesis1.json",
                 "lexicons/morphology-genesis2.json",
+                "lexicons/morphology-genesis3.json",
                 "lexicons/wordgraph-genesis.json",
                 "correlations/agreement-ledger.json",
                 "correlations/apparatus-genesis1.json",
                 "correlations/apparatus-genesis2.json",
+                "correlations/apparatus-genesis3.json",
             },
         )
         for name, sha in recorded.items():

@@ -1,6 +1,6 @@
 # WP-010: Deterministic word-study draft engine (ADR-0010, part 2)
 
-status: open
+status: done
 scope: word-study block assembly from the WordGraph + integration into the skeleton generator
 priority: high
 
@@ -71,4 +71,41 @@ verses.
 
 ## Notes / findings
 
-(appended during work)
+### Design (agreed with user 2026-09-01, before implementation)
+
+- WordGraph extended with a `word_study` sub-record per lexeme (translit,
+  definition, gloss short/full, morph, source_label) — the complete
+  block-source, derived with the EXACT conventions of
+  `build_genesis1.word_study_block`, so the engine consumes ONLY the graph
+  (never the raw lexicons). User approved.
+- Demo = **Genesis 3** (the WP-specified choice; the WordGraph scope was
+  extended to chapters 1-3 to cover it — morphology-genesis3 +
+  apparatus-genesis3 generated first).
+
+### Implementation outcome (2026-09-01)
+
+- `search/corpus/draft_engine.py`: DraftEngine (loads the graph, renders
+  blocks, provenance = graph `$schema`, fail-fast on missing `$schema` and
+  unknown codes); `verse_blocks` counts occurrences like `verse_codes`.
+- `build_genesis1.py`: optional `engine` param on build_entry_markdown /
+  generate / main (`--draft-engine`); engine path adds the WordGraph
+  provenance marker to Source Notes; default path untouched (Genesis 1-2
+  byte-identity preserved).
+- **Drop-in proof**: engine output byte-identical to `word_study_block` for
+  ALL 516 Genesis 1-2 blocks (pinned by test).
+- **kjv-osis attestation merge**: the graph now merges apparatus additions
+  into lexeme occurrences with an explicit per-passage `source` (oshb |
+  kjv-osis | oshb+kjv-osis). Genuine kjv-only lexemes get
+  `oshb_attested=false`; H121 'Adam' is OSHB-attested at Gen 3:17 AND
+  kjv-osis-attested at Gen 2:21 (both recorded). Honesty rules updated.
+  (Subagent must-fix: the earlier claim that H121 was kjv-only was FALSE —
+  the additions are aligner misses; fixed by merging + recording truth.)
+- Genesis 3 demo: 24 skeletons generated via `--draft-engine`, all
+  `status: draft`, WordGraph provenance marker, byte-identical regeneration.
+- Verification: 214 tests local (ALL CHECKS PASSED); 162 passed / 52 skipped
+  in fresh clone; subagent review PASS after must-fix (kjv-only merge +
+  honesty rules) and should-fixes (module-level imports, provenance
+  fail-fast, _load message).
+- `python scripts/wp_check.py --wp WP-010` is N/A (infra package, no
+  `status: review` scope); format compatibility is covered by
+  `test_engine_blocks_format_compatible` + the loader parsing test.

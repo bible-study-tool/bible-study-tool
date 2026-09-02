@@ -200,13 +200,17 @@ def build_entry_markdown(
     book_code: str = "gen",
     book_tag: str = "book/genesis",
     chapter: int = 1,
+    engine=None,
 ) -> tuple[str, list[str]]:
     """Render one entry. Returns (markdown, codes); raises if any code is
     missing from both lexicons (a fact we must not fabricate).
 
     ``book_code`` is the filename/id prefix (e.g. 'gen'); ``book_tag`` is the
     taxonomy book tag (e.g. 'book/genesis') — they differ and must stay
-    separate.
+    separate. ``engine``: an optional draft-engine instance (WP-010); when
+    given, word-study blocks are assembled from the WordGraph and the Source
+    Notes carry the graph provenance. Default (None) keeps the legacy
+    word_study_block path — Genesis 1-2 byte-identity preserved.
     """
     v = verse["verse"]
     raw = verse["text"]
@@ -247,6 +251,35 @@ def build_entry_markdown(
         "---",
     ])
 
+    if engine is not None:
+        blocks = engine.verse_blocks(raw, codes)
+        block_lines = [blocks[c] + "\n" for c in sorted(codes)]
+        src_notes = [
+            "- Verse text and Strong's tags are extracted verbatim from the pinned",
+            "  tagged KJV (scrollmapper KJV-osis; see data/PROVENANCE.md).",
+            f"- Word-study blocks assembled deterministically from the WordGraph",
+            f"  ({engine.provenance}; see lexicons/wordgraph-genesis.json) —",
+            "  generated, never hand-edited.",
+            "- Status: draft. Deterministic skeleton only — cross-references and",
+            "  theological notes await human curation per CONTRIBUTION_STANDARDS.md.",
+            "",
+        ]
+    else:
+        block_lines = [
+            word_study_block(c, occurrences_map[c], lexicon, tbesh) + "\n"
+            for c in sorted(codes)
+        ]
+        src_notes = [
+            "- Verse text and Strong's tags are extracted verbatim from the pinned",
+            "  tagged KJV (scrollmapper KJV-osis; see data/PROVENANCE.md).",
+            "- Word-study facts come from lexicons/strongs-lexicon.json (Strong's,",
+            "  public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —",
+            "  supplementary modern glosses).",
+            "- Status: draft. Deterministic skeleton only — cross-references and",
+            "  theological notes await human curation per CONTRIBUTION_STANDARDS.md.",
+            "",
+        ]
+
     body = "\n".join([
         "",
         f"# {book_label} {chapter}:{v} - KJV",
@@ -255,17 +288,10 @@ def build_entry_markdown(
         "",
         "## Hebrew Word Study",
         "",
-        *(word_study_block(c, occurrences_map[c], lexicon, tbesh) + "\n" for c in sorted(codes)),
+        *block_lines,
         "## Source Notes",
         "",
-        "- Verse text and Strong's tags are extracted verbatim from the pinned",
-        "  tagged KJV (scrollmapper KJV-osis; see data/PROVENANCE.md).",
-        "- Word-study facts come from lexicons/strongs-lexicon.json (Strong's,",
-        "  public domain) and lexicons/tbesh-glosses.json (STEPBible, CC BY 4.0 —",
-        "  supplementary modern glosses).",
-        "- Status: draft. Deterministic skeleton only — cross-references and",
-        "  theological notes await human curation per CONTRIBUTION_STANDARDS.md.",
-        "",
+        *src_notes,
     ])
 
     return fm + "\n" + body, codes
@@ -279,11 +305,14 @@ def generate(
     book_tag: str = "book/genesis",
     chapter: int = 1,
     verses: tuple[int, int] = (4, 31),
+    engine=None,
 ) -> list[str]:
     """Generate entries for one Genesis chapter. Returns written paths.
 
     Defaults reproduce the Genesis 1:4-31 MVP output byte-for-byte. The
     canonical list is authoritative: refuse to emit tags outside it.
+    ``engine`` (optional): draft-engine instance (WP-010) — when given,
+    word-study blocks are assembled from the WordGraph.
     """
     kjv, lexicon, tbesh, canonical = load_pinned_sources(repo)
 
@@ -304,7 +333,7 @@ def generate(
         md, codes = build_entry_markdown(
             verse, lexicon, tbesh,
             book_label=book_label, book_code=book_code, book_tag=book_tag,
-            chapter=chapter,
+            chapter=chapter, engine=engine,
         )
         bad = [c for c in codes if c not in canon_h and c not in canon_g]
         if bad:
@@ -328,9 +357,18 @@ def main(argv=None) -> int:
         "--verses", default="4-31",
         help="Verse range as START-END (default 4-31; use 1-25 for a whole chapter)",
     )
+    parser.add_argument(
+        "--draft-engine", action="store_true",
+        help="Assemble word-study blocks from the WordGraph (WP-010) instead of "
+             "the raw lexicons",
+    )
     args = parser.parse_args(argv)
     start_s, _, end_s = args.verses.partition("-")
     verses = (int(start_s), int(end_s))
+    engine = None
+    if args.draft_engine:
+        from search.corpus.draft_engine import DraftEngine
+        engine = DraftEngine(args.repo)
     written = generate(
         args.repo,
         book_label=args.book,
@@ -338,6 +376,7 @@ def main(argv=None) -> int:
         book_tag=args.book_tag,
         chapter=args.chapter,
         verses=verses,
+        engine=engine,
     )
     print(
         f"Wrote {len(written)} entries (Genesis {args.chapter}:{args.verses}) — "

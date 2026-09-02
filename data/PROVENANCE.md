@@ -119,6 +119,7 @@ The OSHB morphology artifact regenerates byte-identically as well:
 ```
 efd17409d6ab378789b0e332a10894e6e9145d37f14ed3951d9723d45754e4eb  ../lexicons/morphology-genesis1.json
 bb914375dcaba57d4379afb0dcba40d4740218915277a13be270927e564a68b0  ../lexicons/morphology-genesis2.json
+3b6bbd3dd0b3c1fd9c32378ac2085b599132ee021600aecd716a1fb750fb6d65  ../lexicons/morphology-genesis3.json
 ```
 
 The cross-source Agreement Ledger regenerates byte-identically as well
@@ -134,13 +135,14 @@ well:
 ```
 5ae9100bbb7f80ab1fe8a992bfab3871ec87b6655876267c1b238f4fb789f33b  ../correlations/apparatus-genesis1.json
 4f678a8264262f0796a13e0ac49cc040bc3acaaefd7c6b493e66d1a5cab32616  ../correlations/apparatus-genesis2.json
+d3c6e6b2bc74a1de5027568b07589e504d9bee815cf80b4342991ccb74ad23de  ../correlations/apparatus-genesis3.json
 ```
 
 The WordGraph lexical knowledge graph (ADR-0010) regenerates byte-identically
 as well (consumes committed artifacts only — no raw sources):
 
 ```
-d7842e149a48af32a5b27d655e263734b96426c4a69f8af4af51a2a6a269bef7  ../lexicons/wordgraph-genesis.json
+10d54ecc5b78391cff42ec5a7842af85384ef02340c198c5cd0e7983289b57cd  ../lexicons/wordgraph-genesis.json
 ```
 
 ## Source edition caveats (discovered by the corpus fidelity tests)
@@ -191,6 +193,7 @@ python -m search.corpus.build_genesis1 --repo . --chapter 2 --verses 1-25  # Gen
 # 6. Regenerate the OSHB morphology layers from the extracted XML
 python -m search.corpus.build_morphology --repo .               # Genesis 1
 python -m search.corpus.build_morphology --repo . --chapters 2  # Genesis 2
+python -m search.corpus.build_morphology --repo . --chapters 3  # Genesis 3
 
 # 7. Regenerate the cross-source Agreement Ledger (Genesis 1-2 verse facts)
 python -c "from search.agreement.compare import write_ledger; write_ledger('.', chapters=(1,2))"
@@ -198,6 +201,7 @@ python -c "from search.agreement.compare import write_ledger; write_ledger('.', 
 # 8. Regenerate the word-level apparatus
 python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.')"  # Genesis 1
 python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.', out_path='correlations/apparatus-genesis2.json', chapters=(2,))"  # Genesis 2
+python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.', out_path='correlations/apparatus-genesis3.json', chapters=(3,))"  # Genesis 3
 
 # 9. Regenerate the WordGraph lexical knowledge graph (ADR-0010)
 python -m search.corpus.build_wordgraph --repo .

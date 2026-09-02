@@ -227,6 +227,64 @@ class Genesis2SkeletonTests(unittest.TestCase):
         self.assertIn("strongs-H1", v24)
 
 
+@require_raw_sources()
+class Genesis3SkeletonTests(unittest.TestCase):
+    """Genesis 3 (WP-010 demo): 24 engine-generated skeletons, byte-identical
+    to the generator with --draft-engine, all status: draft, carrying the
+    WordGraph provenance marker."""
+
+    @classmethod
+    def setUpClass(cls):
+        from search.corpus.build_genesis1 import build_entry_markdown, load_pinned_sources
+        from search.corpus.draft_engine import DraftEngine
+        cls.kjv, cls.lexicon, cls.tbesh, _ = load_pinned_sources(".")
+        cls.engine = DraftEngine(".")
+        cls.build_entry_markdown = staticmethod(build_entry_markdown)
+        gen = next(b for b in cls.kjv["books"] if b["name"] == "Genesis")
+        ch3 = next(c for c in gen["chapters"] if c["chapter"] == 3)
+        cls.verses = {v["verse"]: v for v in ch3["verses"]}
+
+    def test_genesis_3_is_complete(self):
+        files = sorted(GENESIS_DIR.glob("gen-3-*-kjv.md"))
+        self.assertEqual(len(files), 24, "Genesis 3 must have exactly 24 entries")
+
+    def test_all_draft_and_matching_generator_byte_for_byte(self):
+        for v in range(1, 25):
+            path = GENESIS_DIR / f"gen-3-{v}-kjv.md"
+            text = path.read_text(encoding="utf-8")
+            self.assertIn("status: draft", text, f"{path.name}: not a draft skeleton")
+            expected, _ = self.build_entry_markdown(
+                self.verses[v], self.lexicon, self.tbesh, chapter=3,
+                engine=self.engine,
+            )
+            self.assertEqual(
+                text, expected,
+                f"{path.name}: draft skeleton differs from generator output "
+                "(hand-edit or stale regeneration) — re-run "
+                "python -m search.corpus.build_genesis1 --chapter 3 --verses 1-24 "
+                "--draft-engine",
+            )
+
+    def test_provenance_marker_present(self):
+        for v in range(1, 25):
+            text = (GENESIS_DIR / f"gen-3-{v}-kjv.md").read_text(encoding="utf-8")
+            self.assertIn("WordGraph", text, f"gen-3-{v}: missing provenance")
+            self.assertIn("wordgraph-genesis/v1", text, f"gen-3-{v}: missing version")
+
+    def test_engine_blocks_format_compatible(self):
+        """wp_check's skeleton check must accept engine blocks (via the
+        word_study_block equality it enforces)."""
+        import re
+        block_header = re.compile(r"^### .+ - Strong's ([HG]\d+)$", re.MULTILINE)
+        from search.corpus.build_genesis1 import verse_codes
+        for v in range(1, 25):
+            path = GENESIS_DIR / f"gen-3-{v}-kjv.md"
+            text = path.read_text(encoding="utf-8")
+            codes_found = {m.group(1) for m in block_header.finditer(text)}
+            _, occ_map, _ = verse_codes(self.verses[v]["text"])
+            self.assertEqual(codes_found, set(occ_map), f"gen-3-{v}: block set mismatch")
+
+
 class CorpusIntegrityTests(unittest.TestCase):
     """Golden corpus counts + tag canonicality for the whole Genesis chapter."""
 

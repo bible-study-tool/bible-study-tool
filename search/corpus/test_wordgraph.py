@@ -26,10 +26,10 @@ class WordGraphArtifactTests(unittest.TestCase):
     def test_schema_and_scope(self):
         self.assertEqual(self.graph["$schema"], "wordgraph-genesis/v1")
         self.assertEqual(self.graph["scope"]["book"], "genesis")
-        self.assertEqual(self.graph["scope"]["chapters"], [1, 2])
+        self.assertEqual(self.graph["scope"]["chapters"], [1, 2, 3])
         # Derived from the artifacts (not hardcoded): 31 Gen-1 + 25 Gen-2
-        # distinct osisIDs.
-        self.assertEqual(self.graph["scope"]["verses"], 56)
+        # + 24 Gen-3 distinct osisIDs.
+        self.assertEqual(self.graph["scope"]["verses"], 80)
 
     def test_verses_count_derived_from_occurrences(self):
         """The scope verses count must equal the distinct occurrence passages
@@ -42,7 +42,7 @@ class WordGraphArtifactTests(unittest.TestCase):
         self.assertEqual(len(passages), self.graph["scope"]["verses"])
 
     def test_lexeme_count(self):
-        self.assertEqual(len(self.graph["lexemes"]), 183)
+        self.assertEqual(len(self.graph["lexemes"]), 251)
 
     def test_every_lexeme_has_required_fields(self):
         for l in self.graph["lexemes"]:
@@ -98,7 +98,7 @@ class WordGraphArtifactTests(unittest.TestCase):
         h7307 = self.by_id["H7307"]
         self.assertEqual(h7307["glosses"]["strongs"], "1. wind")
         self.assertEqual(
-            [o["passage"] for o in h7307["occurrences"]], ["Gen.1.2"]
+            [o["passage"] for o in h7307["occurrences"]], ["Gen.1.2", "Gen.3.8"]
         )
 
     def test_oshb_homonyms_verbatim_counts(self):
@@ -114,7 +114,8 @@ class WordGraphArtifactTests(unittest.TestCase):
         (no fabricated ids)."""
         morph_ids = set()
         for fname in ("lexicons/morphology-genesis1.json",
-                      "lexicons/morphology-genesis2.json"):
+                      "lexicons/morphology-genesis2.json",
+                      "lexicons/morphology-genesis3.json"):
             morph = json.loads(Path(fname).read_text(encoding="utf-8"))
             for words in morph["verses"].values():
                 for w in words:
@@ -156,7 +157,7 @@ class WordGraphArtifactTests(unittest.TestCase):
                 for f in src.glob("*.json"):
                     os.symlink(f.resolve(), dst / f.name)
             payload = build(td)
-            self.assertEqual(len(payload["lexemes"]), 183)
+            self.assertEqual(len(payload["lexemes"]), 251)
 
     def test_homograph_notes_file_consumed(self):
         """The curated homograph candidates come from the reviewed notes file
@@ -178,6 +179,37 @@ class WordGraphArtifactTests(unittest.TestCase):
             os.remove(Path(td) / "lexicons" / "wordgraph-notes-genesis.json")
             with self.assertRaises(FileNotFoundError):
                 build(td)
+
+    def test_kjv_only_lexeme_merge(self):
+        """A code attested ONLY by kjv-osis (apparatus addition, absent from
+        OSHB) must appear with oshb_attested=false, its attestation from the
+        apparatus, and source=kjv-osis — the engine must never KeyError."""
+        with tempfile.TemporaryDirectory() as td:
+            import shutil
+            for rel in ("lexicons", "correlations"):
+                src = Path(rel)
+                dst = Path(td) / rel
+                dst.mkdir(parents=True, exist_ok=True)
+                for f in src.glob("*.json"):
+                    # COPY, not symlink: this test MUTATES the apparatus and
+                    # must never touch the committed artifact.
+                    shutil.copy2(f, dst / f.name)
+            # Craft an apparatus with a code NOT in OSHB (H9999 is not a
+            # lexeme anywhere in Genesis 1-3).
+            app_path = Path(td) / "correlations" / "apparatus-genesis1.json"
+            app = json.loads(app_path.read_text(encoding="utf-8"))
+            app["verses"][0]["additions"].append(
+                {"code": "H9999", "kjv-osis": {"code": "H9999", "word_i": 99,
+                                               "token_i": 99, "span_text": "x"}}
+            )
+            app_path.write_text(json.dumps(app), encoding="utf-8")
+            payload = build(td)
+            by_id = {l["id"]: l for l in payload["lexemes"]}
+            self.assertIn("H9999", by_id)
+            rec = by_id["H9999"]
+            self.assertFalse(rec["oshb_attested"])
+            self.assertEqual(rec["attestation"]["verses"], 1)
+            self.assertEqual(rec["occurrences"][0]["source"], "kjv-osis")
 
 
 if __name__ == "__main__":
