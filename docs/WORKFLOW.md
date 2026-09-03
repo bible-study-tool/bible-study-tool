@@ -23,7 +23,7 @@ Two file classes rule everything else:
 
 | | Hand content | Generated artifacts |
 | --- | --- | --- |
-| Examples | `materials/**.md` you author | `lexicons/*.json`, `correlations/{agreement-ledger,apparatus-*}.json`, generated corpus entries |
+| Examples | `materials/**.md` you author, `lexicons/wordgraph-notes-*.json` (curated homographs) | `lexicons/*.json` (except `wordgraph-notes-*.json`), `correlations/{agreement-ledger,apparatus-*}.json`, `lexicons/wordgraph-*.json`, generated corpus entries |
 | Changed by | humans (+ AI drafts, marked `<!-- AI-GENERATED -->`) | generators only — **never hand-edit** |
 | Gated by | F1-F4 validators | byte-regeneration tripwires + PROVENANCE checksum gate |
 | Failure remedy | fix the entry per the validator message | regenerate with the printed command; commit artifact + updated `data/PROVENANCE.md` checksum |
@@ -96,32 +96,53 @@ The streamlined curation cycle:
 
 1. **Extract targeted context** (avoids reading raw multi-thousand-line JSONs):
    ```bash
-   python scripts/curate_context.py --wp WP-003   # or --verses 9..13
+   python scripts/curate_context.py --wp WP-011   # or --wp WP-003, --verses 1..24 --chapter 3
    ```
-   This generates a concise, consolidated brief with KJV verse quotes, exact
-   apparatus omissions (WLC Hebrew, morph, Strong's), and lexical definitions.
+   The tool automatically resolves the target chapter and verse range from the
+   work package's `scope:` line. It outputs a concise brief with KJV verse quotes,
+   apparatus omissions/alignments, and lexical definitions.
 
-2. **Write the interpretive content**: cross-references, study notes, theological
-   connections (per `CONTRIBUTION_STANDARDS.md` and `NOTICE.md`). AI-assisted drafting
-   is fine — **mark every AI-generated block** `<!-- AI-GENERATED -->` …
-   `<!-- END AI-GENERATED -->`, set `status: review` and `updated: <today>` in frontmatter,
-   and leave promotion to `final` to human review.
-   Never edit the generated skeleton's deterministic parts (verse text quote,
-   Strong's tags, word study blocks) by hand.
+2. **The WordGraph cost model (ADR-0010 / WP-010)**:
+   Deterministic word-study blocks (`### <word> — Strong's <code>`) in entry
+   skeletons are assembled directly from the WordGraph (`lexicons/wordgraph-genesis.json`)
+   by the draft engine (`search/corpus/draft_engine.py`), NOT drafted by an LLM.
+   Skeletons carry WordGraph provenance (`wordgraph-genesis/v1`) in `## Source Notes`.
+   Never modify deterministic blocks or verse quotes by hand.
+
+   The curator (human or LLM assistant) authors **only the interpretive layer**:
+   - `cross_references:` in YAML frontmatter (with valid taxonomy tags)
+   - `## Correlations`
+   - `## Study Notes`
+
+   Every AI-assisted block must be marked `<!-- AI-GENERATED -->` …
+   `<!-- END AI-GENERATED -->`. Set `status: review` and `updated: <today>` in
+   the YAML frontmatter. Promotion to `status: final` is reserved for human review.
 
 3. **Pre-flight verify**:
    ```bash
-   python scripts/wp_check.py --wp WP-003
+   python scripts/wp_check.py --wp WP-011
    ```
-   Deterministically verifies AI tag balance, skeleton invariance against lexicons,
-   and scoped F1-F4 schema rules in milliseconds.
+   `wp_check.py` is chapter-aware across the entire book of Genesis. It
+   deterministically validates frontmatter fields, AI comment tag balance,
+   verbatim preservation of the deterministic skeleton (verse text quote and
+   word-study blocks against pinned sources/WordGraph), and scoped F1-F4 schema
+   rules in milliseconds.
 
-4. **Verify + review + commit**:
+4. **Artifact regeneration reference (PROVENANCE cross-link)**:
+   Deterministic artifacts are never hand-edited. Full commands are documented
+   in `data/PROVENANCE.md` ("How to reproduce"):
+   - Morphology: `python -m search.corpus.build_morphology --repo . --chapters <N>`
+   - Apparatus: `python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.', out_path='correlations/apparatus-genesis<N>.json', chapters=(<N>,))"`
+   - WordGraph: `python -m search.corpus.build_wordgraph --repo .`
+   - Draft skeletons: `python -m search.corpus.build_genesis1 --repo . --chapter <N> --verses <start>-<end> --draft-engine`
+   - Curated homograph notes: `lexicons/wordgraph-notes-genesis.json` (hand content consumed by the WordGraph builder).
+
+5. **Verify + review + commit**:
    ```bash
    bash scripts/verify_all.sh
    ```
-   Run subagent review via `.opencode/agent/project-reviewer.md`, update the work package status,
-   and commit per repo conventions.
+   Run subagent review per `AGENTS.md` (mandatory for every substantive step),
+   update the work package status, and commit per repo conventions.
 
 ## Example 5 — A source was re-pinned (the golden-baseline tripwire)
 

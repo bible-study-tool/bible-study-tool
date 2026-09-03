@@ -48,9 +48,9 @@ def roadmap_progress() -> list[tuple[str, int, int, str]]:
         if line.startswith("- `[x]`"):
             counts[pillar][0] += 1
             counts[pillar][1] += 1
-        elif line.startswith("- `[ ]`"):
+        elif line.startswith(("- `[~]`", "- `[ ]`")):
             counts[pillar][1] += 1
-            first_open.setdefault(pillar, line.strip("- `[ ]` ")[:72])
+            first_open.setdefault(pillar, line[7:].strip()[:72])
     return [(k, v[0], v[1], first_open.get(k, "")) for k, v in counts.items()]
 
 

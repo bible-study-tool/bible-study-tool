@@ -1,15 +1,15 @@
 # Work Packages — Index
 
-Curation of the Genesis 1 drafts (roadmap item A1 curation), grouped by
-creation day. Each package is self-contained: a session needs only
-`AGENTS.md` + the package file. Format: see `TEMPLATE.md`.
+Curation of Genesis drafts per chapter (ADR-0009). Each package is
+self-contained: a session needs only `AGENTS.md` + the package file. Format:
+see `TEMPLATE.md`.
 
-The deterministic skeletons (verse text, Strong's tags, word studies) already
-exist and are byte-verified — curation ADDS interpretive content
-(cross-references, study notes, theological connections) and moves entries
-`draft` -> `review`.
+The deterministic skeletons (verse text, Strong's tags, WordGraph-assembled
+word studies) already exist and are byte-verified — curation ADDS interpretive
+content (cross-references, study notes, theological connections) and moves
+entries `draft` -> `review`.
 
-| Package | Scope (Gen 1) | Theme | Status |
+| Package | Scope | Theme | Status |
 | --- | --- | --- | --- |
 | [WP-001](WP-001-gen1-day1-completion.md) | v4-5 | Day 1 completion (light; first naming) | done |
 | [WP-002](WP-002-gen1-day2.md) | v6-8 | Day 2 (firmament, waters) | done |

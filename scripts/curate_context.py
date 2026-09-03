@@ -49,7 +49,22 @@ def parse_verse_range(range_str: str) -> list[int]:
     return [int(s)]
 
 
-def find_wp_file(repo_root: Path, wp_query: str) -> tuple[Path | None, list[int]]:
+class WpScope(tuple):
+    """A 2-tuple (target_file, verses) with an extra `chapter` attribute."""
+
+    target_file: Path | None
+    verses: list[int]
+    chapter: int
+
+    def __new__(cls, target_file: Path | None, verses: list[int], chapter: int = 1):
+        instance = super().__new__(cls, (target_file, verses))
+        instance.target_file = target_file
+        instance.verses = verses
+        instance.chapter = chapter
+        return instance
+
+
+def find_wp_file(repo_root: Path, wp_query: str) -> WpScope:
     """Resolve a work package name like 'WP-003' or 'WP-003-gen1-day3.md'."""
     wp_dir = repo_root / "docs" / "wp"
     query = wp_query.strip().removesuffix(".md")
@@ -64,30 +79,44 @@ def find_wp_file(repo_root: Path, wp_query: str) -> tuple[Path | None, list[int]
                 break
 
     verses: list[int] = []
+    chapter: int = 1
     if target_file and target_file.exists():
         text = target_file.read_text(encoding="utf-8")
 
-        # 1. Check scope line for range, e.g. "scope: gen-1-9-kjv.md .. gen-1-13-kjv.md"
-        range_scope = re.search(r"^scope:\s*gen-\d+-(\d+)-kjv(?:\.md)?\s*\.\.\s*gen-\d+-(\d+)-kjv(?:\.md)?", text, re.MULTILINE)
-        if range_scope:
-            start, end = int(range_scope.group(1)), int(range_scope.group(2))
-            verses = list(range(start, end + 1))
-        else:
-            # 2. Check scope line for comma-separated list
-            scope_match = re.search(r"^scope:\s*(.+)$", text, re.MULTILINE)
-            if scope_match:
-                scope_str = scope_match.group(1)
-                for v_match in re.finditer(r"gen-\d+-(\d+)-kjv", scope_str):
-                    verses.append(int(v_match.group(1)))
-
-        # 3. Fallback: scan for "v9-13" or "v9..13" or "Genesis 1:9-13" in title
-        if not verses:
-            title_match = re.search(r"v(\d+)[-–\.]+(\d+)", text)
-            if title_match:
-                start, end = int(title_match.group(1)), int(title_match.group(2))
+        # 1. Check scope line for range or list (consistent with wp_check.py)
+        scope_match = re.search(r"^scope:\s*(.+)$", text, re.MULTILINE)
+        if scope_match:
+            scope_str = scope_match.group(1)
+            range_scope = re.search(
+                r"gen-(\d+)-(\d+)-kjv(?:\.md)?\s*\.\.\s*gen-\d+-(\d+)-kjv(?:\.md)?",
+                scope_str,
+            )
+            if range_scope:
+                chapter = int(range_scope.group(1))
+                start, end = int(range_scope.group(2)), int(range_scope.group(3))
                 verses = list(range(start, end + 1))
+            else:
+                for v_match in re.finditer(r"gen-(\d+)-(\d+)-kjv", scope_str):
+                    chapter = int(v_match.group(1))
+                    verses.append(int(v_match.group(2)))
 
-    return target_file, sorted(set(verses))
+        # 2. Fallback: scan title line for "Genesis <ch>:<start>-<end>" or "v<start>-<end>"
+        if not verses:
+            title_line = next((l for l in text.splitlines() if l.startswith("#")), "")
+            gen_range = re.search(r"Genesis\s+(\d+):(\d+)[-–\.]+(\d+)", title_line, re.IGNORECASE)
+            if gen_range:
+                chapter = int(gen_range.group(1))
+                verses = list(range(int(gen_range.group(2)), int(gen_range.group(3)) + 1))
+            else:
+                title_match = re.search(r"v(\d+)(?:[-–]|\.{2})(\d+)", title_line)
+                if title_match:
+                    start, end = int(title_match.group(1)), int(title_match.group(2))
+                    verses = list(range(start, end + 1))
+                gen_match = re.search(r"Genesis\s+(\d+)", title_line, re.IGNORECASE)
+                if gen_match:
+                    chapter = int(gen_match.group(1))
+
+    return WpScope(target_file, sorted(set(verses)), chapter)
 
 
 def load_json(path: Path) -> dict:
@@ -103,9 +132,12 @@ def build_briefing(
     verses: list[int],
     wp_file: Path | None = None,
 ) -> str:
+    if not verses:
+        return f"# Curation Briefing — Genesis {chapter} (no verses specified)\n"
+
     # Load data artifacts
     apparatus_path = repo_root / f"correlations/apparatus-genesis{chapter}.json"
-    apparatus_data = load_json(apparatus_path) if apparatus_path.exists() else {}
+    apparatus_data = load_json(apparatus_path)
     apparatus_by_key = {
         v.get("key", ""): v for v in apparatus_data.get("verses", [])
     }
@@ -219,20 +251,31 @@ def main():
     )
     parser.add_argument("--wp", help="Work package name or path (e.g. WP-003)")
     parser.add_argument("--verses", help="Verse range (e.g. 9..13 or 9-13)")
-    parser.add_argument("--chapter", type=int, default=1, help="Genesis chapter (default: 1)")
+    parser.add_argument(
+        "--chapter",
+        type=int,
+        default=None,
+        help="Genesis chapter (default: auto-detected from WP, or 1)",
+    )
     args = parser.parse_args()
 
     repo_root = find_repo_root()
     wp_file = None
     verses = []
+    chapter = 1
 
     if args.wp:
-        wp_file, wp_verses = find_wp_file(repo_root, args.wp)
+        wp_scope = find_wp_file(repo_root, args.wp)
+        wp_file, wp_verses = wp_scope
+        chapter = wp_scope.chapter
         if wp_verses:
             verses = wp_verses
 
     if args.verses:
         verses = parse_verse_range(args.verses)
+
+    if args.chapter is not None:
+        chapter = args.chapter
 
     if not verses:
         if args.wp:
@@ -241,7 +284,7 @@ def main():
             print("Error: Specify either --wp <WP-XXX> or --verses <range> (e.g. 9..13)", file=sys.stderr)
         sys.exit(1)
 
-    briefing = build_briefing(repo_root, args.chapter, verses, wp_file)
+    briefing = build_briefing(repo_root, chapter, verses, wp_file)
     print(briefing)
 
 

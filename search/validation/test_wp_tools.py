@@ -27,6 +27,22 @@ class CurateContextTests(unittest.TestCase):
         self.assertIsNotNone(target_wp3)
         self.assertEqual(verses3, [9, 10, 11, 12, 13])
 
+    def test_find_wp_file_chapter_detection(self):
+        repo_root = Path(".")
+        res_wp2 = find_wp_file(repo_root, "WP-002")
+        self.assertEqual(res_wp2.chapter, 1)
+        self.assertEqual(res_wp2.verses, [6, 7, 8])
+        self.assertEqual(res_wp2[0], res_wp2.target_file)
+        self.assertEqual(res_wp2[1], res_wp2.verses)
+
+        res_wp8 = find_wp_file(repo_root, "WP-008")
+        self.assertEqual(res_wp8.chapter, 2)
+        self.assertEqual(len(res_wp8.verses), 25)
+
+        res_wp11 = find_wp_file(repo_root, "WP-011")
+        self.assertEqual(res_wp11.chapter, 3)
+        self.assertEqual(len(res_wp11.verses), 24)
+
     def test_build_briefing_outputs_required_sections(self):
         repo_root = Path(".")
         briefing = build_briefing(repo_root, 1, [6, 7])
@@ -34,6 +50,11 @@ class CurateContextTests(unittest.TestCase):
         self.assertIn("Genesis 1:7", briefing)
         self.assertIn("Apparatus Alignment", briefing)
         self.assertIn("Key Lexemes in Verse", briefing)
+
+    def test_build_briefing_empty_verses(self):
+        repo_root = Path(".")
+        briefing = build_briefing(repo_root, 1, [])
+        self.assertIn("no verses specified", briefing)
 
 
 class WpCheckTests(unittest.TestCase):
