@@ -8,6 +8,8 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
+  - theme/judgment
   - translation/kjv
   - lang/hebrew
   - strongs-H1512
@@ -29,9 +31,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-03
+cross_references:
+  - type: xref/theme
+    target: "isaiah-65-25"
+    note: "and dust shall be the serpent's meat. They shall not hurt nor destroy in all my holy mountain, saith the Lord"
+  - type: xref/theme
+    target: "micah-7-17"
+    note: "They shall lick the dust like a serpent, they shall move out of their holes like worms of the earth"
+  - type: xref/theme
+    target: "revelation-12-9"
+    note: "And the great dragon was cast out, that old serpent, called the Devil, and Satan"
+  - type: xref/spirit-prophecy
+    target: "pat-3-1"
+    note: "Patriarchs and Prophets, Chapter 3 — The Temptation and Fall"
 ---
 
 # Genesis 3:14 - KJV
@@ -160,6 +175,24 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: divine judgment, curse upon the serpent, humiliation of the adversary, degradation of nature
+*   OT: Isaiah 65:25 — Even in the renewed creation, "dust shall be the serpent's meat"
+*   OT: Micah 7:17 — Total subjugation and humiliation of the enemies of God
+*   NT: Revelation 12:9, 20:2 — Identification of the serpent with the defeated dragon
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 3 — "The serpent was cursed above all cattle... Once the most beautiful of creatures, it was now to crawl in the dust, a perpetual reminder of the Fall."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Immediate Sentence without Interrogation:** Unlike Adam and Eve, who were granted opportunity for confession through divine questions (vv. 9, 11, 13), the serpent receives no interrogation. Sentence is pronounced immediately: *ki asita zot* ("Because thou hast done this"). Satan had acted with deliberate, unmitigated malice; for him there was no repentance and no redemption.
+*   **The Physical and Spiritual Curse (*arur attah*):** The judgment operates on two planes:
+    1. *The Physical Instrument:* The animal that was once "subtle" and among the most graceful of creations is altered to crawl upon its belly (*al-gekhonkha telekh*) and ingest the dust (*ve-afar tokhal*)—an abiding physical witness to the tragedy of the Fall.
+    2. *The Spiritual Power Behind It:* Eating dust is standard biblical idiom for utter defeat, humiliation, and destruction (Mic 7:17; Ps 72:9). Satan, who sought to exalt himself above the stars of God (Isa 14:13), is doomed to the lowest abasement and final extermination (Ezek 28:18–19).
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.14`), 16 tokens are matched, with 7 untagged particles noted in the source: the demonstrative *zot* (H2063), conjunction *ki* (H3588), three occurrences of *kol* (H3605), the preposition *el* (H413), and the preposition *al* (H5921).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -167,5 +200,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

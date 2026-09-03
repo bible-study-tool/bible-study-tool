@@ -8,6 +8,8 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
+  - theme/judgment
   - translation/kjv
   - lang/hebrew
   - strongs-H1121
@@ -25,9 +27,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-03
+cross_references:
+  - type: xref/theme
+    target: "john-16-21"
+    note: "A woman when she is in travail hath sorrow, because her hour is come: but as soon as she is delivered... for joy that a man is born into the world"
+  - type: xref/parallel
+    target: "1-timothy-2-15"
+    note: "Notwithstanding she shall be saved in childbearing, if they continue in faith and charity and holiness with sobriety"
+  - type: xref/theme
+    target: "ephesians-5-22-25"
+    note: "Wives, submit yourselves unto your own husbands... Husbands, love your wives, even as Christ also loved the church — gospel restoration of Edenic marriage"
+  - type: xref/spirit-prophecy
+    target: "pat-3-1"
+    note: "Patriarchs and Prophets, Chapter 3 — The Temptation and Fall"
 ---
 
 # Genesis 3:16 - KJV
@@ -124,6 +139,22 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: the Fall, consequences upon the woman, pain in childbearing, altered marital dynamic, gospel restoration
+*   NT: John 16:21 — Jesus uses the sorrow and joy of travail as an analogy of redemptive transition
+*   NT: 1 Timothy 2:15 — The preservation and spiritual dignity of motherhood under grace
+*   NT: Ephesians 5:22-25 — The redemption and sanctification of marital hierarchy in Christ
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 3 — "Eve had been perfectly happy by her husband's side in her Eden home; but, like restless modern Eves, she was flattered with the hope of entering a higher sphere... In the creation God had made her the equal of Adam."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Multiplied Sorrow (*harbah arbeh itsevonekh ve-heronekh*):** The sentence upon the woman touches her distinctive calling as mother and wife. The Hebrew construction employs the cognate verbal intensification *harbah arbeh* (infinitive absolute + finite verb of *ravah*, H7235: "multiplying I will multiply") with *itsevon* (H6093, "sorrow/pain/toil"). Childbearing, designed in unfallen Eden as an unalloyed blessing, is now attended by acute physical agony and lifelong maternal anxiety, providing an abiding reminder of the entrance of sin.
+*   **Relational Dynamics (*teshuqatekh* and *yimshol-bakh*):** "And thy desire shall be to thy husband, and he shall rule over thee." In unfallen Eden, the man and woman stood in pristine equality and mutual companionship (Gen 2:23–24). Sin disrupted this moral equilibrium: having taken the initiative independent of her husband and the divine command, the woman's desire (*teshuqah*, H8669) is placed in subjection to her husband, who is assigned headship (*mashal*, H4910). In Christian and Adventist ethics (NOTICE.md), this appointed headship was never license for arbitrary subjugation, but an order of protection and self-sacrificing leadership, fully restored in the New Testament model of Christ and the church (Eph 5:22–33).
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.16`), 12 tokens are matched, with 3 untagged source tokens: the pronoun *ve-hu* (H1931, "and he"), and two occurrences of the preposition *el* / *ve-el* (H413, "unto").
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -131,5 +162,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

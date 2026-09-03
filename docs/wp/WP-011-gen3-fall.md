@@ -46,7 +46,7 @@ engine — confirming the new cost model end-to-end.
       walking in the garden; "Where art thou?" (3:9); the fear and the
       nakedness (3:10); the blame-shifting (the woman, the serpent). Xrefs:
       Job 31:33, Psalm 32:3-5, Proverbs 28:13, Romans 3:19.
-- [ ] Gen 3:14-19 (the judgments): the serpent's curse and the Protevangelium
+- [x] Gen 3:14-19 (the judgments): the serpent's curse and the Protevangelium
       ("it shall bruise thy head, and thou shalt bruise his heel," 3:15);
       the woman's pain and desire (3:16); the ground cursed, thorns and
       thistles, the return to dust (3:17-19). Xrefs: Romans 16:20, Hebrews
@@ -95,3 +95,12 @@ verifies chapter 3 skeletons, chapter-aware).
   in "Where art thou?", breakdown of Edenic intimacy, blame-shifting).
   Verified against `correlations/apparatus-genesis3.json`. Deterministic
   skeletons and word-study blocks preserved verbatim.
+- 2026-09-03: Step 3 (Gen 3:14–19 — the judgments and Protevangelium)
+  curated under the NOTICE.md framework: the curse on the serpent; the
+  Protevangelium (enmity as divine gift, Christ the victorious Seed bruising
+  the serpent's head, cross as heel wound); multiplied sorrow in childbearing
+  and redeemed marriage headship; cursed ground, thorns/thistles and the
+  Christological crown of thorns; physical mortality ("unto dust shalt thou
+  return") anchoring biblical wholism and conditional immortality. Verified
+  against `correlations/apparatus-genesis3.json`. Deterministic skeletons and
+  word-study blocks preserved verbatim.

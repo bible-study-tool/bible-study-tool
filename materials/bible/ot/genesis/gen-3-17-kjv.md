@@ -8,6 +8,8 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
+  - theme/judgment
   - translation/kjv
   - lang/hebrew
   - strongs-H121
@@ -29,9 +31,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-03
+cross_references:
+  - type: xref/parallel
+    target: "genesis-2-17"
+    note: "thou shalt not eat of it — the commandment broken"
+  - type: xref/theme
+    target: "romans-8-20-22"
+    note: "For the creature was made subject to vanity... the whole creation groaneth and travaileth in pain together until now"
+  - type: xref/theme
+    target: "galatians-3-13"
+    note: "Christ hath redeemed us from the curse of the law, being made a curse for us"
+  - type: xref/spirit-prophecy
+    target: "pat-3-1"
+    note: "Patriarchs and Prophets, Chapter 3 — The Temptation and Fall"
 ---
 
 # Genesis 3:17 - KJV
@@ -160,6 +175,22 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:RelP
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: the Fall, sentence upon Adam, the cursed ground, toilsome labor, creation groaning under sin
+*   OT: Genesis 2:17 — The explicit prohibition recalled as the ground of judgment
+*   NT: Romans 8:20–22 — The natural creation subjected to futility on account of man's sin
+*   NT: Galatians 3:13 — Christ bearing the curse on the tree to redeem humanity
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 3 — "The curse upon the ground was a blessing in disguise. Labor and toil were appointed to develop character and check the indulgence of appetite."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Heeding Creature over Creator (*shama'ta le-qol ishtekha*):** God begins Adam's sentence by identifying the moral root of his fall: "Because thou hast hearkened unto the voice of thy wife, and hast eaten of the tree..." Adam inverted the created order: he listened to the voice of his wife rather than the voice of God, allowing human affection to eclipse supreme loyalty to his Creator.
+*   **The Ground Cursed for Man's Sake (*arurah ha-adamah ba'avurekha*):** The sentence falls directly upon the earth: *arurah ha-adamah* ("cursed is the ground"). Yet the Hebrew phrase *ba'avurekha* carries a profound theological nuance: "for thy sake." In the Adventist understanding (citing Ellen White), while the curse is a consequence of sin, it was also appointed in divine mercy as a redemptive discipline. Constant, laborious toil (*itsevon*, H6093, the same root used for the woman's pain in v. 16) checks human pride, curbs fallen appetites, and teaches reliance upon God.
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.17`), 18 tokens are matched, with 5 untagged source tokens: the conjunction *ki* (H3588, "for/because"), the negative particle *lo* (H3808), two prepositions *min* / *mimmennu* (H4480), and the compound preposition *ba'avurekha* (H5668, "for thy sake").
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -167,5 +198,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.
