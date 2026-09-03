@@ -24,12 +24,12 @@ guidelines.
 | Draft engine | `search/corpus/draft_engine.py` + `--draft-engine` flag (WP-010) |
 | Validators | F1–F4 + PROVENANCE gate + regeneration tripwires; **218 tests passing** |
 | CI | Green (GitLab pipelines pass) |
-| ADRs | ADR-0001..0010 (0008 Proposed; 0009/0010 Accepted) |
+| ADRs | ADR-0001..0011 (0008, 0011 Proposed; 0001..0007, 0009, 0010 Accepted) |
 
 ## Work packages (docs/wp/INDEX.md)
 
 - WP-001..WP-011 all `done`
-- **WP-012 (next)** — Genesis 4: pipeline artifacts (morphology, apparatus, WordGraph expansion) + skeleton generation + curation (Cain and Abel, the two offerings, the first murder, the two lineages).
+- **Next Focus: Infrastructure, Bootstrapping & Whole-Book Scaffolding (ADR-0011)** — followed by thematic curation packages (WP-012: Genesis 4, WP-013: Genesis 6–9 Flood).
 
 ## Accomplished in this session
 
@@ -42,7 +42,12 @@ guidelines.
    - **Step 2 (Gen 3:8–13):** The voice of the LORD, seeking grace in "Where art thou?", guilt, fear, and Socratic confrontation.
    - **Step 3 (Gen 3:14–19):** Serpent cursed, the Protevangelium (Seed crushing the serpent's head, cross as heel wound), sorrow in childbearing, cursed ground/thorns, physical mortality ("unto dust shalt thou return") anchoring biblical wholism and conditional immortality.
    - **Step 4 (Gen 3:20–24):** Eve named in faith (*Chavvah* / mother of all living), coats of skins inaugurating the sacrificial system and substitutionary atonement (prefiguring Christ's robe of righteousness), tree of life withheld to prevent immortalized sin, expulsion to till the ground of origin, Cherubim and flaming sword guarding the east gate and establishing the primeval sanctuary of worship.
-3. **Quality & Validation:**
+3. **Strategic Architecture Decision (ADR-0011):**
+   - Drafted and approved `ADR-0011: Whole-Book Draft Scaffolding and JIT Spirit of Prophecy Resolution`.
+   - Planned one-command bootstrap tool (`scripts/bootstrap.sh`).
+   - Validated JIT citation token resolution (`egw:PP.57.1`) via a local SQLite database (`data/egw.db`) with FTS5 search to keep repository lean, license-safe, and analytical.
+   - Shifted to broad whole-book scaffolding (generating all Genesis 4–50 draft skeletons) before deep thematic curation.
+4. **Quality & Validation:**
    - Every substantive step audited and approved by `code-reviewer` subagent.
    - All apparatus counts verified against `correlations/apparatus-genesis3.json`.
    - Full gate `bash scripts/verify_all.sh` passed cleanly (218 tests).
@@ -52,21 +57,25 @@ guidelines.
 
 ```bash
 python scripts/status.py                          # ground truth
-python scripts/curate_context.py --wp WP-012      # curation briefing (once WP-012 created)
-python scripts/wp_check.py --wp WP-012            # pre-flight (chapter-aware)
 bash scripts/verify_all.sh                        # full gate (218+ tests)
 python -m pytest                                  # explicit test count
 ```
 
-## Next-session opening checklist
+## Next-session opening checklist (Strategic & Infrastructure Focus)
 
 1. Run `python scripts/status.py` to inspect repository state.
-2. Read `ROADMAP.md` (Pillar A2: Genesis chapter-by-chapter).
-3. Prepare **WP-012: Genesis 4** (per ADR-0009 and ADR-0010):
-   - Extract morphology: `python -m search.corpus.extract_morphology --chapter 4 --output lexicons/morphology-genesis4.json`
-   - Build apparatus: `python -m search.corpus.build_apparatus --chapter 4 --output correlations/apparatus-genesis4.json`
-   - Re-build WordGraph including chapter 4: `python -m search.corpus.build_wordgraph --chapters 1-4 --output lexicons/wordgraph-genesis.json`
-   - Update `data/PROVENANCE.md` with new/updated artifact checksums.
-   - Generate Genesis 4 draft skeletons: `python -m search.corpus.build_genesis1 --chapter 4 --verses 1-26 --draft-engine`
-   - Create work package `docs/wp/WP-012-gen4-cain-abel.md` and register in `docs/wp/INDEX.md`.
-4. Proceed with Genesis 4 curation step-by-step: implement → verify → subagent-review → commit → regroup.
+2. Review **ADR-0011** (`docs/decisions/ADR-0011-whole-book-scaffolding-and-jit-egw.md`).
+3. **Task 1: Automated Bootstrapping (`scripts/bootstrap.sh`):**
+   - Create `scripts/bootstrap.sh` to auto-detect/create `.venv`, install editable package (`pip install -e ".[test]"`), check dependencies, and verify installation.
+   - Add friendly error guards to standalone scripts in `scripts/` so missing dependencies print clear instructions rather than raw stack traces.
+4. **Task 2: Whole-Book Genesis Scaffolding (Genesis 4–50):**
+   - Batch-generate morphology (`lexicons/morphology-genesis*.json`) and apparatus for chapters 4–50.
+   - Expand the WordGraph (`lexicons/wordgraph-genesis.json`) across the full book of Genesis.
+   - Batch-generate draft skeletons (`materials/bible/ot/genesis/gen-*-kjv.md`) for all 1,533 verses.
+5. **Task 3: Spirit of Prophecy (EGW) JIT SQLite Architecture:**
+   - Design local schema for `data/egw.db` (`id` e.g. `PP.57.1`, `book_code`, `book_title`, `page`, `paragraph`, `text` + FTS5).
+   - Develop ingestion/fetch script and CLI lookup tool (`scripts/egw_lookup.py`).
+6. **Task 4: MACULA Integration Planning:**
+   - Review Macula Hebrew schema and map syntax/clause tree enrichment to WordGraph lemmas.
+7. **Task 5: Plan Thematic Curation Packages:**
+   - Formulate WP-012 for Genesis 4 (Cain & Abel, the offerings, first murder) to curate on top of the generated skeletons.
