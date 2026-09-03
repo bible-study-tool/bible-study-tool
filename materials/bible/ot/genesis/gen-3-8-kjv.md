@@ -8,6 +8,7 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
   - translation/kjv
   - lang/hebrew
   - strongs-H120
@@ -28,9 +29,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-02
+cross_references:
+  - type: xref/theme
+    target: "psalm-139-7-12"
+    note: "Whither shall I go from thy spirit? or whither shall I flee from thy presence? — the impossibility of hiding from God"
+  - type: xref/parallel
+    target: "job-34-21-22"
+    note: "For his eyes are upon the ways of man... There is no darkness, nor shadow of death, where the workers of iniquity may hide themselves"
+  - type: xref/theme
+    target: "revelation-6-15-16"
+    note: "hid themselves in the dens and in the rocks... hide us from the face of him that sitteth on the throne"
+  - type: xref/spirit-prophecy
+    target: "pat-3-1"
+    note: "Patriarchs and Prophets, Chapter 3 — The Temptation and Fall"
 ---
 
 # Genesis 3:8 - KJV
@@ -151,6 +165,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: the Fall, divine approach, guilt fleeing from holiness, hiding among the trees
+*   OT: Psalm 139:7-12 — "Whither shall I flee from thy presence?"
+*   OT: Job 34:21-22 — Iniquity cannot find hiding from the Creator's eyes
+*   NT: Revelation 6:15-16 — Sinners hiding from the presence of the Lamb at the parousia
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 3 — "They heard the voice of God, and instead of greeting Him with joy, as had been their custom, they fled in terror to the deepest recesses of the garden."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Voice Walking (*qol YHWH Elohim mithallekh*):** The narrative presents God seeking humanity in intimate personal terms: "they heard the voice of the LORD God walking (*mithallekh*, H1980, Hithpael participle expressing continued or customary movement) in the garden in the cool of the day (*le-ruach ha-yom*, literally 'in the wind/breeze of the day')." In unfallen Eden, the Creator’s approach brought communion and delight. Now, guilt transposes the comforting voice into an omen of terror.
+*   **Hiding from the Divine Presence (*va-yitchabbe ha-adam ve-ishto mi-peney YHWH Elohim*):** Conscience-stricken by disobedience, the couple instinctively flee from the divine presence (*mi-peney*, H6440, from the face of the LORD God) to hide amongst the trees of the garden (*be-tokh ets ha-gan*). This tragic reflex illustrates the alienation wrought by sin: separation from the Source of life. Human history begins its tragic arc of running from God, a pattern echoing down to the final judgment where unrepentant sinners call upon the rocks and mountains to hide them from the face of Him who sits upon the throne (Rev 6:15–16).
+*   **The Contrast of Trees:** The trees, originally created as a blessing and delight (Gen 2:9), now serve as a futile shield against the omniscient Creator.
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.8`), 17 tokens are matched, with 1 untagged direct object marker *et* (H853) recorded as an omission in the KJV-osis source.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -158,5 +189,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

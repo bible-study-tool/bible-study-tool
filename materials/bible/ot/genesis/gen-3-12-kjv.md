@@ -8,6 +8,7 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
   - translation/kjv
   - lang/hebrew
   - strongs-H120
@@ -22,9 +23,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-02
+cross_references:
+  - type: xref/contrast
+    target: "genesis-2-23"
+    note: "This is now bone of my bones, and flesh of my flesh — loving union transformed into bitter recrimination"
+  - type: xref/theme
+    target: "job-31-33"
+    note: "If I covered my transgressions as Adam, by hiding mine iniquity in my bosom"
+  - type: xref/theme
+    target: "proverbs-28-13"
+    note: "He that covereth his sins shall not prosper: but whoso confesseth and forsaketh them shall have mercy"
+  - type: xref/spirit-prophecy
+    target: "pat-3-1"
+    note: "Patriarchs and Prophets, Chapter 3 — The Temptation and Fall"
 ---
 
 # Genesis 3:12 - KJV
@@ -97,6 +111,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: the Fall, blame-shifting, rupture of human intimacy, charging God foolishly
+*   OT: Genesis 2:23 — Adam's joyous song of oneness inverted into cold accusation
+*   OT: Job 31:33 — Covering transgression "as Adam"
+*   OT: Proverbs 28:13 — The spiritual tragedy of attempting to cover and excuse sin
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 3 — "He ungenerously cast the blame upon his wife, and thus upon God Himself... The spirit of self-justification originated with the father of lies."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Dissolution of Edenic Love:** In Genesis 2:23, Adam greeted the woman with poetic ecstasy: "This is now bone of my bones, and flesh of my flesh." In Genesis 3:12, under the corrupting influence of sin, that selfless devotion curdles into cold resentment and cowardly self-exoneration: "The woman whom thou gavest to be with me, she gave me of the tree, and I did eat."
+*   **Charging God with the Blame (*asher natattah immadi*):** Adam does not merely blame his wife; he audaciously implies that God is the ultimate culprit: "The woman *whom thou gavest* to be with me." The implication is blasphemous: *If You had not given me this woman, I would not have fallen; the fault lies in Your gift and providence.* This instinct to accuse God and others while justifying oneself is, in Adventist theology, the hallmark signature of the spirit of Satan.
+*   **Reluctant Admission (*va-okhel*):** Only at the very end of his elaborate defense does Adam utter the briefest acknowledgment: *va-okhel* ("and I did eat"). Even then, it is framed not as repenting of an evil act, but as the passive consequence of others' influence.
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.12`), 9 tokens are matched, with untagged particles *min* (H4480, "of/from") and *asher* (H834, "whom/which") noted in the source.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -104,5 +135,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

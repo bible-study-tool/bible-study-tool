@@ -42,7 +42,7 @@ engine — confirming the new cost model end-to-end.
       and eating (3:6); the opened eyes and the fig leaves (3:7). Xrefs:
       Genesis 2:16-17, 2:25, 2 Corinthians 11:3, 1 Timothy 2:14, Revelation
       12:9, Romans 5:12-14.
-- [ ] Gen 3:8-13 (the hiding and the confrontation): the voice of the LORD
+- [x] Gen 3:8-13 (the hiding and the confrontation): the voice of the LORD
       walking in the garden; "Where art thou?" (3:9); the fear and the
       nakedness (3:10); the blame-shifting (the woman, the serpent). Xrefs:
       Job 31:33, Psalm 32:3-5, Proverbs 28:13, Romans 3:19.
@@ -90,3 +90,8 @@ verifies chapter 3 skeletons, chapter-aware).
   and 3:3 to match pinned `correlations/apparatus-genesis3.json`. Added
   test parity (`test_word_study_facts_match_lexicons` and
   `test_genesis_3_verses_match_pinned_source`) to `Genesis3SkeletonTests`.
+- 2026-09-02: Step 2 (Gen 3:8–13 — the hiding and divine confrontation)
+  curated with theological notes under the NOTICE.md framework (seeking grace
+  in "Where art thou?", breakdown of Edenic intimacy, blame-shifting).
+  Verified against `correlations/apparatus-genesis3.json`. Deterministic
+  skeletons and word-study blocks preserved verbatim.

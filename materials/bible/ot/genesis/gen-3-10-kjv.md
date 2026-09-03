@@ -8,6 +8,7 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
   - translation/kjv
   - lang/hebrew
   - strongs-H1588
@@ -22,9 +23,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-02
+cross_references:
+  - type: xref/contrast
+    target: "genesis-2-25"
+    note: "And they were both naked... and were not ashamed — innocence without fear contrasted with guilty terror"
+  - type: xref/theme
+    target: "proverbs-28-1"
+    note: "The wicked flee when no man pursueth: but the righteous are bold as a lion"
+  - type: xref/theme
+    target: "1-john-4-18"
+    note: "There is no fear in love; but perfect love casteth out fear: because fear hath torment"
+  - type: xref/spirit-prophecy
+    target: "pat-3-1"
+    note: "Patriarchs and Prophets, Chapter 3 — The Temptation and Fall"
 ---
 
 # Genesis 3:10 - KJV
@@ -97,6 +111,22 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: the Fall, confession of fear, nakedness, psychological disruption of sin
+*   OT: Genesis 2:25 — Innocence without shame or dread
+*   OT: Proverbs 28:1 — Guilt producing irrational flight
+*   NT: 1 John 4:18 — Perfect love casting out tormenting fear
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 3 — "The love and peace which had been theirs was gone, and in its place they felt a sense of sin, a dread of the future, a nakedness of soul."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Entry of Fear into the Human Heart (*va-yira*):** Adam confesses: "I heard thy voice in the garden, and I was afraid (*va-yira*, from *yare*, H3372)." This marks the inaugural appearance of dread, anxiety, and guilt in the biblical record. In the unfallen order, communion with God was humanity's highest joy; sin instantly transforms the presence of holiness into an object of agonizing fear (1 John 4:18).
+*   **The Inadequacy of Fig Leaves (*ki-eyrom anokhi*, "because I was naked"):** Adam's reply unmasks the complete failure of the humanly manufactured fig-leaf aprons (v. 7). Despite their handmade coverings, before the penetrating gaze of the Holy God, Adam is forced to confess: "because I was naked; and I hid myself (*va-echave*, H2244)." Self-fashioned righteousness provides zero security when God draws near; moral nakedness remains totally exposed.
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.10`), 8 tokens are matched, with 2 untagged source tokens: the conjunction *ki* (H3588, "for/because") and the direct object marker *et* (H853).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -104,5 +134,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

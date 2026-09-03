@@ -8,6 +8,7 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
   - translation/kjv
   - lang/hebrew
   - strongs-H1115
@@ -22,9 +23,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-02
+cross_references:
+  - type: xref/parallel
+    target: "genesis-2-17"
+    note: "for in the day that thou eatest thereof thou shalt surely die — the commandment recalled"
+  - type: xref/theme
+    target: "romans-3-19-20"
+    note: "that every mouth may be stopped, and all the world may become guilty before God"
+  - type: xref/theme
+    target: "psalm-51-4"
+    note: "Against thee, thee only, have I sinned, and done this evil in thy sight"
+  - type: xref/spirit-prophecy
+    target: "pat-3-1"
+    note: "Patriarchs and Prophets, Chapter 3 — The Temptation and Fall"
 ---
 
 # Genesis 3:11 - KJV
@@ -97,6 +111,22 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: the Fall, divine cross-examination, exposure of transgression, moral accountability
+*   OT: Genesis 2:17 — The clear covenantal prohibition recalled
+*   OT: Psalm 51:4 — True confession recognizing sin as directed against God
+*   NT: Romans 3:19 — The divine law silencing excuses and revealing universal guilt
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 3 — "Thus the Lord led the transgressors step by step to realize their guilt, giving them opportunity to make voluntary confession."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Socratic Interrogation (*mi higgid lekha*):** God meets Adam's evasion with two piercing inquiries: "Who told thee that thou wast naked? Hast thou eaten of the tree...?" The Creator gently strips away the symptom (the shame of physical nakedness) to lay bare the moral root (transgression of divine command). Nakedness was not inherently shameful or frightening in unfallen creation (2:25); only the guilt of rebellion made exposure terrifying.
+*   **The Broken Commandment (*ha-tsivvitikha le-vilti akhol-mimmennu*):** God directs Adam back to the explicit moral boundary: *asher tsivvitikha* ("whereof I commanded thee"). Sin is fundamentally defined as lawlessness—transgression of the Creator's commandment (1 John 3:4). The divine question confronts Adam with inescapable clarity: had he violated the explicit word of God?
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.11`), 9 tokens are matched, with 5 untagged source tokens: the conjunction *ki* (H3588, "for/that"), two prepositions *min* / *mimmennu* (H4480, "of / from it"), the relative *asher* (H834, "which"), and the personal pronoun *attah* (H859, "thou").
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -104,5 +134,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

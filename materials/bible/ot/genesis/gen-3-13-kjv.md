@@ -8,6 +8,7 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
   - translation/kjv
   - lang/hebrew
   - strongs-H3068
@@ -22,9 +23,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-02
+cross_references:
+  - type: xref/theme
+    target: "2-corinthians-11-3"
+    note: "as the serpent beguiled Eve through his subtilty"
+  - type: xref/theme
+    target: "1-timothy-2-14"
+    note: "the woman being deceived was in the transgression"
+  - type: xref/theme
+    target: "psalm-32-5"
+    note: "I acknowledged my sin unto thee, and mine iniquity have I not hid. I said, I will confess my transgressions unto the Lord"
+  - type: xref/spirit-prophecy
+    target: "pat-3-1"
+    note: "Patriarchs and Prophets, Chapter 3 — The Temptation and Fall"
 ---
 
 # Genesis 3:13 - KJV
@@ -97,6 +111,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: the Fall, divine address to the woman, deception acknowledged, blame passed to the serpent
+*   NT: 2 Corinthians 11:3 — "the serpent beguiled Eve through his subtilty"
+*   NT: 1 Timothy 2:14 — Paul affirms the woman was thoroughly deceived
+*   OT: Psalm 32:5 — Contrast between true confession and shifting blame
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 3 — "'The serpent beguiled me, and I did eat.' Why didst Thou make the serpent? Why didst Thou suffer him to enter Eden? These were the questions implied in her excuse."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Examination of the Woman (*mah-zot asit*):** God turns to the woman with the searching query: "What is this that thou hast done?" (*mah-zot asit*, H4100, H2063, H6213). As with Adam, the question gives her opportunity to acknowledge her error and repent.
+*   **The Serpent Beguiled Me (*ha-nachash hishiani*):** The woman follows Adam's pattern of blame-shifting: "The serpent beguiled me (*hishiani*, from *nasha*, H5377, 'to lead astray, deceive, seduce'), and I did eat." The New Testament confirms that the woman was genuinely deceived: "the woman being deceived (*apatedheisa*) was in the transgression" (1 Tim 2:14; 2 Cor 11:3). Yet deception does not negate guilt; she was accountable for departing from the explicit warning of her Creator.
+*   **The Complete Circle of Evasion:** The chain of responsibility is complete: Adam blamed God and the woman; the woman blamed the serpent; the serpent, having no one beneath him to blame, receives no judicial interrogation—in verse 14, God proceeds immediately to pronounce curse upon the serpent without asking him any question.
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.13`), 10 tokens are matched, with 2 untagged source tokens: the demonstrative *zot* (H2063, "this") and the interrogative *mah* (H4100, "what?").
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -104,5 +135,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.
