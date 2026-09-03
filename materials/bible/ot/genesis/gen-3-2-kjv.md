@@ -8,6 +8,7 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
   - translation/kjv
   - lang/hebrew
   - strongs-H1588
@@ -21,9 +22,19 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-02
+cross_references:
+  - type: xref/parallel
+    target: "genesis-2-16"
+    note: "Of every tree of the garden thou mayest freely eat"
+  - type: xref/theme
+    target: "genesis-3-1"
+    note: "Yea, hath God said, Ye shall not eat of every tree of the garden?"
+  - type: xref/spirit-prophecy
+    target: "pat-3-1"
+    note: "Patriarchs and Prophets, Chapter 3 — The Temptation and Fall"
 ---
 
 # Genesis 3:2 - KJV
@@ -88,6 +99,21 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: the Fall, dialogue with temptation, defense of divine permission
+*   OT: Genesis 2:16 — God's original charter of abundance: "Of every tree of the garden thou mayest freely eat"
+*   OT: Genesis 3:1 — The serpent's provocation inviting dialogue
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 3 — "The woman was surprised and startled as she heard the echo of her thoughts..."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Entering the Dialogue (*va-tomer ha-ishah*):** Instead of recognizing the anomaly of a speaking beast questioning the Creator and withdrawing, the woman responds. While she rightly corrects the serpent's sweeping assertion that they could eat of no tree ("We may eat of the fruit of the trees of the garden"), by agreeing to negotiate the terms of divine law with a creature, she steps onto enemy ground.
+*   **The Subdued Permission (*nokhel* vs. *akol tokhel*):** In Genesis 2:16, God's grant of freedom was emphatic: *akol tokhel* ("eating thou shalt eat" / "thou mayest freely eat"). In the woman's reply here, the intensifying infinitive absolute is omitted, and she simply states *nokhel* ("we may eat"). While still affirming God's provision, the rhetorical diminishment of the divine generosity reflects how entering into dialogue with doubt subtly diminishes one's appreciation of God's grace.
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.2`), 7 tokens are matched, with the untagged preposition *el* (H413, "unto") noted as an omission in the KJV source.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -95,5 +121,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

@@ -248,9 +248,9 @@ class Genesis2SkeletonTests(unittest.TestCase):
 
 @require_raw_sources()
 class Genesis3SkeletonTests(unittest.TestCase):
-    """Genesis 3 (WP-010 demo): 24 engine-generated skeletons, byte-identical
-    to the generator with --draft-engine, all status: draft, carrying the
-    WordGraph provenance marker."""
+    """Genesis 3 (WP-010..WP-011): 24 engine-generated skeletons; drafts byte-identical
+    to the generator with --draft-engine, curated entries with cross_references + updated date,
+    carrying the WordGraph provenance marker."""
 
     @classmethod
     def setUpClass(cls):
@@ -267,22 +267,42 @@ class Genesis3SkeletonTests(unittest.TestCase):
         files = sorted(GENESIS_DIR.glob("gen-3-*-kjv.md"))
         self.assertEqual(len(files), 24, "Genesis 3 must have exactly 24 entries")
 
-    def test_all_draft_and_matching_generator_byte_for_byte(self):
+    def test_all_draft_or_curated(self):
+        """Every Genesis 3 entry is either a draft skeleton (byte-identical
+        to the generator with --draft-engine) or curated (status: review/final
+        with cross_references + updated date)."""
+        from search.corpus.build_genesis1 import GENERATION_DATE
         for v in range(1, 25):
             path = GENESIS_DIR / f"gen-3-{v}-kjv.md"
             text = path.read_text(encoding="utf-8")
-            self.assertIn("status: draft", text, f"{path.name}: not a draft skeleton")
-            expected, _ = self.build_entry_markdown(
-                self.verses[v], self.lexicon, self.tbesh, chapter=3,
-                engine=self.engine,
-            )
-            self.assertEqual(
-                text, expected,
-                f"{path.name}: draft skeleton differs from generator output "
-                "(hand-edit or stale regeneration) — re-run "
-                "python -m search.corpus.build_genesis1 --chapter 3 --verses 1-24 "
-                "--draft-engine",
-            )
+            if "status: draft" in text:
+                self.assertIn(f"created: {GENERATION_DATE}", text, f"{path.name}: draft creation date")
+                self.assertNotIn("cross_references:", text, f"{path.name}: uncurated draft should not have xrefs")
+                expected, _ = self.build_entry_markdown(
+                    self.verses[v], self.lexicon, self.tbesh, chapter=3,
+                    engine=self.engine,
+                )
+                self.assertEqual(
+                    text, expected,
+                    f"{path.name}: draft skeleton differs from generator output "
+                    "(hand-edit or stale regeneration) — re-run "
+                    "python -m search.corpus.build_genesis1 --chapter 3 --verses 1-24 "
+                    "--draft-engine",
+                )
+            elif "status: review" in text or "status: final" in text:
+                self.assertIn("cross_references:", text, f"{path.name}: curated entry must include cross_references")
+                self.assertIn("updated:", text, f"{path.name}: curated entry must include updated date")
+                # Skeleton invariance for curated entries: the verse quote
+                # and word-study blocks must still match the generator.
+                expected, _ = self.build_entry_markdown(
+                    self.verses[v], self.lexicon, self.tbesh, chapter=3,
+                    engine=self.engine,
+                )
+                for line in expected.splitlines():
+                    if line.startswith("> ") or line.startswith("### "):
+                        self.assertIn(line, text, f"{path.name}: curated entry drifted from generator skeleton ({line[:40]})")
+            else:
+                self.fail(f"{path.name}: unrecognized entry status")
 
     def test_provenance_marker_present(self):
         for v in range(1, 25):
@@ -302,6 +322,33 @@ class Genesis3SkeletonTests(unittest.TestCase):
             codes_found = {m.group(1) for m in block_header.finditer(text)}
             _, occ_map, _ = verse_codes(self.verses[v]["text"])
             self.assertEqual(codes_found, set(occ_map), f"gen-3-{v}: block set mismatch")
+
+    def test_word_study_facts_match_lexicons(self):
+        """Every word-study block in the committed Genesis-3 entries must be
+        exactly what the WordGraph draft engine emits."""
+        from search.corpus.build_genesis1 import verse_codes
+        import re
+        block_header = re.compile(r"^### .+ - Strong's ([HG]\d+)$", re.MULTILINE)
+        for v in range(1, 25):
+            path = GENESIS_DIR / f"gen-3-{v}-kjv.md"
+            text = path.read_text(encoding="utf-8")
+            for m in block_header.finditer(text):
+                code = m.group(1)
+                _, occ_map, _ = verse_codes(self.verses[v]["text"])
+                block = self.engine.word_study_block(code, occ_map[code])
+                self.assertIn(block, text, f"{path.name}: word block for {code} drifted")
+
+    def test_genesis_3_verses_match_pinned_source(self):
+        for v in range(1, 25):
+            path = GENESIS_DIR / f"gen-3-{v}-kjv.md"
+            quote = next(
+                (l for l in path.read_text(encoding="utf-8").splitlines() if l.startswith("> ")),
+                "",
+            )[2:].strip()
+            self.assertEqual(
+                quote, clean_verse_text(self.verses[v]["text"]),
+                f"Genesis 3:{v}: entry quote does not match pinned source",
+            )
 
 
 class CorpusIntegrityTests(unittest.TestCase):

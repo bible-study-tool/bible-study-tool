@@ -36,7 +36,7 @@ engine — confirming the new cost model end-to-end.
 
 ## Tasks
 
-- [ ] Gen 3:1-7 (the temptation and the Fall): the serpent's cunning (arum
+- [x] Gen 3:1-7 (the temptation and the Fall): the serpent's cunning (arum
       H6175 vs the nakedness of 2:25); the questioning of the command (compare
       2:16-17); "ye shall be as gods, knowing good and evil" (3:5); the taking
       and eating (3:6); the opened eyes and the fig leaves (3:7). Xrefs:
@@ -83,4 +83,10 @@ verifies chapter 3 skeletons, chapter-aware).
 
 ## Notes / findings
 
-(appended during work)
+- 2026-09-02: Step 1 (Gen 3:1–7 — the temptation and Fall) curated with
+  theological notes and cross-references under the NOTICE.md framework.
+  Deterministic skeletons and WordGraph word-study blocks preserved verbatim.
+  Subagent review conducted; corrected apparatus alignment citations in Gen 3:2
+  and 3:3 to match pinned `correlations/apparatus-genesis3.json`. Added
+  test parity (`test_word_study_facts_match_lexicons` and
+  `test_genesis_3_verses_match_pinned_source`) to `Genesis3SkeletonTests`.
