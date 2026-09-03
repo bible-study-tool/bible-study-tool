@@ -8,6 +8,9 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
+  - theme/redemption
+  - theme/sanctuary
   - translation/kjv
   - lang/hebrew
   - strongs-H120
@@ -22,9 +25,25 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-03
+cross_references:
+  - type: xref/contrast
+    target: "genesis-3-7"
+    note: "and they sewed fig leaves together, and made themselves aprons — humanly manufactured covering contrasted with divine substitution"
+  - type: xref/theme
+    target: "isaiah-61-10"
+    note: "he hath covered me with the robe of righteousness, as a bridegroom decketh himself with ornaments"
+  - type: xref/theme
+    target: "revelation-3-18"
+    note: "and white raiment, that thou mayest be clothed, and that the shame of thy nakedness do not appear"
+  - type: xref/theme
+    target: "hebrews-9-22"
+    note: "and without shedding of blood is no remission"
+  - type: xref/spirit-prophecy
+    target: "pat-4-1"
+    note: "Patriarchs and Prophets, Chapter 4 — The Plan of Redemption"
 ---
 
 # Genesis 3:21 - KJV
@@ -97,6 +116,23 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: the first sacrifice, substitutionary atonement, coats of skins, robe of Christ's righteousness replacing fig leaves
+*   OT: Genesis 3:7 — Contrast between human fig-leaf righteousness and God's sacrificial covering
+*   OT: Isaiah 61:10 — The robe of righteousness provided by God
+*   NT: Hebrews 9:22 — The necessity of blood shedding for remission
+*   NT: Revelation 3:18 — White raiment covering the shame of human nakedness
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 4 — "The sacrificial offerings were ordained by God to be to man a perpetual reminder and a penitential acknowledgment of his sin and a confession of his faith in the promised Redeemer... To Adam, the offering of the first sacrifice was a most painful ceremony."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Inauguration of the Sacrificial System (*kotnot or*):** The "coats of skins" (*kotnot or*, H3801, H5785) represent the first recorded death in the biblical narrative. In order to provide skins of animals, innocent blood had to be shed. In Adventist theology (NOTICE.md), this event marks the divine establishment of the sacrificial system: an innocent victim dying in the sinner's place to provide a covering for human guilt.
+*   **Divine Substitution vs. Human Fig Leaves:** In verse 7, Adam and Eve attempted to cover their own nakedness with handmade fig leaves—a type of legalistic, self-righteous effort to conceal guilt. God graciously rejects this fragile human covering and Himself manufactures (*va-ya'as*, H6213) garments from sacrificial victims and clothes them (*va-yalbishem*, H3847). The coats of skins prefigure the spotless robe of Christ's imputed and imparted righteousness (Isa 61:10; Rev 3:18), the only covering acceptable before the presence of God.
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.21`), there is a perfect 8/8 token alignment between KJV-osis and OSHB, with zero omissions and zero additions.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -104,5 +140,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

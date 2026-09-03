@@ -8,6 +8,8 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
+  - theme/resurrection
   - translation/kjv
   - lang/hebrew
   - strongs-H120
@@ -31,9 +33,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-03
+cross_references:
+  - type: xref/parallel
+    target: "genesis-2-9"
+    note: "the tree of life also in the midst of the garden"
+  - type: xref/theme
+    target: "1-timothy-6-15-16"
+    note: "Who only hath immortality, dwelling in the light which no man can approach unto"
+  - type: xref/contrast
+    target: "revelation-22-14"
+    note: "Blessed are they that do his commandments, that they may have right to the tree of life"
+  - type: xref/spirit-prophecy
+    target: "pat-4-1"
+    note: "Patriarchs and Prophets, Chapter 4 — The Plan of Redemption"
 ---
 
 # Genesis 3:22 - KJV
@@ -178,6 +193,21 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: prevention of immortalized sin, conditional immortality, withholding the tree of life, aposiopesis
+*   NT: 1 Timothy 6:16 — God alone possesses inherent immortality
+*   NT: Revelation 22:2, 14 — The tree of life restored to the redeemed in the New Jerusalem
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 4 — "In order to possess an endless existence, man must continue to partake of the tree of life. Deprived of this, his vitality would gradually diminish until life should become extinct. It was Satan's plan that Adam and Eve should by disobedience incur God's displeasure; and then if they failed of obtaining pardon, he hoped that they would eat of the tree of life, and thus perpetuate a life of sin and misery."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Divine Irony and Aposiopesis (*pen yishlach yado*):** God observes: "Behold, the man is become as one of us, to know good and evil." The statement carries solemn, tragic irony: man sought to become "as gods" (v. 5) by grasping autonomy, but achieved only an experiential acquaintance with evil and the misery of estrangement. The sentence breaks off abruptly in an *aposiopesis* (an unfinished sentence): "and now, lest he put forth his hand, and take also of the tree of life, and eat, and live for ever—" The incomplete grammar dramatically portrays immediate, decisive divine intervention before tragedy becomes irrevocable.
+*   **The Mercy of Withholding the Tree of Life:** In Seventh-day Adventist theology (NOTICE.md), God’s exclusion of fallen humanity from the tree of life was an act of profound mercy as well as judgment. Had fallen humanity partaken of the tree of life while in rebellion, sin and suffering would have been immortalized, resulting in eternal, irremediable misery. Immortality in scripture is conditional upon obedience and communion with God (1 Tim 6:16); physical mortality allows God to quarantine and ultimately eradicate sin.
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.22`), 17 tokens are matched, with 5 untagged source tokens: the particle *gam* (H1571), the verb *hayah* (H1961), the preposition *mimmennu* (H4480), the temporal adverb *ve-attah* (H6258, "and now"), and the conjunction *pen* (H6435, "lest").
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -185,5 +215,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

@@ -8,6 +8,8 @@ tags:
   - book/genesis
   - theme/creation
   - theme/origins
+  - theme/fall
+  - theme/judgment
   - translation/kjv
   - lang/hebrew
   - strongs-H127
@@ -22,9 +24,22 @@ source: source/bible
 language: hebrew
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-09-03
+cross_references:
+  - type: xref/parallel
+    target: "genesis-2-5"
+    note: "there was not a man to till the ground — the agrarian calling before Eden"
+  - type: xref/parallel
+    target: "genesis-2-15"
+    note: "And the Lord God took the man, and put him into the garden of Eden to dress it and to keep it"
+  - type: xref/theme
+    target: "genesis-3-19"
+    note: "till thou return unto the ground; for out of it wast thou taken"
+  - type: xref/spirit-prophecy
+    target: "pat-4-1"
+    note: "Patriarchs and Prophets, Chapter 4 — The Plan of Redemption"
 ---
 
 # Genesis 3:23 - KJV
@@ -97,6 +112,21 @@ updated: 2026-08-28
 *   Morphology (STEPBible): H:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: the expulsion from Eden, transition from garden stewardship to hard tilling, reminder of humble origin
+*   OT: Genesis 2:15 — The original idyllic vocation in Eden contrasted with exile
+*   OT: Genesis 3:19 — The ground from which man was taken and to which he must return
+*   Spirit of Prophecy: Patriarchs and Prophets, Chapter 4 — "They were not permitted longer to occupy their Eden home... With sadness they bade farewell to their beautiful surroundings and went forth to dwell upon the earth, where rested the curse of sin."
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Sent Forth (*va-yeshallechehu*):** God dismisses humanity from the sanctuary of Eden: "Therefore the LORD God sent him forth (*va-yeshallechehu*, Piel of *shalach*, H7971, expressing a decisive sending away) from the garden of Eden (*mi-gan eden*)."
+*   **The Soil of Humility (*la-avod et-ha-adamah*):** The purpose of the expulsion is stated with poignant irony: "to till the ground from whence he was taken (*la-avod et-ha-adamah asher luqqach misham*)." In Eden, Adam had been placed to dress and keep (*le-ovdah u-le-shomrah*, Gen 2:15) a luxuriant garden planted by God Himself. In exile, he is sent to till (*la-avod*) the resistant, cursed ground (*adamah*) from which he (*adam*) had been formed (Gen 2:7), constantly confronted with his humble origin and mortality.
+*   **Apparatus Alignment:** In `correlations/apparatus-genesis3.json` (`Gen.3.23`), 8 tokens are matched, with 3 untagged source tokens: the adverb *misham* (H8033, "from thence"), the relative *asher* (H834), and the direct object marker *et* (H853).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -104,5 +134,5 @@ updated: 2026-08-28
 - Word-study blocks assembled deterministically from the WordGraph
   (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
   generated, never hand-edited.
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes added per WP-011;
+  AI-assisted content marked `<!-- AI-GENERATED -->`.

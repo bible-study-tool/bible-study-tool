@@ -1,6 +1,6 @@
 # WP-011: Curate Genesis 3 (the Fall) — ADR-0009, per-chapter package
 
-status: open
+status: done
 scope: gen-3-1-kjv.md .. gen-3-24-kjv.md (24 engine-generated skeletons)
 priority: high
 
@@ -52,12 +52,12 @@ engine — confirming the new cost model end-to-end.
       thistles, the return to dust (3:17-19). Xrefs: Romans 16:20, Hebrews
       2:14, Galatians 3:13, Isaiah 65:17-25 (the restoration), 1 Corinthians
       15:21-22, Ecclesiastes 12:7.
-- [ ] Gen 3:20-24 (the expulsion): Adam names Eve (3:20); the coats of skins
+- [x] Gen 3:20-24 (the expulsion): Adam names Eve (3:20); the coats of skins
       (3:21); the tree of life withheld (3:22-23); the cherubims and the
       flaming sword (3:24). Xrefs: Genesis 2:24, Revelation 2:7, 22:14,
       Revelation 22:2, Hebrews 10:19-20.
-- [ ] AI markers; `status: review`; `updated: <today>`; human review recorded.
-- [ ] On completion: mark Genesis 3 done in ROADMAP; note the next chapter
+- [x] AI markers; `status: review`; `updated: <today>`; human review recorded.
+- [x] On completion: mark Genesis 3 done in ROADMAP; note the next chapter
       package (WP-012: Genesis 4).
 
 ## Conventions that apply
@@ -73,13 +73,13 @@ verifies chapter 3 skeletons, chapter-aware).
 
 ## Acceptance criteria
 
-- [ ] `bash scripts/verify_all.sh` green (report exact test count); `python
+- [x] `bash scripts/verify_all.sh` green (report exact test count); `python
       scripts/wp_check.py --wp WP-011` green (chapter-aware skeleton check).
-- [ ] 24 entries `status: review`; AI blocks marked; skeleton fields
+- [x] 24 entries `status: review`; AI blocks marked; skeleton fields
       byte-identical to the committed WP-010 engine drafts except
       status/updated.
-- [ ] Human review recorded in this file's Notes.
-- [ ] ROADMAP updated (Genesis 3 done; next = Genesis 4); WP INDEX updated.
+- [x] Human review recorded in this file's Notes.
+- [x] ROADMAP updated (Genesis 3 done; next = Genesis 4); WP INDEX updated.
 
 ## Notes / findings
 
@@ -104,3 +104,14 @@ verifies chapter 3 skeletons, chapter-aware).
   return") anchoring biblical wholism and conditional immortality. Verified
   against `correlations/apparatus-genesis3.json`. Deterministic skeletons and
   word-study blocks preserved verbatim.
+- 2026-09-03: Step 4 (Gen 3:20–24 — the expulsion and hope of redemption)
+  curated under the NOTICE.md framework: Adam naming Eve (Chavvah, mother of all
+  living) as an act of faith in the promised Seed; coats of skins inaugurating
+  the sacrificial system and substitutionary atonement (prefiguring Christ's
+  robe of righteousness replacing fig leaves); withholding the tree of life to
+  prevent immortalized sin (affirming conditional immortality); the expulsion
+  to till the cursed soil of origin; the Cherubim and flaming sword (Shekinah)
+  at the east gate guarding the tree of life and establishing the primeval
+  meeting place of worship until Christ opens the new and living way. Verified
+  against `correlations/apparatus-genesis3.json`. Deterministic skeletons and
+  word-study blocks preserved verbatim. All 24 verses of Genesis 3 curated.
