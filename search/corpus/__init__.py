@@ -7,3 +7,19 @@ CONTRIBUTION_STANDARDS.md. Generated entries are `status: draft` skeletons
 whose facts (verse text, Strong's tags, lexicon data) are reproducible and
 verifiable against the pinned sources.
 """
+
+from search.corpus.backup import (
+    CURRENT_BACKUP_VERSION,
+    export_backup,
+    inspect_backup,
+    restore_backup,
+    verify_backup,
+)
+
+__all__ = [
+    "CURRENT_BACKUP_VERSION",
+    "export_backup",
+    "inspect_backup",
+    "restore_backup",
+    "verify_backup",
+]

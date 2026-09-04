@@ -21,6 +21,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-0013](ADR-0013-design-principles-stewardship-and-scalability.md) | Design principles — stewardship, excellence, scalable simplicity ("Doing the best for God without waste") | Accepted |
 | [ADR-0014](ADR-0014-whole-bible-macula-sqlite-architecture.md) | Whole-Bible Macula SQLite Architecture (`data/macula.db`) | Accepted |
 | [ADR-0015](ADR-0015-macula-semantic-enrichment.md) | Macula Semantic Role & Translation-Equivalence Enrichment | Accepted |
+| [ADR-0016](ADR-0016-two-tier-corpus-and-portable-backup.md) | Two-Tier Storage Architecture and Portable Offline Backup | Accepted |
 
 
 ## When to write one

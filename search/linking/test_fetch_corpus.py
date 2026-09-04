@@ -13,17 +13,30 @@ from unittest.mock import MagicMock, patch
 import urllib.error
 import zipfile
 
-from scripts.fetch_egw_corpus import (
-    BIOGRAPHIES,
-    DEVOTIONALS,
-    PERIODICAL_CODES,
-    SPECIAL_COLLECTIONS,
-    STANDARD_BOOKS,
-    download_file,
-    get_curated_corpus,
-    main,
-    resolve_category_path,
-)
+try:
+    from scripts.fetch_egw_corpus import (
+        BIOGRAPHIES,
+        DEVOTIONALS,
+        PERIODICAL_CODES,
+        SPECIAL_COLLECTIONS,
+        STANDARD_BOOKS,
+        download_file,
+        get_curated_corpus,
+        main,
+        resolve_category_path,
+    )
+    HAS_FETCH_SCRIPT = True
+except ImportError:
+    HAS_FETCH_SCRIPT = False
+    BIOGRAPHIES = set()
+    DEVOTIONALS = set()
+    PERIODICAL_CODES = set()
+    SPECIAL_COLLECTIONS = set()
+    STANDARD_BOOKS = set()
+    download_file = None
+    get_curated_corpus = None
+    main = None
+    resolve_category_path = None
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CLI_SCRIPT = REPO_ROOT / "scripts" / "fetch_egw_corpus.py"
@@ -70,6 +83,7 @@ def _create_minimal_epub(zip_path: Path, title: str = "Test Book", paragraphs: l
         zf.writestr("OEBPS/chap1.xhtml", chap1_xhtml)
 
 
+@unittest.skipUnless(HAS_FETCH_SCRIPT, "scripts/fetch_egw_corpus.py not installed (BYOD)")
 class CategoryResolutionTests(unittest.TestCase):
     def test_manuscript_releases_resolution(self):
         self.assertEqual(resolve_category_path("1MR"), Path("02_Manuscript_Releases"))
@@ -116,6 +130,7 @@ class CategoryResolutionTests(unittest.TestCase):
         self.assertEqual(resolve_category_path("GC"), Path("01_Books_and_Compilations"))
 
 
+@unittest.skipUnless(HAS_FETCH_SCRIPT, "scripts/fetch_egw_corpus.py not installed (BYOD)")
 class CuratedCorpusInventoryTests(unittest.TestCase):
     def test_manuscript_releases_count(self):
         corpus = get_curated_corpus("manuscripts")
@@ -162,6 +177,7 @@ class CuratedCorpusInventoryTests(unittest.TestCase):
         self.assertEqual(len(corpus), 414)
 
 
+@unittest.skipUnless(HAS_FETCH_SCRIPT, "scripts/fetch_egw_corpus.py not installed (BYOD)")
 class DownloaderTests(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
@@ -299,6 +315,7 @@ class DownloaderTests(unittest.TestCase):
                     self.assertEqual(pf.read(5), b"%PDF-")
 
 
+@unittest.skipUnless(HAS_FETCH_SCRIPT, "scripts/fetch_egw_corpus.py not installed (BYOD)")
 class HarvesterCLITests(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
