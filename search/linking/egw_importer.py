@@ -27,10 +27,17 @@ import zipfile
 from typing import Any, Generator, Iterable
 
 from search.linking.egw import (
+    ALL_OFFICIAL_EGW_CODES,
     KNOWN_EGW_BOOKS,
     _TRIGGERS,
     EgwDB,
     normalize_token,
+)
+
+# Precompiled regex for pagebreak IDs: p57, p.57, p_57, p-57, page_57, pb_57, etc.
+_PAGEBREAK_ID_RE = re.compile(
+    r"\b(?:page[._\-]?|pb[._\-]?|p[._\-]?)([0-9]+)\b",
+    re.IGNORECASE,
 )
 
 # Canonical verification anchors (token -> expected text start)
@@ -187,23 +194,56 @@ def detect_book_code(name_or_text: str) -> str | None:
     s = name_or_text.strip()
     upper = s.upper()
 
-    # Exact book code match (e.g. "PP", "DA", "GC")
-    for code in KNOWN_EGW_BOOKS:
-        if upper == code:
-            return code
+    # 1. Exact match against curated official publication codes or known books
+    if upper in ALL_OFFICIAL_EGW_CODES:
+        return ALL_OFFICIAL_EGW_CODES[upper]
+    if upper in KNOWN_EGW_BOOKS:
+        return upper
 
-    # Check filename stem or prefixes (e.g., "PP.txt", "DA_1898.epub")
-    stem = Path(s).stem.upper()
-    if stem in KNOWN_EGW_BOOKS:
-        return stem
-    for code in KNOWN_EGW_BOOKS:
-        if stem.startswith(f"{code}_") or stem.startswith(f"{code}-") or stem.startswith(f"{code} "):
-            return code
+    # 2. Check filename stem or prefixes (e.g., "PP.txt", "DA_1898.epub", "en_10MR.epub", "en_AG.epub")
+    stem = Path(s).stem
+    if stem.lower().startswith("en_"):
+        stem = stem[3:]
+    stem_upper = stem.upper()
 
-    # Match by full title substring
+    if stem_upper in ALL_OFFICIAL_EGW_CODES:
+        return ALL_OFFICIAL_EGW_CODES[stem_upper]
+    if stem_upper in KNOWN_EGW_BOOKS:
+        return stem_upper
+
+    # Check prefix delimited by _, -, or space (e.g., "DA_1898", "PP-volume")
+    prefix = re.split(r"[-_ ]", stem, maxsplit=1)[0].upper()
+    if prefix in ALL_OFFICIAL_EGW_CODES:
+        return ALL_OFFICIAL_EGW_CODES[prefix]
+    if prefix in KNOWN_EGW_BOOKS:
+        return prefix
+
+    # 3. Match by full title substring
     for code, title in KNOWN_EGW_BOOKS.items():
         if title.lower() in s.lower():
             return code
+
+    # 4. Match recognized EGW publication code patterns:
+    # - Manuscript Releases: 1MR - 21MR
+    # - Pamphlets: SpTA01 - SpTA12, SpTB01 - SpTB19, SpTEd, PH001 - PH180
+    # - Periodicals: RH1 - RH6, ST1 - ST4
+    # - Sermons: 1SAT, 2SAT
+    if re.fullmatch(r"\d+MR", stem, re.IGNORECASE):
+        return stem.upper()
+    if re.fullmatch(r"SpTA\d{2}", stem, re.IGNORECASE):
+        return f"SpTA{int(stem[4:]):02d}"
+    if re.fullmatch(r"SpTB\d{2}", stem, re.IGNORECASE):
+        return f"SpTB{int(stem[4:]):02d}"
+    if stem.lower() == "spted":
+        return "SpTEd"
+    if re.fullmatch(r"PH\d{3}", stem, re.IGNORECASE):
+        return f"PH{int(stem[2:]):03d}"
+    if re.fullmatch(r"RH\d", stem, re.IGNORECASE):
+        return stem.upper()
+    if re.fullmatch(r"ST\d", stem, re.IGNORECASE):
+        return stem.upper()
+    if re.fullmatch(r"\d+SAT", stem, re.IGNORECASE):
+        return stem.upper()
 
     return None
 
@@ -317,29 +357,81 @@ class TextParagraphParser:
 class _HtmlParagraphExtractor(HTMLParser):
     """Zero-dependency HTML/XHTML parser for EPUB chapter files."""
 
-    def __init__(self):
+    def __init__(self, start_page: int = 1, start_para: int = 0):
         super().__init__()
         self.paragraphs: list[dict[str, Any]] = []
-        self.current_page: int = 1
-        self.current_para: int = 0
+        self.current_page: int = start_page
+        self.current_para: int = start_para
         self.current_chap_title: str | None = None
         self._in_p = False
         self._in_heading = False
+        self._in_pagebreak = False
         self._heading_buffer: list[str] = []
         self._text_buffer: list[str] = []
+        self._pagebreak_buffer: list[str] = []
+
+    def set_page(self, page_num: int):
+        """Transition parser state to a new page, flushing current paragraph if active."""
+        if self._in_p and self._text_buffer:
+            p_text = html.unescape(" ".join(self._text_buffer)).strip()
+            if p_text:
+                self._record_paragraph(p_text)
+            self._text_buffer = []
+        self.current_page = page_num
+        self.current_para = 0
+
+    def _record_paragraph(self, p_text: str):
+        """Append a structured paragraph record with inline citation token detection."""
+        tok_match = _INLINE_TOKEN_RE.search(p_text)
+        if tok_match and tok_match.start() == 0:
+            b = tok_match.group(1).upper()
+            pg = int(tok_match.group(2))
+            pr = int(tok_match.group(3))
+            clean_text = _INLINE_TOKEN_RE.sub("", p_text).strip()
+            self.paragraphs.append({
+                "book_code": b,
+                "page": pg,
+                "paragraph": pr,
+                "chapter_title": self.current_chap_title,
+                "text": clean_text or p_text,
+            })
+            self.current_page = pg
+            self.current_para = pr
+        else:
+            self.current_para += 1
+            self.paragraphs.append({
+                "page": self.current_page,
+                "paragraph": self.current_para,
+                "chapter_title": self.current_chap_title,
+                "text": p_text,
+            })
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]):
         attr_dict = {k.lower(): v for k, v in attrs if v is not None}
         tag_lower = tag.lower()
 
-        # Check for explicit page break anchors: <span id="page_57"/>, <a id="p.57"/>, <span id="pb_57"/>
         id_val = attr_dict.get("id") or attr_dict.get("name") or ""
         class_val = attr_dict.get("class") or ""
+        title_val = attr_dict.get("title") or ""
+        epub_type = attr_dict.get("epub:type") or ""
 
-        page_match = re.search(r"(?:page[_\-]?|pb[_\-]|p\.)([0-9]+)", id_val, re.IGNORECASE)
-        if page_match:
-            self.current_page = int(page_match.group(1))
-            self.current_para = 0
+        # Check for explicit page break anchors:
+        # id="p18", id="page_57", id="pb_57", title="45", class="pagebreak", epub:type="pagebreak"
+        is_pagebreak = "pagebreak" in class_val.lower() or "pagebreak" in epub_type.lower()
+        page_num: int | None = None
+        if title_val.isdigit() and is_pagebreak:
+            page_num = int(title_val)
+        else:
+            page_match = _PAGEBREAK_ID_RE.search(id_val)
+            if page_match:
+                page_num = int(page_match.group(1))
+
+        if page_num is not None:
+            self.set_page(page_num)
+
+        if is_pagebreak:
+            self._in_pagebreak = True
+            self._pagebreak_buffer = []
 
         if tag_lower in ("h1", "h2", "h3"):
             self._in_heading = True
@@ -350,6 +442,13 @@ class _HtmlParagraphExtractor(HTMLParser):
 
     def handle_endtag(self, tag: str):
         tag_lower = tag.lower()
+        if tag_lower in ("span", "a", "div") and self._in_pagebreak:
+            self._in_pagebreak = False
+            raw_num = "".join(self._pagebreak_buffer).strip()
+            num_match = re.search(r"\b(\d+)\b", raw_num)
+            if num_match:
+                self.set_page(int(num_match.group(1)))
+
         if tag_lower in ("h1", "h2", "h3") and self._in_heading:
             self._in_heading = False
             heading_text = " ".join(self._heading_buffer).strip()
@@ -359,34 +458,15 @@ class _HtmlParagraphExtractor(HTMLParser):
             self._in_p = False
             p_text = html.unescape(" ".join(self._text_buffer)).strip()
             if p_text:
-                # Check for inline citation tokens at the beginning of paragraph: {PP 57.1}
-                tok_match = _INLINE_TOKEN_RE.search(p_text)
-                if tok_match and tok_match.start() == 0:
-                    b = tok_match.group(1).upper()
-                    pg = int(tok_match.group(2))
-                    pr = int(tok_match.group(3))
-                    clean_text = _INLINE_TOKEN_RE.sub("", p_text).strip()
-                    self.paragraphs.append({
-                        "book_code": b,
-                        "page": pg,
-                        "paragraph": pr,
-                        "chapter_title": self.current_chap_title,
-                        "text": clean_text or p_text,
-                    })
-                    self.current_page = pg
-                    self.current_para = pr
-                else:
-                    self.current_para += 1
-                    self.paragraphs.append({
-                        "page": self.current_page,
-                        "paragraph": self.current_para,
-                        "chapter_title": self.current_chap_title,
-                        "text": p_text,
-                    })
+                self._record_paragraph(p_text)
+            self._text_buffer = []
 
     def handle_data(self, data: str):
         clean = data.strip()
         if not clean:
+            return
+        if self._in_pagebreak:
+            self._pagebreak_buffer.append(clean)
             return
         if self._in_heading:
             self._heading_buffer.append(clean)
@@ -434,13 +514,13 @@ class EpubParser:
                 opf_dir = str(Path(opf_path).parent) if str(Path(opf_path).parent) != "." else ""
                 opf_content = zf.read(opf_path).decode("utf-8", errors="replace")
 
-            # Extract title if book_title is generic
+            # Extract title if book_title is generic or equals code
             title_match = re.search(r"<dc:title[^>]*>([^<]+)</dc:title>", opf_content, re.IGNORECASE)
             if title_match:
                 extracted_title = title_match.group(1).strip()
-                if book_code == "EGW":
+                if book_code == "EGW" or book_title == book_code:
                     detected = detect_book_code(extracted_title)
-                    if detected:
+                    if detected and detected != "EGW":
                         book_code = detected
                         book_title = KNOWN_EGW_BOOKS.get(book_code, extracted_title)
                     else:
@@ -477,15 +557,16 @@ class EpubParser:
 
             global_page = 1
             curr_para = 0
+            curr_chap_title = None
             for chap_idx, chap_file in enumerate(chapter_files, 1):
                 try:
                     chap_html = zf.read(chap_file).decode("utf-8", errors="replace")
                 except Exception:
                     continue
 
-                parser = _HtmlParagraphExtractor()
-                parser.current_page = global_page
-                parser.current_para = curr_para
+                parser = _HtmlParagraphExtractor(start_page=global_page, start_para=curr_para)
+                if curr_chap_title:
+                    parser.current_chap_title = curr_chap_title
                 parser.feed(chap_html)
 
                 for p in parser.paragraphs:
@@ -505,8 +586,10 @@ class EpubParser:
                 if parser.paragraphs:
                     global_page = max(global_page, parser.current_page)
                     curr_para = parser.current_para
+                if parser.current_chap_title:
+                    curr_chap_title = parser.current_chap_title
 
-        return paragraphs
+            return paragraphs
 
 
 class BulkImporter:
@@ -547,6 +630,45 @@ class BulkImporter:
             return self.db.fast_bulk_insert(paragraphs)
         return self.db.insert_paragraphs_batch(paragraphs)
 
+    def import_files(
+        self,
+        file_paths: Iterable[Path | str],
+        fast: bool = True,
+    ) -> dict[str, int]:
+        """Import an iterable of files with fast trigger-deferred SQLite batching."""
+        paths = [Path(p) for p in file_paths]
+        if not paths:
+            return {}
+
+        self.db.init_db()
+        if fast:
+            with self.db.conn:
+                self.db.conn.execute("DROP TRIGGER IF EXISTS egw_ai;")
+                self.db.conn.execute("DROP TRIGGER IF EXISTS egw_ad;")
+                self.db.conn.execute("DROP TRIGGER IF EXISTS egw_au;")
+
+        results: dict[str, int] = {}
+        total_inserted = 0
+        try:
+            for file in paths:
+                if not file.is_file():
+                    continue
+                file_key = str(file)
+                try:
+                    count = self.import_file(file, fast=False)
+                    results[file_key] = count
+                    total_inserted += max(0, count)
+                except Exception:
+                    results[file_key] = -1
+        finally:
+            if fast:
+                with self.db.conn:
+                    self.db.conn.executescript(_TRIGGERS)
+                    if total_inserted > 0:
+                        self.db.conn.execute("INSERT INTO egw_fts(egw_fts) VALUES('rebuild');")
+
+        return results
+
     def import_directory(
         self,
         dir_path: str | Path,
@@ -560,35 +682,10 @@ class BulkImporter:
 
         pattern = "**/*" if recursive else "*"
         supported_exts = {".epub", ".txt", ".md", ".json"}
+        files = [f for f in sorted(dir_p.glob(pattern)) if f.is_file() and f.suffix.lower() in supported_exts]
 
-        # If fast mode is enabled, drop triggers once across the entire directory batch
-        if fast:
-            self.db.init_db()
-            with self.db.conn:
-                self.db.conn.execute("DROP TRIGGER IF EXISTS egw_ai;")
-                self.db.conn.execute("DROP TRIGGER IF EXISTS egw_ad;")
-                self.db.conn.execute("DROP TRIGGER IF EXISTS egw_au;")
-
-        results: dict[str, int] = {}
-        total_inserted = 0
-        try:
-            for file in sorted(dir_p.glob(pattern)):
-                if file.is_file() and file.suffix.lower() in supported_exts:
-                    rel_key = str(file.relative_to(dir_p))
-                    try:
-                        count = self.import_file(file, fast=False)
-                        results[rel_key] = count
-                        total_inserted += max(0, count)
-                    except Exception:
-                        results[rel_key] = -1
-        finally:
-            if fast:
-                with self.db.conn:
-                    self.db.conn.executescript(_TRIGGERS)
-                    if total_inserted > 0:
-                        self.db.conn.execute("INSERT INTO egw_fts(egw_fts) VALUES('rebuild');")
-
-        return results
+        file_results = self.import_files(files, fast=fast)
+        return {str(Path(k).relative_to(dir_p)): v for k, v in file_results.items()}
 
 
 # Verified public-domain and officially distributed free editions

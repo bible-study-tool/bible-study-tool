@@ -27,6 +27,7 @@ entries `draft` -> `review`.
 | [WP-014](WP-014-whole-bible-macula-sqlite.md) | Pillar B (B2) | Whole-Bible Macula SQLite Architecture (ADR-0013, ADR-0014) | done |
 | [WP-015](WP-015-macula-semantic-enrichment.md) | Pillar B (B3) | Macula Semantic Role & Translation-Equivalence Enrichment (ADR-0015) | done |
 | [WP-016](WP-016-egw-public-domain-corpus.md) | Pillar A (A7) | Spirit of Prophecy (EGW) Public Domain Corpus Expansion (Step 1a) | done |
+| [WP-017](WP-017-egw-full-corpus-harvester.md) | Pillar A (A7) | Full Official English EGW Corpus Harvester & Pagination Fidelity (Step 1b) | done |
 
 
 

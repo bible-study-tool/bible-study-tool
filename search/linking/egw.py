@@ -78,6 +78,66 @@ KNOWN_EGW_BOOKS: dict[str, str] = {
     "YI": "The Youth's Instructor",
 }
 
+# Curated Classifications & Official White Estate Publication Codes (414 codes)
+DEVOTIONALS: set[str] = {
+    "AG", "BLJ", "CC", "CTr", "FH", "FLB", "HB", "HP", "LHU",
+    "ML", "Mar", "OFC", "OHC", "RC", "RRe", "SD", "TDG", "TMK",
+    "UL", "YRP",
+}
+
+BIOGRAPHIES: set[str] = {
+    "1BIO", "2BIO", "3BIO", "4BIO", "5BIO", "6BIO",
+    "LS", "LS80", "LS88", "LSMS", "CET",
+}
+
+PERIODICAL_CODES: set[str] = {
+    "RH1", "RH2", "RH3", "RH4", "RH5", "RH6",
+    "ST1", "ST2", "ST3", "ST4",
+    "YI", "BE", "PT", "HR", "SW", "TMis",
+}
+
+SPECIAL_COLLECTIONS: set[str] = {
+    "1888", "1SAT", "2SAT", "SpM", "PC", "KC", "ApM", "WLF", "ExV", "ExV54",
+}
+
+STANDARD_BOOKS: list[str] = [
+    "1BC", "2BC", "3BC", "4BC", "5BC", "6BC", "7BC", "7ABC", "1MCP", "2MCP",
+    "1SG", "2SG", "3SG", "4aSG", "4bSG", "1SM", "2SM", "3SM", "1SP", "2SP",
+    "3SP", "4SP", "1T", "2T", "3T", "4T", "5T", "6T", "7T", "8T", "9T",
+    "1TT", "2TT", "3TT", "AA", "AC", "AH", "AY", "BOE", "CCh", "CD", "CE",
+    "CEv", "CG", "CH", "CIHS", "CL", "CM", "CME", "COL", "CS", "CSA", "CSW",
+    "CT", "CTBH", "CW", "Con", "ChL", "ChS", "DA", "DD", "DG", "EGWE", "EP",
+    "Ed", "Ev", "FE", "FW", "GC", "GC88", "GW", "GW92", "GrH_a", "GrH_c",
+    "HDL", "HF", "HFM", "HH", "HL", "HLv", "HS", "Hvn", "LDE", "LF", "LP",
+    "LYL", "MB", "MC", "MH", "MHH", "MM", "MTC", "MYP", "NL", "PaM", "PCP",
+    "PK", "PM", "PP", "Pr", "RR", "RY", "SA", "SC", "SJ", "SL", "SR", "SS",
+    "STJ", "SWk", "TA", "TE", "TM", "TR", "TSA", "TSB", "TSDF", "TSS", "TT",
+    "Te", "TEd", "VSS", "WM", "WV",
+]
+
+MR_CODES: list[str] = [f"{i}MR" for i in range(1, 22)]
+
+PAMPHLET_CODES: list[str] = (
+    [f"SpTA{i:02d}" for i in range(1, 13)]
+    + [f"SpTB{i:02d}" for i in range(1, 20)]
+    + ["SpTEd"]
+    + [f"PH{i:03d}" for i in range(1, 181)]
+)
+
+ALL_OFFICIAL_EGW_CODES: dict[str, str] = {
+    code.upper(): code
+    for code in (
+        list(KNOWN_EGW_BOOKS.keys())
+        + STANDARD_BOOKS
+        + list(DEVOTIONALS)
+        + list(BIOGRAPHIES)
+        + list(PERIODICAL_CODES)
+        + list(SPECIAL_COLLECTIONS)
+        + MR_CODES
+        + PAMPHLET_CODES
+    )
+}
+
 _TOKEN_RE = re.compile(
     r"^(?:egw:)?(?=[0-9A-Za-z]*[A-Za-z])([A-Za-z0-9]+)\.([0-9]+)(?:\.([0-9]+))?$",
     re.IGNORECASE,

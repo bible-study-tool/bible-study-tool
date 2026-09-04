@@ -52,6 +52,18 @@ class BookCodeDetectionTests(unittest.TestCase):
         self.assertEqual(detect_book_code("GC-volume.json"), "GC")
         self.assertEqual(detect_book_code("steps to christ.txt"), "SC")
 
+    def test_official_cdn_filename_patterns(self):
+        self.assertEqual(detect_book_code("en_10MR.epub"), "10MR")
+        self.assertEqual(detect_book_code("en_DA.epub"), "DA")
+        self.assertEqual(detect_book_code("en_SpTA01.epub"), "SpTA01")
+        self.assertEqual(detect_book_code("en_PH001.epub"), "PH001")
+        self.assertEqual(detect_book_code("en_RH1.epub"), "RH1")
+        self.assertEqual(detect_book_code("en_AG.epub"), "AG")
+        self.assertEqual(detect_book_code("en_1BIO.epub"), "1BIO")
+        self.assertEqual(detect_book_code("en_1888.epub"), "1888")
+        self.assertEqual(detect_book_code("en_LDE.epub"), "LDE")
+        self.assertEqual(detect_book_code("en_7ABC.epub"), "7ABC")
+
     def test_title_substrings(self):
         self.assertEqual(detect_book_code("Patriarchs and Prophets 1890 Edition"), "PP")
         self.assertEqual(detect_book_code("The Desire of Ages"), "DA")
@@ -177,6 +189,39 @@ class EpubParserTests(unittest.TestCase):
         self.assertEqual(paragraphs[2]["paragraph"], 1)
         self.assertIn("wonderful and beautiful things", paragraphs[2]["text"])
 
+    def test_parse_epub_legacy_pagebreak_ids(self):
+        legacy_epub = Path(self.temp_dir.name) / "legacy.epub"
+        with zipfile.ZipFile(legacy_epub, "w") as zf:
+            zf.writestr("mimetype", "application/epub+zip")
+            zf.writestr(
+                "META-INF/container.xml",
+                '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">'
+                '<rootfiles><rootfile full-path="content.opf" media-type="application/oebps-package+xml"/></rootfiles>'
+                '</container>',
+            )
+            zf.writestr(
+                "content.opf",
+                '<package version="2.0" xmlns="http://www.idpf.org/2007/opf">'
+                '<metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>Patriarchs and Prophets</dc:title></metadata>'
+                '<manifest><item id="c1" href="c1.xhtml" media-type="application/xhtml+xml"/></manifest>'
+                '<spine><itemref idref="c1"/></spine></package>',
+            )
+            zf.writestr(
+                "c1.xhtml",
+                '<html><body>'
+                '<a id="p.57"/><p>Paragraph on page 57.</p>'
+                '<span id="p_58"/><p>Paragraph on page 58.</p>'
+                '<span id="p-59"/><p>Paragraph on page 59.</p>'
+                '</body></html>',
+            )
+
+        parser = EpubParser()
+        paras = parser.parse(legacy_epub)
+        self.assertEqual(len(paras), 3)
+        self.assertEqual(paras[0]["page"], 57)
+        self.assertEqual(paras[1]["page"], 58)
+        self.assertEqual(paras[2]["page"], 59)
+
 
 class FastBulkInsertTests(unittest.TestCase):
     def setUp(self):
@@ -230,6 +275,19 @@ class FastBulkInsertTests(unittest.TestCase):
         self.assertEqual(res["PP.txt"], 2)
         self.assertEqual(res["SC.txt"], 2)
         self.assertEqual(self.db.count(), 4)
+
+    def test_bulk_importer_import_files(self):
+        f1 = Path(self.temp_dir.name) / "f1.txt"
+        f1.write_text("{SC 10.1} Text from first file.", encoding="utf-8")
+        f2 = Path(self.temp_dir.name) / "f2.txt"
+        f2.write_text("{SC 10.2} Text from second file.", encoding="utf-8")
+
+        importer = BulkImporter(self.db)
+        results = importer.import_files([f1, f2], fast=True)
+        self.assertEqual(len(results), 2)
+        self.assertEqual(self.db.count(), 2)
+        self.assertEqual(results[str(f1)], 1)
+        self.assertEqual(results[str(f2)], 1)
 
 
 class CliImporterTests(unittest.TestCase):
