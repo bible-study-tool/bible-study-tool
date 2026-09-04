@@ -29,6 +29,12 @@ before your first task).
 8. **Big decision made? Write an ADR** (`docs/decisions/`) — ask the current
    assistant to draft it if you're mid-conversation. Undocumented decisions
    rot.
+9. **Do the best without being wasteful (ADR-0013).** We build for God. We
+   reject shortsighted toy solutions that do not scale to the whole Bible
+   (66 books, ~31,102 verses) or full commentary corpuses, and we reject
+   bloated enterprise overkill with unneeded dependencies. We stand on the
+   shoulders of open-source giants: study, incorporate, adapt, and attribute
+   generously.
 
 ## Session workflow (always)
 

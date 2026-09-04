@@ -18,6 +18,8 @@ from .loader import Loader
 from .embedder import get_embedder
 from .concordance import build_concordance
 from .candidates import discover_candidates, GateKeeper
+from .egw import EgwDB, KNOWN_EGW_BOOKS, is_egw_token, normalize_token
+from .egw_importer import BulkImporter, EpubParser, TextParagraphParser
 
 __all__ = [
     "Loader",
@@ -25,4 +27,12 @@ __all__ = [
     "build_concordance",
     "discover_candidates",
     "GateKeeper",
+    "EgwDB",
+    "KNOWN_EGW_BOOKS",
+    "is_egw_token",
+    "normalize_token",
+    "BulkImporter",
+    "EpubParser",
+    "TextParagraphParser",
 ]
+

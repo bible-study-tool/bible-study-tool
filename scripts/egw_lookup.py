@@ -35,6 +35,11 @@ try:
         normalize_token,
         seed_core_genesis_passages,
     )
+    from search.linking.egw_importer import (
+        BulkImporter,
+        harvest_public_domain,
+        PUBLIC_DOMAIN_SOURCES,
+    )
 except ModuleNotFoundError as err:
     sys.stderr.write(
         f"\n[ERROR] Missing required module: {err.name}\n"
@@ -91,8 +96,24 @@ def main(argv: list[str] | None = None) -> int:
         help="Show database statistics and paragraph counts",
     )
     parser.add_argument(
+        "--ingest",
+        "--ingest-file",
+        dest="ingest_file",
+        help="Path to an EPUB, TXT, MD, or JSON file to import into the local database",
+    )
+    parser.add_argument(
+        "--ingest-dir",
+        help="Path to a directory of EPUB, TXT, MD, or JSON files to batch import",
+    )
+    parser.add_argument(
+        "--fetch-public-domain",
+        type=str.upper,
+        choices=list(PUBLIC_DOMAIN_SOURCES.keys()),
+        help=f"Download and ingest verified pre-1929 public domain works ({', '.join(PUBLIC_DOMAIN_SOURCES.keys())})",
+    )
+    parser.add_argument(
         "--ingest-json",
-        help="Path to JSON file containing paragraph entries to import",
+        help="Path to JSON file containing paragraph entries to import (legacy alias)",
     )
 
     args = parser.parse_args(argv)
@@ -109,13 +130,42 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Seeded {n} core Genesis study paragraphs into {db.db_path}")
             return 0
 
-        if args.ingest_json:
+        if args.fetch_public_domain:
             try:
-                n = db.ingest_json(args.ingest_json)
-                print(f"Successfully ingested {n} paragraphs from {args.ingest_json}")
+                db.init_db()
+                code = args.fetch_public_domain.upper()
+                print(f"Fetching public-domain edition for {code} ({PUBLIC_DOMAIN_SOURCES[code]['title']})...")
+                n = harvest_public_domain(code, db, dest_dir=_REPO_ROOT / "data" / "egw-sources")
+                print(f"Successfully ingested {n} paragraphs into {db.db_path}")
                 return 0
             except Exception as ex:
-                print(f"Error ingesting JSON: {ex}", file=sys.stderr)
+                print(f"Error fetching public domain work: {ex}", file=sys.stderr)
+                return 1
+
+        if args.ingest_file or args.ingest_json:
+            target = args.ingest_file or args.ingest_json
+            try:
+                importer = BulkImporter(db)
+                n = importer.import_file(target, book_code=args.book)
+                print(f"Successfully ingested {n} paragraphs from {target} into {db.db_path}")
+                return 0
+            except Exception as ex:
+                print(f"Error ingesting file: {ex}", file=sys.stderr)
+                return 1
+
+        if args.ingest_dir:
+            try:
+                importer = BulkImporter(db)
+                print(f"Scanning and importing files in {args.ingest_dir}...")
+                results = importer.import_directory(args.ingest_dir)
+                total = sum(v for v in results.values() if v > 0)
+                print(f"Imported {total} paragraphs across {len(results)} file(s):")
+                for fname, cnt in results.items():
+                    status = f"{cnt} paragraphs" if cnt >= 0 else "FAILED"
+                    print(f"  - {fname}: {status}")
+                return 0
+            except Exception as ex:
+                print(f"Error ingesting directory: {ex}", file=sys.stderr)
                 return 1
 
         if args.stats:

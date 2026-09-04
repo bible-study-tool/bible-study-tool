@@ -27,6 +27,26 @@ No license can enforce this standard. It is upheld by the project's curation
 process and community review — the deterministic core is human-verified, and
 all AI-generated content is marked and gated behind human approval.
 
+## Core Design Principle: Stewardship and Excellence
+
+**"We are doing this for God. So we should do the best we can without being wasteful."** (ADR-0013)
+
+This conviction governs our technical and architectural choices:
+1. **No Shortsighted 'Toy' Solutions**: Because our aim is the study of the
+   complete canon of Scripture (all 66 books, ~31,102 verses) and extensive
+   historical Spirit of Prophecy commentary, we reject narrow, single-chapter
+   or fragile in-memory hacks that fail to scale. We architect robust,
+   disk-backed, zero-dependency engines (such as SQLite FTS5) capable of handling
+   millions of words with sub-millisecond lookups and minimal memory footprints.
+2. **No Wasteful Overkill**: We avoid unnecessary heavyweight dependencies,
+   external server infrastructure, or convoluted abstractions when clean,
+   standard-library Python + SQLite solutions solve the problem reliably offline.
+3. **Standing on the Shoulders of Giants**: When dedicated open-source projects
+   have spent years creating, refining, and maintaining parsers, lexicons, or
+   databases, we do not reinvent them from scratch. We study, adapt, integrate,
+   and build upon them, giving full and generous credit in our documentation
+   and provenance records.
+
 ## Content-Sourcing Policy
 
 The project's own original analytical data (concordance, semantic links,
