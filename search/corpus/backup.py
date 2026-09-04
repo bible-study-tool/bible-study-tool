@@ -158,7 +158,7 @@ def export_backup(
     Args:
         output_path: Destination path for the backup archive (.tar.gz).
         db_paths: Optional list of SQLite databases to include. Defaults to
-                  data/egw.db, data/corpus.db, and data/macula.db if present.
+                  data/egw.db, data/corpus.db, data/macula.db, and data/bible.db if present.
         user_data_paths: Optional list of user annotation files/directories to bundle.
         source_paths: Optional list of raw BYOD source files/directories (e.g. data/egw-sources).
         include_sources: If True, bundles raw BYOD sources to produce a Complete Backup.
@@ -178,6 +178,7 @@ def export_backup(
             root / "data" / "egw.db",
             root / "data" / "corpus.db",
             root / "data" / "macula.db",
+            root / "data" / "bible.db",
         ]
         active_dbs = [p for p in candidate_dbs if p.exists() and p.is_file()]
     else:

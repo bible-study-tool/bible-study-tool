@@ -15,11 +15,43 @@ from search.corpus.backup import (
     restore_backup,
     verify_backup,
 )
+from search.corpus.bible_books import (
+    BIBLE_BOOKS,
+    CANONICAL_OSIS_ORDER,
+    NT_BOOKS,
+    OT_BOOKS,
+    BookInfo,
+    get_book_info,
+    parse_passage_ref,
+    resolve_book_code,
+)
+from search.corpus.extract_kjv import (
+    DEFAULT_BIBLE_DB,
+    DEFAULT_KJV_JSON,
+    BibleDB,
+    clean_verse_text,
+    compile_bible_db,
+    extract_tokens,
+)
 
 __all__ = [
+    "BIBLE_BOOKS",
+    "CANONICAL_OSIS_ORDER",
     "CURRENT_BACKUP_VERSION",
+    "DEFAULT_BIBLE_DB",
+    "DEFAULT_KJV_JSON",
+    "NT_BOOKS",
+    "OT_BOOKS",
+    "BibleDB",
+    "BookInfo",
+    "clean_verse_text",
+    "compile_bible_db",
     "export_backup",
+    "extract_tokens",
+    "get_book_info",
     "inspect_backup",
+    "parse_passage_ref",
+    "resolve_book_code",
     "restore_backup",
     "verify_backup",
 ]
