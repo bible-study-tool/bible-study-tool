@@ -260,6 +260,9 @@ def main():
     args = parser.parse_args()
 
     repo_root = find_repo_root()
+    if not (repo_root / "ROADMAP.md").exists():
+        print("Error: Could not locate repository root. Please run from within the bible-study-tool repository.", file=sys.stderr)
+        sys.exit(1)
     wp_file = None
     verses = []
     chapter = 1

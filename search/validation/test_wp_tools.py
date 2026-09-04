@@ -84,5 +84,35 @@ class WpCheckTests(unittest.TestCase):
             self.assertEqual(code, 0, f"{wp_name} should pass wp_check")
 
 
+class BootstrapScriptTests(unittest.TestCase):
+    def test_bootstrap_script_exists_and_is_executable(self):
+        script = Path("scripts/bootstrap.sh")
+        self.assertTrue(script.exists(), "scripts/bootstrap.sh must exist")
+        import os
+        self.assertTrue(os.access(script, os.X_OK), "scripts/bootstrap.sh must be executable")
+
+    def test_bootstrap_script_syntax(self):
+        import subprocess
+        res = subprocess.run(["bash", "-n", "scripts/bootstrap.sh"], capture_output=True, text=True)
+        self.assertEqual(res.returncode, 0, f"bash -n failed: {res.stderr}")
+
+    def test_bootstrap_script_help(self):
+        import subprocess
+        res = subprocess.run(["bash", "scripts/bootstrap.sh", "--help"], capture_output=True, text=True)
+        self.assertEqual(res.returncode, 0)
+        self.assertIn("Usage:", res.stdout)
+        self.assertIn("--ml", res.stdout)
+        self.assertIn("--verify", res.stdout)
+
+
+class StatusScriptTests(unittest.TestCase):
+    def test_status_test_count(self):
+        from scripts.status import test_count
+        res = test_count()
+        self.assertTrue(isinstance(res, str))
+        self.assertTrue(len(res) > 0)
+        self.assertNotIn("pytest failed", res)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

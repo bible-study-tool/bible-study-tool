@@ -80,12 +80,30 @@ def work_packages() -> list[tuple[str, str, str]]:
 
 
 def test_count() -> str:
+    py_exec = sys.executable
+    venv_py = ROOT / ".venv/bin/python"
+    if venv_py.is_file():
+        # If sys.executable lacks pytest, fallback to .venv python
+        check = subprocess.run(
+            [py_exec, "-m", "pytest", "--version"],
+            capture_output=True, text=True, cwd=ROOT
+        )
+        if check.returncode != 0:
+            py_exec = str(venv_py)
+
     out = subprocess.run(
-        [sys.executable, "-m", "pytest", "--collect-only", "-q"],
+        [py_exec, "-m", "pytest", "--collect-only"],
         capture_output=True, text=True, cwd=ROOT,
     )
+    if out.returncode != 0:
+        if "No module named pytest" in (out.stderr + out.stdout):
+            return "pytest not found — run ./scripts/bootstrap.sh"
+        return "pytest failed"
+    m = re.search(r"(\d+)\s+tests?\s+collected", out.stdout)
+    if m:
+        return f"{m.group(1)} tests collected"
     lines = [l for l in out.stdout.splitlines() if l.strip()]
-    return lines[-1] if lines else "pytest failed"
+    return lines[-1].strip(" =") if lines else "pytest: 0 tests collected"
 
 
 def main() -> int:

@@ -26,17 +26,27 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from search.corpus.build_genesis1 import (
-    clean_verse_text,
-    load_pinned_sources,
-    verse_codes,
-    word_study_block,
-)
-from search.linking.loader import Loader
-from search.validation import audit as f4
-from search.validation import xrefs as f3
-from search.validation.schema import Taxonomy, validate_all as schema_all
-from search.validation.strongs import StrongsCanonical, validate_all as strongs_all
+try:
+    from search.corpus.build_genesis1 import (
+        clean_verse_text,
+        load_pinned_sources,
+        verse_codes,
+        word_study_block,
+    )
+    from search.linking.loader import Loader
+    from search.validation import audit as f4
+    from search.validation import xrefs as f3
+    from search.validation.schema import Taxonomy, validate_all as schema_all
+    from search.validation.strongs import StrongsCanonical, validate_all as strongs_all
+except ModuleNotFoundError as err:
+    sys.stderr.write(
+        f"\n[ERROR] Missing required dependency or module: {err.name}\n"
+        "To set up the environment and install dependencies, run:\n"
+        "    ./scripts/bootstrap.sh\n"
+        "Or activate your virtual environment:\n"
+        "    source .venv/bin/activate\n\n"
+    )
+    sys.exit(1)
 
 
 def find_repo_root() -> Path:

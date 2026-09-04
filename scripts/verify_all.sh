@@ -31,6 +31,21 @@ cd "$REPO_ROOT"
 
 FAILURES=()
 
+# Determine python interpreter (prefer active python/PATH, fallback to .venv)
+PYTHON="python"
+if ! command -v "$PYTHON" >/dev/null 2>&1 || ! "$PYTHON" -m pytest --version >/dev/null 2>&1; then
+  if [[ -x "$REPO_ROOT/.venv/bin/python" ]] && "$REPO_ROOT/.venv/bin/python" -m pytest --version >/dev/null 2>&1; then
+    PYTHON="$REPO_ROOT/.venv/bin/python"
+  else
+    echo "ERROR: Python test dependencies not found (pytest, PyYAML, numpy)." >&2
+    echo "Please initialize your environment with:" >&2
+    echo "    ./scripts/bootstrap.sh" >&2
+    echo "Or activate your virtual environment:" >&2
+    echo "    source .venv/bin/activate" >&2
+    exit 1
+  fi
+fi
+
 run_step() { # run_step <label> <command...>
   local label="$1"; shift
   echo
@@ -45,16 +60,17 @@ run_step() { # run_step <label> <command...>
 
 echo "Bible Study Tool — full local verification"
 echo "repo: $REPO_ROOT"
+echo "python: $("$PYTHON" --version 2>&1) ($PYTHON)"
 
 # --- 1. full test suite (includes all tripwires + checksum gates) -----------
 run_step "Test suite (pytest, includes regeneration tripwires + checksum gate)" \
-  python -m pytest
+  "$PYTHON" -m pytest
 
 # --- 2. F1-F4 data-integrity validators --------------------------------------
-run_step "F1 schema validator"   python -m search.validation.schema  --repo .
-run_step "F2 Strong's validator" python -m search.validation.strongs --repo .
-run_step "F3 cross-ref validator" python -m search.validation.xrefs  --repo .
-run_step "F4 dead-ref audit"     python -m search.validation.audit   --repo .
+run_step "F1 schema validator"   "$PYTHON" -m search.validation.schema  --repo .
+run_step "F2 Strong's validator" "$PYTHON" -m search.validation.strongs --repo .
+run_step "F3 cross-ref validator" "$PYTHON" -m search.validation.xrefs  --repo .
+run_step "F4 dead-ref audit"     "$PYTHON" -m search.validation.audit   --repo .
 
 # --- 3. raw-source checksums (only when the sources are present) -------------
 if [[ -f data/KJV-osis.json ]]; then
