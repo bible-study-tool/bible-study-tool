@@ -53,6 +53,12 @@ class BackupEngineTests(unittest.TestCase):
         self.sample_note = self.test_dir / "my_notes.txt"
         self.sample_note.write_text("Personal study journal.\n", encoding="utf-8")
 
+        # Create sample source file
+        self.sources_dir = self.data_dir / "egw-sources"
+        self.sources_dir.mkdir(parents=True, exist_ok=True)
+        self.sample_epub = self.sources_dir / "PP.epub"
+        self.sample_epub.write_bytes(b"PK\x03\x04mock_epub_content")
+
     def tearDown(self):
         self.temp_dir.cleanup()
 
@@ -268,6 +274,105 @@ class BackupEngineTests(unittest.TestCase):
         with self.assertRaises(SecurityError):
             restore_backup(malicious_archive, target_dir=self.test_dir)
 
+    def test_export_complete_backup_with_sources(self):
+        archive_path = self.test_dir / "complete_backup.tar.gz"
+        manifest = export_backup(
+            output_path=archive_path,
+            db_paths=[self.sample_db],
+            include_sources=True,
+            repo_root=self.test_dir,
+        )
+
+        self.assertEqual(manifest["mode"], "complete")
+        types = [f["type"] for f in manifest["files"]]
+        self.assertIn("database", types)
+        self.assertIn("source", types)
+
+        # Restore complete backup
+        dest_dir = self.test_dir / "restored_complete"
+        res = restore_backup(archive_path, target_dir=dest_dir)
+        self.assertEqual(res["status"], "restored")
+        self.assertTrue((dest_dir / "data" / "sample.db").exists())
+        self.assertTrue((dest_dir / "data" / "egw-sources" / "PP.epub").exists())
+
+    def test_export_sources_only(self):
+        archive_path = self.test_dir / "sources_only.tar.gz"
+        manifest = export_backup(
+            output_path=archive_path,
+            db_paths=[],
+            include_sources=True,
+            repo_root=self.test_dir,
+        )
+
+        self.assertEqual(manifest["mode"], "sources_only")
+        types = [f["type"] for f in manifest["files"]]
+        self.assertNotIn("database", types)
+        self.assertIn("source", types)
+
+    def test_export_complete_with_custom_source_preserves_candidates(self):
+        custom_dir = self.test_dir / "custom_sources"
+        custom_dir.mkdir(parents=True, exist_ok=True)
+        custom_file = custom_dir / "custom_note.txt"
+        custom_file.write_text("Custom source data", encoding="utf-8")
+
+        archive_path = self.test_dir / "complete_with_custom.tar.gz"
+        manifest = export_backup(
+            output_path=archive_path,
+            db_paths=[self.sample_db],
+            include_sources=True,
+            source_paths=[custom_dir],
+            repo_root=self.test_dir,
+        )
+
+        arcnames = [f["arcname"] for f in manifest["files"]]
+        # Both default candidate egw-sources and custom_sources should be bundled
+        self.assertTrue(any("egw-sources" in name for name in arcnames))
+        self.assertTrue(any("custom_sources" in name for name in arcnames))
+
+    def test_symlinks_skipped_during_export(self):
+        link_path = self.sources_dir / "symlink_to_nowhere.epub"
+        try:
+            link_path.symlink_to(self.sample_epub)
+        except OSError:
+            self.skipTest("Symlinks not supported on filesystem")
+
+        archive_path = self.test_dir / "symlink_test.tar.gz"
+        manifest = export_backup(
+            output_path=archive_path,
+            include_sources=True,
+            repo_root=self.test_dir,
+        )
+
+        arcnames = [f["arcname"] for f in manifest["files"]]
+        self.assertFalse(any("symlink_to_nowhere" in name for name in arcnames))
+
+        is_valid, errors = verify_backup(archive_path)
+        self.assertTrue(is_valid, f"Verification failed on archive with skipped symlinks: {errors}")
+
+    def test_verify_detects_unmanifested_rogue_file(self):
+        archive_path = self.test_dir / "clean_backup.tar.gz"
+        export_backup(
+            output_path=archive_path,
+            db_paths=[self.sample_db],
+            repo_root=self.test_dir,
+        )
+
+        # Inject an unmanifested rogue file into tar
+        rogue_archive = self.test_dir / "rogue_injected.tar.gz"
+        with tarfile.open(archive_path, "r:gz") as src, tarfile.open(rogue_archive, "w:gz") as dst:
+            for member in src.getmembers():
+                dst.addfile(member, src.extractfile(member) if member.isreg() else None)
+
+            # Add rogue file
+            rogue_content = b"malicious code"
+            ti = tarfile.TarInfo(name="rogue_script.sh")
+            ti.size = len(rogue_content)
+            dst.addfile(ti, io.BytesIO(rogue_content))
+
+        is_valid, errors = verify_backup(rogue_archive)
+        self.assertFalse(is_valid)
+        self.assertTrue(any("Untracked file found in archive" in e for e in errors))
+
 
 class BackupCLITests(unittest.TestCase):
     def setUp(self):
@@ -308,7 +413,7 @@ class BackupCLITests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(res.returncode, 0, f"Export failed: {res.stderr}")
-        self.assertIn("Backup created successfully!", res.stdout)
+        self.assertIn("backup created successfully!", res.stdout.lower())
         self.assertTrue(self.archive_path.exists())
 
         # 2. Inspect via CLI
@@ -347,6 +452,42 @@ class BackupCLITests(unittest.TestCase):
         self.assertEqual(res_res.returncode, 0, f"Restore failed: {res_res.stderr}")
         self.assertIn("Restore complete!", res_res.stdout)
         self.assertTrue((restore_dir / "data" / "test.db").exists())
+
+    def test_cli_complete_and_sources_modes(self):
+        sources_dir = self.test_dir / "sources"
+        sources_dir.mkdir(parents=True, exist_ok=True)
+        src_file = sources_dir / "book.epub"
+        src_file.write_bytes(b"PK\x03\x04mockbook")
+
+        complete_archive = self.test_dir / "cli_complete.tar.gz"
+        res = subprocess.run(
+            [
+                sys.executable,
+                str(CLI_SCRIPT),
+                "export",
+                "-o",
+                str(complete_archive),
+                "--complete",
+                "--db",
+                str(self.db_path),
+                "--source",
+                str(sources_dir),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(res.returncode, 0, f"Complete export failed: {res.stderr}")
+        self.assertIn("Packaging Complete backup archive", res.stdout)
+
+        # Inspect complete archive
+        res_insp = subprocess.run(
+            [sys.executable, str(CLI_SCRIPT), "inspect", str(complete_archive)],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(res_insp.returncode, 0)
+        self.assertIn("Mode:          COMPLETE", res_insp.stdout)
+        self.assertIn("source", res_insp.stdout)
 
 
 if __name__ == "__main__":

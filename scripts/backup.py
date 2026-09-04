@@ -56,23 +56,24 @@ def handle_export(args: argparse.Namespace) -> int:
     db_paths: list[Path] = []
     root_data = REPO_ROOT / "data"
 
-    if args.include_egw and (root_data / "egw.db").exists():
-        db_paths.append(root_data / "egw.db")
-    if args.include_corpus and (root_data / "corpus.db").exists():
-        db_paths.append(root_data / "corpus.db")
-    if args.include_macula and (root_data / "macula.db").exists():
-        db_paths.append(root_data / "macula.db")
+    if not args.sources_only:
+        if args.include_egw and (root_data / "egw.db").exists():
+            db_paths.append(root_data / "egw.db")
+        if args.include_corpus and (root_data / "corpus.db").exists():
+            db_paths.append(root_data / "corpus.db")
+        if args.include_macula and (root_data / "macula.db").exists():
+            db_paths.append(root_data / "macula.db")
 
-    resolved_dbs = {p.resolve() for p in db_paths}
-    if args.db:
-        for db in args.db:
-            p = Path(db).resolve()
-            if p.exists() and p.is_file():
-                if p not in resolved_dbs:
-                    db_paths.append(p)
-                    resolved_dbs.add(p)
-            else:
-                print(f"[!] Warning: Specified database not found: {db}", file=sys.stderr)
+        resolved_dbs = {p.resolve() for p in db_paths}
+        if args.db:
+            for db in args.db:
+                p = Path(db).resolve()
+                if p.exists() and p.is_file():
+                    if p not in resolved_dbs:
+                        db_paths.append(p)
+                        resolved_dbs.add(p)
+                else:
+                    print(f"[!] Warning: Specified database not found: {db}", file=sys.stderr)
 
     user_paths: list[Path] = []
     resolved_users: set[Path] = set()
@@ -86,26 +87,45 @@ def handle_export(args: argparse.Namespace) -> int:
             else:
                 print(f"[!] Warning: Specified user data path not found: {up}", file=sys.stderr)
 
-    if not db_paths and not user_paths:
-        print("[!] No databases or user data files found to back up.", file=sys.stderr)
+    source_paths: list[Path] | None = None
+    if args.sources:
+        source_paths = []
+        for sp in args.sources:
+            p = Path(sp).resolve()
+            if p.exists():
+                source_paths.append(p)
+            else:
+                print(f"[!] Warning: Specified source path not found: {sp}", file=sys.stderr)
+
+    include_sources = args.include_sources or args.sources_only or (source_paths is not None)
+
+    if not db_paths and not user_paths and not include_sources:
+        print("[!] No databases, user data files, or sources found to back up.", file=sys.stderr)
         return 1
 
-    print(f"[*] Packaging backup archive: {out_path}")
-    print(f"    Databases: {', '.join(p.name for p in db_paths) if db_paths else 'None'}")
+    mode_label = "Complete" if (db_paths and include_sources) else ("Sources-Only" if args.sources_only else "Index-Only")
+    print(f"[*] Packaging {mode_label} backup archive: {out_path}")
+    if db_paths:
+        print(f"    Databases: {', '.join(p.name for p in db_paths)}")
     if user_paths:
         print(f"    User Data: {', '.join(p.name for p in user_paths)}")
+    if include_sources:
+        print(f"    Sources:   Raw BYOD bookshelf included")
 
     manifest = export_backup(
         output_path=out_path,
         db_paths=db_paths,
         user_data_paths=user_paths,
+        source_paths=source_paths,
+        include_sources=include_sources,
         note=args.note or "",
         repo_root=REPO_ROOT,
     )
 
     total_bytes = sum(f["size_bytes"] for f in manifest["files"])
     arch_size = Path(out_path).stat().st_size
-    print(f"\n[✓] Backup created successfully!")
+    actual_mode = manifest.get("mode", "index_only").replace("_", "-").title()
+    print(f"\n[✓] {actual_mode} backup created successfully!")
     print(f"    Archive Path: {Path(out_path).resolve()}")
     print(f"    Archive Size: {format_bytes(arch_size)} (uncompressed: {format_bytes(total_bytes)})")
     print(f"    Files Bundled: {len(manifest['files'])}")
@@ -139,13 +159,21 @@ def handle_inspect(args: argparse.Namespace) -> int:
     print(f"=== Backup Archive Inspection ===")
     print(f"Archive:       {archive_path.resolve()}")
     print(f"Version:       {manifest.get('version', 'unknown')}")
+    print(f"Mode:          {manifest.get('mode', 'index_only').upper()}")
     print(f"Generator:     {manifest.get('generator', 'unknown')}")
     print(f"Created At:    {manifest.get('created_at', 'unknown')}")
     if manifest.get("note"):
         print(f"Note:          {manifest.get('note')}")
-    print(f"File Count:    {manifest.get('file_count', 0)}")
 
     files = manifest.get("files", [])
+    types_count: dict[str, int] = {}
+    for f in files:
+        t = f.get("type", "file")
+        types_count[t] = types_count.get(t, 0) + 1
+    label_map = {"database": "databases", "source": "sources", "user_data": "user data files"}
+    types_str = ", ".join(f"{cnt} {label_map.get(t, t + 's') if cnt != 1 else t}" for t, cnt in types_count.items())
+    print(f"File Count:    {manifest.get('file_count', len(files))} ({types_str or 'empty'})")
+
     if files:
         print("\n--- Bundled Files ---")
         for f in files:
@@ -233,6 +261,26 @@ def main() -> int:
     exp_parser.add_argument("--no-corpus", action="store_false", dest="include_corpus", help="Exclude data/corpus.db")
     exp_parser.add_argument("--include-macula", action="store_true", default=True, help="Include data/macula.db (default)")
     exp_parser.add_argument("--no-macula", action="store_false", dest="include_macula", help="Exclude data/macula.db")
+
+    mode_group = exp_parser.add_mutually_exclusive_group()
+    mode_group.add_argument(
+        "--include-sources", "--complete",
+        action="store_true",
+        dest="include_sources",
+        help="Complete Backup: bundle raw BYOD bookshelf (data/egw-sources, etc.) alongside databases",
+    )
+    mode_group.add_argument(
+        "--sources-only",
+        action="store_true",
+        help="Sources-Only mode: bundle only raw BYOD source files without SQLite databases",
+    )
+
+    exp_parser.add_argument(
+        "--source",
+        action="append",
+        dest="sources",
+        help="Specific raw source directory or file to include (can specify multiple times)",
+    )
     exp_parser.add_argument("--db", action="append", help="Additional SQLite database path to include")
     exp_parser.add_argument("--user-data", action="append", help="Additional user annotation file/dir to include")
 

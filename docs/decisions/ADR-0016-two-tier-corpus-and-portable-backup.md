@@ -64,15 +64,29 @@
 6. **Portable Offline Backup Engine (`scripts/backup.py`, `search/corpus/backup.py`):**
    - Standardizes a deterministic compressed archive (`.tar.gz`) for complete on-device
      study portability.
-   - Archive structure:
-     * `backup_manifest.json`: archive format version, creation timestamp, file list,
+   - **Three Composable Backup Modes:**
+     * **Mode 1: Lightweight / Index-Only (default):** Bundles on-device SQLite databases
+       (`databases/egw.db`, `databases/corpus.db`, `databases/macula.db`) and user annotations
+       (`user_data/`). Fast (~3-4s) and compact (~34 MB).
+     * **Mode 2: Complete Backup (`--complete` / `--include-sources`):**
+       $$\text{Complete Backup} = \text{System State (Databases + Annotations)} + \text{Raw BYOD Bookshelf (EPUBs, PDFs, TXTs)}$$
+       Bundles both the compiled search indexes and the raw digital book collection (`sources/`),
+       guaranteeing 100% offline self-containment when moving to air-gapped machines.
+     * **Mode 3: Sources-Only (`--sources-only`):** Bundles only the raw BYOD source files
+       without SQLite databases.
+   - **Archive Structure:**
+     * `backup_manifest.json`: archive format version, backup mode (`complete`, `index_only`,
+       `sources_only`), generator, creation timestamp, database statistics, file list,
        byte counts, and SHA-256 checksums of each included file.
-     * `databases/`: on-device SQLite databases (`egw.db`, `corpus.db`, `macula.db`).
+     * `databases/`: on-device SQLite databases.
      * `user_data/`: custom annotations, bookmarks, or user manifests.
-   - Security & Integrity:
-     * Path-traversal / zip-slip prevention during restore.
+     * `sources/`: raw BYOD bookshelf files and directories.
+   - **Security & Integrity:**
+     * Path-traversal / zip-slip prevention on both member names (`arcname`) and destination paths.
+     * Rejection of non-regular files (symlinks, FIFO pipes).
      * Cryptographic SHA-256 verification of every extracted file against the manifest.
-     * Atomic restore with staging and automatic rollback on verification failure.
+     * Zero-loss atomic restore with staging within destination directory (`dir=dest`)
+       and atomic file replacement (`os.replace`).
 
 ## Consequences
 
@@ -81,7 +95,7 @@
 * **Unified Multi-Corpus Extensibility:** Pioneers, commentaries, and user books share
   a single indexed FTS5 query architecture without schema forks.
 * **Total Study Portability:** Users can backup, transport, and restore their entire
-  annotated study library across air-gapped systems in a single deterministic step.
+  study state and raw digital bookshelf across air-gapped systems in a single deterministic step.
 * **Tier 1 Integrity Preserved:** Deterministic Bible core remains clean, vetted,
   and protected from unvetted user data leakage.
 

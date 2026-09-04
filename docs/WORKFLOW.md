@@ -173,3 +173,24 @@ CI runs exactly what `verify_all.sh` runs locally. If it fails where your
 local run passed, check for: a stale local artifact, a hash-seed ordering
 difference (all generators are required to be byte-deterministic — that's a
 bug, report it), or an uncommitted file. `git status` first, always.
+
+## Example 7 — Portable Study Backup & Air-Gapped Migration (ADR-0016)
+
+The project provides an offline-first backup and migration engine:
+
+```bash
+# 1. Standard Study Backup (Databases + Personal Annotations):
+python scripts/backup.py export -o data/study_backup.tar.gz
+
+# 2. Complete Backup (Databases + Annotations + Raw BYOD Bookshelf):
+python scripts/backup.py export --complete -o data/full_migration.tar.gz
+
+# 3. Inspect archive manifest, modes, and database table statistics:
+python scripts/backup.py inspect data/full_migration.tar.gz
+
+# 4. Cryptographically verify SHA-256 integrity:
+python scripts/backup.py verify data/full_migration.tar.gz
+
+# 5. Restore onto an air-gapped system:
+python scripts/backup.py restore data/full_migration.tar.gz --overwrite
+```

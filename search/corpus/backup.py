@@ -98,20 +98,70 @@ def is_safe_path(base_dir: Path, target_path: Path) -> bool:
         return False
 
 
+def _archive_filesystem_entry(
+    tar: tarfile.TarFile,
+    entry_path: Path,
+    category: str,
+    root: Path,
+    files_manifest: list[dict[str, Any]],
+    seen_arcnames: set[str],
+) -> None:
+    """Helper to archive a file or directory tree, skipping symlinks and duplicate arcnames."""
+    entries = [entry_path] if entry_path.is_file() else sorted(entry_path.rglob("*"))
+    for item in entries:
+        if not item.is_file() or item.is_symlink():
+            continue
+
+        if root in item.parents:
+            rel_to_root = item.relative_to(root)
+            arcname = f"{category}/{rel_to_root}"
+        else:
+            rel_to_dir = item.relative_to(entry_path) if entry_path.is_dir() else item.name
+            rel_to_root = (
+                Path("data") / category / entry_path.name / rel_to_dir
+                if entry_path.is_dir()
+                else Path("data") / category / item.name
+            )
+            arcname = (
+                f"{category}/{entry_path.name}/{rel_to_dir}"
+                if entry_path.is_dir()
+                else f"{category}/{item.name}"
+            )
+
+        if arcname in seen_arcnames:
+            continue
+        seen_arcnames.add(arcname)
+
+        sha256 = calculate_sha256(item)
+        item_type = "source" if category == "sources" else category
+        files_manifest.append({
+            "arcname": arcname,
+            "target_relpath": str(rel_to_root),
+            "size_bytes": item.stat().st_size,
+            "sha256": sha256,
+            "type": item_type,
+        })
+        tar.add(str(item), arcname=arcname)
+
+
 def export_backup(
     output_path: Path | str,
     db_paths: list[Path | str] | None = None,
     user_data_paths: list[Path | str] | None = None,
+    source_paths: list[Path | str] | None = None,
+    include_sources: bool = False,
     note: str = "",
     repo_root: Path | None = None,
 ) -> dict[str, Any]:
-    """Export on-device databases and user study data into a portable .tar.gz archive.
+    """Export on-device databases, user study data, and raw BYOD sources into a portable .tar.gz archive.
 
     Args:
         output_path: Destination path for the backup archive (.tar.gz).
         db_paths: Optional list of SQLite databases to include. Defaults to
                   data/egw.db, data/corpus.db, and data/macula.db if present.
         user_data_paths: Optional list of user annotation files/directories to bundle.
+        source_paths: Optional list of raw BYOD source files/directories (e.g. data/egw-sources).
+        include_sources: If True, bundles raw BYOD sources to produce a Complete Backup.
         note: Optional study or backup annotation.
         repo_root: Base repository root directory. Defaults to REPO_ROOT.
 
@@ -140,12 +190,36 @@ def export_backup(
             if resolved.exists():
                 active_user_paths.append(resolved)
 
+    # Determine raw BYOD sources to bundle (Complete Backup mode)
+    active_source_paths: list[Path] = []
+    resolved_sources: set[Path] = set()
+
+    if include_sources:
+        candidate_sources = [
+            root / "data" / "egw-sources",
+            root / "data" / "user-sources",
+            root / "data" / "sources",
+        ]
+        for cs in candidate_sources:
+            resolved = cs.resolve()
+            if resolved.exists() and resolved not in resolved_sources:
+                active_source_paths.append(resolved)
+                resolved_sources.add(resolved)
+
+    if source_paths:
+        for sp in source_paths:
+            resolved = Path(sp).resolve()
+            if resolved.exists() and resolved not in resolved_sources:
+                active_source_paths.append(resolved)
+                resolved_sources.add(resolved)
+
     # Checkpoint all active SQLite databases before archiving
     for db in active_dbs:
         checkpoint_sqlite_db(db)
 
     db_stats: dict[str, Any] = {}
     files_manifest: list[dict[str, Any]] = []
+    seen_arcnames: set[str] = set()
 
     # Temporary staging for archive construction
     tmp_out = out.parent / f"{out.name}.tmp.{os.getpid()}"
@@ -156,6 +230,10 @@ def export_backup(
             for db in active_dbs:
                 rel_to_root = db.relative_to(root) if root in db.parents else Path("data") / db.name
                 arcname = f"databases/{db.name}"
+                if arcname in seen_arcnames:
+                    continue
+                seen_arcnames.add(arcname)
+
                 sha256 = calculate_sha256(db)
                 size_bytes = db.stat().st_size
                 stats = inspect_sqlite_db(db)
@@ -172,43 +250,25 @@ def export_backup(
 
             # 2. Bundle user annotations / extra files
             for up in active_user_paths:
-                if up.is_file():
-                    if root in up.parents:
-                        rel_to_root = up.relative_to(root)
-                        arcname = f"user_data/{rel_to_root}"
-                    else:
-                        rel_to_root = Path("user_data") / up.name
-                        arcname = f"user_data/{up.name}"
-                    sha256 = calculate_sha256(up)
-                    size_bytes = up.stat().st_size
-                    files_manifest.append({
-                        "arcname": arcname,
-                        "target_relpath": str(rel_to_root),
-                        "size_bytes": size_bytes,
-                        "sha256": sha256,
-                        "type": "user_data",
-                    })
-                    tar.add(str(up), arcname=arcname)
-                elif up.is_dir():
-                    for child in sorted(up.rglob("*")):
-                        if child.is_file():
-                            rel_to_dir = child.relative_to(up)
-                            rel_to_root = child.relative_to(root) if root in child.parents else Path("user_data") / up.name / rel_to_dir
-                            arcname = f"user_data/{up.name}/{rel_to_dir}"
-                            sha256 = calculate_sha256(child)
-                            size_bytes = child.stat().st_size
-                            files_manifest.append({
-                                "arcname": arcname,
-                                "target_relpath": str(rel_to_root),
-                                "size_bytes": size_bytes,
-                                "sha256": sha256,
-                                "type": "user_data",
-                            })
-                            tar.add(str(child), arcname=arcname)
+                _archive_filesystem_entry(tar, up, "user_data", root, files_manifest, seen_arcnames)
 
-            # 3. Create manifest and add to root of tar archive
+            # 3. Bundle raw BYOD source bookshelf if requested (Complete Backup mode)
+            for sp in active_source_paths:
+                _archive_filesystem_entry(tar, sp, "sources", root, files_manifest, seen_arcnames)
+
+            # 4. Create manifest and add to root of tar archive
+            has_dbs = bool(active_dbs)
+            has_sources = bool(active_source_paths)
+            if has_dbs and has_sources:
+                mode = "complete"
+            elif has_sources and not has_dbs:
+                mode = "sources_only"
+            else:
+                mode = "index_only"
+
             manifest_data: dict[str, Any] = {
                 "version": CURRENT_BACKUP_VERSION,
+                "mode": mode,
                 "generator": "adventist-bible-study-tool/backup-engine (ADR-0016)",
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "note": note,
@@ -275,6 +335,13 @@ def verify_backup(archive_path: Path | str) -> tuple[bool, list[str]]:
     manifest_files = {f["arcname"]: f for f in manifest.get("files", [])}
 
     with tarfile.open(arch, "r:gz") as tar:
+        # Check for unmanifested rogue members
+        for member in tar.getmembers():
+            if member.name == BACKUP_MANIFEST_NAME or member.isdir():
+                continue
+            if member.name not in manifest_files:
+                errors.append(f"Untracked file found in archive: {member.name}")
+
         for arcname, file_info in manifest_files.items():
             try:
                 member = tar.getmember(arcname)
