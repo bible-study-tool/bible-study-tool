@@ -1,0 +1,108 @@
+---
+id: gen-29-12-kjv
+type: material/bible
+book: book/genesis
+passage: "Genesis 29:12"
+tags:
+  - material/bible
+  - book/genesis
+  - theme/creation
+  - theme/origins
+  - translation/kjv
+  - lang/hebrew
+  - strongs-H1
+  - strongs-H1121
+  - strongs-H251
+  - strongs-H3290
+  - strongs-H5046
+  - strongs-H7259
+  - strongs-H7323
+  - strongs-H7354
+source: source/bible
+language: hebrew
+translation: kjv
+level: intro
+status: draft
+created: 2026-08-28
+updated: 2026-08-28
+---
+
+# Genesis 29:12 - KJV
+
+> And Jacob told Rachel that he was her father’s brother, and that he was Rebekah’s son: and she ran and told her father.
+
+## Hebrew Word Study
+
+### awb (father) - Strong's H1
+
+*   Transliteration: awb
+*   Definition: 1. father
+*   Modern Gloss (TBESH): father
+*   Morphology (STEPBible): H:N-M
+*   Lemma occurrences in this verse: 2
+
+### bane (son) - Strong's H1121
+
+*   Transliteration: bane
+*   Definition: 1. a son (as a builder of the family name), in the widest sense (of literal and figurative relationship, including grandson, subject, nation, quality or condition, etc., (like H0001 H0251, etc.))
+*   Modern Gloss (TBESH): son: child
+*   Morphology (STEPBible): H:N-M
+*   Lemma occurrences in this verse: 1
+
+### awkh (brother) - Strong's H251
+
+*   Transliteration: awkh
+*   Definition: 1. a brother (used in the widest sense of literal relationship and metaphorical affinity or resemblance (like H0001))
+*   Modern Gloss (TBESH): brother: male-sibling
+*   Morphology (STEPBible): H:N-M
+*   Lemma occurrences in this verse: 1
+
+### yah-ak-obe' (Jacob) - Strong's H3290
+
+*   Transliteration: yah-ak-obe'
+*   Definition: 1. heel-catcher (i.e. supplanter)
+*   Modern Gloss (TBESH): Jacob
+*   Morphology (STEPBible): N:N-M-P
+*   Lemma occurrences in this verse: 1
+
+### naw-gad' (to tell) - Strong's H5046
+
+*   Transliteration: naw-gad'
+*   Definition: 1. (properly) to front, i.e. stand boldly out opposite
+*   Modern Gloss (TBESH): to tell
+*   Morphology (STEPBible): H:V
+*   Lemma occurrences in this verse: 2
+
+### rib-kaw' (Rebekah) - Strong's H7259
+
+*   Transliteration: rib-kaw'
+*   Definition: 1. fettering (by beauty)
+*   Modern Gloss (TBESH): Rebekah
+*   Morphology (STEPBible): N:N-F-P
+*   Lemma occurrences in this verse: 1
+
+### roots (to run) - Strong's H7323
+
+*   Transliteration: roots
+*   Definition: 1. to run (for whatever reason, especially to rush)
+*   Modern Gloss (TBESH): to run: run
+*   Morphology (STEPBible): H:V
+*   Lemma occurrences in this verse: 1
+
+### raw-khale' (Rachel) - Strong's H7354
+
+*   Transliteration: raw-khale'
+*   Definition: 1. Rachel, a wife of Jacob
+*   Modern Gloss (TBESH): Rachel
+*   Morphology (STEPBible): N:N-F-P
+*   Lemma occurrences in this verse: 1
+
+## Source Notes
+
+- Verse text and Strong's tags are extracted verbatim from the pinned
+  tagged KJV (scrollmapper KJV-osis; see data/PROVENANCE.md).
+- Word-study blocks assembled deterministically from the WordGraph
+  (wordgraph-genesis/v1; see lexicons/wordgraph-genesis.json) —
+  generated, never hand-edited.
+- Status: draft. Deterministic skeleton only — cross-references and
+  theological notes await human curation per CONTRIBUTION_STANDARDS.md.

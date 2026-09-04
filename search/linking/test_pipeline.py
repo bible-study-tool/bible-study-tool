@@ -72,10 +72,10 @@ class DbIndexTests(unittest.TestCase):
         self.assertEqual(db.count(), len(loader.entries))
 
         # metadata queries (proper SQL, no rescan)
-        self.assertEqual(len(db.entries_by_strongs("H7225")), 1)
-        # Golden corpus count: 31 Gen-1 + 25 Gen-2 + 24 Gen-3 entries carry
-        # theme/creation (book-level expansion).
-        self.assertEqual(len(db.entries_by_tag("theme/creation")), 80)
+        # H7225 (reshith) appears in Gen 1:1, Gen 10:10, and Gen 49:3 across Genesis
+        self.assertEqual(len(db.entries_by_strongs("H7225")), 3)
+        # Golden corpus count: all 1,533 Genesis entries carry theme/creation
+        self.assertEqual(len(db.entries_by_tag("theme/creation")), 1533)
 
         # FTS free-text
         fts = db.search("creation light")

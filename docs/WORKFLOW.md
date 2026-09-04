@@ -31,7 +31,11 @@ Two file classes rule everything else:
 ## Example 1 — Starting a session (fresh or returning)
 
 ```bash
-python scripts/status.py        # ground truth: branch, tree state, roadmap
+# On a fresh clone or updated branch, initialize dependencies & environment:
+./scripts/bootstrap.sh
+
+# Ground truth: branch, tree state, roadmap status:
+python scripts/status.py
 ```
 
 Then read, in this order: the current phase in `ROADMAP.md`, the open work
@@ -102,15 +106,22 @@ The streamlined curation cycle:
    work package's `scope:` line. It outputs a concise brief with KJV verse quotes,
    apparatus omissions/alignments, and lexical definitions.
 
-2. **The WordGraph cost model (ADR-0010 / WP-010)**:
+2. **The WordGraph cost model (ADR-0010 / WP-010) & Broad Scaffolding (ADR-0011)**:
    Deterministic word-study blocks (`### <word> — Strong's <code>`) in entry
    skeletons are assembled directly from the WordGraph (`lexicons/wordgraph-genesis.json`)
    by the draft engine (`search/corpus/draft_engine.py`), NOT drafted by an LLM.
-   Skeletons carry WordGraph provenance (`wordgraph-genesis/v1`) in `## Source Notes`.
-   Never modify deterministic blocks or verse quotes by hand.
+   Per ADR-0011, draft skeletons for all 50 chapters of Genesis (all 1,533 verses)
+   are already pre-generated in `materials/bible/ot/genesis/`. Curators never
+   need to regenerate skeletons from scratch for Genesis; they simply open the
+   existing draft files for the scoped verses. Skeletons carry WordGraph provenance
+   (`wordgraph-genesis/v1`) in `## Source Notes`. Never modify deterministic blocks
+   or verse quotes by hand.
 
    The curator (human or LLM assistant) authors **only the interpretive layer**:
-   - `cross_references:` in YAML frontmatter (with valid taxonomy tags)
+   - `cross_references:` in YAML frontmatter (with valid taxonomy tags).
+     Use canonical Spirit of Prophecy citation tokens where applicable (`egw:PP.57.1`).
+     Query or verify passages via `python scripts/egw_lookup.py --token egw:PP.57.1`
+     or search via `python scripts/egw_lookup.py --search "phrase"`.
    - `## Correlations`
    - `## Study Notes`
 

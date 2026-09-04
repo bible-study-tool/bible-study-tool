@@ -40,7 +40,10 @@ are **not owned by this project** and are **not redistributed here**:
   bundled** in this repository. The tool instead **links out** — pointing users
   to the official resources (e.g., egwwritings.org, the Adventist Digital
   Library) where they may download the text themselves and add it locally.
-  Linking is reference, not distribution.
+  Linking is reference, not distribution. Entries use canonical citation
+  tokens (`egw:BOOK.PAGE.PARA`), and paragraph text is stored only in the
+  user's local SQLite database (`data/egw.db`), resolved just-in-time (JIT)
+  on the user's device (see ADR-0011).
 
 * **Bible translations**: public-domain translations (e.g., KJV, ASV, WEB) and
   the original Hebrew/Greek may be bundled. Copyrighted translations (e.g.,
@@ -61,7 +64,7 @@ are **not owned by this project** and are **not redistributed here**:
   transformation changes recorded in each artifact. See `data/PROVENANCE.md`
   for pins, checksums, and the full record.
 
-* **Morphology layer** (`lexicons/morphology-genesis1.json`): derived from
+* **Morphology layer** (`lexicons/morphology-genesis*.json`): derived from
   the Open Scriptures Hebrew Bible (CC BY 4.0) — attribution to the
   **Open Scriptures Hebrew Bible Project** (https://hb.openscriptures.org);
   WLC text therein is public domain (Groves Center).

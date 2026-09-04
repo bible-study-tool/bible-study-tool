@@ -58,8 +58,18 @@ FACT_VERSE_TEXT = "verse_text"
 FACT_WORD_STRONGS = "word_strongs"
 FACT_LEXICON_GLOSS = "lexicon_gloss"
 
+import functools
+
 # KJV-osis <w> word elements (OSIS tagging of the scrollmapper file).
-_W_RE = re.compile(r'<w lemma="([^"]*)"[^>]*>(.*?)</w>', re.DOTALL)
+# Handles both standard <w lemma="...">text</w> and self-closing <w lemma="..."/> tags (e.g. Gen 44:10).
+_W_RE = re.compile(r'<w\b([^>]*?)(?:/>|>(.*?)</w>)', re.DOTALL)
+_LEMMA_ATTR_RE = re.compile(r'lemma="([^"]*)"')
+_STRONG_CODE_RE = re.compile(r"strong:([HG])(\d{1,5})")
+
+
+@functools.lru_cache(maxsize=2)
+def _load_kjv_json(path_str: str) -> dict:
+    return json.loads(Path(path_str).read_text(encoding="utf-8"))
 
 
 def _fact(fact_type: str, source: str, key: str, value, meta=None) -> dict:
@@ -84,9 +94,7 @@ def kjv_osis_facts(repo: str = ".", chapter: int = 1) -> list[dict]:
     English text span). The verse-level multiset is the fail-fast verse_codes
     expansion so the adapter cannot drift from the corpus generator.
     """
-    kjv = json.loads(
-        Path(repo, "data/KJV-osis.json").read_text(encoding="utf-8")
-    )
+    kjv = _load_kjv_json(str(Path(repo, "data/KJV-osis.json").resolve()))
     gen = next(b for b in kjv["books"] if b["name"] == "Genesis")
     ch = next(c for c in gen["chapters"] if c["chapter"] == chapter)
     facts: list[dict] = []
@@ -106,20 +114,23 @@ def kjv_osis_facts(repo: str = ".", chapter: int = 1) -> list[dict]:
 
         words = []
         for i, m in enumerate(_W_RE.finditer(raw), start=1):
+            attrs = m.group(1)
+            lem_m = _LEMMA_ATTR_RE.search(attrs)
+            lem = lem_m.group(1) if lem_m else ""
             # Canonical unpadded normalization (int() strips source leading
             # zeros, e.g. H0430 -> H430), identical to verse_codes in
             # build_genesis1 (scrollmapper also writes unpadded codes such as
             # H068 in places).
             word_codes = [
                 f"{letter}{int(num)}"
-                for letter, num in re.findall(r"strong:([HG])(\d{1,5})", m.group(1))
+                for letter, num in _STRONG_CODE_RE.findall(lem)
             ]
             words.append(
                 {
                     "i": i,
                     "codes": word_codes,
                     # Unescaped to match clean_verse_text's entity handling.
-                    "text": html.unescape(m.group(2)).strip(),
+                    "text": html.unescape(m.group(2) or "").strip(),
                 }
             )
 

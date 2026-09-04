@@ -120,6 +120,53 @@ The OSHB morphology artifact regenerates byte-identically as well:
 efd17409d6ab378789b0e332a10894e6e9145d37f14ed3951d9723d45754e4eb  ../lexicons/morphology-genesis1.json
 bb914375dcaba57d4379afb0dcba40d4740218915277a13be270927e564a68b0  ../lexicons/morphology-genesis2.json
 3b6bbd3dd0b3c1fd9c32378ac2085b599132ee021600aecd716a1fb750fb6d65  ../lexicons/morphology-genesis3.json
+5b09763c05840fd84bba6f0fb2dbee71434f0559ba072590115cee770975079b  ../lexicons/morphology-genesis4.json
+78a339b7d5f58183e137cd56f08ced5d32392365f7335c21efade224528d39dc  ../lexicons/morphology-genesis5.json
+6d04f7b8efeb7ea37d37c2c7533439ee64297423d120abc3baf90f471ce4b271  ../lexicons/morphology-genesis6.json
+b029498d6fdd21660bd534ffb8aae3a34fb9abc5c7d6236cb63cdd96048c372c  ../lexicons/morphology-genesis7.json
+0bd304e12ba0943763db44910166f2f26e830be14beebee32fcbffa42e828cc5  ../lexicons/morphology-genesis8.json
+bf309896ddca625e8fce9c298ca9b0704593cde5f78ee08f28088e6bf75dd723  ../lexicons/morphology-genesis9.json
+122c6b7c307bc7da552dc7023241473c76d94e235b407eba141484121ab22edd  ../lexicons/morphology-genesis10.json
+4d25fa1d6ad872b918253ee0f48d0950b801f79ea0668fbb469cce47efa19281  ../lexicons/morphology-genesis11.json
+dcf382dd347f542ab067de20bc7f15a4a0749afe4e2186d1b0712411d2a13ee5  ../lexicons/morphology-genesis12.json
+48b291b8503f98b01270c9610107d8289815df9bd686e501d02748fd1198139d  ../lexicons/morphology-genesis13.json
+dc1bb8c63d7be67f5d59beea5dd509e6cf6ac3b32e217e0e0ded11dc0e5f1642  ../lexicons/morphology-genesis14.json
+77db96e201041e23ec70180fb2dd101eab7108812a5387f836ec5a358a008a5f  ../lexicons/morphology-genesis15.json
+3b62a26e36ffce7272ef9f0f65ecf6a42c66938c498e8f35519bff91950e8e4c  ../lexicons/morphology-genesis16.json
+d56476353c970c944ced3401c3c4d218bf464b551ba4272af6c443fea7185562  ../lexicons/morphology-genesis17.json
+8ea44f46380129affbda7b8bb1c25f79d7ebc12bd94ba45b6a41fe4c0043d270  ../lexicons/morphology-genesis18.json
+deb5d3459cbb7346f040b7da80c9e14f5bc238b0b167de972d298c70db62e18a  ../lexicons/morphology-genesis19.json
+5fb3d4b058fb01a96084f742e4727bd9dd94b6ec67a6cb8a3ec12a5913b88c61  ../lexicons/morphology-genesis20.json
+8e62c458cd6504a96ea886c7039b6bc86a7701640e80c35ad2c2a09e656cfe79  ../lexicons/morphology-genesis21.json
+78689244d9c84231a7442ebc49e59897cce7010fc60d0a24cd92cac3384b486a  ../lexicons/morphology-genesis22.json
+3832c5b58c0cbcd645e503759f3b835de92eb0208d5081ff3f683fd6e5aa30e5  ../lexicons/morphology-genesis23.json
+3b44026c0829a8ce18d92752d07a55b34bbbb4340013228b2cdb64ebb320bbcc  ../lexicons/morphology-genesis24.json
+9dcc12a0aa1179176f218b13c5bba9553cccd823a5e6eb661b7c7033282924eb  ../lexicons/morphology-genesis25.json
+c266b1427ce5f18409b57266f03af7f36eeb81332f7f47ece4ce0a5cb86e0c7b  ../lexicons/morphology-genesis26.json
+86f007f864f98eada7a7f1cd8f12945cda59de6c4f4343c25ac7dea9ee1db3e1  ../lexicons/morphology-genesis27.json
+f3a5b3ff2331e7ab1da30a9f4a06e078be79d06dc4ba57c3708514fddf05fd23  ../lexicons/morphology-genesis28.json
+4a017488e00d4297b58844e99cf3070f15f399de9d027afda6957be822e8a277  ../lexicons/morphology-genesis29.json
+0c4fdaeee0c57d3cbe70be49647af6b94d14d8baec65997158342fa40420cd20  ../lexicons/morphology-genesis30.json
+91b65309b023cda28330c81374799fc4f192e9afc1ab40b562ee41222cc3559d  ../lexicons/morphology-genesis31.json
+e76cff696ad1c61c6eacfdbc9679fbdf36fad4ecb1fbbefffab1a2bbe89695eb  ../lexicons/morphology-genesis32.json
+bc2f76067614097c3fe8141b5bc5a15d587c3bcb260b70c57f960237b16d0f79  ../lexicons/morphology-genesis33.json
+7e2f7424c8d34ce83c9b2a858109fb7f595577ac8c53a2f5cf06d4c354e1dd27  ../lexicons/morphology-genesis34.json
+79b32e1ad54e4db9805a74700820aef1384f7efc6ad0853184722fa306b8633e  ../lexicons/morphology-genesis35.json
+23694ef7a3742450678eaa35f3c70a560866f1770c7e254881add63f39a450fd  ../lexicons/morphology-genesis36.json
+0b240abd3bac0111d7134e2a4aaec651c9a8c36aaa2ba12fb36b09a346adbed3  ../lexicons/morphology-genesis37.json
+a120f0d2384c2f2cdf3b43dab27a577722e2e29b2d403c01c27167b68ffe893e  ../lexicons/morphology-genesis38.json
+1af8ca09ed5490ffd8b34fbff6e0b69c82049306d753fc9baf2e7e6ba5055325  ../lexicons/morphology-genesis39.json
+aeaef679209d90c18c874be8092b78d4db5d9eb965483954907a4700c6c8293c  ../lexicons/morphology-genesis40.json
+61c61e649778a691c7bc50f50f0317e9e42d73ca9647daeb0a12cbc6f87e4292  ../lexicons/morphology-genesis41.json
+c6ea8792d6c99692400d967c5ff599f64caea0636eafd450a91f4faa7e49afea  ../lexicons/morphology-genesis42.json
+a0b254603079da8647b7942efb0c4a0131d0446a1eeb8ed0b3267f3dd24e9d91  ../lexicons/morphology-genesis43.json
+0443b44537c3357ce1d986e3f6ec28e2e450d5a3927ff8ba96effb7efeb7344e  ../lexicons/morphology-genesis44.json
+931c2763f1e68e8f19e0257985c49a86211a00f5aaf524bbe19d938531c37a1f  ../lexicons/morphology-genesis45.json
+8a0975daa6b25d9fc22d4a1c992547876cb850d60b99c09b3083ba915f5d85dd  ../lexicons/morphology-genesis46.json
+567ad05c4d45ddbf3a1783f3ee514e754296630a08b6d1e97ef674010d283463  ../lexicons/morphology-genesis47.json
+c8b03781548abc8ee744fe3d6adea41ab795eb83d2a2fa6b04e0bd8c31a869ce  ../lexicons/morphology-genesis48.json
+3bf38a7d8245c2b5e49049210208d6ae485bbeaa2ac7f5aa0ad52802e2387d9a  ../lexicons/morphology-genesis49.json
+41e471a5bd517edc6d2fb4286972333396ca02e7aa8517414dff79ba396141f1  ../lexicons/morphology-genesis50.json
 ```
 
 The cross-source Agreement Ledger regenerates byte-identically as well
@@ -136,13 +183,60 @@ well:
 5ae9100bbb7f80ab1fe8a992bfab3871ec87b6655876267c1b238f4fb789f33b  ../correlations/apparatus-genesis1.json
 4f678a8264262f0796a13e0ac49cc040bc3acaaefd7c6b493e66d1a5cab32616  ../correlations/apparatus-genesis2.json
 d3c6e6b2bc74a1de5027568b07589e504d9bee815cf80b4342991ccb74ad23de  ../correlations/apparatus-genesis3.json
+a884e638033d9040cb5e179f89497c4caa82b4c782fa72ad9b8a94b2924e386e  ../correlations/apparatus-genesis4.json
+9d9304bf08d8bbcba98509928a53075e012ee231160ab779e618123db3d6d1b0  ../correlations/apparatus-genesis5.json
+27d487952883df16db6f9881e6a2bb024cfb5919f92dbfef4fdfb0524d195dc4  ../correlations/apparatus-genesis6.json
+4b2b463efdfd8c47d654dd90b66c3f106c0faa1baf3a047a693b0a3343f08ba6  ../correlations/apparatus-genesis7.json
+7ae21294cf11d2ccb81e3fa5aee5b6e5e1443f79d26e85ac83b9df92c4e3c298  ../correlations/apparatus-genesis8.json
+bee3f507c78256eead3353eedb0e2436e036dac994e24cf8fb6023d6cfbf5cfe  ../correlations/apparatus-genesis9.json
+9692f82329321d9085a69e4613f8f15c0863bd72c4ec37cc776f93a186e7f033  ../correlations/apparatus-genesis10.json
+1f6809c4eb0235a9fbbbcbf704d52826ccb828995f5b9fd8894d073fa1a79934  ../correlations/apparatus-genesis11.json
+a6325636976b6f6beffea35fe59e6a23e6da68a40626e3ef19959a43aba86df9  ../correlations/apparatus-genesis12.json
+dcfbb529d0f4f9bdbca33832db1404ad3fc3a8b650ce3f6a0ee8b99ba7d93030  ../correlations/apparatus-genesis13.json
+a05b2515fada260b7da05d22bec8cc8d73fd2cef6121330d918973238b168fc6  ../correlations/apparatus-genesis14.json
+c1cd57d42602698b2d4b6a26a6247d139cd39c7fba0fdb9727f75df52fddd3fc  ../correlations/apparatus-genesis15.json
+a9469fb547e26a069e700f02e069a2982d33372e15f0c768196febc852a1d723  ../correlations/apparatus-genesis16.json
+668bf2358ef031edc11091f29d84767c2eec65b181b93746a5b38154629e845b  ../correlations/apparatus-genesis17.json
+92a5abd01fd30fa467658fe31b9cc451c0dec179d6439f3b728dbe4801a7ae58  ../correlations/apparatus-genesis18.json
+d96d4f17a4472aa8d305b36d7541d9c2028e4796952ab4fb3a5430e797950fed  ../correlations/apparatus-genesis19.json
+0bcd04debc53e4bd27183f6c2bf7096259ee02a3bbd4f83fd8e762e9a918bb21  ../correlations/apparatus-genesis20.json
+8e7506958399e91d560e338c37ee0745227e6dc4212fb1c06e87a6bb26b0dcdc  ../correlations/apparatus-genesis21.json
+e4cf9c958f58584132611f84ee311ffd85029a72bb8cfc2dcdf3faae85d7cb16  ../correlations/apparatus-genesis22.json
+0ab35bc08e541b1ea55fb0bedee0182623e97a3375d0b6020817504c06f49bda  ../correlations/apparatus-genesis23.json
+5bc81935cf8e5d988af3e848c08adf95ea3a1887bb7ce845efa19c10378c89fd  ../correlations/apparatus-genesis24.json
+d0b6ef1e941dd1ecc28bf01432d96f59fdc8056025a218d74a19628842fe76d5  ../correlations/apparatus-genesis25.json
+0d3752687c2b00fe0cef4743b779edbecc1c5a909888cc92474391fc31c79ec9  ../correlations/apparatus-genesis26.json
+ab781ca514f4d779cbabf3471a182dd377138d3e45bc36b5aa5c372192186988  ../correlations/apparatus-genesis27.json
+bc0a9ed950e587deeb54e2bc4598aae9f348f5293cb112ffce47970aa5d2e72d  ../correlations/apparatus-genesis28.json
+b81e9d18c56ae9958bfa024bac54f83e94ff68a9f44fe7c31a14415055bced0a  ../correlations/apparatus-genesis29.json
+aa9146f7217743ca1adac15270a6324296dc5914de93e4d04013209dc161ab56  ../correlations/apparatus-genesis30.json
+30769c8174d1efb8cf49d036090e71946f33d446d64e274b7e82fd3f70d1546b  ../correlations/apparatus-genesis31.json
+8fc40767197a988f62b45d46996b41d70fc83a1bd7749c4e0ee88267516a4fdd  ../correlations/apparatus-genesis32.json
+c419362004fcb434b542954c38ba70196f241c13fea196be8f96b10d0804c018  ../correlations/apparatus-genesis33.json
+71b8e428f4b21fb3e1f8035ff70c42bcf3a2a148ce8b6f47b6064b57bb11402e  ../correlations/apparatus-genesis34.json
+b1cd999accf45948aa25328a35ce967d31488bac9f4ec8a2416223a613ece245  ../correlations/apparatus-genesis35.json
+0c592c2b3f1a5350100e3e39d608a319f69a1cbd140662f3f5cde3fb8aa5582f  ../correlations/apparatus-genesis36.json
+4e1ae89f73419cac45ee096ea082197a32d8399e5456d7a2776146df33b65f31  ../correlations/apparatus-genesis37.json
+3c3ed600e1ff70ae42879e79277b0949b61263be8444a755e64c2550ad797436  ../correlations/apparatus-genesis38.json
+2b93472c9aeb1051fd57f2749f74edb1fd4366276d393de69a3355cdf3109094  ../correlations/apparatus-genesis39.json
+41014cb7e3b275eee17ef66a96d6de63d082336e5cb2278b87490f438b670183  ../correlations/apparatus-genesis40.json
+8d46d6293e6fbb3df9eca7b89f7934ae3b84032cf348ee4638e4f70378eef6d3  ../correlations/apparatus-genesis41.json
+39648f546023b80e7194cc39f4927a6db59443d3331f45162dfe3d2dcc25eeef  ../correlations/apparatus-genesis42.json
+60c510e3256166c5cac6f60c33e6c657b4b772796c18e5bff17f46c2cf0819b2  ../correlations/apparatus-genesis43.json
+6f4c84f94fbe599e0b7471b311ee1347e05725ec5528e015cc1e869911722feb  ../correlations/apparatus-genesis44.json
+bdc84a9d1fba8c3d41c01de4be2c2385b2a4a58dde10255fa91f98dc1f9a0316  ../correlations/apparatus-genesis45.json
+10558e0c4533d450ef687e2217e8efb9a290765e0805a6c723ebaf04d2d9d3fa  ../correlations/apparatus-genesis46.json
+ddf91bfb10097b9cf4c9e06c6224a8479f1c60d45fbd9d1eea25a63135f25b48  ../correlations/apparatus-genesis47.json
+7dcef2a14e6d29566d74d978fa494c1c02a2411a55a2a6e98b03d5d474ab3411  ../correlations/apparatus-genesis48.json
+2005db7ea9709b5112a745e1bded3eefea6d9e7914ebda2f3fb197bf0ad11a35  ../correlations/apparatus-genesis49.json
+30430b875edbba109af0d9aecfd9294733dcc9a384817ed9f901b822c74f0310  ../correlations/apparatus-genesis50.json
 ```
 
 The WordGraph lexical knowledge graph (ADR-0010) regenerates byte-identically
 as well (consumes committed artifacts only — no raw sources):
 
 ```
-10d54ecc5b78391cff42ec5a7842af85384ef02340c198c5cd0e7983289b57cd  ../lexicons/wordgraph-genesis.json
+0d84ce85d40f2a731e473181b01d609c4d6f042bae36aacfad838147beccc01a  ../lexicons/wordgraph-genesis.json
 ```
 
 ## Source edition caveats (discovered by the corpus fidelity tests)

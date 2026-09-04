@@ -37,18 +37,18 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
 ### A. Corpus & Content
 - `[x]` **A1. Complete Genesis 1 creation narrative** — v1-31 (all 31 skeletons generated; v1-31 curated across WP-001..WP-006 with status: review) — **MVP scope closed**
-- `[~]` **A2. Complete the book of Genesis, chapter by chapter** (per ADR-0009: whole-book pipeline, per-chapter WPs) — Genesis 2 curated (WP-008, incl. the seventh-day Sabbath); Genesis 3 curated (WP-011, the Fall, Protevangelium, expulsion) — **next: Genesis 4** (WP-012, Cain and Abel); then expand to the wider OT (Exodus, Isaiah, Daniel, Psalms)
-- `[~]` **A10. WordGraph lexical knowledge graph** (ADR-0010) — lemma-centric spine (token id / lexeme + homograph index / Strong's legacy crosswalk); aggregate-first dictionary; deterministic word-study generation; per-book artifacts (`lexicons/wordgraph-*.json`); makes computation *more* deterministic as data grows. **Genesis 1-3 WordGraph done (WP-009); draft engine done (WP-010)** — Genesis 3 skeletons engine-generated; next chapters consume the engine.
+- `[~]` **A2. Complete the book of Genesis, chapter by chapter** (per ADR-0009 & ADR-0011: whole-book pipeline, broad scaffolding + per-chapter curation) — Broad draft skeletons generated for all 50 chapters (1,533 verses); Genesis 1-3 curated (WP-001..WP-011); chapters 4-50 generated as draft skeletons awaiting per-chapter curation (Genesis 4 next); then expand to the wider OT (Exodus, Isaiah, Daniel, Psalms)
+- `[x]` **A10. WordGraph lexical knowledge graph** (ADR-0010) — lemma-centric spine (token id / lexeme + homograph index / Strong's legacy crosswalk); aggregate-first dictionary; deterministic word-study generation; per-book artifacts (`lexicons/wordgraph-*.json`); makes computation *more* deterministic as data grows. **Whole-book Genesis WordGraph done** (`lexicons/wordgraph-genesis.json`: 1,783 lexemes, 20,159 tokens across 50 chapters / 1,533 verses); draft engine operational (WP-010).
 - `[ ]` **A3. Add NT coverage** — John 1, Hebrews, Revelation, Romans
 - `[x]` **A4. Full Strong's lexicon dataset** — `lexicons/strongs-list.json` (canonical 8674 H + 5624 G, F2-verified) + `lexicons/strongs-lexicon.json` (definitions/transliteration/KJV usage); sources pinned in `data/PROVENANCE.md`
 - `[ ]` **A5. Greek word-study expansion** — corpus is currently Hebrew-dominant
 - `[ ]` **A6. Multiple public-domain translations** (KJV/ASV/WEB) bundled; user-supplied model for copyrighted
-- `[ ]` **A7. Spirit of Prophecy integration** — link-out + user-supplied-text model (NOTICE.md)
+- `[x]` **A7. Spirit of Prophecy integration** — link-out + user-supplied-text model (NOTICE.md, ADR-0011); JIT SQLite architecture (`search/linking/egw.py`, `scripts/egw_lookup.py`, `search/validation/xrefs.py`) with FTS5 virtual table, BM25 ranking, and canonical citation resolution (`egw:BOOK.PAGE.PARA`).
 - `[ ]` **A8. Commentaries & study guides** — SDABC-adjacent, Sabbath School
 - `[ ]` **A9. Original-language text corpus** — Masoretic Hebrew, LXX Greek as structured data
 
 ### B. Macula / Linguistic Data Integration
-- `[~]` **B0. WordGraph foundation** (ADR-0010) — lemma-centric lexical knowledge graph, seeded for Genesis (WP-009); the substrate that Macula integration will enrich (WP-010 draft engine consumes it)
+- `[x]` **B0. WordGraph foundation** (ADR-0010) — lemma-centric lexical knowledge graph, complete for whole-book Genesis (`lexicons/wordgraph-genesis.json`); the substrate that Macula integration will enrich (WP-010 draft engine consumes it)
 - `[ ]` **B1. Phase 1: reference integration** — download datasets, Strong's↔Macula mapping (rides on the WordGraph crosswalk)
 - `[ ]` **B2. Phase 2: automated lookup** — Text-Fabric script (Strong's → Macula annotations)
 - `[ ]` **B3. Phase 3: semantic enrichment** — use Macula roles/syntax to enrich semantic-links + translation-equivalence

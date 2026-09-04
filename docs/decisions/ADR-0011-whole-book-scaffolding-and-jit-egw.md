@@ -1,6 +1,6 @@
 # ADR-0011: Whole-Book Draft Scaffolding and JIT Spirit of Prophecy Resolution
 
-**Status:** Proposed · **Date:** 2026-09-03
+**Status:** Accepted · **Date:** 2026-09-03
 
 ## Context
 

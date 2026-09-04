@@ -1,0 +1,5478 @@
+{
+  "$schema": "apparatus-genesis39/v1",
+  "alignment": "Order-free, per-code occurrence pairing (k-th occurrence of a code in kjv-osis pairs with the k-th in oshb). Matched pairs assert 'same lexeme attested in this verse', not word-order correspondence. Surplus occurrences become omissions/additions; the omissions themselves are exact. Excluded from alignment on both sides: tokens with no Strong's number (11 OSHB prefix-only words in Genesis 39) — counts and omissions cover coded tokens only. Quirk: scrollmapper sometimes merges the object marker H853 into a verb span (e.g. 'created' carries H853+H1254), so matched H853 pairs show the verb's English span against the standalone Hebrew word et.",
+  "sources": {
+    "kjv-osis": "scrollmapper tagged KJV (English spans; some lemmas merged)",
+    "oshb": "Open Scriptures Hebrew Bible (Hebrew words; complete tagging)"
+  },
+  "summary": {
+    "verses": 23,
+    "matched_tokens": 227,
+    "omissions": 110,
+    "additions": 2,
+    "omissions_by_code": {
+      "H1961": 17,
+      "H834": 14,
+      "H413": 11,
+      "H853": 10,
+      "H3605": 9,
+      "H854": 6,
+      "H3588": 5,
+      "H1931": 4,
+      "H5973": 4,
+      "H8033": 4,
+      "H369": 3,
+      "H3808": 3,
+      "H428": 3,
+      "H2088": 2,
+      "H376": 2,
+      "H4480": 2,
+      "H5921": 2,
+      "H1004": 1,
+      "H2005": 1,
+      "H2063": 1,
+      "H3303": 1,
+      "H349": 1,
+      "H4100": 1,
+      "H518": 1,
+      "H5704": 1,
+      "H631": 1
+    }
+  },
+  "verses": [
+    {
+      "key": "Gen.39.1",
+      "matched": [
+        {
+          "code": "H2876",
+          "kjv-osis": {
+            "code": "H2876",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "of the guard"
+          },
+          "oshb": {
+            "code": "H2876",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "הַ/טַּבָּחִים֙",
+            "morph": "HTd/Ncmpa",
+            "id": "01rHG"
+          }
+        },
+        {
+          "code": "H3027",
+          "kjv-osis": {
+            "code": "H3027",
+            "word_i": 11,
+            "token_i": 12,
+            "span_text": "him of the hands"
+          },
+          "oshb": {
+            "code": "H3027",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "מִ/יַּד֙",
+            "morph": "HR/Ncbsc",
+            "id": "01KVs"
+          }
+        },
+        {
+          "code": "H3130",
+          "kjv-osis": {
+            "code": "H3130",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And Joseph"
+          },
+          "oshb": {
+            "code": "H3130",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וְ/יוֹסֵ֖ף",
+            "morph": "HC/Np",
+            "id": "01dRQ"
+          }
+        },
+        {
+          "code": "H3381",
+          "kjv-osis": {
+            "code": "H3381",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "was brought down"
+          },
+          "oshb": {
+            "code": "H3381",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "הוּרַ֣ד",
+            "morph": "HVHp3ms",
+            "id": "01p3s"
+          }
+        },
+        {
+          "code": "H3381",
+          "kjv-osis": {
+            "code": "H3381",
+            "word_i": 13,
+            "token_i": 14,
+            "span_text": "which had brought him down"
+          },
+          "oshb": {
+            "code": "H3381",
+            "word_i": 15,
+            "token_i": 15,
+            "wlc": "הוֹרִדֻ֖/הוּ",
+            "morph": "HVhp3cp/Sp3ms",
+            "id": "01fYp"
+          }
+        },
+        {
+          "code": "H3459",
+          "kjv-osis": {
+            "code": "H3459",
+            "word_i": 12,
+            "token_i": 13,
+            "span_text": "of the Ishmeelites"
+          },
+          "oshb": {
+            "code": "H3459",
+            "word_i": 13,
+            "token_i": 13,
+            "wlc": "הַ/יִּשְׁמְעֵאלִ֔ים",
+            "morph": "HTd/Ngmpa",
+            "id": "01NWz"
+          }
+        },
+        {
+          "code": "H376",
+          "kjv-osis": {
+            "code": "H376",
+            "word_i": 9,
+            "token_i": 10,
+            "span_text": "an Egyptian"
+          },
+          "oshb": {
+            "code": "H376",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "אִ֣ישׁ",
+            "morph": "HNcmsa",
+            "id": "01UYk"
+          }
+        },
+        {
+          "code": "H4713",
+          "kjv-osis": {
+            "code": "H4713",
+            "word_i": 9,
+            "token_i": 9,
+            "span_text": "an Egyptian"
+          },
+          "oshb": {
+            "code": "H4713",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "מִצְרִ֔י",
+            "morph": "HNgmsa",
+            "id": "01zi4"
+          }
+        },
+        {
+          "code": "H4714",
+          "kjv-osis": {
+            "code": "H4714",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "to Egypt"
+          },
+          "oshb": {
+            "code": "H4714",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "מִצְרָ֑יְמָ/ה",
+            "morph": "HNp/Sd",
+            "id": "01cCA"
+          }
+        },
+        {
+          "code": "H5631",
+          "kjv-osis": {
+            "code": "H5631",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "an officer"
+          },
+          "oshb": {
+            "code": "H5631",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "סְרִ֨יס",
+            "morph": "HNcmsc",
+            "id": "012Du"
+          }
+        },
+        {
+          "code": "H6318",
+          "kjv-osis": {
+            "code": "H6318",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "and Potiphar"
+          },
+          "oshb": {
+            "code": "H6318",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "פּוֹטִיפַר֩",
+            "morph": "HNp",
+            "id": "01Tg7"
+          }
+        },
+        {
+          "code": "H6547",
+          "kjv-osis": {
+            "code": "H6547",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "of Pharaoh"
+          },
+          "oshb": {
+            "code": "H6547",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "פַּרְעֹ֜ה",
+            "morph": "HNp",
+            "id": "01rRn"
+          }
+        },
+        {
+          "code": "H7069",
+          "kjv-osis": {
+            "code": "H7069",
+            "word_i": 10,
+            "token_i": 11,
+            "span_text": "bought"
+          },
+          "oshb": {
+            "code": "H7069",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "וַ/יִּקְנֵ֡/הוּ",
+            "morph": "HC/Vqw3ms/Sp3ms",
+            "id": "014sY"
+          }
+        },
+        {
+          "code": "H8269",
+          "kjv-osis": {
+            "code": "H8269",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "captain"
+          },
+          "oshb": {
+            "code": "H8269",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "שַׂ֤ר",
+            "morph": "HNcmsc",
+            "id": "015wa"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H8033",
+          "oshb": {
+            "code": "H8033",
+            "word_i": 16,
+            "token_i": 16,
+            "wlc": "שָֽׁמָּ/ה",
+            "morph": "HD/Sd",
+            "id": "01Bgt"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 14,
+            "token_i": 14,
+            "wlc": "אֲשֶׁ֥ר",
+            "morph": "HTr",
+            "id": "01DgG"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 14,
+        "oshb_tokens": 16,
+        "matched": 14,
+        "omissions": 2,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.2",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "and he was in the house"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "בְּ/בֵ֥ית",
+            "morph": "HR/Ncmsc",
+            "id": "01MoC"
+          }
+        },
+        {
+          "code": "H113",
+          "kjv-osis": {
+            "code": "H113",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "of his master"
+          },
+          "oshb": {
+            "code": "H113",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "אֲדֹנָ֖י/ו",
+            "morph": "HNcmpc/Sp3ms",
+            "id": "01rVu"
+          }
+        },
+        {
+          "code": "H3068",
+          "kjv-osis": {
+            "code": "H3068",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And the <divineName>Lord</divineName>"
+          },
+          "oshb": {
+            "code": "H3068",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "יְהוָה֙",
+            "morph": "HNp",
+            "id": "01txG"
+          }
+        },
+        {
+          "code": "H3130",
+          "kjv-osis": {
+            "code": "H3130",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "was with Joseph"
+          },
+          "oshb": {
+            "code": "H3130",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "יוֹסֵ֔ף",
+            "morph": "HNp",
+            "id": "015xS"
+          }
+        },
+        {
+          "code": "H376",
+          "kjv-osis": {
+            "code": "H376",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "man"
+          },
+          "oshb": {
+            "code": "H376",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "אִ֣ישׁ",
+            "morph": "HNcmsc",
+            "id": "01LXL"
+          }
+        },
+        {
+          "code": "H4713",
+          "kjv-osis": {
+            "code": "H4713",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "the Egyptian"
+          },
+          "oshb": {
+            "code": "H4713",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "הַ/מִּצְרִֽי",
+            "morph": "HTd/Ngmsa",
+            "id": "01g8F"
+          }
+        },
+        {
+          "code": "H6743",
+          "kjv-osis": {
+            "code": "H6743",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "and he was a prosperous"
+          },
+          "oshb": {
+            "code": "H6743",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "מַצְלִ֑יחַ",
+            "morph": "HVhrmsa",
+            "id": "01MuN"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יְהִ֤י",
+            "morph": "HC/Vqw3ms",
+            "id": "01P8k"
+          }
+        },
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "וַ/יְהִ֖י",
+            "morph": "HC/Vqw3ms",
+            "id": "01sGD"
+          }
+        },
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "וַ/יְהִ֕י",
+            "morph": "HC/Vqw3ms",
+            "id": "01T3s"
+          }
+        },
+        {
+          "code": "H854",
+          "oshb": {
+            "code": "H854",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "אֶת",
+            "morph": "HR",
+            "id": "01tM3"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 7,
+        "oshb_tokens": 11,
+        "matched": 7,
+        "omissions": 4,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.3",
+      "matched": [
+        {
+          "code": "H113",
+          "kjv-osis": {
+            "code": "H113",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And his master"
+          },
+          "oshb": {
+            "code": "H113",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "אֲדֹנָ֔י/ו",
+            "morph": "HNcmpc/Sp3ms",
+            "id": "01kL5"
+          }
+        },
+        {
+          "code": "H3027",
+          "kjv-osis": {
+            "code": "H3027",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "in his hand"
+          },
+          "oshb": {
+            "code": "H3027",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "בְּ/יָדֽ/וֹ",
+            "morph": "HR/Ncbsc/Sp3ms",
+            "id": "01JTd"
+          }
+        },
+        {
+          "code": "H3068",
+          "kjv-osis": {
+            "code": "H3068",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "that the <divineName>Lord</divineName>"
+          },
+          "oshb": {
+            "code": "H3068",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "יְהוָ֖ה",
+            "morph": "HNp",
+            "id": "01pEE"
+          }
+        },
+        {
+          "code": "H3068",
+          "kjv-osis": {
+            "code": "H3068",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "with him, and that the <divineName>Lord</divineName>"
+          },
+          "oshb": {
+            "code": "H3068",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "יְהוָ֖ה",
+            "morph": "HNp",
+            "id": "01ris"
+          }
+        },
+        {
+          "code": "H6213",
+          "kjv-osis": {
+            "code": "H6213",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "made all that he did"
+          },
+          "oshb": {
+            "code": "H6213",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "עֹשֶׂ֔ה",
+            "morph": "HVqrmsa",
+            "id": "01MXn"
+          }
+        },
+        {
+          "code": "H6743",
+          "kjv-osis": {
+            "code": "H6743",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "to prosper"
+          },
+          "oshb": {
+            "code": "H6743",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "מַצְלִ֥יחַ",
+            "morph": "HVhrmsa",
+            "id": "01r9A"
+          }
+        },
+        {
+          "code": "H7200",
+          "kjv-osis": {
+            "code": "H7200",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "saw"
+          },
+          "oshb": {
+            "code": "H7200",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יַּ֣רְא",
+            "morph": "HC/Vqw3ms",
+            "id": "01JdL"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1931",
+          "oshb": {
+            "code": "H1931",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "ה֣וּא",
+            "morph": "HPp3ms",
+            "id": "01Efs"
+          }
+        },
+        {
+          "code": "H3588",
+          "oshb": {
+            "code": "H3588",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "כִּ֥י",
+            "morph": "HC",
+            "id": "01cPL"
+          }
+        },
+        {
+          "code": "H3605",
+          "oshb": {
+            "code": "H3605",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "וְ/כֹל֙",
+            "morph": "HC/Ncmsa",
+            "id": "016kc"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "אֲשֶׁר",
+            "morph": "HTr",
+            "id": "01PFY"
+          }
+        },
+        {
+          "code": "H854",
+          "oshb": {
+            "code": "H854",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "אִתּ֑/וֹ",
+            "morph": "HR/Sp3ms",
+            "id": "01DJz"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 7,
+        "oshb_tokens": 12,
+        "matched": 7,
+        "omissions": 5,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.4",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "over his house"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "בֵּית֔/וֹ",
+            "morph": "HNcmsc/Sp3ms",
+            "id": "01kjd"
+          }
+        },
+        {
+          "code": "H2580",
+          "kjv-osis": {
+            "code": "H2580",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "grace"
+          },
+          "oshb": {
+            "code": "H2580",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "חֵ֛ן",
+            "morph": "HNcmsa",
+            "id": "018Yw"
+          }
+        },
+        {
+          "code": "H3027",
+          "kjv-osis": {
+            "code": "H3027",
+            "word_i": 10,
+            "token_i": 10,
+            "span_text": "into his hand"
+          },
+          "oshb": {
+            "code": "H3027",
+            "word_i": 14,
+            "token_i": 13,
+            "wlc": "בְּ/יָדֽ/וֹ",
+            "morph": "HR/Ncbsc/Sp3ms",
+            "id": "01rTN"
+          }
+        },
+        {
+          "code": "H3130",
+          "kjv-osis": {
+            "code": "H3130",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And Joseph"
+          },
+          "oshb": {
+            "code": "H3130",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "יוֹסֵ֥ף",
+            "morph": "HNp",
+            "id": "01m4W"
+          }
+        },
+        {
+          "code": "H3426",
+          "kjv-osis": {
+            "code": "H3426",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "he had"
+          },
+          "oshb": {
+            "code": "H3426",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "יֶשׁ",
+            "morph": "HTm",
+            "id": "01JSR"
+          }
+        },
+        {
+          "code": "H4672",
+          "kjv-osis": {
+            "code": "H4672",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "found"
+          },
+          "oshb": {
+            "code": "H4672",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יִּמְצָ֨א",
+            "morph": "HC/Vqw3ms",
+            "id": "01Uwz"
+          }
+        },
+        {
+          "code": "H5414",
+          "kjv-osis": {
+            "code": "H5414",
+            "word_i": 9,
+            "token_i": 9,
+            "span_text": "he put"
+          },
+          "oshb": {
+            "code": "H5414",
+            "word_i": 13,
+            "token_i": 12,
+            "wlc": "נָתַ֥ן",
+            "morph": "HVqp3ms",
+            "id": "01jyE"
+          }
+        },
+        {
+          "code": "H5869",
+          "kjv-osis": {
+            "code": "H5869",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "in his sight"
+          },
+          "oshb": {
+            "code": "H5869",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "בְּ/עֵינָ֖י/ו",
+            "morph": "HR/Ncbdc/Sp3ms",
+            "id": "01Z26"
+          }
+        },
+        {
+          "code": "H6485",
+          "kjv-osis": {
+            "code": "H6485",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "him: and he made him overseer"
+          },
+          "oshb": {
+            "code": "H6485",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "וַ/יַּפְקִדֵ֨/הוּ֙",
+            "morph": "HC/Vhw3ms/Sp3ms",
+            "id": "01aEB"
+          }
+        },
+        {
+          "code": "H8334",
+          "kjv-osis": {
+            "code": "H8334",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "and he served"
+          },
+          "oshb": {
+            "code": "H8334",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "וַ/יְשָׁ֣רֶת",
+            "morph": "HC/Vpw3ms",
+            "id": "01YgJ"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H3605",
+          "oshb": {
+            "code": "H3605",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "וְ/כָל",
+            "morph": "HC/Ncmsc",
+            "id": "01pWm"
+          }
+        },
+        {
+          "code": "H5921",
+          "oshb": {
+            "code": "H5921",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "עַל",
+            "morph": "HR",
+            "id": "01Vuz"
+          }
+        },
+        {
+          "code": "H853",
+          "oshb": {
+            "code": "H853",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "אֹת֑/וֹ",
+            "morph": "HTo/Sp3ms",
+            "id": "01wF3"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 10,
+        "oshb_tokens": 13,
+        "matched": 10,
+        "omissions": 3,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.5",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "in his house"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "בְּ/בֵית֗/וֹ",
+            "morph": "HR/Ncmsc/Sp3ms",
+            "id": "01iQZ"
+          }
+        },
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "house"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 14,
+            "token_i": 13,
+            "wlc": "בֵּ֥ית",
+            "morph": "HNcmsc",
+            "id": "012xC"
+          }
+        },
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 14,
+            "token_i": 14,
+            "span_text": "in the house"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 25,
+            "token_i": 23,
+            "wlc": "בַּ/בַּ֖יִת",
+            "morph": "HRd/Ncmsa",
+            "id": "016L2"
+          }
+        },
+        {
+          "code": "H1288",
+          "kjv-osis": {
+            "code": "H1288",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "blessed"
+          },
+          "oshb": {
+            "code": "H1288",
+            "word_i": 11,
+            "token_i": 10,
+            "wlc": "וַ/יְבָ֧רֶךְ",
+            "morph": "HC/Vpw3ms",
+            "id": "01Y2u"
+          }
+        },
+        {
+          "code": "H1293",
+          "kjv-osis": {
+            "code": "H1293",
+            "word_i": 11,
+            "token_i": 11,
+            "span_text": "and the blessing"
+          },
+          "oshb": {
+            "code": "H1293",
+            "word_i": 19,
+            "token_i": 18,
+            "wlc": "בִּרְכַּ֤ת",
+            "morph": "HNcfsc",
+            "id": "01hQg"
+          }
+        },
+        {
+          "code": "H1558",
+          "kjv-osis": {
+            "code": "H1558",
+            "word_i": 10,
+            "token_i": 10,
+            "span_text": "sake"
+          },
+          "oshb": {
+            "code": "H1558",
+            "word_i": 16,
+            "token_i": 15,
+            "wlc": "בִּ/גְלַ֣ל",
+            "morph": "HR/Ncmsc",
+            "id": "01Lv9"
+          }
+        },
+        {
+          "code": "H227",
+          "kjv-osis": {
+            "code": "H227",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And it came to pass from the time"
+          },
+          "oshb": {
+            "code": "H227",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "מֵ/אָז֩",
+            "morph": "HR/D",
+            "id": "01JVN"
+          }
+        },
+        {
+          "code": "H3068",
+          "kjv-osis": {
+            "code": "H3068",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "that the <divineName>Lord</divineName>"
+          },
+          "oshb": {
+            "code": "H3068",
+            "word_i": 12,
+            "token_i": 11,
+            "wlc": "יְהוָ֛ה",
+            "morph": "HNp",
+            "id": "01gER"
+          }
+        },
+        {
+          "code": "H3068",
+          "kjv-osis": {
+            "code": "H3068",
+            "word_i": 12,
+            "token_i": 12,
+            "span_text": "of the <divineName>Lord</divineName>"
+          },
+          "oshb": {
+            "code": "H3068",
+            "word_i": 20,
+            "token_i": 19,
+            "wlc": "יְהוָה֙",
+            "morph": "HNp",
+            "id": "01Rqg"
+          }
+        },
+        {
+          "code": "H3130",
+          "kjv-osis": {
+            "code": "H3130",
+            "word_i": 9,
+            "token_i": 9,
+            "span_text": "for Joseph’s"
+          },
+          "oshb": {
+            "code": "H3130",
+            "word_i": 17,
+            "token_i": 16,
+            "wlc": "יוֹסֵ֑ף",
+            "morph": "HNp",
+            "id": "01SEo"
+          }
+        },
+        {
+          "code": "H3426",
+          "kjv-osis": {
+            "code": "H3426",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "and over all that he had"
+          },
+          "oshb": {
+            "code": "H3426",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "יֶשׁ",
+            "morph": "HTm",
+            "id": "01aqk"
+          }
+        },
+        {
+          "code": "H3426",
+          "kjv-osis": {
+            "code": "H3426",
+            "word_i": 13,
+            "token_i": 13,
+            "span_text": "was upon all that he had"
+          },
+          "oshb": {
+            "code": "H3426",
+            "word_i": 23,
+            "token_i": 22,
+            "wlc": "יֶשׁ",
+            "morph": "HTm",
+            "id": "014qH"
+          }
+        },
+        {
+          "code": "H4713",
+          "kjv-osis": {
+            "code": "H4713",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "the Egyptian’s"
+          },
+          "oshb": {
+            "code": "H4713",
+            "word_i": 15,
+            "token_i": 14,
+            "wlc": "הַ/מִּצְרִ֖י",
+            "morph": "HTd/Ngmsa",
+            "id": "01dgh"
+          }
+        },
+        {
+          "code": "H6485",
+          "kjv-osis": {
+            "code": "H6485",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "he had made him overseer"
+          },
+          "oshb": {
+            "code": "H6485",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "הִפְקִ֨יד",
+            "morph": "HVhp3ms",
+            "id": "01HTu"
+          }
+        },
+        {
+          "code": "H7704",
+          "kjv-osis": {
+            "code": "H7704",
+            "word_i": 15,
+            "token_i": 15,
+            "span_text": "and in the field"
+          },
+          "oshb": {
+            "code": "H7704",
+            "word_i": 26,
+            "token_i": 24,
+            "wlc": "וּ/בַ/שָּׂדֶֽה",
+            "morph": "HC/Rd/Ncmsa",
+            "id": "01ZLM"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יְהִ֡י",
+            "morph": "HC/Vqw3ms",
+            "id": "014Td"
+          }
+        },
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 18,
+            "token_i": 17,
+            "wlc": "וַ/יְהִ֞י",
+            "morph": "HC/Vqw3ms",
+            "id": "01QQV"
+          }
+        },
+        {
+          "code": "H3605",
+          "oshb": {
+            "code": "H3605",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "כָּל",
+            "morph": "HNcmsc",
+            "id": "01HWX"
+          }
+        },
+        {
+          "code": "H3605",
+          "oshb": {
+            "code": "H3605",
+            "word_i": 21,
+            "token_i": 20,
+            "wlc": "בְּ/כָל",
+            "morph": "HR/Ncmsc",
+            "id": "01uWB"
+          }
+        },
+        {
+          "code": "H5921",
+          "oshb": {
+            "code": "H5921",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "וְ/עַל֙",
+            "morph": "HC/R",
+            "id": "01YoU"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "אֲשֶׁ֣ר",
+            "morph": "HTr",
+            "id": "01yWZ"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 22,
+            "token_i": 21,
+            "wlc": "אֲשֶׁ֣ר",
+            "morph": "HTr",
+            "id": "01SXR"
+          }
+        },
+        {
+          "code": "H853",
+          "oshb": {
+            "code": "H853",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "אֹת֜/וֹ",
+            "morph": "HTo/Sp3ms",
+            "id": "01UqD"
+          }
+        },
+        {
+          "code": "H853",
+          "oshb": {
+            "code": "H853",
+            "word_i": 13,
+            "token_i": 12,
+            "wlc": "אֶת",
+            "morph": "HTo",
+            "id": "01Joj"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 15,
+        "oshb_tokens": 24,
+        "matched": 15,
+        "omissions": 9,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.6",
+      "matched": [
+        {
+          "code": "H3027",
+          "kjv-osis": {
+            "code": "H3027",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "hand"
+          },
+          "oshb": {
+            "code": "H3027",
+            "word_i": 5,
+            "token_i": 4,
+            "wlc": "בְּ/יַד",
+            "morph": "HR/Ncbsc",
+            "id": "01KZZ"
+          }
+        },
+        {
+          "code": "H3045",
+          "kjv-osis": {
+            "code": "H3045",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "and he knew"
+          },
+          "oshb": {
+            "code": "H3045",
+            "word_i": 8,
+            "token_i": 7,
+            "wlc": "יָדַ֤ע",
+            "morph": "HVqp3ms",
+            "id": "01srU"
+          }
+        },
+        {
+          "code": "H3130",
+          "kjv-osis": {
+            "code": "H3130",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "all that he had in Joseph’s"
+          },
+          "oshb": {
+            "code": "H3130",
+            "word_i": 6,
+            "token_i": 5,
+            "wlc": "יוֹסֵף֒",
+            "morph": "HNp",
+            "id": "01PZk"
+          }
+        },
+        {
+          "code": "H3130",
+          "kjv-osis": {
+            "code": "H3130",
+            "word_i": 9,
+            "token_i": 9,
+            "span_text": "And Joseph"
+          },
+          "oshb": {
+            "code": "H3130",
+            "word_i": 18,
+            "token_i": 17,
+            "wlc": "יוֹסֵ֔ף",
+            "morph": "HNp",
+            "id": "01pWA"
+          }
+        },
+        {
+          "code": "H3303",
+          "kjv-osis": {
+            "code": "H3303",
+            "word_i": 11,
+            "token_i": 11,
+            "span_text": "and well"
+          },
+          "oshb": {
+            "code": "H3303",
+            "word_i": 19,
+            "token_i": 18,
+            "wlc": "יְפֵה",
+            "morph": "HAamsc",
+            "id": "01pqD"
+          }
+        },
+        {
+          "code": "H3899",
+          "kjv-osis": {
+            "code": "H3899",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "the bread"
+          },
+          "oshb": {
+            "code": "H3899",
+            "word_i": 13,
+            "token_i": 12,
+            "wlc": "הַ/לֶּ֖חֶם",
+            "morph": "HTd/Ncbsa",
+            "id": "01dzc"
+          }
+        },
+        {
+          "code": "H3972",
+          "kjv-osis": {
+            "code": "H3972",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "not ought"
+          },
+          "oshb": {
+            "code": "H3972",
+            "word_i": 10,
+            "token_i": 9,
+            "wlc": "מְא֔וּמָה",
+            "morph": "HNcfsa",
+            "id": "01zCz"
+          }
+        },
+        {
+          "code": "H398",
+          "kjv-osis": {
+            "code": "H398",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "which he did eat"
+          },
+          "oshb": {
+            "code": "H398",
+            "word_i": 16,
+            "token_i": 15,
+            "wlc": "אוֹכֵ֑ל",
+            "morph": "HVqrmsa",
+            "id": "01Yr6"
+          }
+        },
+        {
+          "code": "H4758",
+          "kjv-osis": {
+            "code": "H4758",
+            "word_i": 12,
+            "token_i": 12,
+            "span_text": "favoured"
+          },
+          "oshb": {
+            "code": "H4758",
+            "word_i": 22,
+            "token_i": 21,
+            "wlc": "מַרְאֶֽה",
+            "morph": "HNcmsa",
+            "id": "01yDB"
+          }
+        },
+        {
+          "code": "H518",
+          "kjv-osis": {
+            "code": "H518",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "he had, save"
+          },
+          "oshb": {
+            "code": "H518",
+            "word_i": 12,
+            "token_i": 11,
+            "wlc": "אִם",
+            "morph": "HC",
+            "id": "01Gfb"
+          }
+        },
+        {
+          "code": "H5800",
+          "kjv-osis": {
+            "code": "H5800",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And he left"
+          },
+          "oshb": {
+            "code": "H5800",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יַּעֲזֹ֣ב",
+            "morph": "HC/Vqw3ms",
+            "id": "01uW7"
+          }
+        },
+        {
+          "code": "H8389",
+          "kjv-osis": {
+            "code": "H8389",
+            "word_i": 10,
+            "token_i": 10,
+            "span_text": "goodly"
+          },
+          "oshb": {
+            "code": "H8389",
+            "word_i": 20,
+            "token_i": 19,
+            "wlc": "תֹ֖אַר",
+            "morph": "HNcmsa",
+            "id": "01kje"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1931",
+          "oshb": {
+            "code": "H1931",
+            "word_i": 15,
+            "token_i": 14,
+            "wlc": "ה֣וּא",
+            "morph": "HPp3ms",
+            "id": "01tt3"
+          }
+        },
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 17,
+            "token_i": 16,
+            "wlc": "וַ/יְהִ֣י",
+            "morph": "HC/Vqw3ms",
+            "id": "01bDJ"
+          }
+        },
+        {
+          "code": "H3303",
+          "oshb": {
+            "code": "H3303",
+            "word_i": 21,
+            "token_i": 20,
+            "wlc": "וִ/יפֵ֥ה",
+            "morph": "HC/Aamsc",
+            "id": "011gK"
+          }
+        },
+        {
+          "code": "H3588",
+          "oshb": {
+            "code": "H3588",
+            "word_i": 11,
+            "token_i": 10,
+            "wlc": "כִּ֥י",
+            "morph": "HC",
+            "id": "01XDP"
+          }
+        },
+        {
+          "code": "H3605",
+          "oshb": {
+            "code": "H3605",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "כָּל",
+            "morph": "HNcmsc",
+            "id": "01hD3"
+          }
+        },
+        {
+          "code": "H3808",
+          "oshb": {
+            "code": "H3808",
+            "word_i": 7,
+            "token_i": 6,
+            "wlc": "וְ/לֹא",
+            "morph": "HC/Tn",
+            "id": "01htK"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "אֲשֶׁר",
+            "morph": "HTr",
+            "id": "01njY"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 14,
+            "token_i": 13,
+            "wlc": "אֲשֶׁר",
+            "morph": "HTr",
+            "id": "01dtY"
+          }
+        },
+        {
+          "code": "H854",
+          "oshb": {
+            "code": "H854",
+            "word_i": 9,
+            "token_i": 8,
+            "wlc": "אִתּ/וֹ֙",
+            "morph": "HR/Sp3ms",
+            "id": "01a4E"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 12,
+        "oshb_tokens": 21,
+        "matched": 12,
+        "omissions": 9,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.7",
+      "matched": [
+        {
+          "code": "H113",
+          "kjv-osis": {
+            "code": "H113",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "that his master’s"
+          },
+          "oshb": {
+            "code": "H113",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "אֲדֹנָ֛י/ו",
+            "morph": "HNcmpc/Sp3ms",
+            "id": "01ETR"
+          }
+        },
+        {
+          "code": "H1697",
+          "kjv-osis": {
+            "code": "H1697",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "these things"
+          },
+          "oshb": {
+            "code": "H1697",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "הַ/דְּבָרִ֣ים",
+            "morph": "HTd/Ncmpa",
+            "id": "01N1E"
+          }
+        },
+        {
+          "code": "H310",
+          "kjv-osis": {
+            "code": "H310",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And it came to pass after"
+          },
+          "oshb": {
+            "code": "H310",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "אַחַר֙",
+            "morph": "HR",
+            "id": "01WVX"
+          }
+        },
+        {
+          "code": "H3130",
+          "kjv-osis": {
+            "code": "H3130",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "upon Joseph"
+          },
+          "oshb": {
+            "code": "H3130",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "יוֹסֵ֑ף",
+            "morph": "HNp",
+            "id": "01KYC"
+          }
+        },
+        {
+          "code": "H5375",
+          "kjv-osis": {
+            "code": "H5375",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "cast"
+          },
+          "oshb": {
+            "code": "H5375",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "וַ/תִּשָּׂ֧א",
+            "morph": "HC/Vqw3fs",
+            "id": "01hrH"
+          }
+        },
+        {
+          "code": "H559",
+          "kjv-osis": {
+            "code": "H559",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "and she said"
+          },
+          "oshb": {
+            "code": "H559",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "וַ/תֹּ֖אמֶר",
+            "morph": "HC/Vqw3fs",
+            "id": "01gAt"
+          }
+        },
+        {
+          "code": "H5869",
+          "kjv-osis": {
+            "code": "H5869",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "her eyes"
+          },
+          "oshb": {
+            "code": "H5869",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "עֵינֶ֖י/הָ",
+            "morph": "HNcbdc/Sp3fs",
+            "id": "013Ti"
+          }
+        },
+        {
+          "code": "H7901",
+          "kjv-osis": {
+            "code": "H7901",
+            "word_i": 9,
+            "token_i": 9,
+            "span_text": "Lie"
+          },
+          "oshb": {
+            "code": "H7901",
+            "word_i": 13,
+            "token_i": 13,
+            "wlc": "שִׁכְבָ֥/ה",
+            "morph": "HVqv2ms/Sh",
+            "id": "01ZEn"
+          }
+        },
+        {
+          "code": "H802",
+          "kjv-osis": {
+            "code": "H802",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "wife"
+          },
+          "oshb": {
+            "code": "H802",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "אֵֽשֶׁת",
+            "morph": "HNcfsc",
+            "id": "01KUG"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יְהִ֗י",
+            "morph": "HC/Vqw3ms",
+            "id": "01LeX"
+          }
+        },
+        {
+          "code": "H413",
+          "oshb": {
+            "code": "H413",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "אֶל",
+            "morph": "HR",
+            "id": "01kFu"
+          }
+        },
+        {
+          "code": "H428",
+          "oshb": {
+            "code": "H428",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "הָ/אֵ֔לֶּה",
+            "morph": "HTd/Pdxcp",
+            "id": "01QGH"
+          }
+        },
+        {
+          "code": "H5973",
+          "oshb": {
+            "code": "H5973",
+            "word_i": 14,
+            "token_i": 14,
+            "wlc": "עִמִּֽ/י",
+            "morph": "HR/Sp1cs",
+            "id": "01rBA"
+          }
+        },
+        {
+          "code": "H853",
+          "oshb": {
+            "code": "H853",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "אֶת",
+            "morph": "HTo",
+            "id": "01DPx"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 9,
+        "oshb_tokens": 14,
+        "matched": 9,
+        "omissions": 5,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.8",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "with me in the house"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "בַּ/בָּ֑יִת",
+            "morph": "HRd/Ncmsa",
+            "id": "019H2"
+          }
+        },
+        {
+          "code": "H113",
+          "kjv-osis": {
+            "code": "H113",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "unto his master’s"
+          },
+          "oshb": {
+            "code": "H113",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "אֲדֹנָ֔י/ו",
+            "morph": "HNcmpc/Sp3ms",
+            "id": "01HHS"
+          }
+        },
+        {
+          "code": "H113",
+          "kjv-osis": {
+            "code": "H113",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "Behold, my master"
+          },
+          "oshb": {
+            "code": "H113",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "אֲדֹנִ֔/י",
+            "morph": "HNcmsc/Sp1cs",
+            "id": "01PEk"
+          }
+        },
+        {
+          "code": "H3027",
+          "kjv-osis": {
+            "code": "H3027",
+            "word_i": 10,
+            "token_i": 10,
+            "span_text": "to my hand"
+          },
+          "oshb": {
+            "code": "H3027",
+            "word_i": 18,
+            "token_i": 17,
+            "wlc": "בְּ/יָדִֽ/י",
+            "morph": "HR/Ncbsc/Sp1cs",
+            "id": "01LCt"
+          }
+        },
+        {
+          "code": "H3045",
+          "kjv-osis": {
+            "code": "H3045",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "wotteth"
+          },
+          "oshb": {
+            "code": "H3045",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "יָדַ֥ע",
+            "morph": "HVqp3ms",
+            "id": "01FAA"
+          }
+        },
+        {
+          "code": "H3426",
+          "kjv-osis": {
+            "code": "H3426",
+            "word_i": 9,
+            "token_i": 9,
+            "span_text": "all that he hath"
+          },
+          "oshb": {
+            "code": "H3426",
+            "word_i": 15,
+            "token_i": 15,
+            "wlc": "יֶשׁ",
+            "morph": "HTm",
+            "id": "01hMb"
+          }
+        },
+        {
+          "code": "H3985",
+          "kjv-osis": {
+            "code": "H3985",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "But he refused"
+          },
+          "oshb": {
+            "code": "H3985",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יְמָאֵ֓ן",
+            "morph": "HC/Vpw3ms",
+            "id": "017BJ"
+          }
+        },
+        {
+          "code": "H5414",
+          "kjv-osis": {
+            "code": "H5414",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "and he hath committed"
+          },
+          "oshb": {
+            "code": "H5414",
+            "word_i": 17,
+            "token_i": 16,
+            "wlc": "נָתַ֥ן",
+            "morph": "HVqp3ms",
+            "id": "01nis"
+          }
+        },
+        {
+          "code": "H559",
+          "kjv-osis": {
+            "code": "H559",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "and said"
+          },
+          "oshb": {
+            "code": "H559",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "וַ/יֹּ֨אמֶר֙",
+            "morph": "HC/Vqw3ms",
+            "id": "01AzR"
+          }
+        },
+        {
+          "code": "H802",
+          "kjv-osis": {
+            "code": "H802",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "wife"
+          },
+          "oshb": {
+            "code": "H802",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "אֵ֣שֶׁת",
+            "morph": "HNcfsc",
+            "id": "01Y1a"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H2005",
+          "oshb": {
+            "code": "H2005",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "הֵ֣ן",
+            "morph": "HTm",
+            "id": "01rym"
+          }
+        },
+        {
+          "code": "H3605",
+          "oshb": {
+            "code": "H3605",
+            "word_i": 13,
+            "token_i": 13,
+            "wlc": "וְ/כֹ֥ל",
+            "morph": "HC/Ncmsa",
+            "id": "01Krx"
+          }
+        },
+        {
+          "code": "H3808",
+          "oshb": {
+            "code": "H3808",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "לֹא",
+            "morph": "HTn",
+            "id": "01aP7"
+          }
+        },
+        {
+          "code": "H4100",
+          "oshb": {
+            "code": "H4100",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "מַה",
+            "morph": "HTi",
+            "id": "01xie"
+          }
+        },
+        {
+          "code": "H413",
+          "oshb": {
+            "code": "H413",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "אֶל",
+            "morph": "HR",
+            "id": "01Adt"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 14,
+            "token_i": 14,
+            "wlc": "אֲשֶׁר",
+            "morph": "HTr",
+            "id": "01rX5"
+          }
+        },
+        {
+          "code": "H854",
+          "oshb": {
+            "code": "H854",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "אִתִּ֖/י",
+            "morph": "HR/Sp1cs",
+            "id": "01TxR"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 10,
+        "oshb_tokens": 17,
+        "matched": 10,
+        "omissions": 7,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.9",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "in this house"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "בַּ/בַּ֣יִת",
+            "morph": "HRd/Ncmsa",
+            "id": "01ACr"
+          }
+        },
+        {
+          "code": "H1419",
+          "kjv-osis": {
+            "code": "H1419",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "none greater"
+          },
+          "oshb": {
+            "code": "H1419",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "גָד֜וֹל",
+            "morph": "HAamsa",
+            "id": "01uZ7"
+          }
+        },
+        {
+          "code": "H1419",
+          "kjv-osis": {
+            "code": "H1419",
+            "word_i": 10,
+            "token_i": 10,
+            "span_text": "this great"
+          },
+          "oshb": {
+            "code": "H1419",
+            "word_i": 19,
+            "token_i": 19,
+            "wlc": "הַ/גְּדֹלָה֙",
+            "morph": "HTd/Aafsa",
+            "id": "01HHr"
+          }
+        },
+        {
+          "code": "H2398",
+          "kjv-osis": {
+            "code": "H2398",
+            "word_i": 12,
+            "token_i": 12,
+            "span_text": "and sin"
+          },
+          "oshb": {
+            "code": "H2398",
+            "word_i": 21,
+            "token_i": 21,
+            "wlc": "וְ/חָטָ֖אתִי",
+            "morph": "HC/Vqq1cs",
+            "id": "01zcy"
+          }
+        },
+        {
+          "code": "H2820",
+          "kjv-osis": {
+            "code": "H2820",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "hath he kept back"
+          },
+          "oshb": {
+            "code": "H2820",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "חָשַׂ֤ךְ",
+            "morph": "HVqp3ms",
+            "id": "01qxE"
+          }
+        },
+        {
+          "code": "H3808",
+          "kjv-osis": {
+            "code": "H3808",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "than I; neither"
+          },
+          "oshb": {
+            "code": "H3808",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "וְ/לֹֽא",
+            "morph": "HC/Tn",
+            "id": "013dZ"
+          }
+        },
+        {
+          "code": "H3972",
+          "kjv-osis": {
+            "code": "H3972",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "any thing"
+          },
+          "oshb": {
+            "code": "H3972",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "מְא֔וּמָה",
+            "morph": "HNcfsa",
+            "id": "016ZG"
+          }
+        },
+        {
+          "code": "H430",
+          "kjv-osis": {
+            "code": "H430",
+            "word_i": 13,
+            "token_i": 13,
+            "span_text": "against God"
+          },
+          "oshb": {
+            "code": "H430",
+            "word_i": 22,
+            "token_i": 22,
+            "wlc": "לֵֽ/אלֹהִֽים",
+            "morph": "HR/Ncmpa",
+            "id": "01G1Y"
+          }
+        },
+        {
+          "code": "H6213",
+          "kjv-osis": {
+            "code": "H6213",
+            "word_i": 9,
+            "token_i": 9,
+            "span_text": "how then can I do"
+          },
+          "oshb": {
+            "code": "H6213",
+            "word_i": 17,
+            "token_i": 17,
+            "wlc": "אֶֽעֱשֶׂ֜ה",
+            "morph": "HVqi1cs",
+            "id": "01APA"
+          }
+        },
+        {
+          "code": "H7451",
+          "kjv-osis": {
+            "code": "H7451",
+            "word_i": 11,
+            "token_i": 11,
+            "span_text": "wickedness"
+          },
+          "oshb": {
+            "code": "H7451",
+            "word_i": 18,
+            "token_i": 18,
+            "wlc": "הָ/רָעָ֤ה",
+            "morph": "HTd/Ncfsa",
+            "id": "01L5y"
+          }
+        },
+        {
+          "code": "H802",
+          "kjv-osis": {
+            "code": "H802",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "his wife"
+          },
+          "oshb": {
+            "code": "H802",
+            "word_i": 15,
+            "token_i": 15,
+            "wlc": "אִשְׁתּ֑/וֹ",
+            "morph": "HNcfsc/Sp3ms",
+            "id": "01cNr"
+          }
+        },
+        {
+          "code": "H834",
+          "kjv-osis": {
+            "code": "H834",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "from me but thee, because"
+          },
+          "oshb": {
+            "code": "H834",
+            "word_i": 13,
+            "token_i": 13,
+            "wlc": "בַּ/אֲשֶׁ֣ר",
+            "morph": "HR/Tr",
+            "id": "01fBU"
+          }
+        },
+        {
+          "code": "H859",
+          "kjv-osis": {
+            "code": "H859",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "thou"
+          },
+          "oshb": {
+            "code": "H859",
+            "word_i": 14,
+            "token_i": 14,
+            "wlc": "אַתְּ",
+            "morph": "HPp2fs",
+            "id": "01zof"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H2063",
+          "oshb": {
+            "code": "H2063",
+            "word_i": 20,
+            "token_i": 20,
+            "wlc": "הַ/זֹּ֔את",
+            "morph": "HTd/Pdxfs",
+            "id": "01mQs"
+          }
+        },
+        {
+          "code": "H2088",
+          "oshb": {
+            "code": "H2088",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "הַ/זֶּה֮",
+            "morph": "HTd/Pdxms",
+            "id": "01Rp2"
+          }
+        },
+        {
+          "code": "H349",
+          "oshb": {
+            "code": "H349",
+            "word_i": 16,
+            "token_i": 16,
+            "wlc": "וְ/אֵ֨יךְ",
+            "morph": "HC/Ti",
+            "id": "01hW5"
+          }
+        },
+        {
+          "code": "H3588",
+          "oshb": {
+            "code": "H3588",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "כִּ֥י",
+            "morph": "HC",
+            "id": "01T9o"
+          }
+        },
+        {
+          "code": "H369",
+          "oshb": {
+            "code": "H369",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "אֵינֶ֨/נּוּ",
+            "morph": "HTn/Sp3ms",
+            "id": "015y6"
+          }
+        },
+        {
+          "code": "H4480",
+          "oshb": {
+            "code": "H4480",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "מִמֶּ/נִּי֒",
+            "morph": "HR/Sp1cs",
+            "id": "01Zqf"
+          }
+        },
+        {
+          "code": "H4480",
+          "oshb": {
+            "code": "H4480",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "מִמֶּ֨/נִּי֙",
+            "morph": "HR/Sp1cs",
+            "id": "01Us2"
+          }
+        },
+        {
+          "code": "H518",
+          "oshb": {
+            "code": "H518",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "אִם",
+            "morph": "HC",
+            "id": "01x5k"
+          }
+        },
+        {
+          "code": "H853",
+          "oshb": {
+            "code": "H853",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "אוֹתָ֖/ךְ",
+            "morph": "HTo/Sp2fs",
+            "id": "01JBi"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 13,
+        "oshb_tokens": 22,
+        "matched": 13,
+        "omissions": 9,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.10",
+      "matched": [
+        {
+          "code": "H1696",
+          "kjv-osis": {
+            "code": "H1696",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And it came to pass, as she spake"
+          },
+          "oshb": {
+            "code": "H1696",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "כְּ/דַבְּרָ֥/הּ",
+            "morph": "HR/Vpc/Sp3fs",
+            "id": "01nhi"
+          }
+        },
+        {
+          "code": "H3117",
+          "kjv-osis": {
+            "code": "H3117",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "day"
+          },
+          "oshb": {
+            "code": "H3117",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "י֣וֹם",
+            "morph": "HNcmsa",
+            "id": "01eTF"
+          }
+        },
+        {
+          "code": "H3117",
+          "kjv-osis": {
+            "code": "H3117",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "by day"
+          },
+          "oshb": {
+            "code": "H3117",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "י֑וֹם",
+            "morph": "HNcmsa",
+            "id": "01spw"
+          }
+        },
+        {
+          "code": "H3130",
+          "kjv-osis": {
+            "code": "H3130",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "to Joseph"
+          },
+          "oshb": {
+            "code": "H3130",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "יוֹסֵ֖ף",
+            "morph": "HNp",
+            "id": "01RC1"
+          }
+        },
+        {
+          "code": "H681",
+          "kjv-osis": {
+            "code": "H681",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "by her"
+          },
+          "oshb": {
+            "code": "H681",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "אֶצְלָ֖/הּ",
+            "morph": "HR/Sp3fs",
+            "id": "01XTm"
+          }
+        },
+        {
+          "code": "H7901",
+          "kjv-osis": {
+            "code": "H7901",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "not unto her, to lie"
+          },
+          "oshb": {
+            "code": "H7901",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "לִ/שְׁכַּ֥ב",
+            "morph": "HR/Vqc",
+            "id": "01cRX"
+          }
+        },
+        {
+          "code": "H8085",
+          "kjv-osis": {
+            "code": "H8085",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "that he hearkened"
+          },
+          "oshb": {
+            "code": "H8085",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "שָׁמַ֥ע",
+            "morph": "HVqp3ms",
+            "id": "01JsP"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יְהִ֕י",
+            "morph": "HC/Vqw3ms",
+            "id": "01UAX"
+          }
+        },
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "לִ/הְי֥וֹת",
+            "morph": "HR/Vqc",
+            "id": "01w2p"
+          }
+        },
+        {
+          "code": "H3808",
+          "oshb": {
+            "code": "H3808",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "וְ/לֹא",
+            "morph": "HC/Tn",
+            "id": "01UjQ"
+          }
+        },
+        {
+          "code": "H413",
+          "oshb": {
+            "code": "H413",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "אֶל",
+            "morph": "HR",
+            "id": "01byg"
+          }
+        },
+        {
+          "code": "H413",
+          "oshb": {
+            "code": "H413",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "אֵלֶ֛י/הָ",
+            "morph": "HR/Sp3fs",
+            "id": "014MZ"
+          }
+        },
+        {
+          "code": "H5973",
+          "oshb": {
+            "code": "H5973",
+            "word_i": 13,
+            "token_i": 13,
+            "wlc": "עִמָּֽ/הּ",
+            "morph": "HR/Sp3fs",
+            "id": "01shk"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 7,
+        "oshb_tokens": 13,
+        "matched": 7,
+        "omissions": 6,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.11",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "into the house"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "הַ/בַּ֖יְתָ/ה",
+            "morph": "HTd/Ncmsa/Sd",
+            "id": "01RUb"
+          }
+        },
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 7,
+            "token_i": 8,
+            "span_text": "of the house"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "הַ/בַּ֛יִת",
+            "morph": "HTd/Ncmsa",
+            "id": "01Koc"
+          }
+        },
+        {
+          "code": "H3117",
+          "kjv-osis": {
+            "code": "H3117",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And it came to pass about this time"
+          },
+          "oshb": {
+            "code": "H3117",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "כְּ/הַ/יּ֣וֹם",
+            "morph": "HR/Td/Ncmsa",
+            "id": "011pp"
+          }
+        },
+        {
+          "code": "H376",
+          "kjv-osis": {
+            "code": "H376",
+            "word_i": 6,
+            "token_i": 7,
+            "span_text": "none of the men"
+          },
+          "oshb": {
+            "code": "H376",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "אִ֜ישׁ",
+            "morph": "HNcmsa",
+            "id": "01Xr8"
+          }
+        },
+        {
+          "code": "H4399",
+          "kjv-osis": {
+            "code": "H4399",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "his business"
+          },
+          "oshb": {
+            "code": "H4399",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "מְלַאכְתּ֑/וֹ",
+            "morph": "HNcfsc/Sp3ms",
+            "id": "01xj7"
+          }
+        },
+        {
+          "code": "H6213",
+          "kjv-osis": {
+            "code": "H6213",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "to do"
+          },
+          "oshb": {
+            "code": "H6213",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "לַ/עֲשׂ֣וֹת",
+            "morph": "HR/Vqc",
+            "id": "013NC"
+          }
+        },
+        {
+          "code": "H935",
+          "kjv-osis": {
+            "code": "H935",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "went"
+          },
+          "oshb": {
+            "code": "H935",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "וַ/יָּבֹ֥א",
+            "morph": "HC/Vqw3ms",
+            "id": "01t1e"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1004",
+          "oshb": {
+            "code": "H1004",
+            "word_i": 13,
+            "token_i": 13,
+            "wlc": "בַּ/בָּֽיִת",
+            "morph": "HRd/Ncmsa",
+            "id": "01jeD"
+          }
+        },
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יְהִי֙",
+            "morph": "HC/Vqw3ms",
+            "id": "01peX"
+          }
+        },
+        {
+          "code": "H2088",
+          "oshb": {
+            "code": "H2088",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "הַ/זֶּ֔ה",
+            "morph": "HTd/Pdxms",
+            "id": "01HVR"
+          }
+        },
+        {
+          "code": "H369",
+          "oshb": {
+            "code": "H369",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "וְ/אֵ֨ין",
+            "morph": "HC/Tn",
+            "id": "01sH2"
+          }
+        },
+        {
+          "code": "H376",
+          "oshb": {
+            "code": "H376",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "מֵ/אַנְשֵׁ֥י",
+            "morph": "HR/Ncmpc",
+            "id": "01evS"
+          }
+        },
+        {
+          "code": "H8033",
+          "oshb": {
+            "code": "H8033",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "שָׁ֖ם",
+            "morph": "HD",
+            "id": "01ppZ"
+          }
+        }
+      ],
+      "additions": [
+        {
+          "code": "H582",
+          "kjv-osis": {
+            "code": "H582",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "none of the men"
+          }
+        }
+      ],
+      "counts": {
+        "kjv_osis_tokens": 8,
+        "oshb_tokens": 13,
+        "matched": 7,
+        "omissions": 6,
+        "additions": 1
+      }
+    },
+    {
+      "key": "Gen.39.12",
+      "matched": [
+        {
+          "code": "H2351",
+          "kjv-osis": {
+            "code": "H2351",
+            "word_i": 10,
+            "token_i": 10,
+            "span_text": "him out"
+          },
+          "oshb": {
+            "code": "H2351",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "הַ/חֽוּצָ/ה",
+            "morph": "HTd/Ncmsa/Sd",
+            "id": "01Nje"
+          }
+        },
+        {
+          "code": "H3027",
+          "kjv-osis": {
+            "code": "H3027",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "in her hand"
+          },
+          "oshb": {
+            "code": "H3027",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "בְּ/יָדָ֔/הּ",
+            "morph": "HR/Ncbsc/Sp3fs",
+            "id": "01DHE"
+          }
+        },
+        {
+          "code": "H3318",
+          "kjv-osis": {
+            "code": "H3318",
+            "word_i": 9,
+            "token_i": 9,
+            "span_text": "and got"
+          },
+          "oshb": {
+            "code": "H3318",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "וַ/יֵּצֵ֥א",
+            "morph": "HC/Vqw3ms",
+            "id": "01xmM"
+          }
+        },
+        {
+          "code": "H5127",
+          "kjv-osis": {
+            "code": "H5127",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "and fled"
+          },
+          "oshb": {
+            "code": "H5127",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "וַ/יָּ֖נָס",
+            "morph": "HC/Vqw3ms",
+            "id": "01hiu"
+          }
+        },
+        {
+          "code": "H559",
+          "kjv-osis": {
+            "code": "H559",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "saying"
+          },
+          "oshb": {
+            "code": "H559",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "לֵ/אמֹ֖ר",
+            "morph": "HR/Vqc",
+            "id": "01oWb"
+          }
+        },
+        {
+          "code": "H5800",
+          "kjv-osis": {
+            "code": "H5800",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "with me: and he left"
+          },
+          "oshb": {
+            "code": "H5800",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "וַ/יַּעֲזֹ֤ב",
+            "morph": "HC/Vqw3ms",
+            "id": "01maA"
+          }
+        },
+        {
+          "code": "H7901",
+          "kjv-osis": {
+            "code": "H7901",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "Lie"
+          },
+          "oshb": {
+            "code": "H7901",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "שִׁכְבָ֣/ה",
+            "morph": "HVqv2ms/Sh",
+            "id": "01V6M"
+          }
+        },
+        {
+          "code": "H8610",
+          "kjv-osis": {
+            "code": "H8610",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And she caught"
+          },
+          "oshb": {
+            "code": "H8610",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/תִּתְפְּשֵׂ֧/הוּ",
+            "morph": "HC/Vqw3fs/Sp3ms",
+            "id": "01Wao"
+          }
+        },
+        {
+          "code": "H899",
+          "kjv-osis": {
+            "code": "H899",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "him by his garment"
+          },
+          "oshb": {
+            "code": "H899",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "בְּ/בִגְד֛/וֹ",
+            "morph": "HR/Ncmsc/Sp3ms",
+            "id": "01J1H"
+          }
+        },
+        {
+          "code": "H899",
+          "kjv-osis": {
+            "code": "H899",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "his garment"
+          },
+          "oshb": {
+            "code": "H899",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "בִּגְד/וֹ֙",
+            "morph": "HNcmsc/Sp3ms",
+            "id": "018XX"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H5973",
+          "oshb": {
+            "code": "H5973",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "עִמִּ֑/י",
+            "morph": "HR/Sp1cs",
+            "id": "015Xs"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 10,
+        "oshb_tokens": 11,
+        "matched": 10,
+        "omissions": 1,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.13",
+      "matched": [
+        {
+          "code": "H2351",
+          "kjv-osis": {
+            "code": "H2351",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "forth"
+          },
+          "oshb": {
+            "code": "H2351",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "הַ/חֽוּצָ/ה",
+            "morph": "HTd/Ncmsa/Sd",
+            "id": "01FFQ"
+          }
+        },
+        {
+          "code": "H3027",
+          "kjv-osis": {
+            "code": "H3027",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "in her hand"
+          },
+          "oshb": {
+            "code": "H3027",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "בְּ/יָדָ֑/הּ",
+            "morph": "HR/Ncbsc/Sp3fs",
+            "id": "01esV"
+          }
+        },
+        {
+          "code": "H5127",
+          "kjv-osis": {
+            "code": "H5127",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "and was fled"
+          },
+          "oshb": {
+            "code": "H5127",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "וַ/יָּ֖נָס",
+            "morph": "HC/Vqw3ms",
+            "id": "01b3y"
+          }
+        },
+        {
+          "code": "H5800",
+          "kjv-osis": {
+            "code": "H5800",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "that he had left"
+          },
+          "oshb": {
+            "code": "H5800",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "עָזַ֥ב",
+            "morph": "HVqp3ms",
+            "id": "01Kxf"
+          }
+        },
+        {
+          "code": "H7200",
+          "kjv-osis": {
+            "code": "H7200",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And it came to pass, when she saw"
+          },
+          "oshb": {
+            "code": "H7200",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "כִּ/רְאוֹתָ֔/הּ",
+            "morph": "HR/Vqc/Sp3fs",
+            "id": "01hYP"
+          }
+        },
+        {
+          "code": "H899",
+          "kjv-osis": {
+            "code": "H899",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "his garment"
+          },
+          "oshb": {
+            "code": "H899",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "בִּגְד֖/וֹ",
+            "morph": "HNcmsc/Sp3ms",
+            "id": "018fD"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יְהִי֙",
+            "morph": "HC/Vqw3ms",
+            "id": "01qcJ"
+          }
+        },
+        {
+          "code": "H3588",
+          "oshb": {
+            "code": "H3588",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "כִּֽי",
+            "morph": "HC",
+            "id": "015vU"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 6,
+        "oshb_tokens": 8,
+        "matched": 6,
+        "omissions": 2,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.14",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "of her house"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "בֵיתָ֗/הּ",
+            "morph": "HNcmsc/Sp3fs",
+            "id": "01PBi"
+          }
+        },
+        {
+          "code": "H1419",
+          "kjv-osis": {
+            "code": "H1419",
+            "word_i": 13,
+            "token_i": 14,
+            "span_text": "with a loud"
+          },
+          "oshb": {
+            "code": "H1419",
+            "word_i": 20,
+            "token_i": 17,
+            "wlc": "גָּדֽוֹל",
+            "morph": "HAamsa",
+            "id": "01ezh"
+          }
+        },
+        {
+          "code": "H376",
+          "kjv-osis": {
+            "code": "H376",
+            "word_i": 8,
+            "token_i": 9,
+            "span_text": "an Hebrew"
+          },
+          "oshb": {
+            "code": "H376",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "לְ/אַנְשֵׁ֣י",
+            "morph": "HR/Ncmpc",
+            "id": "01CBy"
+          }
+        },
+        {
+          "code": "H559",
+          "kjv-osis": {
+            "code": "H559",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "and spake"
+          },
+          "oshb": {
+            "code": "H559",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "וַ/תֹּ֤אמֶר",
+            "morph": "HC/Vqw3fs",
+            "id": "014La"
+          }
+        },
+        {
+          "code": "H559",
+          "kjv-osis": {
+            "code": "H559",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "unto them, saying"
+          },
+          "oshb": {
+            "code": "H559",
+            "word_i": 6,
+            "token_i": 5,
+            "wlc": "לֵ/אמֹ֔ר",
+            "morph": "HR/Vqc",
+            "id": "01eDf"
+          }
+        },
+        {
+          "code": "H5680",
+          "kjv-osis": {
+            "code": "H5680",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "an Hebrew"
+          },
+          "oshb": {
+            "code": "H5680",
+            "word_i": 11,
+            "token_i": 9,
+            "wlc": "עִבְרִ֖י",
+            "morph": "HNgmsa",
+            "id": "01CRS"
+          }
+        },
+        {
+          "code": "H6711",
+          "kjv-osis": {
+            "code": "H6711",
+            "word_i": 9,
+            "token_i": 10,
+            "span_text": "unto us to mock"
+          },
+          "oshb": {
+            "code": "H6711",
+            "word_i": 12,
+            "token_i": 10,
+            "wlc": "לְ/צַ֣חֶק",
+            "morph": "HR/Vpc",
+            "id": "01nU4"
+          }
+        },
+        {
+          "code": "H6963",
+          "kjv-osis": {
+            "code": "H6963",
+            "word_i": 14,
+            "token_i": 15,
+            "span_text": "voice"
+          },
+          "oshb": {
+            "code": "H6963",
+            "word_i": 19,
+            "token_i": 16,
+            "wlc": "בְּ/ק֥וֹל",
+            "morph": "HR/Ncmsa",
+            "id": "01DPX"
+          }
+        },
+        {
+          "code": "H7121",
+          "kjv-osis": {
+            "code": "H7121",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "That she called"
+          },
+          "oshb": {
+            "code": "H7121",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/תִּקְרָ֞א",
+            "morph": "HC/Vqw3fs",
+            "id": "01i2s"
+          }
+        },
+        {
+          "code": "H7121",
+          "kjv-osis": {
+            "code": "H7121",
+            "word_i": 12,
+            "token_i": 13,
+            "span_text": "with me, and I cried"
+          },
+          "oshb": {
+            "code": "H7121",
+            "word_i": 18,
+            "token_i": 15,
+            "wlc": "וָ/אֶקְרָ֖א",
+            "morph": "HC/Vqw1cs",
+            "id": "01ajX"
+          }
+        },
+        {
+          "code": "H7200",
+          "kjv-osis": {
+            "code": "H7200",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "See"
+          },
+          "oshb": {
+            "code": "H7200",
+            "word_i": 7,
+            "token_i": 6,
+            "wlc": "רְא֗וּ",
+            "morph": "HVqv2mp",
+            "id": "01ML6"
+          }
+        },
+        {
+          "code": "H7901",
+          "kjv-osis": {
+            "code": "H7901",
+            "word_i": 11,
+            "token_i": 12,
+            "span_text": "unto me to lie"
+          },
+          "oshb": {
+            "code": "H7901",
+            "word_i": 16,
+            "token_i": 13,
+            "wlc": "לִ/שְׁכַּ֣ב",
+            "morph": "HR/Vqc",
+            "id": "019vv"
+          }
+        },
+        {
+          "code": "H935",
+          "kjv-osis": {
+            "code": "H935",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "he hath brought in"
+          },
+          "oshb": {
+            "code": "H935",
+            "word_i": 8,
+            "token_i": 7,
+            "wlc": "הֵ֥בִיא",
+            "morph": "HVhp3ms",
+            "id": "01iD7"
+          }
+        },
+        {
+          "code": "H935",
+          "kjv-osis": {
+            "code": "H935",
+            "word_i": 10,
+            "token_i": 11,
+            "span_text": "us; he came in"
+          },
+          "oshb": {
+            "code": "H935",
+            "word_i": 14,
+            "token_i": 11,
+            "wlc": "בָּ֤א",
+            "morph": "HVqp3ms",
+            "id": "015pE"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H376",
+          "oshb": {
+            "code": "H376",
+            "word_i": 10,
+            "token_i": 8,
+            "wlc": "אִ֥ישׁ",
+            "morph": "HNcmsa",
+            "id": "01Wy1"
+          }
+        },
+        {
+          "code": "H413",
+          "oshb": {
+            "code": "H413",
+            "word_i": 15,
+            "token_i": 12,
+            "wlc": "אֵלַ/י֙",
+            "morph": "HR/Sp1cs",
+            "id": "01jgj"
+          }
+        },
+        {
+          "code": "H5973",
+          "oshb": {
+            "code": "H5973",
+            "word_i": 17,
+            "token_i": 14,
+            "wlc": "עִמִּ֔/י",
+            "morph": "HR/Sp1cs",
+            "id": "01UZr"
+          }
+        }
+      ],
+      "additions": [
+        {
+          "code": "H582",
+          "kjv-osis": {
+            "code": "H582",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "unto the men"
+          }
+        }
+      ],
+      "counts": {
+        "kjv_osis_tokens": 15,
+        "oshb_tokens": 17,
+        "matched": 14,
+        "omissions": 3,
+        "additions": 1
+      }
+    },
+    {
+      "key": "Gen.39.15",
+      "matched": [
+        {
+          "code": "H2351",
+          "kjv-osis": {
+            "code": "H2351",
+            "word_i": 10,
+            "token_i": 10,
+            "span_text": "out"
+          },
+          "oshb": {
+            "code": "H2351",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "הַ/חֽוּצָ/ה",
+            "morph": "HTd/Ncmsa/Sd",
+            "id": "011hQ"
+          }
+        },
+        {
+          "code": "H3318",
+          "kjv-osis": {
+            "code": "H3318",
+            "word_i": 9,
+            "token_i": 9,
+            "span_text": "and got him"
+          },
+          "oshb": {
+            "code": "H3318",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "וַ/יֵּצֵ֥א",
+            "morph": "HC/Vqw3ms",
+            "id": "01pmx"
+          }
+        },
+        {
+          "code": "H5127",
+          "kjv-osis": {
+            "code": "H5127",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "and fled"
+          },
+          "oshb": {
+            "code": "H5127",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "וַ/יָּ֖נָס",
+            "morph": "HC/Vqw3ms",
+            "id": "01eZ5"
+          }
+        },
+        {
+          "code": "H5800",
+          "kjv-osis": {
+            "code": "H5800",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "that he left"
+          },
+          "oshb": {
+            "code": "H5800",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "וַ/יַּעֲזֹ֤ב",
+            "morph": "HC/Vqw3ms",
+            "id": "01iv9"
+          }
+        },
+        {
+          "code": "H681",
+          "kjv-osis": {
+            "code": "H681",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "with me"
+          },
+          "oshb": {
+            "code": "H681",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "אֶצְלִ֔/י",
+            "morph": "HR/Sp1cs",
+            "id": "01SVt"
+          }
+        },
+        {
+          "code": "H6963",
+          "kjv-osis": {
+            "code": "H6963",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "my voice"
+          },
+          "oshb": {
+            "code": "H6963",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "קוֹלִ֖/י",
+            "morph": "HNcmsc/Sp1cs",
+            "id": "01kVa"
+          }
+        },
+        {
+          "code": "H7121",
+          "kjv-osis": {
+            "code": "H7121",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "and cried"
+          },
+          "oshb": {
+            "code": "H7121",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "וָ/אֶקְרָ֑א",
+            "morph": "HC/Vqw1cs",
+            "id": "01e2w"
+          }
+        },
+        {
+          "code": "H7311",
+          "kjv-osis": {
+            "code": "H7311",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "that I lifted up"
+          },
+          "oshb": {
+            "code": "H7311",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "הֲרִימֹ֥תִי",
+            "morph": "HVhp1cs",
+            "id": "01tEB"
+          }
+        },
+        {
+          "code": "H8085",
+          "kjv-osis": {
+            "code": "H8085",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And it came to pass, when he heard"
+          },
+          "oshb": {
+            "code": "H8085",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "כְ/שָׁמְע֔/וֹ",
+            "morph": "HR/Vqc/Sp3ms",
+            "id": "01moq"
+          }
+        },
+        {
+          "code": "H899",
+          "kjv-osis": {
+            "code": "H899",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "his garment"
+          },
+          "oshb": {
+            "code": "H899",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "בִּגְד/וֹ֙",
+            "morph": "HNcmsc/Sp3ms",
+            "id": "01pQZ"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יְהִ֣י",
+            "morph": "HC/Vqw3ms",
+            "id": "01GS8"
+          }
+        },
+        {
+          "code": "H3588",
+          "oshb": {
+            "code": "H3588",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "כִּֽי",
+            "morph": "HC",
+            "id": "01LGN"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 10,
+        "oshb_tokens": 12,
+        "matched": 10,
+        "omissions": 2,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.16",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "home"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "בֵּיתֽ/וֹ",
+            "morph": "HNcmsc/Sp3ms",
+            "id": "01ZQk"
+          }
+        },
+        {
+          "code": "H113",
+          "kjv-osis": {
+            "code": "H113",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "until his lord"
+          },
+          "oshb": {
+            "code": "H113",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "אֲדֹנָ֖י/ו",
+            "morph": "HNcmpc/Sp3ms",
+            "id": "01kNu"
+          }
+        },
+        {
+          "code": "H3240",
+          "kjv-osis": {
+            "code": "H3240",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And she laid up"
+          },
+          "oshb": {
+            "code": "H3240",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/תַּנַּ֥ח",
+            "morph": "HC/Vhw3fs",
+            "id": "015zX"
+          }
+        },
+        {
+          "code": "H681",
+          "kjv-osis": {
+            "code": "H681",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "by her"
+          },
+          "oshb": {
+            "code": "H681",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "אֶצְלָ֑/הּ",
+            "morph": "HR/Sp3fs",
+            "id": "01E8D"
+          }
+        },
+        {
+          "code": "H899",
+          "kjv-osis": {
+            "code": "H899",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "his garment"
+          },
+          "oshb": {
+            "code": "H899",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "בִּגְד֖/וֹ",
+            "morph": "HNcmsc/Sp3ms",
+            "id": "0187d"
+          }
+        },
+        {
+          "code": "H935",
+          "kjv-osis": {
+            "code": "H935",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "came"
+          },
+          "oshb": {
+            "code": "H935",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "בּ֥וֹא",
+            "morph": "HVqc",
+            "id": "01tkL"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H413",
+          "oshb": {
+            "code": "H413",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "אֶל",
+            "morph": "HR",
+            "id": "01gQo"
+          }
+        },
+        {
+          "code": "H5704",
+          "oshb": {
+            "code": "H5704",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "עַד",
+            "morph": "HR",
+            "id": "01sgg"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 6,
+        "oshb_tokens": 8,
+        "matched": 6,
+        "omissions": 2,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.17",
+      "matched": [
+        {
+          "code": "H1696",
+          "kjv-osis": {
+            "code": "H1696",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And she spake"
+          },
+          "oshb": {
+            "code": "H1696",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/תְּדַבֵּ֣ר",
+            "morph": "HC/Vpw3fs",
+            "id": "016Ge"
+          }
+        },
+        {
+          "code": "H1697",
+          "kjv-osis": {
+            "code": "H1697",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "unto him according to these words"
+          },
+          "oshb": {
+            "code": "H1697",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "כַּ/דְּבָרִ֥ים",
+            "morph": "HRd/Ncmpa",
+            "id": "01qVP"
+          }
+        },
+        {
+          "code": "H559",
+          "kjv-osis": {
+            "code": "H559",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "saying"
+          },
+          "oshb": {
+            "code": "H559",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "לֵ/אמֹ֑ר",
+            "morph": "HR/Vqc",
+            "id": "01z9p"
+          }
+        },
+        {
+          "code": "H5650",
+          "kjv-osis": {
+            "code": "H5650",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "servant"
+          },
+          "oshb": {
+            "code": "H5650",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "הָ/עֶ֧בֶד",
+            "morph": "HTd/Ncmsa",
+            "id": "01SFY"
+          }
+        },
+        {
+          "code": "H5680",
+          "kjv-osis": {
+            "code": "H5680",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "The Hebrew"
+          },
+          "oshb": {
+            "code": "H5680",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "הָֽ/עִבְרִ֛י",
+            "morph": "HTd/Ngmsa",
+            "id": "01CrS"
+          }
+        },
+        {
+          "code": "H6711",
+          "kjv-osis": {
+            "code": "H6711",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "unto me to mock"
+          },
+          "oshb": {
+            "code": "H6711",
+            "word_i": 13,
+            "token_i": 12,
+            "wlc": "לְ/צַ֥חֶק",
+            "morph": "HR/Vpc",
+            "id": "01tam"
+          }
+        },
+        {
+          "code": "H935",
+          "kjv-osis": {
+            "code": "H935",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "which thou hast brought"
+          },
+          "oshb": {
+            "code": "H935",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "בָּֽא",
+            "morph": "HVqp3ms",
+            "id": "01v9o"
+          }
+        },
+        {
+          "code": "H935",
+          "kjv-osis": {
+            "code": "H935",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "unto us, came in"
+          },
+          "oshb": {
+            "code": "H935",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "הֵבֵ֥אתָ",
+            "morph": "HVhp2ms",
+            "id": "01BP3"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H413",
+          "oshb": {
+            "code": "H413",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "אֵלָ֔י/ו",
+            "morph": "HR/Sp3ms",
+            "id": "01Gf9"
+          }
+        },
+        {
+          "code": "H413",
+          "oshb": {
+            "code": "H413",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "אֵלַ֞/י",
+            "morph": "HR/Sp1cs",
+            "id": "01oKD"
+          }
+        },
+        {
+          "code": "H428",
+          "oshb": {
+            "code": "H428",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "הָ/אֵ֖לֶּה",
+            "morph": "HTd/Pdxcp",
+            "id": "01M6W"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "אֲשֶׁר",
+            "morph": "HTr",
+            "id": "01w6m"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 8,
+        "oshb_tokens": 12,
+        "matched": 8,
+        "omissions": 4,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.18",
+      "matched": [
+        {
+          "code": "H2351",
+          "kjv-osis": {
+            "code": "H2351",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "out"
+          },
+          "oshb": {
+            "code": "H2351",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "הַ/חֽוּצָ/ה",
+            "morph": "HTd/Ncmsa/Sd",
+            "id": "01w6P"
+          }
+        },
+        {
+          "code": "H5127",
+          "kjv-osis": {
+            "code": "H5127",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "and fled"
+          },
+          "oshb": {
+            "code": "H5127",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "וַ/יָּ֥נָס",
+            "morph": "HC/Vqw3ms",
+            "id": "01qW6"
+          }
+        },
+        {
+          "code": "H5800",
+          "kjv-osis": {
+            "code": "H5800",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "that he left"
+          },
+          "oshb": {
+            "code": "H5800",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "וַ/יַּעֲזֹ֥ב",
+            "morph": "HC/Vqw3ms",
+            "id": "01NWw"
+          }
+        },
+        {
+          "code": "H681",
+          "kjv-osis": {
+            "code": "H681",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "with me"
+          },
+          "oshb": {
+            "code": "H681",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "אֶצְלִ֖/י",
+            "morph": "HR/Sp1cs",
+            "id": "01PyK"
+          }
+        },
+        {
+          "code": "H6963",
+          "kjv-osis": {
+            "code": "H6963",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "my voice"
+          },
+          "oshb": {
+            "code": "H6963",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "קוֹלִ֖/י",
+            "morph": "HNcmsc/Sp1cs",
+            "id": "01ZFa"
+          }
+        },
+        {
+          "code": "H7121",
+          "kjv-osis": {
+            "code": "H7121",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "and cried"
+          },
+          "oshb": {
+            "code": "H7121",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "וָ/אֶקְרָ֑א",
+            "morph": "HC/Vqw1cs",
+            "id": "01viQ"
+          }
+        },
+        {
+          "code": "H7311",
+          "kjv-osis": {
+            "code": "H7311",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And it came to pass, as I lifted up"
+          },
+          "oshb": {
+            "code": "H7311",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "כַּ/הֲרִימִ֥/י",
+            "morph": "HR/Vhc/Sp1cs",
+            "id": "01XXH"
+          }
+        },
+        {
+          "code": "H899",
+          "kjv-osis": {
+            "code": "H899",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "his garment"
+          },
+          "oshb": {
+            "code": "H899",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "בִּגְד֛/וֹ",
+            "morph": "HNcmsc/Sp3ms",
+            "id": "01mbN"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יְהִ֕י",
+            "morph": "HC/Vqw3ms",
+            "id": "01XkY"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 8,
+        "oshb_tokens": 9,
+        "matched": 8,
+        "omissions": 1,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.19",
+      "matched": [
+        {
+          "code": "H113",
+          "kjv-osis": {
+            "code": "H113",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And it came to pass, when his master"
+          },
+          "oshb": {
+            "code": "H113",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "אֲדֹנָ֜י/ו",
+            "morph": "HNcmpc/Sp3ms",
+            "id": "01E94"
+          }
+        },
+        {
+          "code": "H1696",
+          "kjv-osis": {
+            "code": "H1696",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "which she spake"
+          },
+          "oshb": {
+            "code": "H1696",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "דִּבְּרָ֤ה",
+            "morph": "HVpp3fs",
+            "id": "0166R"
+          }
+        },
+        {
+          "code": "H1697",
+          "kjv-osis": {
+            "code": "H1697",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "the words"
+          },
+          "oshb": {
+            "code": "H1697",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "דִּבְרֵ֣י",
+            "morph": "HNcmpc",
+            "id": "01goD"
+          }
+        },
+        {
+          "code": "H1697",
+          "kjv-osis": {
+            "code": "H1697",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "After this manner"
+          },
+          "oshb": {
+            "code": "H1697",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "כַּ/דְּבָרִ֣ים",
+            "morph": "HRd/Ncmpa",
+            "id": "01V9i"
+          }
+        },
+        {
+          "code": "H2734",
+          "kjv-osis": {
+            "code": "H2734",
+            "word_i": 11,
+            "token_i": 11,
+            "span_text": "was kindled"
+          },
+          "oshb": {
+            "code": "H2734",
+            "word_i": 16,
+            "token_i": 15,
+            "wlc": "וַ/יִּ֖חַר",
+            "morph": "HC/Vqw3ms",
+            "id": "014Zo"
+          }
+        },
+        {
+          "code": "H559",
+          "kjv-osis": {
+            "code": "H559",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "unto him, saying"
+          },
+          "oshb": {
+            "code": "H559",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "לֵ/אמֹ֔ר",
+            "morph": "HR/Vqc",
+            "id": "01ZfA"
+          }
+        },
+        {
+          "code": "H5650",
+          "kjv-osis": {
+            "code": "H5650",
+            "word_i": 9,
+            "token_i": 9,
+            "span_text": "thy servant"
+          },
+          "oshb": {
+            "code": "H5650",
+            "word_i": 15,
+            "token_i": 14,
+            "wlc": "עַבְדֶּ֑/ךָ",
+            "morph": "HNcmsc/Sp2ms",
+            "id": "01YBt"
+          }
+        },
+        {
+          "code": "H6213",
+          "kjv-osis": {
+            "code": "H6213",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "did"
+          },
+          "oshb": {
+            "code": "H6213",
+            "word_i": 13,
+            "token_i": 13,
+            "wlc": "עָ֥שָׂהּ",
+            "morph": "HVqp3ms",
+            "id": "01oc4"
+          }
+        },
+        {
+          "code": "H639",
+          "kjv-osis": {
+            "code": "H639",
+            "word_i": 10,
+            "token_i": 10,
+            "span_text": "to me; that his wrath"
+          },
+          "oshb": {
+            "code": "H639",
+            "word_i": 17,
+            "token_i": 16,
+            "wlc": "אַפּֽ/וֹ",
+            "morph": "HNcmsc/Sp3ms",
+            "id": "011q7"
+          }
+        },
+        {
+          "code": "H802",
+          "kjv-osis": {
+            "code": "H802",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "of his wife"
+          },
+          "oshb": {
+            "code": "H802",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "אִשְׁתּ֗/וֹ",
+            "morph": "HNcfsc/Sp3ms",
+            "id": "01VMN"
+          }
+        },
+        {
+          "code": "H8085",
+          "kjv-osis": {
+            "code": "H8085",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "heard"
+          },
+          "oshb": {
+            "code": "H8085",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "כִ/שְׁמֹ֨עַ",
+            "morph": "HR/Vqc",
+            "id": "014qC"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יְהִי֩",
+            "morph": "HC/Vqw3ms",
+            "id": "01uhp"
+          }
+        },
+        {
+          "code": "H413",
+          "oshb": {
+            "code": "H413",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "אֵלָי/ו֙",
+            "morph": "HR/Sp3ms",
+            "id": "014uS"
+          }
+        },
+        {
+          "code": "H428",
+          "oshb": {
+            "code": "H428",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "הָ/אֵ֔לֶּה",
+            "morph": "HTd/Pdxcp",
+            "id": "01R43"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "אֲשֶׁ֨ר",
+            "morph": "HTr",
+            "id": "01TSZ"
+          }
+        },
+        {
+          "code": "H853",
+          "oshb": {
+            "code": "H853",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "אֶת",
+            "morph": "HTo",
+            "id": "01DPc"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 11,
+        "oshb_tokens": 16,
+        "matched": 11,
+        "omissions": 5,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.20",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 5,
+            "token_i": 6,
+            "span_text": "into the prison"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "בֵּ֣ית",
+            "morph": "HNcmsc",
+            "id": "01WeJ"
+          }
+        },
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 10,
+            "token_i": 12,
+            "span_text": "and he was there in the prison"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 17,
+            "token_i": 17,
+            "wlc": "בְּ/בֵ֥ית",
+            "morph": "HR/Ncmsc",
+            "id": "01wRD"
+          }
+        },
+        {
+          "code": "H113",
+          "kjv-osis": {
+            "code": "H113",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "master"
+          },
+          "oshb": {
+            "code": "H113",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "אֲדֹנֵ֨י",
+            "morph": "HNcmpc",
+            "id": "0183Z"
+          }
+        },
+        {
+          "code": "H3130",
+          "kjv-osis": {
+            "code": "H3130",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And Joseph’s"
+          },
+          "oshb": {
+            "code": "H3130",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "יוֹסֵ֜ף",
+            "morph": "HNp",
+            "id": "01nN8"
+          }
+        },
+        {
+          "code": "H3947",
+          "kjv-osis": {
+            "code": "H3947",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "took"
+          },
+          "oshb": {
+            "code": "H3947",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יִּקַּח֩",
+            "morph": "HC/Vqw3ms",
+            "id": "01W5J"
+          }
+        },
+        {
+          "code": "H4428",
+          "kjv-osis": {
+            "code": "H4428",
+            "word_i": 7,
+            "token_i": 8,
+            "span_text": "where the king’s"
+          },
+          "oshb": {
+            "code": "H4428",
+            "word_i": 13,
+            "token_i": 13,
+            "wlc": "הַ/מֶּ֖לֶךְ",
+            "morph": "HTd/Ncmsa",
+            "id": "01kwd"
+          }
+        },
+        {
+          "code": "H4725",
+          "kjv-osis": {
+            "code": "H4725",
+            "word_i": 6,
+            "token_i": 7,
+            "span_text": "a place"
+          },
+          "oshb": {
+            "code": "H4725",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "מְק֕וֹם",
+            "morph": "HNcmsc",
+            "id": "01ChB"
+          }
+        },
+        {
+          "code": "H5414",
+          "kjv-osis": {
+            "code": "H5414",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "him, and put him"
+          },
+          "oshb": {
+            "code": "H5414",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "וַֽ/יִּתְּנֵ֨/הוּ֙",
+            "morph": "HC/Vqw3ms/Sp3ms",
+            "id": "01KND"
+          }
+        },
+        {
+          "code": "H5470",
+          "kjv-osis": {
+            "code": "H5470",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "into the prison"
+          },
+          "oshb": {
+            "code": "H5470",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "הַ/סֹּ֔הַר",
+            "morph": "HTd/Ncmsa",
+            "id": "01ugY"
+          }
+        },
+        {
+          "code": "H5470",
+          "kjv-osis": {
+            "code": "H5470",
+            "word_i": 10,
+            "token_i": 11,
+            "span_text": "and he was there in the prison"
+          },
+          "oshb": {
+            "code": "H5470",
+            "word_i": 18,
+            "token_i": 18,
+            "wlc": "הַ/סֹּֽהַר",
+            "morph": "HTd/Ncmsa",
+            "id": "01Ato"
+          }
+        },
+        {
+          "code": "H615",
+          "kjv-osis": {
+            "code": "H615",
+            "word_i": 8,
+            "token_i": 9,
+            "span_text": "prisoners"
+          },
+          "oshb": {
+            "code": "H615",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "אֲסִירֵ֥י",
+            "morph": "HNcmpc",
+            "id": "01qVE"
+          }
+        },
+        {
+          "code": "H631",
+          "kjv-osis": {
+            "code": "H631",
+            "word_i": 9,
+            "token_i": 10,
+            "span_text": "bound"
+          },
+          "oshb": {
+            "code": "H631",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "אסורי",
+            "morph": "HVqsmpc",
+            "id": "01Mbg"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 15,
+            "token_i": 15,
+            "wlc": "וַֽ/יְהִי",
+            "morph": "HC/Vqw3ms",
+            "id": "01aCw"
+          }
+        },
+        {
+          "code": "H413",
+          "oshb": {
+            "code": "H413",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "אֶל",
+            "morph": "HR",
+            "id": "01PDj"
+          }
+        },
+        {
+          "code": "H631",
+          "oshb": {
+            "code": "H631",
+            "word_i": 14,
+            "token_i": 14,
+            "wlc": "אֲסוּרִ֑ים",
+            "morph": "HVqsmpa",
+            "id": "01SUN"
+          }
+        },
+        {
+          "code": "H8033",
+          "oshb": {
+            "code": "H8033",
+            "word_i": 16,
+            "token_i": 16,
+            "wlc": "שָׁ֖ם",
+            "morph": "HD",
+            "id": "01UAz"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "אֲשֶׁר",
+            "morph": "HTr",
+            "id": "01Csm"
+          }
+        },
+        {
+          "code": "H853",
+          "oshb": {
+            "code": "H853",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "אֹת֗/וֹ",
+            "morph": "HTo/Sp3ms",
+            "id": "01P92"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 12,
+        "oshb_tokens": 18,
+        "matched": 12,
+        "omissions": 6,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.21",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 9,
+            "token_i": 10,
+            "span_text": "of the prison"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "בֵּית",
+            "morph": "HNcmsc",
+            "id": "01mXi"
+          }
+        },
+        {
+          "code": "H2580",
+          "kjv-osis": {
+            "code": "H2580",
+            "word_i": 6,
+            "token_i": 6,
+            "span_text": "him favour"
+          },
+          "oshb": {
+            "code": "H2580",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "חִנּ֔/וֹ",
+            "morph": "HNcmsc/Sp3ms",
+            "id": "01cMu"
+          }
+        },
+        {
+          "code": "H2617",
+          "kjv-osis": {
+            "code": "H2617",
+            "word_i": 4,
+            "token_i": 4,
+            "span_text": "him mercy"
+          },
+          "oshb": {
+            "code": "H2617",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "חָ֑סֶד",
+            "morph": "HNcmsa",
+            "id": "01NXV"
+          }
+        },
+        {
+          "code": "H3068",
+          "kjv-osis": {
+            "code": "H3068",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "But the <divineName>Lord</divineName>"
+          },
+          "oshb": {
+            "code": "H3068",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "יְהוָה֙",
+            "morph": "HNp",
+            "id": "01WKB"
+          }
+        },
+        {
+          "code": "H3130",
+          "kjv-osis": {
+            "code": "H3130",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "was with Joseph"
+          },
+          "oshb": {
+            "code": "H3130",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "יוֹסֵ֔ף",
+            "morph": "HNp",
+            "id": "01CwL"
+          }
+        },
+        {
+          "code": "H5186",
+          "kjv-osis": {
+            "code": "H5186",
+            "word_i": 3,
+            "token_i": 3,
+            "span_text": "and shewed"
+          },
+          "oshb": {
+            "code": "H5186",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "וַ/יֵּ֥ט",
+            "morph": "HC/Vqw3ms",
+            "id": "01MpV"
+          }
+        },
+        {
+          "code": "H5414",
+          "kjv-osis": {
+            "code": "H5414",
+            "word_i": 5,
+            "token_i": 5,
+            "span_text": "and gave"
+          },
+          "oshb": {
+            "code": "H5414",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "וַ/יִּתֵּ֣ן",
+            "morph": "HC/Vqw3ms",
+            "id": "01EUo"
+          }
+        },
+        {
+          "code": "H5470",
+          "kjv-osis": {
+            "code": "H5470",
+            "word_i": 9,
+            "token_i": 9,
+            "span_text": "of the prison"
+          },
+          "oshb": {
+            "code": "H5470",
+            "word_i": 13,
+            "token_i": 13,
+            "wlc": "הַ/סֹּֽהַר",
+            "morph": "HTd/Ncmsa",
+            "id": "01KQ6"
+          }
+        },
+        {
+          "code": "H5869",
+          "kjv-osis": {
+            "code": "H5869",
+            "word_i": 7,
+            "token_i": 7,
+            "span_text": "in the sight"
+          },
+          "oshb": {
+            "code": "H5869",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "בְּ/עֵינֵ֖י",
+            "morph": "HR/Ncbdc",
+            "id": "01ehx"
+          }
+        },
+        {
+          "code": "H8269",
+          "kjv-osis": {
+            "code": "H8269",
+            "word_i": 8,
+            "token_i": 8,
+            "span_text": "of the keeper"
+          },
+          "oshb": {
+            "code": "H8269",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "שַׂ֥ר",
+            "morph": "HNcmsc",
+            "id": "01y66"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יְהִ֤י",
+            "morph": "HC/Vqw3ms",
+            "id": "018ek"
+          }
+        },
+        {
+          "code": "H413",
+          "oshb": {
+            "code": "H413",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "אֵלָ֖י/ו",
+            "morph": "HR/Sp3ms",
+            "id": "01daa"
+          }
+        },
+        {
+          "code": "H854",
+          "oshb": {
+            "code": "H854",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "אֶת",
+            "morph": "HR",
+            "id": "01C9a"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 10,
+        "oshb_tokens": 13,
+        "matched": 10,
+        "omissions": 3,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.22",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 2,
+            "token_i": 3,
+            "span_text": "of the prison"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "בֵּית",
+            "morph": "HNcmsc",
+            "id": "01QwX"
+          }
+        },
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 7,
+            "token_i": 9,
+            "span_text": "in the prison"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "בְּ/בֵ֣ית",
+            "morph": "HR/Ncmsc",
+            "id": "01gz1"
+          }
+        },
+        {
+          "code": "H3027",
+          "kjv-osis": {
+            "code": "H3027",
+            "word_i": 5,
+            "token_i": 6,
+            "span_text": "hand"
+          },
+          "oshb": {
+            "code": "H3027",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "בְּ/יַד",
+            "morph": "HR/Ncbsc",
+            "id": "01i3K"
+          }
+        },
+        {
+          "code": "H3130",
+          "kjv-osis": {
+            "code": "H3130",
+            "word_i": 4,
+            "token_i": 5,
+            "span_text": "to Joseph’s"
+          },
+          "oshb": {
+            "code": "H3130",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "יוֹסֵ֔ף",
+            "morph": "HNp",
+            "id": "01kNa"
+          }
+        },
+        {
+          "code": "H5414",
+          "kjv-osis": {
+            "code": "H5414",
+            "word_i": 3,
+            "token_i": 4,
+            "span_text": "committed"
+          },
+          "oshb": {
+            "code": "H5414",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "וַ/יִּתֵּ֞ן",
+            "morph": "HC/Vqw3ms",
+            "id": "01J4G"
+          }
+        },
+        {
+          "code": "H5470",
+          "kjv-osis": {
+            "code": "H5470",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "of the prison"
+          },
+          "oshb": {
+            "code": "H5470",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "הַ/סֹּ֨הַר֙",
+            "morph": "HTd/Ncmsa",
+            "id": "016RS"
+          }
+        },
+        {
+          "code": "H5470",
+          "kjv-osis": {
+            "code": "H5470",
+            "word_i": 7,
+            "token_i": 8,
+            "span_text": "in the prison"
+          },
+          "oshb": {
+            "code": "H5470",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "הַ/סֹּ֑הַר",
+            "morph": "HTd/Ncmsa",
+            "id": "01ZtQ"
+          }
+        },
+        {
+          "code": "H615",
+          "kjv-osis": {
+            "code": "H615",
+            "word_i": 6,
+            "token_i": 7,
+            "span_text": "all the prisoners"
+          },
+          "oshb": {
+            "code": "H615",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "הָ֣/אֲסִירִ֔ם",
+            "morph": "HTd/Ncmpa",
+            "id": "01b2G"
+          }
+        },
+        {
+          "code": "H6213",
+          "kjv-osis": {
+            "code": "H6213",
+            "word_i": 8,
+            "token_i": 10,
+            "span_text": "and whatsoever they did"
+          },
+          "oshb": {
+            "code": "H6213",
+            "word_i": 16,
+            "token_i": 16,
+            "wlc": "עֹשִׂים֙",
+            "morph": "HVqrmpa",
+            "id": "018wG"
+          }
+        },
+        {
+          "code": "H6213",
+          "kjv-osis": {
+            "code": "H6213",
+            "word_i": 9,
+            "token_i": 11,
+            "span_text": "there, he was the doer"
+          },
+          "oshb": {
+            "code": "H6213",
+            "word_i": 20,
+            "token_i": 20,
+            "wlc": "עֹשֶֽׂה",
+            "morph": "HVqrmsa",
+            "id": "01AYE"
+          }
+        },
+        {
+          "code": "H8269",
+          "kjv-osis": {
+            "code": "H8269",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "And the keeper"
+          },
+          "oshb": {
+            "code": "H8269",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "שַׂ֤ר",
+            "morph": "HNcmsc",
+            "id": "01FXg"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1931",
+          "oshb": {
+            "code": "H1931",
+            "word_i": 18,
+            "token_i": 18,
+            "wlc": "ה֖וּא",
+            "morph": "HPp3ms",
+            "id": "01RdU"
+          }
+        },
+        {
+          "code": "H1961",
+          "oshb": {
+            "code": "H1961",
+            "word_i": 19,
+            "token_i": 19,
+            "wlc": "הָיָ֥ה",
+            "morph": "HVqp3ms",
+            "id": "01mfu"
+          }
+        },
+        {
+          "code": "H3605",
+          "oshb": {
+            "code": "H3605",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "כָּל",
+            "morph": "HNcmsc",
+            "id": "016i7"
+          }
+        },
+        {
+          "code": "H3605",
+          "oshb": {
+            "code": "H3605",
+            "word_i": 14,
+            "token_i": 14,
+            "wlc": "כָּל",
+            "morph": "HNcmsc",
+            "id": "01UMy"
+          }
+        },
+        {
+          "code": "H8033",
+          "oshb": {
+            "code": "H8033",
+            "word_i": 17,
+            "token_i": 17,
+            "wlc": "שָׁ֔ם",
+            "morph": "HD",
+            "id": "0115r"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "אֲשֶׁ֖ר",
+            "morph": "HTr",
+            "id": "01otA"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 15,
+            "token_i": 15,
+            "wlc": "אֲשֶׁ֤ר",
+            "morph": "HTr",
+            "id": "01iXq"
+          }
+        },
+        {
+          "code": "H853",
+          "oshb": {
+            "code": "H853",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "אֵ֚ת",
+            "morph": "HTo",
+            "id": "012od"
+          }
+        },
+        {
+          "code": "H853",
+          "oshb": {
+            "code": "H853",
+            "word_i": 13,
+            "token_i": 13,
+            "wlc": "וְ/אֵ֨ת",
+            "morph": "HC/To",
+            "id": "01BX7"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 11,
+        "oshb_tokens": 20,
+        "matched": 11,
+        "omissions": 9,
+        "additions": 0
+      }
+    },
+    {
+      "key": "Gen.39.23",
+      "matched": [
+        {
+          "code": "H1004",
+          "kjv-osis": {
+            "code": "H1004",
+            "word_i": 2,
+            "token_i": 3,
+            "span_text": "of the prison"
+          },
+          "oshb": {
+            "code": "H1004",
+            "word_i": 3,
+            "token_i": 3,
+            "wlc": "בֵּית",
+            "morph": "HNcmsc",
+            "id": "01nQN"
+          }
+        },
+        {
+          "code": "H3027",
+          "kjv-osis": {
+            "code": "H3027",
+            "word_i": 5,
+            "token_i": 6,
+            "span_text": "under his hand"
+          },
+          "oshb": {
+            "code": "H3027",
+            "word_i": 9,
+            "token_i": 9,
+            "wlc": "בְּ/יָד֔/וֹ",
+            "morph": "HR/Ncbsc/Sp3ms",
+            "id": "01Ax6"
+          }
+        },
+        {
+          "code": "H3068",
+          "kjv-osis": {
+            "code": "H3068",
+            "word_i": 6,
+            "token_i": 7,
+            "span_text": "because the <divineName>Lord</divineName>"
+          },
+          "oshb": {
+            "code": "H3068",
+            "word_i": 11,
+            "token_i": 11,
+            "wlc": "יְהוָ֖ה",
+            "morph": "HNp",
+            "id": "01w6B"
+          }
+        },
+        {
+          "code": "H3068",
+          "kjv-osis": {
+            "code": "H3068",
+            "word_i": 8,
+            "token_i": 9,
+            "span_text": "the <divineName>Lord</divineName>"
+          },
+          "oshb": {
+            "code": "H3068",
+            "word_i": 16,
+            "token_i": 16,
+            "wlc": "יְהוָ֥ה",
+            "morph": "HNp",
+            "id": "01MFx"
+          }
+        },
+        {
+          "code": "H3972",
+          "kjv-osis": {
+            "code": "H3972",
+            "word_i": 4,
+            "token_i": 5,
+            "span_text": "not to any thing"
+          },
+          "oshb": {
+            "code": "H3972",
+            "word_i": 8,
+            "token_i": 8,
+            "wlc": "מְא֨וּמָה֙",
+            "morph": "HNcfsa",
+            "id": "01U1Y"
+          }
+        },
+        {
+          "code": "H5470",
+          "kjv-osis": {
+            "code": "H5470",
+            "word_i": 2,
+            "token_i": 2,
+            "span_text": "of the prison"
+          },
+          "oshb": {
+            "code": "H5470",
+            "word_i": 4,
+            "token_i": 4,
+            "wlc": "הַ/סֹּ֗הַר",
+            "morph": "HTd/Ncmsa",
+            "id": "01Bd5"
+          }
+        },
+        {
+          "code": "H6213",
+          "kjv-osis": {
+            "code": "H6213",
+            "word_i": 7,
+            "token_i": 8,
+            "span_text": "which he did"
+          },
+          "oshb": {
+            "code": "H6213",
+            "word_i": 15,
+            "token_i": 15,
+            "wlc": "עֹשֶׂ֖ה",
+            "morph": "HVqrmsa",
+            "id": "015iX"
+          }
+        },
+        {
+          "code": "H6743",
+          "kjv-osis": {
+            "code": "H6743",
+            "word_i": 9,
+            "token_i": 10,
+            "span_text": "to prosper"
+          },
+          "oshb": {
+            "code": "H6743",
+            "word_i": 17,
+            "token_i": 17,
+            "wlc": "מַצְלִֽיחַ",
+            "morph": "HVhrmsa",
+            "id": "014ok"
+          }
+        },
+        {
+          "code": "H7200",
+          "kjv-osis": {
+            "code": "H7200",
+            "word_i": 3,
+            "token_i": 4,
+            "span_text": "looked"
+          },
+          "oshb": {
+            "code": "H7200",
+            "word_i": 5,
+            "token_i": 5,
+            "wlc": "רֹאֶ֤ה",
+            "morph": "HVqrmsa",
+            "id": "01uTd"
+          }
+        },
+        {
+          "code": "H8269",
+          "kjv-osis": {
+            "code": "H8269",
+            "word_i": 1,
+            "token_i": 1,
+            "span_text": "The keeper"
+          },
+          "oshb": {
+            "code": "H8269",
+            "word_i": 2,
+            "token_i": 2,
+            "wlc": "שַׂ֣ר",
+            "morph": "HNcmsc",
+            "id": "01epw"
+          }
+        }
+      ],
+      "omissions": [
+        {
+          "code": "H1931",
+          "oshb": {
+            "code": "H1931",
+            "word_i": 14,
+            "token_i": 14,
+            "wlc": "ה֥וּא",
+            "morph": "HPp3ms",
+            "id": "015Eh"
+          }
+        },
+        {
+          "code": "H3605",
+          "oshb": {
+            "code": "H3605",
+            "word_i": 7,
+            "token_i": 7,
+            "wlc": "כָּל",
+            "morph": "HNcmsc",
+            "id": "01kLf"
+          }
+        },
+        {
+          "code": "H369",
+          "oshb": {
+            "code": "H369",
+            "word_i": 1,
+            "token_i": 1,
+            "wlc": "אֵ֣ין",
+            "morph": "HTn",
+            "id": "01QeM"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 10,
+            "token_i": 10,
+            "wlc": "בַּ/אֲשֶׁ֥ר",
+            "morph": "HR/Tr",
+            "id": "01WS9"
+          }
+        },
+        {
+          "code": "H834",
+          "oshb": {
+            "code": "H834",
+            "word_i": 13,
+            "token_i": 13,
+            "wlc": "וַֽ/אֲשֶׁר",
+            "morph": "HC/Tr",
+            "id": "01Pkr"
+          }
+        },
+        {
+          "code": "H853",
+          "oshb": {
+            "code": "H853",
+            "word_i": 6,
+            "token_i": 6,
+            "wlc": "אֶֽת",
+            "morph": "HTo",
+            "id": "01VTm"
+          }
+        },
+        {
+          "code": "H854",
+          "oshb": {
+            "code": "H854",
+            "word_i": 12,
+            "token_i": 12,
+            "wlc": "אִתּ֑/וֹ",
+            "morph": "HR/Sp3ms",
+            "id": "01oag"
+          }
+        }
+      ],
+      "additions": [],
+      "counts": {
+        "kjv_osis_tokens": 10,
+        "oshb_tokens": 17,
+        "matched": 10,
+        "omissions": 7,
+        "additions": 0
+      }
+    }
+  ]
+}

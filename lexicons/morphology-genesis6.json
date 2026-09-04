@@ -1,0 +1,3679 @@
+{
+  "$schema": "morphology-genesis6/v1",
+  "source": {
+    "dataset": "Open Scriptures Hebrew Bible v2.2 (per-book OSIS XML)",
+    "upstream": "https://github.com/openscriptures/morphhb",
+    "pin": "SHA-256 in data/PROVENANCE.md"
+  },
+  "license": "WLC text: public domain; morphology+lemma: CC BY 4.0",
+  "attribution": "Open Scriptures Hebrew Bible Project (https://hb.openscriptures.org)",
+  "changes_recorded": [
+    "Reformatted OSIS XML -> JSON, one record per <w> word (data unchanged).",
+    "Lemma decomposition into prefix chain / base Strong's / suffix marker",
+    "is derived structure; the verbatim lemma is kept on every record."
+  ],
+  "counts": {
+    "verses": 22,
+    "words": 305,
+    "prefix_only_words": 8
+  },
+  "verses": {
+    "1": [
+      {
+        "id": "01hdw",
+        "osisID": "Gen.6.1",
+        "wlc": "וַֽ/יְהִי֙",
+        "morph": "HC/Vqw3ms",
+        "n": "1.1.0",
+        "lemma": "c/1961",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H1961",
+        "suffix": null
+      },
+      {
+        "id": "01LaJ",
+        "osisID": "Gen.6.1",
+        "wlc": "כִּֽי",
+        "morph": "HC",
+        "n": null,
+        "lemma": "3588 a",
+        "prefixes": [],
+        "base": "H3588",
+        "suffix": "a"
+      },
+      {
+        "id": "01ZkJ",
+        "osisID": "Gen.6.1",
+        "wlc": "הֵחֵ֣ל",
+        "morph": "HVhp3ms",
+        "n": null,
+        "lemma": "2490 c",
+        "prefixes": [],
+        "base": "H2490",
+        "suffix": "c"
+      },
+      {
+        "id": "01rrP",
+        "osisID": "Gen.6.1",
+        "wlc": "הָֽ/אָדָ֔ם",
+        "morph": "HTd/Ncmsa",
+        "n": "1.1",
+        "lemma": "d/120",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H120",
+        "suffix": null
+      },
+      {
+        "id": "01fqW",
+        "osisID": "Gen.6.1",
+        "wlc": "לָ/רֹ֖ב",
+        "morph": "HR/Vqc",
+        "n": "1.0",
+        "lemma": "l/7231",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H7231",
+        "suffix": null
+      },
+      {
+        "id": "01sNS",
+        "osisID": "Gen.6.1",
+        "wlc": "עַל",
+        "morph": "HR",
+        "n": null,
+        "lemma": "5921 a",
+        "prefixes": [],
+        "base": "H5921",
+        "suffix": "a"
+      },
+      {
+        "id": "01Rij",
+        "osisID": "Gen.6.1",
+        "wlc": "פְּנֵ֣י",
+        "morph": "HNcbpc",
+        "n": null,
+        "lemma": "6440",
+        "prefixes": [],
+        "base": "H6440",
+        "suffix": null
+      },
+      {
+        "id": "01rq9",
+        "osisID": "Gen.6.1",
+        "wlc": "הָֽ/אֲדָמָ֑ה",
+        "morph": "HTd/Ncfsa",
+        "n": "1",
+        "lemma": "d/127",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H127",
+        "suffix": null
+      },
+      {
+        "id": "012pQ",
+        "osisID": "Gen.6.1",
+        "wlc": "וּ/בָנ֖וֹת",
+        "morph": "HC/Ncfpa",
+        "n": "0.0",
+        "lemma": "c/1323",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H1323",
+        "suffix": null
+      },
+      {
+        "id": "01hDH",
+        "osisID": "Gen.6.1",
+        "wlc": "יֻלְּד֥וּ",
+        "morph": "HVPp3cp",
+        "n": null,
+        "lemma": "3205",
+        "prefixes": [],
+        "base": "H3205",
+        "suffix": null
+      },
+      {
+        "id": "01zCX",
+        "osisID": "Gen.6.1",
+        "wlc": "לָ/הֶֽם",
+        "morph": "HR/Sp3mp",
+        "n": "0",
+        "lemma": "l",
+        "prefixes": [
+          "l"
+        ],
+        "base": null,
+        "suffix": null
+      }
+    ],
+    "2": [
+      {
+        "id": "01BTq",
+        "osisID": "Gen.6.2",
+        "wlc": "וַ/יִּרְא֤וּ",
+        "morph": "HC/Vqw3mp",
+        "n": null,
+        "lemma": "c/7200",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H7200",
+        "suffix": null
+      },
+      {
+        "id": "01qmD",
+        "osisID": "Gen.6.2",
+        "wlc": "בְנֵי",
+        "morph": "HNcmpc",
+        "n": null,
+        "lemma": "1121 a",
+        "prefixes": [],
+        "base": "H1121",
+        "suffix": "a"
+      },
+      {
+        "id": "01T54",
+        "osisID": "Gen.6.2",
+        "wlc": "הָֽ/אֱלֹהִים֙",
+        "morph": "HTd/Ncmpa",
+        "n": "1.1.0",
+        "lemma": "d/430",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H430",
+        "suffix": null
+      },
+      {
+        "id": "01KK7",
+        "osisID": "Gen.6.2",
+        "wlc": "אֶת",
+        "morph": "HTo",
+        "n": null,
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "01xrB",
+        "osisID": "Gen.6.2",
+        "wlc": "בְּנ֣וֹת",
+        "morph": "HNcfpc",
+        "n": null,
+        "lemma": "1323",
+        "prefixes": [],
+        "base": "H1323",
+        "suffix": null
+      },
+      {
+        "id": "012tb",
+        "osisID": "Gen.6.2",
+        "wlc": "הָֽ/אָדָ֔ם",
+        "morph": "HTd/Ncmsa",
+        "n": "1.1",
+        "lemma": "d/120",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H120",
+        "suffix": null
+      },
+      {
+        "id": "01AAU",
+        "osisID": "Gen.6.2",
+        "wlc": "כִּ֥י",
+        "morph": "HC",
+        "n": null,
+        "lemma": "3588 a",
+        "prefixes": [],
+        "base": "H3588",
+        "suffix": "a"
+      },
+      {
+        "id": "01fKo",
+        "osisID": "Gen.6.2",
+        "wlc": "טֹבֹ֖ת",
+        "morph": "HAafpa",
+        "n": "1.0",
+        "lemma": "2896 a",
+        "prefixes": [],
+        "base": "H2896",
+        "suffix": "a"
+      },
+      {
+        "id": "01hrP",
+        "osisID": "Gen.6.2",
+        "wlc": "הֵ֑נָּה",
+        "morph": "HPp3fp",
+        "n": "1",
+        "lemma": "2007",
+        "prefixes": [],
+        "base": "H2007",
+        "suffix": null
+      },
+      {
+        "id": "01NXB",
+        "osisID": "Gen.6.2",
+        "wlc": "וַ/יִּקְח֤וּ",
+        "morph": "HC/Vqw3mp",
+        "n": null,
+        "lemma": "c/3947",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H3947",
+        "suffix": null
+      },
+      {
+        "id": "01cv9",
+        "osisID": "Gen.6.2",
+        "wlc": "לָ/הֶם֙",
+        "morph": "HR/Sp3mp",
+        "n": "0.1.0",
+        "lemma": "l",
+        "prefixes": [
+          "l"
+        ],
+        "base": null,
+        "suffix": null
+      },
+      {
+        "id": "018HL",
+        "osisID": "Gen.6.2",
+        "wlc": "נָשִׁ֔ים",
+        "morph": "HNcfpa",
+        "n": "0.1",
+        "lemma": "802",
+        "prefixes": [],
+        "base": "H802",
+        "suffix": null
+      },
+      {
+        "id": "01sDr",
+        "osisID": "Gen.6.2",
+        "wlc": "מִ/כֹּ֖ל",
+        "morph": "HR/Ncmsa",
+        "n": "0.0",
+        "lemma": "m/3605",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "01Xyc",
+        "osisID": "Gen.6.2",
+        "wlc": "אֲשֶׁ֥ר",
+        "morph": "HTr",
+        "n": null,
+        "lemma": "834 a",
+        "prefixes": [],
+        "base": "H834",
+        "suffix": "a"
+      },
+      {
+        "id": "01nYo",
+        "osisID": "Gen.6.2",
+        "wlc": "בָּחָֽרוּ",
+        "morph": "HVqp3cp",
+        "n": "0",
+        "lemma": "977",
+        "prefixes": [],
+        "base": "H977",
+        "suffix": null
+      }
+    ],
+    "3": [
+      {
+        "id": "01pow",
+        "osisID": "Gen.6.3",
+        "wlc": "וַ/יֹּ֣אמֶר",
+        "morph": "HC/Vqw3ms",
+        "n": null,
+        "lemma": "c/559",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H559",
+        "suffix": null
+      },
+      {
+        "id": "01j9W",
+        "osisID": "Gen.6.3",
+        "wlc": "יְהוָ֗ה",
+        "morph": "HNp",
+        "n": "1.1.1",
+        "lemma": "3068",
+        "prefixes": [],
+        "base": "H3068",
+        "suffix": null
+      },
+      {
+        "id": "01c3J",
+        "osisID": "Gen.6.3",
+        "wlc": "לֹֽא",
+        "morph": "HTn",
+        "n": null,
+        "lemma": "3808",
+        "prefixes": [],
+        "base": "H3808",
+        "suffix": null
+      },
+      {
+        "id": "01a5b",
+        "osisID": "Gen.6.3",
+        "wlc": "יָד֨וֹן",
+        "morph": "HVqi3ms",
+        "n": null,
+        "lemma": "1777",
+        "prefixes": [],
+        "base": "H1777",
+        "suffix": null
+      },
+      {
+        "id": "01wEY",
+        "osisID": "Gen.6.3",
+        "wlc": "רוּחִ֤/י",
+        "morph": "HNcbsc/Sp1cs",
+        "n": null,
+        "lemma": "7307",
+        "prefixes": [],
+        "base": "H7307",
+        "suffix": null
+      },
+      {
+        "id": "01EQ4",
+        "osisID": "Gen.6.3",
+        "wlc": "בָֽ/אָדָם֙",
+        "morph": "HRd/Ncmsa",
+        "n": "1.1.0",
+        "lemma": "b/120",
+        "prefixes": [
+          "b"
+        ],
+        "base": "H120",
+        "suffix": null
+      },
+      {
+        "id": "01avL",
+        "osisID": "Gen.6.3",
+        "wlc": "לְ/עֹלָ֔ם",
+        "morph": "HR/Ncmsa",
+        "n": "1.1",
+        "lemma": "l/5769",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H5769",
+        "suffix": null
+      },
+      {
+        "id": "017ej",
+        "osisID": "Gen.6.3",
+        "wlc": "בְּ/שַׁ/גַּ֖ם",
+        "morph": "HR/Tr/D",
+        "n": "1.0",
+        "lemma": "b/s/1571",
+        "prefixes": [
+          "b",
+          "s"
+        ],
+        "base": "H1571",
+        "suffix": null
+      },
+      {
+        "id": "01amD",
+        "osisID": "Gen.6.3",
+        "wlc": "ה֣וּא",
+        "morph": "HPp3ms",
+        "n": null,
+        "lemma": "1931",
+        "prefixes": [],
+        "base": "H1931",
+        "suffix": null
+      },
+      {
+        "id": "01VUr",
+        "osisID": "Gen.6.3",
+        "wlc": "בָשָׂ֑ר",
+        "morph": "HNcmsa",
+        "n": "1",
+        "lemma": "1320",
+        "prefixes": [],
+        "base": "H1320",
+        "suffix": null
+      },
+      {
+        "id": "01yB6",
+        "osisID": "Gen.6.3",
+        "wlc": "וְ/הָי֣וּ",
+        "morph": "HC/Vqq3cp",
+        "n": null,
+        "lemma": "c/1961",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H1961",
+        "suffix": null
+      },
+      {
+        "id": "01c5N",
+        "osisID": "Gen.6.3",
+        "wlc": "יָמָ֔י/ו",
+        "morph": "HNcmpc/Sp3ms",
+        "n": "0.1",
+        "lemma": "3117",
+        "prefixes": [],
+        "base": "H3117",
+        "suffix": null
+      },
+      {
+        "id": "01T55",
+        "osisID": "Gen.6.3",
+        "wlc": "מֵאָ֥ה",
+        "morph": "HAcbsa",
+        "n": null,
+        "lemma": "3967",
+        "prefixes": [],
+        "base": "H3967",
+        "suffix": null
+      },
+      {
+        "id": "01peT",
+        "osisID": "Gen.6.3",
+        "wlc": "וְ/עֶשְׂרִ֖ים",
+        "morph": "HC/Acbpa",
+        "n": "0.0",
+        "lemma": "c/6242",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H6242",
+        "suffix": null
+      },
+      {
+        "id": "01Ksj",
+        "osisID": "Gen.6.3",
+        "wlc": "שָׁנָֽה",
+        "morph": "HNcfsa",
+        "n": "0",
+        "lemma": "8141",
+        "prefixes": [],
+        "base": "H8141",
+        "suffix": null
+      }
+    ],
+    "4": [
+      {
+        "id": "01Z3e",
+        "osisID": "Gen.6.4",
+        "wlc": "הַ/נְּפִלִ֞ים",
+        "morph": "HTd/Ncmpa",
+        "n": "1.2.0.0",
+        "lemma": "d/5303",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H5303",
+        "suffix": null
+      },
+      {
+        "id": "01Kzf",
+        "osisID": "Gen.6.4",
+        "wlc": "הָי֣וּ",
+        "morph": "HVqp3cp",
+        "n": null,
+        "lemma": "1961",
+        "prefixes": [],
+        "base": "H1961",
+        "suffix": null
+      },
+      {
+        "id": "01orc",
+        "osisID": "Gen.6.4",
+        "wlc": "בָ/אָרֶץ֮",
+        "morph": "HRd/Ncbsa",
+        "n": "1.2.0",
+        "lemma": "b/776",
+        "prefixes": [
+          "b"
+        ],
+        "base": "H776",
+        "suffix": null
+      },
+      {
+        "id": "0162Y",
+        "osisID": "Gen.6.4",
+        "wlc": "בַּ/יָּמִ֣ים",
+        "morph": "HRd/Ncmpa",
+        "n": null,
+        "lemma": "b/3117",
+        "prefixes": [
+          "b"
+        ],
+        "base": "H3117",
+        "suffix": null
+      },
+      {
+        "id": "01k5t",
+        "osisID": "Gen.6.4",
+        "wlc": "הָ/הֵם֒",
+        "morph": "HTd/Pp3mp",
+        "n": "1.2",
+        "lemma": "d/1992",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H1992",
+        "suffix": null
+      },
+      {
+        "id": "01KZM",
+        "osisID": "Gen.6.4",
+        "wlc": "וְ/גַ֣ם",
+        "morph": "HC/Ta",
+        "n": null,
+        "lemma": "c/1571",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H1571",
+        "suffix": null
+      },
+      {
+        "id": "01rez",
+        "osisID": "Gen.6.4",
+        "wlc": "אַֽחֲרֵי",
+        "morph": "HR",
+        "n": null,
+        "lemma": "310 a",
+        "prefixes": [],
+        "base": "H310",
+        "suffix": "a"
+      },
+      {
+        "id": "01HUJ",
+        "osisID": "Gen.6.4",
+        "wlc": "כֵ֗ן",
+        "morph": "HD",
+        "n": "1.1.1",
+        "lemma": "3651 c",
+        "prefixes": [],
+        "base": "H3651",
+        "suffix": "c"
+      },
+      {
+        "id": "01psq",
+        "osisID": "Gen.6.4",
+        "wlc": "אֲשֶׁ֨ר",
+        "morph": "HTr",
+        "n": null,
+        "lemma": "834 a",
+        "prefixes": [],
+        "base": "H834",
+        "suffix": "a"
+      },
+      {
+        "id": "01WRG",
+        "osisID": "Gen.6.4",
+        "wlc": "יָבֹ֜אוּ",
+        "morph": "HVqi3mp",
+        "n": "1.1.0.0",
+        "lemma": "935",
+        "prefixes": [],
+        "base": "H935",
+        "suffix": null
+      },
+      {
+        "id": "01wbu",
+        "osisID": "Gen.6.4",
+        "wlc": "בְּנֵ֤י",
+        "morph": "HNcmpc",
+        "n": null,
+        "lemma": "1121 a",
+        "prefixes": [],
+        "base": "H1121",
+        "suffix": "a"
+      },
+      {
+        "id": "01Bav",
+        "osisID": "Gen.6.4",
+        "wlc": "הָֽ/אֱלֹהִים֙",
+        "morph": "HTd/Ncmpa",
+        "n": "1.1.0",
+        "lemma": "d/430",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H430",
+        "suffix": null
+      },
+      {
+        "id": "01GVi",
+        "osisID": "Gen.6.4",
+        "wlc": "אֶל",
+        "morph": "HR",
+        "n": null,
+        "lemma": "413",
+        "prefixes": [],
+        "base": "H413",
+        "suffix": null
+      },
+      {
+        "id": "01Csn",
+        "osisID": "Gen.6.4",
+        "wlc": "בְּנ֣וֹת",
+        "morph": "HNcfpc",
+        "n": null,
+        "lemma": "1323",
+        "prefixes": [],
+        "base": "H1323",
+        "suffix": null
+      },
+      {
+        "id": "01R9z",
+        "osisID": "Gen.6.4",
+        "wlc": "הָֽ/אָדָ֔ם",
+        "morph": "HTd/Ncmsa",
+        "n": "1.1",
+        "lemma": "d/120",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H120",
+        "suffix": null
+      },
+      {
+        "id": "01tn3",
+        "osisID": "Gen.6.4",
+        "wlc": "וְ/יָלְד֖וּ",
+        "morph": "HC/Vqq3cp",
+        "n": "1.0",
+        "lemma": "c/3205",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H3205",
+        "suffix": null
+      },
+      {
+        "id": "01uiF",
+        "osisID": "Gen.6.4",
+        "wlc": "לָ/הֶ֑ם",
+        "morph": "HR/Sp3mp",
+        "n": "1",
+        "lemma": "l",
+        "prefixes": [
+          "l"
+        ],
+        "base": null,
+        "suffix": null
+      },
+      {
+        "id": "01hmQ",
+        "osisID": "Gen.6.4",
+        "wlc": "הֵ֧מָּה",
+        "morph": "HPp3mp",
+        "n": null,
+        "lemma": "1992",
+        "prefixes": [],
+        "base": "H1992",
+        "suffix": null
+      },
+      {
+        "id": "01pj9",
+        "osisID": "Gen.6.4",
+        "wlc": "הַ/גִּבֹּרִ֛ים",
+        "morph": "HTd/Aampa",
+        "n": "0.0.0",
+        "lemma": "d/1368",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H1368",
+        "suffix": null
+      },
+      {
+        "id": "01gza",
+        "osisID": "Gen.6.4",
+        "wlc": "אֲשֶׁ֥ר",
+        "morph": "HTr",
+        "n": null,
+        "lemma": "834 a",
+        "prefixes": [],
+        "base": "H834",
+        "suffix": "a"
+      },
+      {
+        "id": "01nh4",
+        "osisID": "Gen.6.4",
+        "wlc": "מֵ/עוֹלָ֖ם",
+        "morph": "HR/Ncmsa",
+        "n": "0.0",
+        "lemma": "m/5769",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H5769",
+        "suffix": null
+      },
+      {
+        "id": "01yip",
+        "osisID": "Gen.6.4",
+        "wlc": "אַנְשֵׁ֥י",
+        "morph": "HNcmpc",
+        "n": null,
+        "lemma": "376",
+        "prefixes": [],
+        "base": "H376",
+        "suffix": null
+      },
+      {
+        "id": "01yhX",
+        "osisID": "Gen.6.4",
+        "wlc": "הַ/שֵּֽׁם",
+        "morph": "HTd/Ncmsa",
+        "n": "0",
+        "lemma": "d/8034",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H8034",
+        "suffix": null
+      }
+    ],
+    "5": [
+      {
+        "id": "01Rr8",
+        "osisID": "Gen.6.5",
+        "wlc": "וַ/יַּ֣רְא",
+        "morph": "HC/Vqw3ms",
+        "n": null,
+        "lemma": "c/7200",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H7200",
+        "suffix": null
+      },
+      {
+        "id": "01q3q",
+        "osisID": "Gen.6.5",
+        "wlc": "יְהוָ֔ה",
+        "morph": "HNp",
+        "n": "1.1",
+        "lemma": "3068",
+        "prefixes": [],
+        "base": "H3068",
+        "suffix": null
+      },
+      {
+        "id": "01zBj",
+        "osisID": "Gen.6.5",
+        "wlc": "כִּ֥י",
+        "morph": "HC",
+        "n": null,
+        "lemma": "3588 a",
+        "prefixes": [],
+        "base": "H3588",
+        "suffix": "a"
+      },
+      {
+        "id": "01mM8",
+        "osisID": "Gen.6.5",
+        "wlc": "רַבָּ֛ה",
+        "morph": "HAafsa",
+        "n": "1.0.0",
+        "lemma": "7227 a",
+        "prefixes": [],
+        "base": "H7227",
+        "suffix": "a"
+      },
+      {
+        "id": "01Boi",
+        "osisID": "Gen.6.5",
+        "wlc": "רָעַ֥ת",
+        "morph": "HNcfsc",
+        "n": null,
+        "lemma": "7451 c",
+        "prefixes": [],
+        "base": "H7451",
+        "suffix": "c"
+      },
+      {
+        "id": "019tu",
+        "osisID": "Gen.6.5",
+        "wlc": "הָ/אָדָ֖ם",
+        "morph": "HTd/Ncmsa",
+        "n": "1.0",
+        "lemma": "d/120",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H120",
+        "suffix": null
+      },
+      {
+        "id": "01cJ2",
+        "osisID": "Gen.6.5",
+        "wlc": "בָּ/אָ֑רֶץ",
+        "morph": "HRd/Ncbsa",
+        "n": "1",
+        "lemma": "b/776",
+        "prefixes": [
+          "b"
+        ],
+        "base": "H776",
+        "suffix": null
+      },
+      {
+        "id": "01qwa",
+        "osisID": "Gen.6.5",
+        "wlc": "וְ/כָל",
+        "morph": "HC/Ncmsc",
+        "n": null,
+        "lemma": "c/3605",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "01U6p",
+        "osisID": "Gen.6.5",
+        "wlc": "יֵ֨צֶר֙",
+        "morph": "HNcmsc",
+        "n": "0.1.0",
+        "lemma": "3336",
+        "prefixes": [],
+        "base": "H3336",
+        "suffix": null
+      },
+      {
+        "id": "01gi1",
+        "osisID": "Gen.6.5",
+        "wlc": "מַחְשְׁבֹ֣ת",
+        "morph": "HNcfpc",
+        "n": null,
+        "lemma": "4284",
+        "prefixes": [],
+        "base": "H4284",
+        "suffix": null
+      },
+      {
+        "id": "01zuP",
+        "osisID": "Gen.6.5",
+        "wlc": "לִבּ֔/וֹ",
+        "morph": "HNcmsc/Sp3ms",
+        "n": "0.1",
+        "lemma": "3820 a",
+        "prefixes": [],
+        "base": "H3820",
+        "suffix": "a"
+      },
+      {
+        "id": "01RH3",
+        "osisID": "Gen.6.5",
+        "wlc": "רַ֥ק",
+        "morph": "HTa",
+        "n": null,
+        "lemma": "7535",
+        "prefixes": [],
+        "base": "H7535",
+        "suffix": null
+      },
+      {
+        "id": "01tap",
+        "osisID": "Gen.6.5",
+        "wlc": "רַ֖ע",
+        "morph": "HAamsa",
+        "n": "0.0",
+        "lemma": "7451 a",
+        "prefixes": [],
+        "base": "H7451",
+        "suffix": "a"
+      },
+      {
+        "id": "01dpu",
+        "osisID": "Gen.6.5",
+        "wlc": "כָּל",
+        "morph": "HNcmsc",
+        "n": null,
+        "lemma": "3605",
+        "prefixes": [],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "01bEm",
+        "osisID": "Gen.6.5",
+        "wlc": "הַ/יּֽוֹם",
+        "morph": "HTd/Ncmsa",
+        "n": "0",
+        "lemma": "d/3117",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H3117",
+        "suffix": null
+      }
+    ],
+    "6": [
+      {
+        "id": "01jsC",
+        "osisID": "Gen.6.6",
+        "wlc": "וַ/יִּנָּ֣חֶם",
+        "morph": "HC/VNw3ms",
+        "n": null,
+        "lemma": "c/5162",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H5162",
+        "suffix": null
+      },
+      {
+        "id": "01VLV",
+        "osisID": "Gen.6.6",
+        "wlc": "יְהוָ֔ה",
+        "morph": "HNp",
+        "n": "1.1",
+        "lemma": "3068",
+        "prefixes": [],
+        "base": "H3068",
+        "suffix": null
+      },
+      {
+        "id": "01RYi",
+        "osisID": "Gen.6.6",
+        "wlc": "כִּֽי",
+        "morph": "HC",
+        "n": null,
+        "lemma": "3588 a",
+        "prefixes": [],
+        "base": "H3588",
+        "suffix": "a"
+      },
+      {
+        "id": "01VMS",
+        "osisID": "Gen.6.6",
+        "wlc": "עָשָׂ֥ה",
+        "morph": "HVqp3ms",
+        "n": null,
+        "lemma": "6213 a",
+        "prefixes": [],
+        "base": "H6213",
+        "suffix": "a"
+      },
+      {
+        "id": "01WwP",
+        "osisID": "Gen.6.6",
+        "wlc": "אֶת",
+        "morph": "HTo",
+        "n": null,
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "019hJ",
+        "osisID": "Gen.6.6",
+        "wlc": "הָֽ/אָדָ֖ם",
+        "morph": "HTd/Ncmsa",
+        "n": "1.0",
+        "lemma": "d/120",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H120",
+        "suffix": null
+      },
+      {
+        "id": "01wDc",
+        "osisID": "Gen.6.6",
+        "wlc": "בָּ/אָ֑רֶץ",
+        "morph": "HRd/Ncbsa",
+        "n": "1",
+        "lemma": "b/776",
+        "prefixes": [
+          "b"
+        ],
+        "base": "H776",
+        "suffix": null
+      },
+      {
+        "id": "011ME",
+        "osisID": "Gen.6.6",
+        "wlc": "וַ/יִּתְעַצֵּ֖ב",
+        "morph": "HC/Vtw3ms",
+        "n": "0.0",
+        "lemma": "c/6087 a",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H6087",
+        "suffix": "a"
+      },
+      {
+        "id": "01bxs",
+        "osisID": "Gen.6.6",
+        "wlc": "אֶל",
+        "morph": "HR",
+        "n": null,
+        "lemma": "413",
+        "prefixes": [],
+        "base": "H413",
+        "suffix": null
+      },
+      {
+        "id": "01Eya",
+        "osisID": "Gen.6.6",
+        "wlc": "לִבּֽ/וֹ",
+        "morph": "HNcmsc/Sp3ms",
+        "n": "0",
+        "lemma": "3820 a",
+        "prefixes": [],
+        "base": "H3820",
+        "suffix": "a"
+      }
+    ],
+    "7": [
+      {
+        "id": "01bTU",
+        "osisID": "Gen.6.7",
+        "wlc": "וַ/יֹּ֣אמֶר",
+        "morph": "HC/Vqw3ms",
+        "n": null,
+        "lemma": "c/559",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H559",
+        "suffix": null
+      },
+      {
+        "id": "01Wzj",
+        "osisID": "Gen.6.7",
+        "wlc": "יְהוָ֗ה",
+        "morph": "HNp",
+        "n": "1.2.2",
+        "lemma": "3068",
+        "prefixes": [],
+        "base": "H3068",
+        "suffix": null
+      },
+      {
+        "id": "01xVG",
+        "osisID": "Gen.6.7",
+        "wlc": "אֶמְחֶ֨ה",
+        "morph": "HVqi1cs",
+        "n": null,
+        "lemma": "4229 a",
+        "prefixes": [],
+        "base": "H4229",
+        "suffix": "a"
+      },
+      {
+        "id": "01Ehm",
+        "osisID": "Gen.6.7",
+        "wlc": "אֶת",
+        "morph": "HTo",
+        "n": null,
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "01CAK",
+        "osisID": "Gen.6.7",
+        "wlc": "הָ/אָדָ֤ם",
+        "morph": "HTd/Ncmsa",
+        "n": null,
+        "lemma": "d/120",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H120",
+        "suffix": null
+      },
+      {
+        "id": "01o3f",
+        "osisID": "Gen.6.7",
+        "wlc": "אֲשֶׁר",
+        "morph": "HTr",
+        "n": null,
+        "lemma": "834 a",
+        "prefixes": [],
+        "base": "H834",
+        "suffix": "a"
+      },
+      {
+        "id": "01e88",
+        "osisID": "Gen.6.7",
+        "wlc": "בָּרָ֨אתִי֙",
+        "morph": "HVqp1cs",
+        "n": "1.2.1",
+        "lemma": "1254 a",
+        "prefixes": [],
+        "base": "H1254",
+        "suffix": "a"
+      },
+      {
+        "id": "01f25",
+        "osisID": "Gen.6.7",
+        "wlc": "מֵ/עַל֙",
+        "morph": "HR/R",
+        "n": "1.2.0",
+        "lemma": "m/5921 a",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H5921",
+        "suffix": "a"
+      },
+      {
+        "id": "01Hww",
+        "osisID": "Gen.6.7",
+        "wlc": "פְּנֵ֣י",
+        "morph": "HNcbpc",
+        "n": null,
+        "lemma": "6440",
+        "prefixes": [],
+        "base": "H6440",
+        "suffix": null
+      },
+      {
+        "id": "01TVz",
+        "osisID": "Gen.6.7",
+        "wlc": "הָֽ/אֲדָמָ֔ה",
+        "morph": "HTd/Ncfsa",
+        "n": "1.2",
+        "lemma": "d/127",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H127",
+        "suffix": null
+      },
+      {
+        "id": "01LRb",
+        "osisID": "Gen.6.7",
+        "wlc": "מֵֽ/אָדָם֙",
+        "morph": "HR/Ncmsa",
+        "n": "1.1.0",
+        "lemma": "m/120",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H120",
+        "suffix": null
+      },
+      {
+        "id": "01HAt",
+        "osisID": "Gen.6.7",
+        "wlc": "עַד",
+        "morph": "HR",
+        "n": null,
+        "lemma": "5704",
+        "prefixes": [],
+        "base": "H5704",
+        "suffix": null
+      },
+      {
+        "id": "01nGv",
+        "osisID": "Gen.6.7",
+        "wlc": "בְּהֵמָ֔ה",
+        "morph": "HNcfsa",
+        "n": "1.1",
+        "lemma": "929",
+        "prefixes": [],
+        "base": "H929",
+        "suffix": null
+      },
+      {
+        "id": "01iiv",
+        "osisID": "Gen.6.7",
+        "wlc": "עַד",
+        "morph": "HR",
+        "n": null,
+        "lemma": "5704",
+        "prefixes": [],
+        "base": "H5704",
+        "suffix": null
+      },
+      {
+        "id": "01CVL",
+        "osisID": "Gen.6.7",
+        "wlc": "רֶ֖מֶשׂ",
+        "morph": "HNcmsa",
+        "n": "1.0",
+        "lemma": "7431",
+        "prefixes": [],
+        "base": "H7431",
+        "suffix": null
+      },
+      {
+        "id": "019vz",
+        "osisID": "Gen.6.7",
+        "wlc": "וְ/עַד",
+        "morph": "HC/R",
+        "n": null,
+        "lemma": "c/5704",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H5704",
+        "suffix": null
+      },
+      {
+        "id": "01NTb",
+        "osisID": "Gen.6.7",
+        "wlc": "ע֣וֹף",
+        "morph": "HNcmsc",
+        "n": null,
+        "lemma": "5775",
+        "prefixes": [],
+        "base": "H5775",
+        "suffix": null
+      },
+      {
+        "id": "01cvb",
+        "osisID": "Gen.6.7",
+        "wlc": "הַ/שָּׁמָ֑יִם",
+        "morph": "HTd/Ncmpa",
+        "n": "1",
+        "lemma": "d/8064",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H8064",
+        "suffix": null
+      },
+      {
+        "id": "01B7J",
+        "osisID": "Gen.6.7",
+        "wlc": "כִּ֥י",
+        "morph": "HC",
+        "n": null,
+        "lemma": "3588 a",
+        "prefixes": [],
+        "base": "H3588",
+        "suffix": "a"
+      },
+      {
+        "id": "01XBu",
+        "osisID": "Gen.6.7",
+        "wlc": "נִחַ֖מְתִּי",
+        "morph": "HVNp1cs",
+        "n": "0.0",
+        "lemma": "5162",
+        "prefixes": [],
+        "base": "H5162",
+        "suffix": null
+      },
+      {
+        "id": "01uMM",
+        "osisID": "Gen.6.7",
+        "wlc": "כִּ֥י",
+        "morph": "HC",
+        "n": null,
+        "lemma": "3588 a",
+        "prefixes": [],
+        "base": "H3588",
+        "suffix": "a"
+      },
+      {
+        "id": "01XBy",
+        "osisID": "Gen.6.7",
+        "wlc": "עֲשִׂיתִֽ/ם",
+        "morph": "HVqp1cs/Sp3mp",
+        "n": "0",
+        "lemma": "6213 a",
+        "prefixes": [],
+        "base": "H6213",
+        "suffix": "a"
+      }
+    ],
+    "8": [
+      {
+        "id": "01Gch",
+        "osisID": "Gen.6.8",
+        "wlc": "וְ/נֹ֕חַ",
+        "morph": "HC/Np",
+        "n": "0.1",
+        "lemma": "c/5146",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H5146",
+        "suffix": null
+      },
+      {
+        "id": "01tZs",
+        "osisID": "Gen.6.8",
+        "wlc": "מָ֥צָא",
+        "morph": "HVqp3ms",
+        "n": null,
+        "lemma": "4672",
+        "prefixes": [],
+        "base": "H4672",
+        "suffix": null
+      },
+      {
+        "id": "01Sx5",
+        "osisID": "Gen.6.8",
+        "wlc": "חֵ֖ן",
+        "morph": "HNcmsa",
+        "n": "0.0",
+        "lemma": "2580",
+        "prefixes": [],
+        "base": "H2580",
+        "suffix": null
+      },
+      {
+        "id": "01mYa",
+        "osisID": "Gen.6.8",
+        "wlc": "בְּ/עֵינֵ֥י",
+        "morph": "HR/Ncbdc",
+        "n": null,
+        "lemma": "b/5869 a",
+        "prefixes": [
+          "b"
+        ],
+        "base": "H5869",
+        "suffix": "a"
+      },
+      {
+        "id": "01Fc9",
+        "osisID": "Gen.6.8",
+        "wlc": "יְהוָֽה",
+        "morph": "HNp",
+        "n": "0",
+        "lemma": "3068",
+        "prefixes": [],
+        "base": "H3068",
+        "suffix": null
+      }
+    ],
+    "9": [
+      {
+        "id": "0163V",
+        "osisID": "Gen.6.9",
+        "wlc": "אֵ֚לֶּה",
+        "morph": "HPdxcp",
+        "n": "1.1.0",
+        "lemma": "428",
+        "prefixes": [],
+        "base": "H428",
+        "suffix": null
+      },
+      {
+        "id": "01xVx",
+        "osisID": "Gen.6.9",
+        "wlc": "תּוֹלְדֹ֣ת",
+        "morph": "HNcfpc",
+        "n": null,
+        "lemma": "8435",
+        "prefixes": [],
+        "base": "H8435",
+        "suffix": null
+      },
+      {
+        "id": "01ZMa",
+        "osisID": "Gen.6.9",
+        "wlc": "נֹ֔חַ",
+        "morph": "HNp",
+        "n": "1.1",
+        "lemma": "5146",
+        "prefixes": [],
+        "base": "H5146",
+        "suffix": null
+      },
+      {
+        "id": "01K9n",
+        "osisID": "Gen.6.9",
+        "wlc": "נֹ֗חַ",
+        "morph": "HNp",
+        "n": "1.0.1",
+        "lemma": "5146",
+        "prefixes": [],
+        "base": "H5146",
+        "suffix": null
+      },
+      {
+        "id": "01rsj",
+        "osisID": "Gen.6.9",
+        "wlc": "אִ֥ישׁ",
+        "morph": "HNcmsa",
+        "n": null,
+        "lemma": "376",
+        "prefixes": [],
+        "base": "H376",
+        "suffix": null
+      },
+      {
+        "id": "01QzN",
+        "osisID": "Gen.6.9",
+        "wlc": "צַדִּ֛יק",
+        "morph": "HAamsa",
+        "n": "1.0.0",
+        "lemma": "6662",
+        "prefixes": [],
+        "base": "H6662",
+        "suffix": null
+      },
+      {
+        "id": "01zQg",
+        "osisID": "Gen.6.9",
+        "wlc": "תָּמִ֥ים",
+        "morph": "HAamsa",
+        "n": null,
+        "lemma": "8549",
+        "prefixes": [],
+        "base": "H8549",
+        "suffix": null
+      },
+      {
+        "id": "01s54",
+        "osisID": "Gen.6.9",
+        "wlc": "הָיָ֖ה",
+        "morph": "HVqp3ms",
+        "n": "1.0",
+        "lemma": "1961",
+        "prefixes": [],
+        "base": "H1961",
+        "suffix": null
+      },
+      {
+        "id": "01ZxQ",
+        "osisID": "Gen.6.9",
+        "wlc": "בְּ/דֹֽרֹתָ֑י/ו",
+        "morph": "HR/Ncmpc/Sp3ms",
+        "n": "1",
+        "lemma": "b/1755",
+        "prefixes": [
+          "b"
+        ],
+        "base": "H1755",
+        "suffix": null
+      },
+      {
+        "id": "01mBQ",
+        "osisID": "Gen.6.9",
+        "wlc": "אֶת",
+        "morph": "HR",
+        "n": null,
+        "lemma": "854",
+        "prefixes": [],
+        "base": "H854",
+        "suffix": null
+      },
+      {
+        "id": "01kmu",
+        "osisID": "Gen.6.9",
+        "wlc": "הָֽ/אֱלֹהִ֖ים",
+        "morph": "HTd/Ncmpa",
+        "n": "0.0",
+        "lemma": "d/430",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H430",
+        "suffix": null
+      },
+      {
+        "id": "01Rpd",
+        "osisID": "Gen.6.9",
+        "wlc": "הִֽתְהַלֶּךְ",
+        "morph": "HVtp3ms",
+        "n": null,
+        "lemma": "1980",
+        "prefixes": [],
+        "base": "H1980",
+        "suffix": null
+      },
+      {
+        "id": "012xG",
+        "osisID": "Gen.6.9",
+        "wlc": "נֹֽחַ",
+        "morph": "HNp",
+        "n": "0",
+        "lemma": "5146",
+        "prefixes": [],
+        "base": "H5146",
+        "suffix": null
+      }
+    ],
+    "10": [
+      {
+        "id": "01ex2",
+        "osisID": "Gen.6.10",
+        "wlc": "וַ/יּ֥וֹלֶד",
+        "morph": "HC/Vhw3ms",
+        "n": null,
+        "lemma": "c/3205",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H3205",
+        "suffix": null
+      },
+      {
+        "id": "013VA",
+        "osisID": "Gen.6.10",
+        "wlc": "נֹ֖חַ",
+        "morph": "HNp",
+        "n": "1.0",
+        "lemma": "5146",
+        "prefixes": [],
+        "base": "H5146",
+        "suffix": null
+      },
+      {
+        "id": "01XVR",
+        "osisID": "Gen.6.10",
+        "wlc": "שְׁלֹשָׁ֣ה",
+        "morph": "HAcmsa",
+        "n": null,
+        "lemma": "7969",
+        "prefixes": [],
+        "base": "H7969",
+        "suffix": null
+      },
+      {
+        "id": "01Lx1",
+        "osisID": "Gen.6.10",
+        "wlc": "בָנִ֑ים",
+        "morph": "HNcmpa",
+        "n": "1",
+        "lemma": "1121 a",
+        "prefixes": [],
+        "base": "H1121",
+        "suffix": "a"
+      },
+      {
+        "id": "017zA",
+        "osisID": "Gen.6.10",
+        "wlc": "אֶת",
+        "morph": "HTo",
+        "n": null,
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "01bE4",
+        "osisID": "Gen.6.10",
+        "wlc": "שֵׁ֖ם",
+        "morph": "HNp",
+        "n": "0.0",
+        "lemma": "8035",
+        "prefixes": [],
+        "base": "H8035",
+        "suffix": null
+      },
+      {
+        "id": "01qcU",
+        "osisID": "Gen.6.10",
+        "wlc": "אֶת",
+        "morph": "HTo",
+        "n": null,
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "018e9",
+        "osisID": "Gen.6.10",
+        "wlc": "חָ֥ם",
+        "morph": "HNp",
+        "n": null,
+        "lemma": "2526",
+        "prefixes": [],
+        "base": "H2526",
+        "suffix": null
+      },
+      {
+        "id": "01iuc",
+        "osisID": "Gen.6.10",
+        "wlc": "וְ/אֶת",
+        "morph": "HC/To",
+        "n": null,
+        "lemma": "c/853",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "014pW",
+        "osisID": "Gen.6.10",
+        "wlc": "יָֽפֶת",
+        "morph": "HNp",
+        "n": "0",
+        "lemma": "3315",
+        "prefixes": [],
+        "base": "H3315",
+        "suffix": null
+      }
+    ],
+    "11": [
+      {
+        "id": "01tDy",
+        "osisID": "Gen.6.11",
+        "wlc": "וַ/תִּשָּׁחֵ֥ת",
+        "morph": "HC/VNw3fs",
+        "n": null,
+        "lemma": "c/7843",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H7843",
+        "suffix": null
+      },
+      {
+        "id": "01NLe",
+        "osisID": "Gen.6.11",
+        "wlc": "הָ/אָ֖רֶץ",
+        "morph": "HTd/Ncbsa",
+        "n": "1.0",
+        "lemma": "d/776",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H776",
+        "suffix": null
+      },
+      {
+        "id": "01GtD",
+        "osisID": "Gen.6.11",
+        "wlc": "לִ/פְנֵ֣י",
+        "morph": "HR/Ncbpc",
+        "n": null,
+        "lemma": "l/6440",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H6440",
+        "suffix": null
+      },
+      {
+        "id": "01mwz",
+        "osisID": "Gen.6.11",
+        "wlc": "הָֽ/אֱלֹהִ֑ים",
+        "morph": "HTd/Ncmpa",
+        "n": "1",
+        "lemma": "d/430",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H430",
+        "suffix": null
+      },
+      {
+        "id": "01v4c",
+        "osisID": "Gen.6.11",
+        "wlc": "וַ/תִּמָּלֵ֥א",
+        "morph": "HC/VNw3fs",
+        "n": null,
+        "lemma": "c/4390",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H4390",
+        "suffix": null
+      },
+      {
+        "id": "01SkK",
+        "osisID": "Gen.6.11",
+        "wlc": "הָ/אָ֖רֶץ",
+        "morph": "HTd/Ncbsa",
+        "n": "0.0",
+        "lemma": "d/776",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H776",
+        "suffix": null
+      },
+      {
+        "id": "015xn",
+        "osisID": "Gen.6.11",
+        "wlc": "חָמָֽס",
+        "morph": "HNcmsa",
+        "n": "0",
+        "lemma": "2555",
+        "prefixes": [],
+        "base": "H2555",
+        "suffix": null
+      }
+    ],
+    "12": [
+      {
+        "id": "01U8y",
+        "osisID": "Gen.6.12",
+        "wlc": "וַ/יַּ֧רְא",
+        "morph": "HC/Vqw3ms",
+        "n": null,
+        "lemma": "c/7200",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H7200",
+        "suffix": null
+      },
+      {
+        "id": "01G3b",
+        "osisID": "Gen.6.12",
+        "wlc": "אֱלֹהִ֛ים",
+        "morph": "HNcmpa",
+        "n": "1.0.0",
+        "lemma": "430",
+        "prefixes": [],
+        "base": "H430",
+        "suffix": null
+      },
+      {
+        "id": "01i4K",
+        "osisID": "Gen.6.12",
+        "wlc": "אֶת",
+        "morph": "HTo",
+        "n": null,
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "01Vhq",
+        "osisID": "Gen.6.12",
+        "wlc": "הָ/אָ֖רֶץ",
+        "morph": "HTd/Ncbsa",
+        "n": "1.0",
+        "lemma": "d/776",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H776",
+        "suffix": null
+      },
+      {
+        "id": "018w5",
+        "osisID": "Gen.6.12",
+        "wlc": "וְ/הִנֵּ֣ה",
+        "morph": "HC/Tm",
+        "n": null,
+        "lemma": "c/2009",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H2009",
+        "suffix": null
+      },
+      {
+        "id": "01XKu",
+        "osisID": "Gen.6.12",
+        "wlc": "נִשְׁחָ֑תָה",
+        "morph": "HVNp3fs",
+        "n": "1",
+        "lemma": "7843",
+        "prefixes": [],
+        "base": "H7843",
+        "suffix": null
+      },
+      {
+        "id": "01N3Z",
+        "osisID": "Gen.6.12",
+        "wlc": "כִּֽי",
+        "morph": "HC",
+        "n": null,
+        "lemma": "3588 a",
+        "prefixes": [],
+        "base": "H3588",
+        "suffix": "a"
+      },
+      {
+        "id": "0172P",
+        "osisID": "Gen.6.12",
+        "wlc": "הִשְׁחִ֧ית",
+        "morph": "HVhp3ms",
+        "n": null,
+        "lemma": "7843",
+        "prefixes": [],
+        "base": "H7843",
+        "suffix": null
+      },
+      {
+        "id": "01u1j",
+        "osisID": "Gen.6.12",
+        "wlc": "כָּל",
+        "morph": "HNcmsc",
+        "n": null,
+        "lemma": "3605",
+        "prefixes": [],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "01DBw",
+        "osisID": "Gen.6.12",
+        "wlc": "בָּשָׂ֛ר",
+        "morph": "HNcmsa",
+        "n": "0.0.0",
+        "lemma": "1320",
+        "prefixes": [],
+        "base": "H1320",
+        "suffix": null
+      },
+      {
+        "id": "01KyH",
+        "osisID": "Gen.6.12",
+        "wlc": "אֶת",
+        "morph": "HTo",
+        "n": null,
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "01sK9",
+        "osisID": "Gen.6.12",
+        "wlc": "דַּרְכּ֖/וֹ",
+        "morph": "HNcbsc/Sp3ms",
+        "n": "0.0",
+        "lemma": "1870",
+        "prefixes": [],
+        "base": "H1870",
+        "suffix": null
+      },
+      {
+        "id": "01soG",
+        "osisID": "Gen.6.12",
+        "wlc": "עַל",
+        "morph": "HR",
+        "n": null,
+        "lemma": "5921 a",
+        "prefixes": [],
+        "base": "H5921",
+        "suffix": "a"
+      },
+      {
+        "id": "01Ggv",
+        "osisID": "Gen.6.12",
+        "wlc": "הָ/אָֽרֶץ",
+        "morph": "HTd/Ncbsa",
+        "n": "0",
+        "lemma": "d/776",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H776",
+        "suffix": null
+      }
+    ],
+    "13": [
+      {
+        "id": "01NRv",
+        "osisID": "Gen.6.13",
+        "wlc": "וַ/יֹּ֨אמֶר",
+        "morph": "HC/Vqw3ms",
+        "n": null,
+        "lemma": "c/559",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H559",
+        "suffix": null
+      },
+      {
+        "id": "01fdT",
+        "osisID": "Gen.6.13",
+        "wlc": "אֱלֹהִ֜ים",
+        "morph": "HNcmpa",
+        "n": "1.1.1.0",
+        "lemma": "430",
+        "prefixes": [],
+        "base": "H430",
+        "suffix": null
+      },
+      {
+        "id": "01qex",
+        "osisID": "Gen.6.13",
+        "wlc": "לְ/נֹ֗חַ",
+        "morph": "HR/Np",
+        "n": "1.1.1",
+        "lemma": "l/5146",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H5146",
+        "suffix": null
+      },
+      {
+        "id": "01GE5",
+        "osisID": "Gen.6.13",
+        "wlc": "קֵ֤ץ",
+        "morph": "HNcmsc",
+        "n": null,
+        "lemma": "7093",
+        "prefixes": [],
+        "base": "H7093",
+        "suffix": null
+      },
+      {
+        "id": "014oz",
+        "osisID": "Gen.6.13",
+        "wlc": "כָּל",
+        "morph": "HNcmsc",
+        "n": null,
+        "lemma": "3605",
+        "prefixes": [],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "016kG",
+        "osisID": "Gen.6.13",
+        "wlc": "בָּשָׂר֙",
+        "morph": "HNcmsa",
+        "n": "1.1.0",
+        "lemma": "1320",
+        "prefixes": [],
+        "base": "H1320",
+        "suffix": null
+      },
+      {
+        "id": "01Wuj",
+        "osisID": "Gen.6.13",
+        "wlc": "בָּ֣א",
+        "morph": "HVqp3ms",
+        "n": null,
+        "lemma": "935",
+        "prefixes": [],
+        "base": "H935",
+        "suffix": null
+      },
+      {
+        "id": "016jv",
+        "osisID": "Gen.6.13",
+        "wlc": "לְ/פָנַ֔/י",
+        "morph": "HR/Ncbpc/Sp1cs",
+        "n": "1.1",
+        "lemma": "l/6440",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H6440",
+        "suffix": null
+      },
+      {
+        "id": "01WSR",
+        "osisID": "Gen.6.13",
+        "wlc": "כִּֽי",
+        "morph": "HC",
+        "n": null,
+        "lemma": "3588 a",
+        "prefixes": [],
+        "base": "H3588",
+        "suffix": "a"
+      },
+      {
+        "id": "01xRq",
+        "osisID": "Gen.6.13",
+        "wlc": "מָלְאָ֥ה",
+        "morph": "HVqp3fs",
+        "n": null,
+        "lemma": "4390",
+        "prefixes": [],
+        "base": "H4390",
+        "suffix": null
+      },
+      {
+        "id": "01xiv",
+        "osisID": "Gen.6.13",
+        "wlc": "הָ/אָ֛רֶץ",
+        "morph": "HTd/Ncbsa",
+        "n": "1.0.0",
+        "lemma": "d/776",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H776",
+        "suffix": null
+      },
+      {
+        "id": "01Vhb",
+        "osisID": "Gen.6.13",
+        "wlc": "חָמָ֖ס",
+        "morph": "HNcmsa",
+        "n": "1.0",
+        "lemma": "2555",
+        "prefixes": [],
+        "base": "H2555",
+        "suffix": null
+      },
+      {
+        "id": "01Kra",
+        "osisID": "Gen.6.13",
+        "wlc": "מִ/פְּנֵי/הֶ֑ם",
+        "morph": "HR/Ncbpc/Sp3mp",
+        "n": "1",
+        "lemma": "m/6440",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H6440",
+        "suffix": null
+      },
+      {
+        "id": "01FB9",
+        "osisID": "Gen.6.13",
+        "wlc": "וְ/הִנְ/נִ֥י",
+        "morph": "HC/Tj/Sp1cs",
+        "n": null,
+        "lemma": "c/2005",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H2005",
+        "suffix": null
+      },
+      {
+        "id": "01WPN",
+        "osisID": "Gen.6.13",
+        "wlc": "מַשְׁחִיתָ֖/ם",
+        "morph": "HVhrmsc/Sp3mp",
+        "n": "0.0",
+        "lemma": "7843",
+        "prefixes": [],
+        "base": "H7843",
+        "suffix": null
+      },
+      {
+        "id": "01zbb",
+        "osisID": "Gen.6.13",
+        "wlc": "אֶת",
+        "morph": "HR",
+        "n": null,
+        "lemma": "854",
+        "prefixes": [],
+        "base": "H854",
+        "suffix": null
+      },
+      {
+        "id": "01W6k",
+        "osisID": "Gen.6.13",
+        "wlc": "הָ/אָֽרֶץ",
+        "morph": "HTd/Ncbsa",
+        "n": "0",
+        "lemma": "d/776",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H776",
+        "suffix": null
+      }
+    ],
+    "14": [
+      {
+        "id": "01dcc",
+        "osisID": "Gen.6.14",
+        "wlc": "עֲשֵׂ֤ה",
+        "morph": "HVqv2ms",
+        "n": null,
+        "lemma": "6213 a",
+        "prefixes": [],
+        "base": "H6213",
+        "suffix": "a"
+      },
+      {
+        "id": "013fz",
+        "osisID": "Gen.6.14",
+        "wlc": "לְ/ךָ֙",
+        "morph": "HR/Sp2ms",
+        "n": "1.1.0",
+        "lemma": "l",
+        "prefixes": [
+          "l"
+        ],
+        "base": null,
+        "suffix": null
+      },
+      {
+        "id": "01pV4",
+        "osisID": "Gen.6.14",
+        "wlc": "תֵּבַ֣ת",
+        "morph": "HNcfsc",
+        "n": null,
+        "lemma": "8392",
+        "prefixes": [],
+        "base": "H8392",
+        "suffix": null
+      },
+      {
+        "id": "01K76",
+        "osisID": "Gen.6.14",
+        "wlc": "עֲצֵי",
+        "morph": "HNcmpc",
+        "n": null,
+        "lemma": "6086",
+        "prefixes": [],
+        "base": "H6086",
+        "suffix": null
+      },
+      {
+        "id": "01Xvh",
+        "osisID": "Gen.6.14",
+        "wlc": "גֹ֔פֶר",
+        "morph": "HNcmsa",
+        "n": "1.1",
+        "lemma": "1613",
+        "prefixes": [],
+        "base": "H1613",
+        "suffix": null
+      },
+      {
+        "id": "01F23",
+        "osisID": "Gen.6.14",
+        "wlc": "קִנִּ֖ים",
+        "morph": "HNcmpa",
+        "n": "1.0",
+        "lemma": "7064",
+        "prefixes": [],
+        "base": "H7064",
+        "suffix": null
+      },
+      {
+        "id": "01t9z",
+        "osisID": "Gen.6.14",
+        "wlc": "תַּֽעֲשֶׂ֣ה",
+        "morph": "HVqi2ms",
+        "n": null,
+        "lemma": "6213 a",
+        "prefixes": [],
+        "base": "H6213",
+        "suffix": "a"
+      },
+      {
+        "id": "01whu",
+        "osisID": "Gen.6.14",
+        "wlc": "אֶת",
+        "morph": "HR",
+        "n": null,
+        "lemma": "854",
+        "prefixes": [],
+        "base": "H854",
+        "suffix": null
+      },
+      {
+        "id": "01ose",
+        "osisID": "Gen.6.14",
+        "wlc": "הַ/תֵּבָ֑ה",
+        "morph": "HTd/Ncfsa",
+        "n": "1",
+        "lemma": "d/8392",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H8392",
+        "suffix": null
+      },
+      {
+        "id": "01min",
+        "osisID": "Gen.6.14",
+        "wlc": "וְ/כָֽפַרְתָּ֥",
+        "morph": "HC/Vqq2ms",
+        "n": null,
+        "lemma": "c/3722 b",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H3722",
+        "suffix": "b"
+      },
+      {
+        "id": "01iic",
+        "osisID": "Gen.6.14",
+        "wlc": "אֹתָ֛/הּ",
+        "morph": "HTo/Sp3fs",
+        "n": "0.0.0",
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "01uQX",
+        "osisID": "Gen.6.14",
+        "wlc": "מִ/בַּ֥יִת",
+        "morph": "HR/Ncmsa",
+        "n": null,
+        "lemma": "m/1004 b",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H1004",
+        "suffix": "b"
+      },
+      {
+        "id": "01fqr",
+        "osisID": "Gen.6.14",
+        "wlc": "וּ/מִ/ח֖וּץ",
+        "morph": "HC/R/Ncmsa",
+        "n": "0.0",
+        "lemma": "c/m/2351",
+        "prefixes": [
+          "c",
+          "m"
+        ],
+        "base": "H2351",
+        "suffix": null
+      },
+      {
+        "id": "01gRQ",
+        "osisID": "Gen.6.14",
+        "wlc": "בַּ/כֹּֽפֶר",
+        "morph": "HRd/Ncmsa",
+        "n": "0",
+        "lemma": "b/3724 b",
+        "prefixes": [
+          "b"
+        ],
+        "base": "H3724",
+        "suffix": "b"
+      }
+    ],
+    "15": [
+      {
+        "id": "01oC6",
+        "osisID": "Gen.6.15",
+        "wlc": "וְ/זֶ֕ה",
+        "morph": "HC/Pdxms",
+        "n": "1.1",
+        "lemma": "c/2088",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H2088",
+        "suffix": null
+      },
+      {
+        "id": "01AB9",
+        "osisID": "Gen.6.15",
+        "wlc": "אֲשֶׁ֥ר",
+        "morph": "HTr",
+        "n": null,
+        "lemma": "834 a",
+        "prefixes": [],
+        "base": "H834",
+        "suffix": "a"
+      },
+      {
+        "id": "016Bi",
+        "osisID": "Gen.6.15",
+        "wlc": "תַּֽעֲשֶׂ֖ה",
+        "morph": "HVqi2ms",
+        "n": "1.0",
+        "lemma": "6213 a",
+        "prefixes": [],
+        "base": "H6213",
+        "suffix": "a"
+      },
+      {
+        "id": "01TKQ",
+        "osisID": "Gen.6.15",
+        "wlc": "אֹתָ֑/הּ",
+        "morph": "HTo/Sp3fs",
+        "n": "1",
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "01sX9",
+        "osisID": "Gen.6.15",
+        "wlc": "שְׁלֹ֧שׁ",
+        "morph": "HAcfsa",
+        "n": null,
+        "lemma": "7969",
+        "prefixes": [],
+        "base": "H7969",
+        "suffix": null
+      },
+      {
+        "id": "01CNX",
+        "osisID": "Gen.6.15",
+        "wlc": "מֵא֣וֹת",
+        "morph": "HAcbpa",
+        "n": null,
+        "lemma": "3967",
+        "prefixes": [],
+        "base": "H3967",
+        "suffix": null
+      },
+      {
+        "id": "015Jx",
+        "osisID": "Gen.6.15",
+        "wlc": "אַמָּ֗ה",
+        "morph": "HNcfsa",
+        "n": "0.2.1",
+        "lemma": "520 a",
+        "prefixes": [],
+        "base": "H520",
+        "suffix": "a"
+      },
+      {
+        "id": "01K8B",
+        "osisID": "Gen.6.15",
+        "wlc": "אֹ֚רֶךְ",
+        "morph": "HNcmsc",
+        "n": "0.2.0",
+        "lemma": "753",
+        "prefixes": [],
+        "base": "H753",
+        "suffix": null
+      },
+      {
+        "id": "01qTM",
+        "osisID": "Gen.6.15",
+        "wlc": "הַ/תֵּבָ֔ה",
+        "morph": "HTd/Ncfsa",
+        "n": "0.2",
+        "lemma": "d/8392",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H8392",
+        "suffix": null
+      },
+      {
+        "id": "01kST",
+        "osisID": "Gen.6.15",
+        "wlc": "חֲמִשִּׁ֤ים",
+        "morph": "HAcbpa",
+        "n": null,
+        "lemma": "2572",
+        "prefixes": [],
+        "base": "H2572",
+        "suffix": null
+      },
+      {
+        "id": "019ok",
+        "osisID": "Gen.6.15",
+        "wlc": "אַמָּה֙",
+        "morph": "HNcfsa",
+        "n": "0.1.0",
+        "lemma": "520 a",
+        "prefixes": [],
+        "base": "H520",
+        "suffix": "a"
+      },
+      {
+        "id": "01G8f",
+        "osisID": "Gen.6.15",
+        "wlc": "רָחְבָּ֔/הּ",
+        "morph": "HNcmsc/Sp3fs",
+        "n": "0.1",
+        "lemma": "7341",
+        "prefixes": [],
+        "base": "H7341",
+        "suffix": null
+      },
+      {
+        "id": "01bjL",
+        "osisID": "Gen.6.15",
+        "wlc": "וּ/שְׁלֹשִׁ֥ים",
+        "morph": "HC/Acbpa",
+        "n": null,
+        "lemma": "c/7970",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H7970",
+        "suffix": null
+      },
+      {
+        "id": "01ant",
+        "osisID": "Gen.6.15",
+        "wlc": "אַמָּ֖ה",
+        "morph": "HNcfsa",
+        "n": "0.0",
+        "lemma": "520 a",
+        "prefixes": [],
+        "base": "H520",
+        "suffix": "a"
+      },
+      {
+        "id": "014aq",
+        "osisID": "Gen.6.15",
+        "wlc": "קוֹמָתָֽ/הּ",
+        "morph": "HNcfsc/Sp3fs",
+        "n": "0",
+        "lemma": "6967",
+        "prefixes": [],
+        "base": "H6967",
+        "suffix": null
+      }
+    ],
+    "16": [
+      {
+        "id": "01xLT",
+        "osisID": "Gen.6.16",
+        "wlc": "צֹ֣הַר",
+        "morph": "HNcfsa",
+        "n": "1.1.1.0",
+        "lemma": "6672 b",
+        "prefixes": [],
+        "base": "H6672",
+        "suffix": "b"
+      },
+      {
+        "id": "01fns",
+        "osisID": "Gen.6.16",
+        "wlc": "תַּֽעֲשֶׂ֣ה",
+        "morph": "HVqi2ms",
+        "n": null,
+        "lemma": "6213 a",
+        "prefixes": [],
+        "base": "H6213",
+        "suffix": "a"
+      },
+      {
+        "id": "01p9L",
+        "osisID": "Gen.6.16",
+        "wlc": "לַ/תֵּבָ֗ה",
+        "morph": "HRd/Ncfsa",
+        "n": "1.1.1",
+        "lemma": "l/8392",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H8392",
+        "suffix": null
+      },
+      {
+        "id": "01ZUC",
+        "osisID": "Gen.6.16",
+        "wlc": "וְ/אֶל",
+        "morph": "HC/R",
+        "n": null,
+        "lemma": "c/413",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H413",
+        "suffix": null
+      },
+      {
+        "id": "01JCj",
+        "osisID": "Gen.6.16",
+        "wlc": "אַמָּה֙",
+        "morph": "HNcfsa",
+        "n": "1.1.0",
+        "lemma": "520 a",
+        "prefixes": [],
+        "base": "H520",
+        "suffix": "a"
+      },
+      {
+        "id": "01cTb",
+        "osisID": "Gen.6.16",
+        "wlc": "תְּכַלֶ֣/נָּה",
+        "morph": "HVpi2ms/Sp3fs",
+        "n": null,
+        "lemma": "3615",
+        "prefixes": [],
+        "base": "H3615",
+        "suffix": null
+      },
+      {
+        "id": "01EZX",
+        "osisID": "Gen.6.16",
+        "wlc": "מִ/לְ/מַ֔עְלָ/ה",
+        "morph": "HR/R/D/Sd",
+        "n": "1.1",
+        "lemma": "m/l/4605",
+        "prefixes": [
+          "m",
+          "l"
+        ],
+        "base": "H4605",
+        "suffix": null
+      },
+      {
+        "id": "01Y8E",
+        "osisID": "Gen.6.16",
+        "wlc": "וּ/פֶ֥תַח",
+        "morph": "HC/Ncmsc",
+        "n": null,
+        "lemma": "c/6607",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H6607",
+        "suffix": null
+      },
+      {
+        "id": "01WfP",
+        "osisID": "Gen.6.16",
+        "wlc": "הַ/תֵּבָ֖ה",
+        "morph": "HTd/Ncfsa",
+        "n": "1.0",
+        "lemma": "d/8392",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H8392",
+        "suffix": null
+      },
+      {
+        "id": "01EHX",
+        "osisID": "Gen.6.16",
+        "wlc": "בְּ/צִדָּ֣/הּ",
+        "morph": "HR/Ncmsc/Sp3fs",
+        "n": null,
+        "lemma": "b/6654",
+        "prefixes": [
+          "b"
+        ],
+        "base": "H6654",
+        "suffix": null
+      },
+      {
+        "id": "01htV",
+        "osisID": "Gen.6.16",
+        "wlc": "תָּשִׂ֑ים",
+        "morph": "HVqi2ms",
+        "n": "1",
+        "lemma": "7760 a",
+        "prefixes": [],
+        "base": "H7760",
+        "suffix": "a"
+      },
+      {
+        "id": "01dnq",
+        "osisID": "Gen.6.16",
+        "wlc": "תַּחְתִּיִּ֛ם",
+        "morph": "HAampa",
+        "n": "0.0.0",
+        "lemma": "8482",
+        "prefixes": [],
+        "base": "H8482",
+        "suffix": null
+      },
+      {
+        "id": "01Bfr",
+        "osisID": "Gen.6.16",
+        "wlc": "שְׁנִיִּ֥ם",
+        "morph": "HAompa",
+        "n": null,
+        "lemma": "8145",
+        "prefixes": [],
+        "base": "H8145",
+        "suffix": null
+      },
+      {
+        "id": "01n3U",
+        "osisID": "Gen.6.16",
+        "wlc": "וּ/שְׁלִשִׁ֖ים",
+        "morph": "HC/Aompa",
+        "n": "0.0",
+        "lemma": "c/7992",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H7992",
+        "suffix": null
+      },
+      {
+        "id": "01UYs",
+        "osisID": "Gen.6.16",
+        "wlc": "תַּֽעֲשֶֽׂ/הָ",
+        "morph": "HVqi2ms/Sp3fs",
+        "n": "0",
+        "lemma": "6213 a",
+        "prefixes": [],
+        "base": "H6213",
+        "suffix": "a"
+      }
+    ],
+    "17": [
+      {
+        "id": "01T4t",
+        "osisID": "Gen.6.17",
+        "wlc": "וַ/אֲנִ֗י",
+        "morph": "HC/Pp1cs",
+        "n": "1.2.1",
+        "lemma": "c/589",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H589",
+        "suffix": null
+      },
+      {
+        "id": "01CXn",
+        "osisID": "Gen.6.17",
+        "wlc": "הִנְ/נִי֩",
+        "morph": "HTm/Sp1cs",
+        "n": null,
+        "lemma": "2009",
+        "prefixes": [],
+        "base": "H2009",
+        "suffix": null
+      },
+      {
+        "id": "01eoV",
+        "osisID": "Gen.6.17",
+        "wlc": "מֵבִ֨יא",
+        "morph": "HVhrmsa",
+        "n": null,
+        "lemma": "935",
+        "prefixes": [],
+        "base": "H935",
+        "suffix": null
+      },
+      {
+        "id": "01z2s",
+        "osisID": "Gen.6.17",
+        "wlc": "אֶת",
+        "morph": "HTo",
+        "n": null,
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "01eW4",
+        "osisID": "Gen.6.17",
+        "wlc": "הַ/מַּבּ֥וּל",
+        "morph": "HTd/Ncmsa",
+        "n": null,
+        "lemma": "d/3999",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H3999",
+        "suffix": null
+      },
+      {
+        "id": "01Kox",
+        "osisID": "Gen.6.17",
+        "wlc": "מַ֨יִם֙",
+        "morph": "HNcmpa",
+        "n": "1.2.0",
+        "lemma": "4325",
+        "prefixes": [],
+        "base": "H4325",
+        "suffix": null
+      },
+      {
+        "id": "01RGB",
+        "osisID": "Gen.6.17",
+        "wlc": "עַל",
+        "morph": "HR",
+        "n": null,
+        "lemma": "5921 a",
+        "prefixes": [],
+        "base": "H5921",
+        "suffix": "a"
+      },
+      {
+        "id": "01Upn",
+        "osisID": "Gen.6.17",
+        "wlc": "הָ/אָ֔רֶץ",
+        "morph": "HTd/Ncbsa",
+        "n": "1.2",
+        "lemma": "d/776",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H776",
+        "suffix": null
+      },
+      {
+        "id": "01dXz",
+        "osisID": "Gen.6.17",
+        "wlc": "לְ/שַׁחֵ֣ת",
+        "morph": "HR/Vpc",
+        "n": null,
+        "lemma": "l/7843",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H7843",
+        "suffix": null
+      },
+      {
+        "id": "01Bbn",
+        "osisID": "Gen.6.17",
+        "wlc": "כָּל",
+        "morph": "HNcmsc",
+        "n": null,
+        "lemma": "3605",
+        "prefixes": [],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "011Zv",
+        "osisID": "Gen.6.17",
+        "wlc": "בָּשָׂ֗ר",
+        "morph": "HNcmsa",
+        "n": "1.1.1",
+        "lemma": "1320",
+        "prefixes": [],
+        "base": "H1320",
+        "suffix": null
+      },
+      {
+        "id": "01TB4",
+        "osisID": "Gen.6.17",
+        "wlc": "אֲשֶׁר",
+        "morph": "HTr",
+        "n": null,
+        "lemma": "834 a",
+        "prefixes": [],
+        "base": "H834",
+        "suffix": "a"
+      },
+      {
+        "id": "01oG9",
+        "osisID": "Gen.6.17",
+        "wlc": "בּ/וֹ֙",
+        "morph": "HR/Sp3ms",
+        "n": "1.1.0",
+        "lemma": "b",
+        "prefixes": [
+          "b"
+        ],
+        "base": null,
+        "suffix": null
+      },
+      {
+        "id": "01prm",
+        "osisID": "Gen.6.17",
+        "wlc": "ר֣וּחַ",
+        "morph": "HNcbsc",
+        "n": null,
+        "lemma": "7307",
+        "prefixes": [],
+        "base": "H7307",
+        "suffix": null
+      },
+      {
+        "id": "01rwi",
+        "osisID": "Gen.6.17",
+        "wlc": "חַיִּ֔ים",
+        "morph": "HNcmpa",
+        "n": "1.1",
+        "lemma": "2416 e",
+        "prefixes": [],
+        "base": "H2416",
+        "suffix": "e"
+      },
+      {
+        "id": "01EAA",
+        "osisID": "Gen.6.17",
+        "wlc": "מִ/תַּ֖חַת",
+        "morph": "HR/R",
+        "n": "1.0",
+        "lemma": "m/8478",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H8478",
+        "suffix": null
+      },
+      {
+        "id": "01LxY",
+        "osisID": "Gen.6.17",
+        "wlc": "הַ/שָּׁמָ֑יִם",
+        "morph": "HTd/Ncmpa",
+        "n": "1",
+        "lemma": "d/8064",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H8064",
+        "suffix": null
+      },
+      {
+        "id": "01Frb",
+        "osisID": "Gen.6.17",
+        "wlc": "כֹּ֥ל",
+        "morph": "HNcmsa",
+        "n": null,
+        "lemma": "3605",
+        "prefixes": [],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "01HJn",
+        "osisID": "Gen.6.17",
+        "wlc": "אֲשֶׁר",
+        "morph": "HTr",
+        "n": null,
+        "lemma": "834 a",
+        "prefixes": [],
+        "base": "H834",
+        "suffix": "a"
+      },
+      {
+        "id": "01LuD",
+        "osisID": "Gen.6.17",
+        "wlc": "בָּ/אָ֖רֶץ",
+        "morph": "HRd/Ncbsa",
+        "n": "0.0",
+        "lemma": "b/776",
+        "prefixes": [
+          "b"
+        ],
+        "base": "H776",
+        "suffix": null
+      },
+      {
+        "id": "01XnL",
+        "osisID": "Gen.6.17",
+        "wlc": "יִגְוָֽע",
+        "morph": "HVqi3ms",
+        "n": "0",
+        "lemma": "1478",
+        "prefixes": [],
+        "base": "H1478",
+        "suffix": null
+      }
+    ],
+    "18": [
+      {
+        "id": "01sUy",
+        "osisID": "Gen.6.18",
+        "wlc": "וַ/הֲקִמֹתִ֥י",
+        "morph": "HC/Vhp1cs",
+        "n": null,
+        "lemma": "c/6965 b",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H6965",
+        "suffix": "b"
+      },
+      {
+        "id": "017nT",
+        "osisID": "Gen.6.18",
+        "wlc": "אֶת",
+        "morph": "HTo",
+        "n": null,
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "01yyf",
+        "osisID": "Gen.6.18",
+        "wlc": "בְּרִיתִ֖/י",
+        "morph": "HNcfsc/Sp1cs",
+        "n": "1.0",
+        "lemma": "1285",
+        "prefixes": [],
+        "base": "H1285",
+        "suffix": null
+      },
+      {
+        "id": "014Zw",
+        "osisID": "Gen.6.18",
+        "wlc": "אִתָּ֑/ךְ",
+        "morph": "HR/Sp2fs",
+        "n": "1",
+        "lemma": "854",
+        "prefixes": [],
+        "base": "H854",
+        "suffix": null
+      },
+      {
+        "id": "01JqE",
+        "osisID": "Gen.6.18",
+        "wlc": "וּ/בָאתָ֙",
+        "morph": "HC/Vqq2ms",
+        "n": "0.2.0",
+        "lemma": "c/935",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H935",
+        "suffix": null
+      },
+      {
+        "id": "01rnt",
+        "osisID": "Gen.6.18",
+        "wlc": "אֶל",
+        "morph": "HR",
+        "n": null,
+        "lemma": "413",
+        "prefixes": [],
+        "base": "H413",
+        "suffix": null
+      },
+      {
+        "id": "01DiF",
+        "osisID": "Gen.6.18",
+        "wlc": "הַ/תֵּבָ֔ה",
+        "morph": "HTd/Ncfsa",
+        "n": "0.2",
+        "lemma": "d/8392",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H8392",
+        "suffix": null
+      },
+      {
+        "id": "01eUy",
+        "osisID": "Gen.6.18",
+        "wlc": "אַתָּ֕ה",
+        "morph": "HPp2ms",
+        "n": "0.1",
+        "lemma": "859 a",
+        "prefixes": [],
+        "base": "H859",
+        "suffix": "a"
+      },
+      {
+        "id": "01Vak",
+        "osisID": "Gen.6.18",
+        "wlc": "וּ/בָנֶ֛י/ךָ",
+        "morph": "HC/Ncmpc/Sp2ms",
+        "n": "0.0.0",
+        "lemma": "c/1121 a",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H1121",
+        "suffix": "a"
+      },
+      {
+        "id": "01oiN",
+        "osisID": "Gen.6.18",
+        "wlc": "וְ/אִשְׁתְּ/ךָ֥",
+        "morph": "HC/Ncfsc/Sp2ms",
+        "n": null,
+        "lemma": "c/802",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H802",
+        "suffix": null
+      },
+      {
+        "id": "01vnQ",
+        "osisID": "Gen.6.18",
+        "wlc": "וּ/נְשֵֽׁי",
+        "morph": "HC/Ncfpc",
+        "n": null,
+        "lemma": "c/802",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H802",
+        "suffix": null
+      },
+      {
+        "id": "01gEr",
+        "osisID": "Gen.6.18",
+        "wlc": "בָנֶ֖י/ךָ",
+        "morph": "HNcmpc/Sp2ms",
+        "n": "0.0",
+        "lemma": "1121 a",
+        "prefixes": [],
+        "base": "H1121",
+        "suffix": "a"
+      },
+      {
+        "id": "01WLF",
+        "osisID": "Gen.6.18",
+        "wlc": "אִתָּֽ/ךְ",
+        "morph": "HR/Sp2fs",
+        "n": "0",
+        "lemma": "854",
+        "prefixes": [],
+        "base": "H854",
+        "suffix": null
+      }
+    ],
+    "19": [
+      {
+        "id": "01wGZ",
+        "osisID": "Gen.6.19",
+        "wlc": "וּ/מִ/כָּל",
+        "morph": "HC/R/Ncmsc",
+        "n": null,
+        "lemma": "c/m/3605",
+        "prefixes": [
+          "c",
+          "m"
+        ],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "01HVd",
+        "osisID": "Gen.6.19",
+        "wlc": "הָ֠/חַי",
+        "morph": "HTd/Aamsa",
+        "n": "1.0.0.1",
+        "lemma": "d/2416 a",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H2416",
+        "suffix": "a"
+      },
+      {
+        "id": "01Fze",
+        "osisID": "Gen.6.19",
+        "wlc": "מִֽ/כָּל",
+        "morph": "HR/Ncmsc",
+        "n": null,
+        "lemma": "m/3605",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "01ZHY",
+        "osisID": "Gen.6.19",
+        "wlc": "בָּשָׂ֞ר",
+        "morph": "HNcmsa",
+        "n": "1.0.0.0",
+        "lemma": "1320",
+        "prefixes": [],
+        "base": "H1320",
+        "suffix": null
+      },
+      {
+        "id": "011sU",
+        "osisID": "Gen.6.19",
+        "wlc": "שְׁנַ֧יִם",
+        "morph": "HAcmda",
+        "n": null,
+        "lemma": "8147",
+        "prefixes": [],
+        "base": "H8147",
+        "suffix": null
+      },
+      {
+        "id": "01CGv",
+        "osisID": "Gen.6.19",
+        "wlc": "מִ/כֹּ֛ל",
+        "morph": "HR/Ncmsa",
+        "n": "1.0.0",
+        "lemma": "m/3605",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "01xTA",
+        "osisID": "Gen.6.19",
+        "wlc": "תָּבִ֥יא",
+        "morph": "HVhi2ms",
+        "n": null,
+        "lemma": "935",
+        "prefixes": [],
+        "base": "H935",
+        "suffix": null
+      },
+      {
+        "id": "01isH",
+        "osisID": "Gen.6.19",
+        "wlc": "אֶל",
+        "morph": "HR",
+        "n": null,
+        "lemma": "413",
+        "prefixes": [],
+        "base": "H413",
+        "suffix": null
+      },
+      {
+        "id": "01nJS",
+        "osisID": "Gen.6.19",
+        "wlc": "הַ/תֵּבָ֖ה",
+        "morph": "HTd/Ncfsa",
+        "n": "1.0",
+        "lemma": "d/8392",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H8392",
+        "suffix": null
+      },
+      {
+        "id": "01cUx",
+        "osisID": "Gen.6.19",
+        "wlc": "לְ/הַחֲיֹ֣ת",
+        "morph": "HR/Vhc",
+        "n": null,
+        "lemma": "l/2421",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H2421",
+        "suffix": null
+      },
+      {
+        "id": "01a6i",
+        "osisID": "Gen.6.19",
+        "wlc": "אִתָּ֑/ךְ",
+        "morph": "HR/Sp2fs",
+        "n": "1",
+        "lemma": "854",
+        "prefixes": [],
+        "base": "H854",
+        "suffix": null
+      },
+      {
+        "id": "01Jfc",
+        "osisID": "Gen.6.19",
+        "wlc": "זָכָ֥ר",
+        "morph": "HAamsa",
+        "n": null,
+        "lemma": "2145",
+        "prefixes": [],
+        "base": "H2145",
+        "suffix": null
+      },
+      {
+        "id": "01hEY",
+        "osisID": "Gen.6.19",
+        "wlc": "וּ/נְקֵבָ֖ה",
+        "morph": "HC/Ncfsa",
+        "n": "0.0",
+        "lemma": "c/5347",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H5347",
+        "suffix": null
+      },
+      {
+        "id": "01ijZ",
+        "osisID": "Gen.6.19",
+        "wlc": "יִֽהְיֽוּ",
+        "morph": "HVqi3mp",
+        "n": "0",
+        "lemma": "1961",
+        "prefixes": [],
+        "base": "H1961",
+        "suffix": null
+      }
+    ],
+    "20": [
+      {
+        "id": "01u83",
+        "osisID": "Gen.6.20",
+        "wlc": "מֵ/הָ/ע֣וֹף",
+        "morph": "HR/Td/Ncmsa",
+        "n": null,
+        "lemma": "m/d/5775",
+        "prefixes": [
+          "m",
+          "d"
+        ],
+        "base": "H5775",
+        "suffix": null
+      },
+      {
+        "id": "01NzX",
+        "osisID": "Gen.6.20",
+        "wlc": "לְ/מִינֵ֗/הוּ",
+        "morph": "HR/Ncmsc/Sp3ms",
+        "n": "1.1.1",
+        "lemma": "l/4327",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H4327",
+        "suffix": null
+      },
+      {
+        "id": "0117r",
+        "osisID": "Gen.6.20",
+        "wlc": "וּ/מִן",
+        "morph": "HC/R",
+        "n": null,
+        "lemma": "c/4480 a",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H4480",
+        "suffix": "a"
+      },
+      {
+        "id": "01ZU1",
+        "osisID": "Gen.6.20",
+        "wlc": "הַ/בְּהֵמָה֙",
+        "morph": "HTd/Ncfsa",
+        "n": "1.1.0",
+        "lemma": "d/929",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H929",
+        "suffix": null
+      },
+      {
+        "id": "01otL",
+        "osisID": "Gen.6.20",
+        "wlc": "לְ/מִינָ֔/הּ",
+        "morph": "HR/Ncmsc/Sp3fs",
+        "n": "1.1",
+        "lemma": "l/4327",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H4327",
+        "suffix": null
+      },
+      {
+        "id": "01um7",
+        "osisID": "Gen.6.20",
+        "wlc": "מִ/כֹּ֛ל",
+        "morph": "HR/Ncmsc",
+        "n": "1.0.0",
+        "lemma": "m/3605",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "01KjJ",
+        "osisID": "Gen.6.20",
+        "wlc": "רֶ֥מֶשׂ",
+        "morph": "HNcmsc",
+        "n": null,
+        "lemma": "7431",
+        "prefixes": [],
+        "base": "H7431",
+        "suffix": null
+      },
+      {
+        "id": "01fiM",
+        "osisID": "Gen.6.20",
+        "wlc": "הָֽ/אֲדָמָ֖ה",
+        "morph": "HTd/Ncfsa",
+        "n": "1.0",
+        "lemma": "d/127",
+        "prefixes": [
+          "d"
+        ],
+        "base": "H127",
+        "suffix": null
+      },
+      {
+        "id": "01dcf",
+        "osisID": "Gen.6.20",
+        "wlc": "לְ/מִינֵ֑/הוּ",
+        "morph": "HR/Ncmsc/Sp3ms",
+        "n": "1",
+        "lemma": "l/4327",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H4327",
+        "suffix": null
+      },
+      {
+        "id": "01KEb",
+        "osisID": "Gen.6.20",
+        "wlc": "שְׁנַ֧יִם",
+        "morph": "HAcmda",
+        "n": null,
+        "lemma": "8147",
+        "prefixes": [],
+        "base": "H8147",
+        "suffix": null
+      },
+      {
+        "id": "01hC2",
+        "osisID": "Gen.6.20",
+        "wlc": "מִ/כֹּ֛ל",
+        "morph": "HR/Ncmsa",
+        "n": "0.0.0",
+        "lemma": "m/3605",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "014fq",
+        "osisID": "Gen.6.20",
+        "wlc": "יָבֹ֥אוּ",
+        "morph": "HVqi3mp",
+        "n": null,
+        "lemma": "935",
+        "prefixes": [],
+        "base": "H935",
+        "suffix": null
+      },
+      {
+        "id": "01sEG",
+        "osisID": "Gen.6.20",
+        "wlc": "אֵלֶ֖י/ךָ",
+        "morph": "HR/Sp2ms",
+        "n": "0.0",
+        "lemma": "413",
+        "prefixes": [],
+        "base": "H413",
+        "suffix": null
+      },
+      {
+        "id": "01HuD",
+        "osisID": "Gen.6.20",
+        "wlc": "לְ/הַֽחֲיֽוֹת",
+        "morph": "HR/Vhc",
+        "n": "0",
+        "lemma": "l/2421",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H2421",
+        "suffix": null
+      }
+    ],
+    "21": [
+      {
+        "id": "013KB",
+        "osisID": "Gen.6.21",
+        "wlc": "וְ/אַתָּ֣ה",
+        "morph": "HC/Pp2ms",
+        "n": null,
+        "lemma": "c/859 a",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H859",
+        "suffix": "a"
+      },
+      {
+        "id": "01q7m",
+        "osisID": "Gen.6.21",
+        "wlc": "קַח",
+        "morph": "HVqv2ms",
+        "n": null,
+        "lemma": "3947",
+        "prefixes": [],
+        "base": "H3947",
+        "suffix": null
+      },
+      {
+        "id": "01bTg",
+        "osisID": "Gen.6.21",
+        "wlc": "לְ/ךָ֗",
+        "morph": "HR/Sp2ms",
+        "n": "1.1.1",
+        "lemma": "l",
+        "prefixes": [
+          "l"
+        ],
+        "base": null,
+        "suffix": null
+      },
+      {
+        "id": "01Aw1",
+        "osisID": "Gen.6.21",
+        "wlc": "מִ/כָּל",
+        "morph": "HR/Ncmsc",
+        "n": null,
+        "lemma": "m/3605",
+        "prefixes": [
+          "m"
+        ],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "01AqN",
+        "osisID": "Gen.6.21",
+        "wlc": "מַֽאֲכָל֙",
+        "morph": "HNcmsa",
+        "n": "1.1.0",
+        "lemma": "3978",
+        "prefixes": [],
+        "base": "H3978",
+        "suffix": null
+      },
+      {
+        "id": "0176m",
+        "osisID": "Gen.6.21",
+        "wlc": "אֲשֶׁ֣ר",
+        "morph": "HTr",
+        "n": null,
+        "lemma": "834 a",
+        "prefixes": [],
+        "base": "H834",
+        "suffix": "a"
+      },
+      {
+        "id": "016a2",
+        "osisID": "Gen.6.21",
+        "wlc": "יֵֽאָכֵ֔ל",
+        "morph": "HVNi3ms",
+        "n": "1.1",
+        "lemma": "398",
+        "prefixes": [],
+        "base": "H398",
+        "suffix": null
+      },
+      {
+        "id": "01g5k",
+        "osisID": "Gen.6.21",
+        "wlc": "וְ/אָסַפְתָּ֖",
+        "morph": "HC/Vqp2ms",
+        "n": "1.0",
+        "lemma": "c/622",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H622",
+        "suffix": null
+      },
+      {
+        "id": "01wJN",
+        "osisID": "Gen.6.21",
+        "wlc": "אֵלֶ֑י/ךָ",
+        "morph": "HR/Sp2ms",
+        "n": "1",
+        "lemma": "413",
+        "prefixes": [],
+        "base": "H413",
+        "suffix": null
+      },
+      {
+        "id": "01bGZ",
+        "osisID": "Gen.6.21",
+        "wlc": "וְ/הָיָ֥ה",
+        "morph": "HC/Vqp3ms",
+        "n": null,
+        "lemma": "c/1961",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H1961",
+        "suffix": null
+      },
+      {
+        "id": "01pX4",
+        "osisID": "Gen.6.21",
+        "wlc": "לְ/ךָ֛",
+        "morph": "HR/Sp2ms",
+        "n": "0.0.0",
+        "lemma": "l",
+        "prefixes": [
+          "l"
+        ],
+        "base": null,
+        "suffix": null
+      },
+      {
+        "id": "01J7k",
+        "osisID": "Gen.6.21",
+        "wlc": "וְ/לָ/הֶ֖ם",
+        "morph": "HC/R/Sp3mp",
+        "n": "0.0",
+        "lemma": "c/l",
+        "prefixes": [
+          "c",
+          "l"
+        ],
+        "base": null,
+        "suffix": null
+      },
+      {
+        "id": "01AuP",
+        "osisID": "Gen.6.21",
+        "wlc": "לְ/אָכְלָֽה",
+        "morph": "HR/Ncfsa",
+        "n": "0",
+        "lemma": "l/402",
+        "prefixes": [
+          "l"
+        ],
+        "base": "H402",
+        "suffix": null
+      }
+    ],
+    "22": [
+      {
+        "id": "01syM",
+        "osisID": "Gen.6.22",
+        "wlc": "וַ/יַּ֖עַשׂ",
+        "morph": "HC/Vqw3ms",
+        "n": "1.0",
+        "lemma": "c/6213 a",
+        "prefixes": [
+          "c"
+        ],
+        "base": "H6213",
+        "suffix": "a"
+      },
+      {
+        "id": "01ayp",
+        "osisID": "Gen.6.22",
+        "wlc": "נֹ֑חַ",
+        "morph": "HNp",
+        "n": "1",
+        "lemma": "5146",
+        "prefixes": [],
+        "base": "H5146",
+        "suffix": null
+      },
+      {
+        "id": "01zG9",
+        "osisID": "Gen.6.22",
+        "wlc": "כְּ֠/כֹל",
+        "morph": "HR/Ncmsa",
+        "n": "0.0.0.0",
+        "lemma": "k/3605",
+        "prefixes": [
+          "k"
+        ],
+        "base": "H3605",
+        "suffix": null
+      },
+      {
+        "id": "01DUx",
+        "osisID": "Gen.6.22",
+        "wlc": "אֲשֶׁ֨ר",
+        "morph": "HTr",
+        "n": null,
+        "lemma": "834 a",
+        "prefixes": [],
+        "base": "H834",
+        "suffix": "a"
+      },
+      {
+        "id": "01G26",
+        "osisID": "Gen.6.22",
+        "wlc": "צִוָּ֥ה",
+        "morph": "HVpp3ms",
+        "n": null,
+        "lemma": "6680",
+        "prefixes": [],
+        "base": "H6680",
+        "suffix": null
+      },
+      {
+        "id": "01r7o",
+        "osisID": "Gen.6.22",
+        "wlc": "אֹת֛/וֹ",
+        "morph": "HTo/Sp3ms",
+        "n": "0.0.0",
+        "lemma": "853",
+        "prefixes": [],
+        "base": "H853",
+        "suffix": null
+      },
+      {
+        "id": "01kDi",
+        "osisID": "Gen.6.22",
+        "wlc": "אֱלֹהִ֖ים",
+        "morph": "HNcmpa",
+        "n": "0.0",
+        "lemma": "430",
+        "prefixes": [],
+        "base": "H430",
+        "suffix": null
+      },
+      {
+        "id": "01VnV",
+        "osisID": "Gen.6.22",
+        "wlc": "כֵּ֥ן",
+        "morph": "HTm",
+        "n": null,
+        "lemma": "3651 c",
+        "prefixes": [],
+        "base": "H3651",
+        "suffix": "c"
+      },
+      {
+        "id": "01J24",
+        "osisID": "Gen.6.22",
+        "wlc": "עָשָֽׂה",
+        "morph": "HVqp3ms",
+        "n": "0",
+        "lemma": "6213 a",
+        "prefixes": [],
+        "base": "H6213",
+        "suffix": "a"
+      }
+    ]
+  }
+}

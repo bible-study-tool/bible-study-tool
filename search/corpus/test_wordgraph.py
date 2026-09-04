@@ -26,10 +26,9 @@ class WordGraphArtifactTests(unittest.TestCase):
     def test_schema_and_scope(self):
         self.assertEqual(self.graph["$schema"], "wordgraph-genesis/v1")
         self.assertEqual(self.graph["scope"]["book"], "genesis")
-        self.assertEqual(self.graph["scope"]["chapters"], [1, 2, 3])
-        # Derived from the artifacts (not hardcoded): 31 Gen-1 + 25 Gen-2
-        # + 24 Gen-3 distinct osisIDs.
-        self.assertEqual(self.graph["scope"]["verses"], 80)
+        self.assertEqual(self.graph["scope"]["chapters"], list(range(1, 51)))
+        # Derived from the artifacts (not hardcoded): 1,533 Genesis verses
+        self.assertEqual(self.graph["scope"]["verses"], 1533)
 
     def test_verses_count_derived_from_occurrences(self):
         """The scope verses count must equal the distinct occurrence passages
@@ -42,7 +41,7 @@ class WordGraphArtifactTests(unittest.TestCase):
         self.assertEqual(len(passages), self.graph["scope"]["verses"])
 
     def test_lexeme_count(self):
-        self.assertEqual(len(self.graph["lexemes"]), 251)
+        self.assertEqual(len(self.graph["lexemes"]), 1783)
 
     def test_every_lexeme_has_required_fields(self):
         for l in self.graph["lexemes"]:
@@ -79,11 +78,11 @@ class WordGraphArtifactTests(unittest.TestCase):
         self.assertEqual(h1254["glosses"]["strongs"], "1. (absolutely) to create")
         self.assertEqual(h1254["glosses"]["tbesh"], ["to create", "to fatten"])
         self.assertEqual(h1254["glosses"]["ledger_status"], "agree")
-        self.assertEqual(h1254["attestation"]["verses"], 5)
-        self.assertEqual(h1254["attestation"]["tokens"], 7)
+        self.assertEqual(h1254["attestation"]["verses"], 8)
+        self.assertEqual(h1254["attestation"]["tokens"], 11)
         self.assertEqual(
             [o["passage"] for o in h1254["occurrences"]],
-            ["Gen.1.1", "Gen.1.21", "Gen.1.27", "Gen.2.3", "Gen.2.4"],
+            ["Gen.1.1", "Gen.1.21", "Gen.1.27", "Gen.2.3", "Gen.2.4", "Gen.5.1", "Gen.5.2", "Gen.6.7"],
         )
 
         h7673 = self.by_id["H7673"]
@@ -92,14 +91,12 @@ class WordGraphArtifactTests(unittest.TestCase):
             h7673["homograph"]["candidate_senses"], ["to cease", "to keep"]
         )
         self.assertEqual(
-            [o["passage"] for o in h7673["occurrences"]], ["Gen.2.2", "Gen.2.3"]
+            [o["passage"] for o in h7673["occurrences"]], ["Gen.2.2", "Gen.2.3", "Gen.8.22"]
         )
 
         h7307 = self.by_id["H7307"]
         self.assertEqual(h7307["glosses"]["strongs"], "1. wind")
-        self.assertEqual(
-            [o["passage"] for o in h7307["occurrences"]], ["Gen.1.2", "Gen.3.8"]
-        )
+        self.assertEqual(h7307["attestation"]["verses"], 11)
 
     def test_oshb_homonyms_verbatim_counts(self):
         """The OSHB n-attribute is stored verbatim as counts, never identity."""
@@ -113,10 +110,8 @@ class WordGraphArtifactTests(unittest.TestCase):
         """Every token id in the graph must exist in the morphology artifacts
         (no fabricated ids)."""
         morph_ids = set()
-        for fname in ("lexicons/morphology-genesis1.json",
-                      "lexicons/morphology-genesis2.json",
-                      "lexicons/morphology-genesis3.json"):
-            morph = json.loads(Path(fname).read_text(encoding="utf-8"))
+        for c in range(1, 51):
+            morph = json.loads(Path(f"lexicons/morphology-genesis{c}.json").read_text(encoding="utf-8"))
             for words in morph["verses"].values():
                 for w in words:
                     morph_ids.add(w["id"])
@@ -157,7 +152,7 @@ class WordGraphArtifactTests(unittest.TestCase):
                 for f in src.glob("*.json"):
                     os.symlink(f.resolve(), dst / f.name)
             payload = build(td)
-            self.assertEqual(len(payload["lexemes"]), 251)
+            self.assertEqual(len(payload["lexemes"]), 1783)
 
     def test_homograph_notes_file_consumed(self):
         """The curated homograph candidates come from the reviewed notes file

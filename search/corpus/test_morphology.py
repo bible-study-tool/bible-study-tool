@@ -47,6 +47,15 @@ class DecomposeTests(unittest.TestCase):
             self.assertEqual(d["base"], expected["base"], lemma)
             self.assertEqual(d["suffix"], expected["suffix"], lemma)
 
+    def test_compound_proper_names(self):
+        d1 = decompose_lemma("1008+")
+        self.assertEqual(d1["base"], "H1008")
+        self.assertIsNone(d1["suffix"])
+        d2 = decompose_lemma("b/884+")
+        self.assertEqual(d2["prefixes"], ["b"])
+        self.assertEqual(d2["base"], "H884")
+        self.assertIsNone(d2["suffix"])
+
     def test_unrecognized_form_raises(self):
         with self.assertRaises(ValueError):
             decompose_lemma("123/x45")
@@ -91,6 +100,15 @@ class ParseBookTests(unittest.TestCase):
             p.write_text(bad, encoding="utf-8")
             with self.assertRaises(ValueError):
                 parse_book_xml(str(p), 1)
+
+    def test_aramaic_morph_accepted(self):
+        # Gen 31:47 contains Aramaic proper noun morphology 'ANp'
+        aramaic = FIXTURE_XML.replace('morph="HR/Ncfsa"', 'morph="ANp"')
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "Gen.xml"
+            p.write_text(aramaic, encoding="utf-8")
+            records = parse_book_xml(str(p), 1)
+            self.assertEqual(records[0]["morph"], "ANp")
 
 
 class ArtifactTests(unittest.TestCase):
@@ -273,22 +291,19 @@ class ProvenanceChecksumGateTests(unittest.TestCase):
         }
         # Exact inventory pin: removing any artifact from PROVENANCE must
         # fail here, not slide under a floor.
+        expected_inventory = {
+            "lexicons/strongs-list.json",
+            "lexicons/strongs-lexicon.json",
+            "lexicons/tbesh-glosses.json",
+            "lexicons/tbesg-glosses.json",
+            *(f"lexicons/morphology-genesis{c}.json" for c in range(1, 51)),
+            "lexicons/wordgraph-genesis.json",
+            "correlations/agreement-ledger.json",
+            *(f"correlations/apparatus-genesis{c}.json" for c in range(1, 51)),
+        }
         self.assertEqual(
             set(recorded),
-            {
-                "lexicons/strongs-list.json",
-                "lexicons/strongs-lexicon.json",
-                "lexicons/tbesh-glosses.json",
-                "lexicons/tbesg-glosses.json",
-                "lexicons/morphology-genesis1.json",
-                "lexicons/morphology-genesis2.json",
-                "lexicons/morphology-genesis3.json",
-                "lexicons/wordgraph-genesis.json",
-                "correlations/agreement-ledger.json",
-                "correlations/apparatus-genesis1.json",
-                "correlations/apparatus-genesis2.json",
-                "correlations/apparatus-genesis3.json",
-            },
+            expected_inventory,
         )
         for name, sha in recorded.items():
             path = Path(name)

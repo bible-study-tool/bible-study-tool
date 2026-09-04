@@ -40,16 +40,12 @@ from pathlib import Path
 
 # The committed artifacts the graph consumes (all must exist).
 _CONSUMED = (
-    "lexicons/morphology-genesis1.json",
-    "lexicons/morphology-genesis2.json",
-    "lexicons/morphology-genesis3.json",
+    *(f"lexicons/morphology-genesis{c}.json" for c in range(1, 51)),
     "lexicons/strongs-list.json",
     "lexicons/strongs-lexicon.json",
     "lexicons/tbesh-glosses.json",
     "correlations/agreement-ledger.json",
-    "correlations/apparatus-genesis1.json",
-    "correlations/apparatus-genesis2.json",
-    "correlations/apparatus-genesis3.json",
+    *(f"correlations/apparatus-genesis{c}.json" for c in range(1, 51)),
 )
 # The curated, REVIEWED homograph candidate file (hand content, separate from
 # the generated artifact — per WP-009 convention). The generator consumes it;
@@ -160,9 +156,9 @@ def build(repo: str = ".") -> dict:
     # The Genesis chapters in scope: derived from the consumed morphology
     # artifacts (morphology-genesis{N}.json).
     scope_chapters = sorted(
-        int(re.search(r"morphology-genesis(\d+)\.json$", f).group(1))
+        int(m.group(1))
         for f in _CONSUMED
-        if re.search(r"morphology-genesis(\d+)\.json$", f)
+        if (m := re.search(r"morphology-genesis(\d+)\.json$", f))
     )
     morph_layers = [
         _load(repo, f"lexicons/morphology-genesis{ch}.json")
@@ -300,17 +296,13 @@ def build(repo: str = ".") -> dict:
         "$schema": "wordgraph-genesis/v1",
         "scope": {"book": "genesis", "chapters": scope_chapters, "verses": n_verses},
         "generated_from": [
-            "lexicons/morphology-genesis1.json",
-            "lexicons/morphology-genesis2.json",
-            "lexicons/morphology-genesis3.json",
+            *(f"lexicons/morphology-genesis{c}.json" for c in scope_chapters),
             "lexicons/strongs-list.json",
             "lexicons/strongs-lexicon.json",
             "lexicons/tbesh-glosses.json",
             "correlations/agreement-ledger.json",
-            "correlations/apparatus-genesis1.json",
-            "correlations/apparatus-genesis2.json",
-            "correlations/apparatus-genesis3.json",
-            "lexicons/wordgraph-notes-genesis.json",
+            *(f"correlations/apparatus-genesis{c}.json" for c in scope_chapters),
+            _HOMOGRAPH_NOTES,
         ],
         "identity_model": (
             "Three-layer stack per ADR-0010: token layer (OSHB ids in "
@@ -329,16 +321,17 @@ def build(repo: str = ".") -> dict:
             "conflicting occurrence appears in scope.",
             "Theological prose per lexeme deferred indefinitely (thin human "
             "layer).",
-            "TBESG (Greek glosses) intentionally not consumed: Genesis 1-2 is "
-            "all-Hebrew — the Greek gloss layer applies when a Greek-scope "
-            "book is added.",
+            "TBESG (Greek glosses) intentionally not consumed: Genesis is "
+            "Old Testament (Hebrew/Aramaic) — the Greek gloss layer applies "
+            "when a Greek-scope book is added.",
             "kjv-osis attestation (apparatus additions) is merged into lexeme "
             "occurrences with an explicit 'source' per passage (oshb | "
             "kjv-osis | oshb+kjv-osis). Most additions are aligner misses "
             "(the code IS OSHB-attested at that verse); a lexeme attested "
             "ONLY by kjv-osis is recorded with oshb_attested=false and its "
             "attestation comes from the apparatus, so the draft engine never "
-            "KeyErrors on a real verse.",
+            "KeyErrors on a real verse. attestation.tokens strictly reflects "
+            "original-language (OSHB) token IDs, which is 0 for pure kjv-osis additions.",
         ],
         "lexemes": lexemes,
     }

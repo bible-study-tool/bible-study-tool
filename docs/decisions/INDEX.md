@@ -16,7 +16,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-0008](ADR-0008-future-architecture-and-packaging.md) | Future architecture & packaging direction (3-tier engine, tiered distribution) | Proposed |
 | [ADR-0009](ADR-0009-corpus-expansion-model.md) | Corpus expansion model — whole-book pipeline, per-chapter work packages | Accepted |
 | [ADR-0010](ADR-0010-wordgraph.md) | The WordGraph — a lemma-centric lexical knowledge graph (evolution of Strong's) | Accepted |
-| [ADR-0011](ADR-0011-whole-book-scaffolding-and-jit-egw.md) | Whole-Book Draft Scaffolding and JIT Spirit of Prophecy Resolution | Proposed |
+| [ADR-0011](ADR-0011-whole-book-scaffolding-and-jit-egw.md) | Whole-Book Draft Scaffolding and JIT Spirit of Prophecy Resolution | Accepted |
 
 ## When to write one
 

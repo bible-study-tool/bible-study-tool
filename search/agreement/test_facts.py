@@ -102,6 +102,17 @@ class KjvOsisAdapterTests(unittest.TestCase):
             expected = sorted(c for c, n in occ.items() for _ in range(n))
             self.assertEqual(by_key[key]["value"], expected, key)
 
+    def test_self_closing_w_tag_handled_without_token_loss(self):
+        # Gen 44:10 contains self-closing <w lemma="strong:H03651"/>
+        ch44_facts = kjv_osis_facts(".", chapter=44)
+        v10 = next(
+            f for f in ch44_facts
+            if f["key"] == "Gen.44.10" and f["fact_type"] == FACT_WORD_STRONGS
+        )
+        self.assertIn("H3651", v10["value"])
+        # Verify subsequent tokens were not dropped:
+        self.assertIn("H4672", v10["value"])
+
 
 @require_raw_sources()
 class OshbAdapterTests(unittest.TestCase):

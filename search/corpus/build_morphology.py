@@ -41,11 +41,9 @@ OSIS_NS = {"osis": "http://www.bibletechnologies.net/2003/OSIS/namespace"}
 # Optional space-letter suffix at the very end (e.g. '1254 a').
 _LEMMA_SUFFIX_RE = re.compile(r"^(?P<head>.*?)(?:\s+(?P<suffix>[a-z]))?$")
 
-# ETCBC/OSHB morphology code shape: 'H' + letters/digits/slashes.
-# (Hebrew entries only; if scope ever widens, Aramaic words use 'A'-prefixed
-# codes — e.g. the two Aramaic words at Gen 31:47, morph 'ANp' — and would
-# need their own branch.)
-_MORPH_RE = re.compile(r"^H[A-Za-z0-9/]+$")
+# ETCBC/OSHB morphology code shape: 'H' or 'A' + letters/digits/slashes.
+# Covers Hebrew ('H') and biblical Aramaic ('A', e.g. Gen 31:47 morph 'ANp').
+_MORPH_RE = re.compile(r"^[HA][A-Za-z0-9/]+$")
 
 # A single prefix/segment: 1-2 lowercase letters (ETCBC preformat morphemes).
 _SEGMENT_RE = re.compile(r"^[a-z]{1,2}$")
@@ -61,6 +59,8 @@ def decompose_lemma(lemma: str) -> dict:
       '1254 a'    -> base H1254, suffix 'a'
       'c/l/4723 c'-> prefixes [c, l], base H4723, suffix 'c'
       'b', 'c'    -> prefix-only word (no base number)
+      '1008+'     -> base H1008 (compound proper name marker in OSHB)
+      'b/884+'    -> prefixes [b], base H884
     Returns {"lemma": ..., "prefixes": [...], "base": "H####"|None, "suffix": str|None}.
     Raises ValueError on unrecognized forms (fail-fast, no silent drops).
     """
@@ -75,10 +75,12 @@ def decompose_lemma(lemma: str) -> dict:
     prefixes: list[str] = []
     base: str | None = None
     for part in parts:
-        if part.isdigit():
+        has_compound = part.endswith("+")
+        num_part = part[:-1] if has_compound else part
+        if num_part.isdigit():
             if base is not None:
                 raise ValueError(f"unrecognized OSHB lemma (two numeric parts): {lemma!r}")
-            base = f"H{int(part)}"
+            base = f"H{int(num_part)}"
         elif _SEGMENT_RE.match(part):
             prefixes.append(part)
         else:
@@ -91,40 +93,67 @@ def decompose_lemma(lemma: str) -> dict:
     }
 
 
-def parse_book_xml(path: str, chapter: int) -> list[dict]:
+def parse_book_xml(source: str | Path | ET.Element, chapter: int) -> list[dict]:
     """Parse one OSHB book XML and return word records for one chapter, in order.
 
     Selects exactly ``Book.CHAPTER.N`` verses (e.g. Gen.1.1..Gen.1.31) and
     iterates their <w> children in document order. Raises ValueError if any
     word has a malformed morphology code, an unrecognized lemma form, or empty
     text (all would silently corrupt the layer).
+
+    Versification: Genesis 31-32 has a traditional chapter-break difference
+    between the Hebrew Masoretic Text (MT/WLC/OSHB) and the English KJV:
+      - Gen 31:55 in KJV corresponds to Gen 32:1 in MT.
+      - Gen 32:1..32 in KJV correspond to Gen 32:2..33 in MT.
+    The OSHB records are mapped to the canonical KJV corpus versification
+    so each verse in the corpus has an aligned morphology layer.
     """
-    root = ET.parse(path).getroot()
+    if isinstance(source, ET.Element):
+        root = source
+        source_label = "<ET.Element>"
+    else:
+        root = ET.parse(source).getroot()
+        source_label = str(source)
     records: list[dict] = []
     prefix = f"Gen.{chapter}"
     for verse in root.iter(f"{{{OSIS_NS['osis']}}}verse"):
         osis_id = verse.get("osisID", "")
-        if osis_id != prefix and not osis_id.startswith(prefix + "."):
-            continue
+        if chapter == 31:
+            if not (osis_id.startswith("Gen.31.") or osis_id == "Gen.32.1"):
+                continue
+            canonical_osis_id = "Gen.31.55" if osis_id == "Gen.32.1" else osis_id
+        elif chapter == 32:
+            if not (osis_id.startswith("Gen.32.") and osis_id != "Gen.32.1"):
+                continue
+            v_num = int(osis_id.split(".")[-1]) - 1
+            canonical_osis_id = f"Gen.32.{v_num}"
+        else:
+            if osis_id != prefix and not osis_id.startswith(prefix + "."):
+                continue
+            canonical_osis_id = osis_id
+
         for w in verse.iter(f"{{{OSIS_NS['osis']}}}w"):
             lemma = w.get("lemma", "")
             morph = w.get("morph", "")
             wid = w.get("id", "")
             n_attr = w.get("n")
             if not _MORPH_RE.match(morph):
-                raise ValueError(f"{path}: word id {wid}: malformed morph {morph!r}")
+                raise ValueError(f"{source_label}: word id {wid}: malformed morph {morph!r}")
             decomp = decompose_lemma(lemma)
             text = (w.text or "").strip()
             if not text:
-                raise ValueError(f"{path}: word id {wid}: empty WLC text")
+                raise ValueError(f"{source_label}: word id {wid}: empty WLC text")
             records.append(
                 {
                     "id": wid,
-                    "osisID": osis_id,
+                    "osisID": canonical_osis_id,
                     "wlc": text,
                     "morph": morph,
                     "n": n_attr,
-                    **decomp,
+                    "lemma": decomp["lemma"],
+                    "prefixes": decomp["prefixes"],
+                    "base": decomp["base"],
+                    "suffix": decomp["suffix"],
                 }
             )
     return records
@@ -137,24 +166,24 @@ def _artifact_stem(chapters: tuple[int, ...]) -> str:
 
 def build(
     repo: str = ".",
-    oshb_dir: str | None = None,
-    out_dir: str = "lexicons",
     chapters: tuple[int, ...] = (1,),
+    out_dir: str | Path | None = None,
 ) -> dict:
-    oshb_path = Path(oshb_dir) if oshb_dir else Path(repo) / "data/oshb"
-    gen_xml = oshb_path / "Gen.xml"
+    gen_xml = Path(repo) / "data/oshb/Gen.xml"
     if not gen_xml.exists():
         raise FileNotFoundError(
-            f"{gen_xml} missing — run scripts/fetch_sources.sh to extract OSHB"
+            f"OSHB source missing: {gen_xml} — run scripts/fetch_sources.sh "
+            "to fetch pinned upstream data."
         )
 
     with open(Path(repo) / "lexicons/strongs-list.json", encoding="utf-8") as fh:
         canonical = json.load(fh)
     canon_h = set(canonical["hebrew"])
 
+    root = ET.parse(gen_xml).getroot()
     verses: dict[str, list[dict]] = {}
     for chapter in chapters:
-        for rec in parse_book_xml(str(gen_xml), chapter):
+        for rec in parse_book_xml(root, chapter):
             vnum = rec["osisID"].split(".")[-1]
             # Single-chapter artifacts keep plain verse-number keys (matches
             # the seeded morphology-genesis1.json byte-for-byte); multi-
