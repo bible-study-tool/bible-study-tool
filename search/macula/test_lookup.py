@@ -270,7 +270,7 @@ class MaculaCliTests(unittest.TestCase):
         res = subprocess.run(cmd, capture_output=True, text=True)
         self.assertEqual(res.returncode, 0, res.stderr)
         data = json.loads(res.stdout)
-        self.assertIn(data["chapters"], (50, 929))
+        self.assertIn(data["chapters"], (50, 929, 1189))
         self.assertGreaterEqual(data["verses"], 1533)
         self.assertGreaterEqual(data["clauses"], 7007)
 

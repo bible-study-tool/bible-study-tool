@@ -156,6 +156,24 @@ else
   echo "[skip] macula-hebrew/*.xml (all 39 OT books) already present"
 fi
 
+# --- 6. Clear-Bible Macula Greek Lowfat XML (Whole New Testament: 27 books, 260 chapters) ---
+MACULA_GREEK_PIN="8423afe47b9e8f24b7772e808af45c7159a6fe7e"
+mkdir -p "$DATA/macula-greek"
+if [[ ! -f "$DATA/macula-greek/27-revelation.xml" ]]; then
+  echo "[get ] Macula Greek Lowfat XML (27 books, 260 chapters) from Clear-Bible/macula-greek ..."
+  TMP="$(mktemp -d)"
+  trap 'rm -rf "$TMP"' EXIT
+  git clone --filter=blob:none --no-checkout https://github.com/Clear-Bible/macula-greek.git "$TMP/macula_greek"
+  git -C "$TMP/macula_greek" sparse-checkout set Nestle1904/lowfat
+  git -C "$TMP/macula_greek" checkout "$MACULA_GREEK_PIN"
+  cp "$TMP/macula_greek/Nestle1904/lowfat"/[0-9]*.xml "$DATA/macula-greek/"
+  rm -rf "$TMP"
+  trap - EXIT
+else
+  echo "[skip] macula-greek/*.xml (all 27 NT books) already present"
+fi
+
 # --- verification ------------------------------------------------------------
 verify
+
 

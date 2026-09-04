@@ -25,9 +25,17 @@ from search.macula.extract import (
 from search.macula.lookup import MaculaDB, get_db
 
 _AGENT_ROLES: frozenset[str] = frozenset(resolve_role_query("subj"))
-_ACTION_ROLES: frozenset[str] = frozenset(resolve_role_query("pred")) | frozenset(resolve_role_query("verb"))
+_ACTION_ROLES: frozenset[str] = (
+    frozenset(resolve_role_query("pred"))
+    | frozenset(resolve_role_query("verb"))
+    | frozenset(resolve_role_query("copula"))
+)
 _PATIENT_ROLES: frozenset[str] = frozenset(resolve_role_query("obj"))
-_CONTEXT_ROLES: frozenset[str] = frozenset(resolve_role_query("pp")) | frozenset(resolve_role_query("adv"))
+_CONTEXT_ROLES: frozenset[str] = (
+    frozenset(resolve_role_query("pp"))
+    | frozenset(resolve_role_query("adv"))
+    | frozenset(resolve_role_query("prep"))
+)
 
 
 def _clean_definition(desc: str) -> str:

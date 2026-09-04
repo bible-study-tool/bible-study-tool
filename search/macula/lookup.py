@@ -147,8 +147,12 @@ class MaculaDB:
         self.close()
 
     def lookup_strongs(self, query: str) -> dict | None:
-        """Look up Hebrew Strong's entry (e.g. 'H7225', '7225', '0722', 'H430')."""
-        norm = normalize_hebrew_strongs(query)
+        """Look up Strong's entry (e.g. 'H7225', '7225', 'H430', 'G2316', 'G02316')."""
+        q = query.strip().upper()
+        if q.startswith("G"):
+            norm = normalize_greek_strongs(q)
+        else:
+            norm = normalize_hebrew_strongs(q)
         if not norm:
             return None
         if self._sqlite:

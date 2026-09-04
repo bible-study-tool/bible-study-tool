@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""CLI utility for querying Macula Hebrew linguistic and syntactic data.
+"""CLI utility for querying Macula Hebrew (OT) and Greek (NT) linguistic and syntactic data.
 
 Usage:
   python scripts/macula_lookup.py --strongs H7225
+  python scripts/macula_lookup.py --strongs G2316
   python scripts/macula_lookup.py --verse Gen.1.1
+  python scripts/macula_lookup.py --verse "John 3:16"
   python scripts/macula_lookup.py --lxx G4160
   python scripts/macula_lookup.py --domain 168
   python scripts/macula_lookup.py --stats
@@ -21,8 +23,16 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from search.corpus.bible_books import NT_BOOKS
 from search.macula.lookup import MaculaDB, normalize_verse_ref
 from search.macula.enrichment import get_translation_equivalences, get_verse_semantic_frame
+
+
+def _source_tag(verse_id: str | None) -> str:
+    if not verse_id:
+        return "Source"
+    b = verse_id.split(".")[0]
+    return "Nestle1904" if b in NT_BOOKS else "MT"
 
 
 def format_strongs(entry: dict) -> str:
@@ -64,8 +74,9 @@ def format_equivalences(eqs: list[dict], strongs: str) -> str:
 
 
 def format_semantic_frame(frame: dict) -> str:
+    src_label = _source_tag(frame.get("verse_id"))
     lines = [
-        f"Verse: {frame.get('verse_id')} [MT: {frame.get('mt_id')}]",
+        f"Verse: {frame.get('verse_id')} [{src_label}: {frame.get('mt_id')}]",
         f"Text:  {frame.get('text')}",
         "",
         "Semantic Participant Roles & Clauses:",
@@ -92,8 +103,9 @@ def format_semantic_frame(frame: dict) -> str:
 
 
 def format_verse(entry: dict) -> str:
+    src_label = _source_tag(entry.get("verse_id"))
     lines = [
-        f"Verse: {entry.get('verse_id')} [MT: {entry.get('mt_id')}]",
+        f"Verse: {entry.get('verse_id')} [{src_label}: {entry.get('mt_id')}]",
         f"Text:  {entry.get('text')}",
         "",
         "Clauses & Constituent Roles:",
@@ -183,7 +195,7 @@ def main(argv: list[str] | None = None) -> int:
             out["backend"] = backend
             print(json.dumps(out, indent=2))
         else:
-            print(f"Macula Hebrew Corpus Statistics [Backend: {backend}]:")
+            print(f"Macula Linguistic Corpus Statistics [Backend: {backend}]:")
             for k, v in counts.items():
                 print(f"  {k}: {v}")
         return 0

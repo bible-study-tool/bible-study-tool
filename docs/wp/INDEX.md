@@ -30,7 +30,7 @@ entries `draft` -> `review`.
 | [WP-017](WP-017-egw-full-corpus-harvester.md) | Pillar A (A7) | Full Official English EGW Corpus Harvester & Pagination Fidelity (Step 1b) | done |
 | [WP-018](WP-018-whole-bible-macula.md) | Pillar B (B1-B3) | Whole-Bible Macula Linguistic Integration (Step 2) | done |
 | [WP-019](WP-019-whole-bible-english-corpus.md) | Pillar A (A2, A3, A6) | Whole-Bible English Text Integration (All 66 Books) | done |
-| [WP-020](WP-020-macula-greek-nt-integration.md) | Pillar B (B1-B3, NT) | Macula Greek (NT) Linguistic Integration & Canon Unification | open |
+| [WP-020](WP-020-macula-greek-nt-integration.md) | Pillar B (B1-B3, NT) | Macula Greek (NT) Linguistic Integration & Canon Unification | done |
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1

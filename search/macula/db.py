@@ -291,12 +291,15 @@ class MaculaSqliteDB:
             )
 
     def lookup_strongs(self, strongs_num: str) -> dict[str, Any] | None:
-        """Lookup Hebrew Strong's entry from database."""
+        """Lookup Strong's entry (Hebrew H... or Greek G...) from database."""
         if not self.exists():
             return None
-        norm_s = strongs_num.strip().upper()
-        if not norm_s.startswith("H") and norm_s.isdigit():
-            norm_s = f"H{int(norm_s)}"
+        from search.macula.extract import normalize_greek_strongs, normalize_hebrew_strongs
+
+        raw = strongs_num.strip().upper()
+        norm_s = normalize_greek_strongs(raw) if raw.startswith("G") else normalize_hebrew_strongs(raw)
+        if not norm_s:
+            norm_s = raw
 
         cur = self.conn.execute(
             "SELECT * FROM strongs_crosswalk WHERE strongs = ?;", (norm_s,)
@@ -380,9 +383,12 @@ class MaculaSqliteDB:
 
         clauses = []
         for cl in clause_rows:
+            cl_consts = constituents_by_clause.get(cl["id"], [])
+            cl_text = " ".join(c["text"] for c in cl_consts if c.get("text"))
             clauses.append({
                 "rule": cl["rule"],
-                "constituents": constituents_by_clause.get(cl["id"], []),
+                "text": cl_text,
+                "constituents": cl_consts,
             })
 
         return {
@@ -488,6 +494,7 @@ class MaculaSqliteDB:
                 "role": r["role"],
                 "role_label": r["role_label"],
                 "class": r["class"],
+                "text": r["text"],
                 "constituent_text": r["text"],
                 "clause_rule": r["clause_rule"],
                 "verse_text": r["verse_text"],

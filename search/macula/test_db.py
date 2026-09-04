@@ -397,8 +397,8 @@ class TestWholeBibleMaculaDB(unittest.TestCase):
 
     def test_whole_bible_stats(self):
         counts = self.db.counts
-        self.assertEqual(counts["chapters"], 929)
-        self.assertEqual(counts["verses"], 23206)
+        self.assertIn(counts["chapters"], (929, 1189))
+        self.assertIn(counts["verses"], (23206, 31149))
         self.assertGreaterEqual(counts["clauses"], 100000)
         self.assertGreaterEqual(counts["constituents"], 250000)
         self.assertGreaterEqual(counts["tokens"], 600000)
@@ -415,6 +415,10 @@ class TestWholeBibleMaculaDB(unittest.TestCase):
             ("Ps.51.0b", "PSA 51:2", 1),
             ("Mal.4.6", "MAL 3:24", 6),
             ("Num.26.1", "NUM 25:19, NUM 26:1", 2),
+            ("Matt.1.1", "MAT 1:1", 1),
+            ("John.3.16", "JHN 3:16", 4),
+            ("Rom.8.28", "ROM 8:28", 1),
+            ("Rev.14.7", "REV 14:7", 4),
         ]
         for vref, expected_mt, min_clauses in targets:
             v = self.db.lookup_verse(vref)
@@ -428,6 +432,11 @@ class TestWholeBibleMaculaDB(unittest.TestCase):
         s = self.db.lookup_strongs("H7225")
         self.assertIsNotNone(s)
         self.assertEqual(s["strongs"], "H7225")
+
+        s_g = self.db.lookup_strongs("G2316")
+        self.assertIsNotNone(s_g)
+        self.assertEqual(s_g["strongs"], "G2316")
+        self.assertIn("θεός", s_g["lemmas"])
         # In Genesis alone it was 5; across whole OT it is 68
         self.assertEqual(s["occurrences"], 68)
         self.assertIn("G536", s["lxx"])

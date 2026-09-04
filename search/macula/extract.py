@@ -14,23 +14,27 @@ import re
 from typing import Any, Iterable, Iterator
 import xml.etree.ElementTree as ET
 
+from search.corpus.bible_books import resolve_book_code
+
 _HEBREW_RE = re.compile(r"^[Hh]?0*(\d+)[a-zA-Z]?$")
 _GREEK_RE = re.compile(r"^[Gg]?0*(\d+)[a-zA-Z]?$")
 
 ROLE_LABELS: dict[str, str] = {
     "s": "subject",
     "v": "predicate_verb",
+    "vc": "copula",
     "o": "object",
     "o2": "indirect_object",
     "p": "predicate",
     "pp": "prepositional_phrase",
+    "prep": "preposition",
     "adv": "adverbial",
     "cjp": "conjunction_phrase",
     "voc": "vocative",
     "cl": "clause",
 }
 
-ROLE_ALIASES: dict[str, tuple[str, str]] = {
+ROLE_ALIASES: dict[str, tuple[str, ...]] = {
     "s": ("s", "subject"),
     "subj": ("s", "subject"),
     "subject": ("s", "subject"),
@@ -38,6 +42,9 @@ ROLE_ALIASES: dict[str, tuple[str, str]] = {
     "verb": ("v", "predicate_verb"),
     "predicate_verb": ("v", "predicate_verb"),
     "pred_verb": ("v", "predicate_verb"),
+    "vc": ("vc", "copula"),
+    "copula": ("vc", "copula"),
+    "cop": ("vc", "copula"),
     "o": ("o", "object"),
     "obj": ("o", "object"),
     "object": ("o", "object"),
@@ -47,9 +54,10 @@ ROLE_ALIASES: dict[str, tuple[str, str]] = {
     "p": ("p", "predicate"),
     "pred": ("p", "predicate"),
     "predicate": ("p", "predicate"),
-    "pp": ("pp", "prepositional_phrase"),
-    "prep": ("pp", "prepositional_phrase"),
-    "prepositional_phrase": ("pp", "prepositional_phrase"),
+    "pp": ("pp", "prepositional_phrase", "prep", "preposition"),
+    "prep": ("pp", "prepositional_phrase", "prep", "preposition"),
+    "preposition": ("pp", "prepositional_phrase", "prep", "preposition"),
+    "prepositional_phrase": ("pp", "prepositional_phrase", "prep", "preposition"),
     "adv": ("adv", "adverbial"),
     "adverbial": ("adv", "adverbial"),
     "voc": ("voc", "vocative"),
@@ -141,6 +149,35 @@ MACULA_TO_OSIS: dict[str, str] = {
     "HAG": "Hag",
     "ZEC": "Zech",
     "MAL": "Mal",
+
+    # New Testament (27 books: Macula lowfat XML abbreviation -> OSIS code)
+    "MAT": "Matt",
+    "MRK": "Mark",
+    "LUK": "Luke",
+    "JHN": "John",
+    "ACT": "Acts",
+    "ROM": "Rom",
+    "1CO": "1Cor",
+    "2CO": "2Cor",
+    "GAL": "Gal",
+    "EPH": "Eph",
+    "PHP": "Phil",
+    "COL": "Col",
+    "1TH": "1Thess",
+    "2TH": "2Thess",
+    "1TI": "1Tim",
+    "2TI": "2Tim",
+    "TIT": "Titus",
+    "PHM": "Phlm",
+    "HEB": "Heb",
+    "JAS": "Jas",
+    "1PE": "1Pet",
+    "2PE": "2Pet",
+    "1JN": "1John",
+    "2JN": "2John",
+    "3JN": "3John",
+    "JUD": "Jude",
+    "REV": "Rev",
 }
 
 OSIS_TO_MACULA: dict[str, str] = {v: k for k, v in MACULA_TO_OSIS.items()}
@@ -190,14 +227,17 @@ OSIS_BOOK_ALIASES: dict[str, str] = {
 
 
 def resolve_osis_book(book_str: str) -> str:
-    """Resolve any book name, abbreviation, or alias to canonical OSIS code (e.g. 'Gen', 'Ps', 'Dan')."""
-    clean = book_str.strip().lower()
-    if clean in OSIS_BOOK_ALIASES:
-        return OSIS_BOOK_ALIASES[clean]
+    """Resolve any book name, abbreviation, or alias to canonical OSIS code (e.g. 'Gen', 'Ps', 'Dan', 'John')."""
     clean_upper = book_str.strip().upper()
     if clean_upper in MACULA_TO_OSIS:
         return MACULA_TO_OSIS[clean_upper]
-    return book_str.strip().capitalize()
+    clean = book_str.strip().lower()
+    if clean in OSIS_BOOK_ALIASES:
+        return OSIS_BOOK_ALIASES[clean]
+    try:
+        return resolve_book_code(book_str)
+    except (ValueError, NameError):
+        return book_str.strip().capitalize()
 
 
 _VERSIFICATION_CACHE: tuple[dict[str, str], set[int], set[int]] | None = None

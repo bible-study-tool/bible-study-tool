@@ -160,6 +160,48 @@ fb35b24bfa6d4198f9acda8cf55bd85e5ba57d93246da57a80c373552e3bc85b  macula-hebrew/
 ae35301fc336395f0d05b4fab1249ab48acc787438e3534279a154ab953044f9  macula-hebrew/01-Gen-050-lowfat.xml
 ```
 
+### 6. Clear-Bible Macula Greek — Lowfat XML (Whole New Testament: 27 Books, 260 Chapters)
+
+| Field | Value |
+| --- | --- |
+| Upstream | <https://github.com/Clear-Bible/macula-greek> |
+| Pinned commit | `8423afe47b9e8f24b7772e808af45c7159a6fe7e` (master, 2024-04-18) |
+| Path | `Nestle1904/lowfat/` (27 books from `01-matthew.xml` through `27-revelation.xml`) |
+| License | **CC BY 4.0** (Creative Commons Attribution 4.0 International) — Clear-Bible project. Compatible with project CC BY 4.0 content license. |
+| Feeds | `data/macula.db` (whole-Bible linguistic SQLite database across all 66 books, 31,149 verses, 128,078 clauses, 815,856 tokens, 13,538 crosswalk entries) via `python -m search.macula.build_db`. Extracted XML lives in `data/macula-greek/` (gitignored; reproduced by `scripts/fetch_sources.sh`). |
+
+SHA-256:
+
+```
+7227c49c078edea5e0d4a81770f85bb22627e4070e8701b74220e2527678a82f  macula-greek/01-matthew.xml
+6df302c2cba58e19a0670b047d157be6551f9558eb8bd21c6db4c56d48adf6ae  macula-greek/02-mark.xml
+03dfe693eebb9dd69f03f7813c53f42275d0c37f057a3b46c326b2b832dca786  macula-greek/03-luke.xml
+8d05ead4d8dfbd094c684d798e4deb7cab28848760a7a9f92da20cc8c3c583f8  macula-greek/04-john.xml
+ecc17b4c61065273bd910dd3454cb9628e7c6518200e487ae3de47b9af0e3f49  macula-greek/05-acts.xml
+8d988a0907b2e473ad40e355faa158b814de1de2e392f6fb6d7cccb69e81a980  macula-greek/06-romans.xml
+046086fb343318cb07b4c859ac8fee8af65f5c4c3208283e6f0fc5a4ba93a3f8  macula-greek/07-1corinthians.xml
+f99c4229d6b8c9225123666ecb24ac66db9ded991ad67276df2711c0bde2f37d  macula-greek/08-2corinthians.xml
+ab348722a09c46c5c6135eb83e6c7db53cdce07ec81a20168f8c04b05704a725  macula-greek/09-galatians.xml
+cc4d35ae9f28e99f946df391a3cbb41c0e1a22b0900f0eacb1806c7661b97aa6  macula-greek/10-ephesians.xml
+9b701c6e1b0fc75f6611bdedd678722d2f1673af1f50479453cc39cf2a092555  macula-greek/11-philippians.xml
+336c4ea6da31c21fa499a9933487799ea6afc46bccd0bd86ad5dbb7966f40fa9  macula-greek/12-colossians.xml
+fd2acd9697d93f8dcbdcfb49902294305bf6d0a3f0a0d2314b34281304121b2b  macula-greek/13-1thessalonians.xml
+ba059f5e178925ad4b8998c959631870f29c23f455a769e3f4bac75456419b1b  macula-greek/14-2thessalonians.xml
+8f27a6f2099ad9204867820c42e79726b7dd8685ec4b6845dac85f86a0b4758a  macula-greek/15-1timothy.xml
+cb0c373052f50a8b4bb980dc8b009b13c3d64537fb03a8f2d9a80519aeb603c4  macula-greek/16-2timothy.xml
+cb1f43f8a12fc173069aa8acd0dc45e631bba3bc7ed4d0053e49185f50138d4a  macula-greek/17-titus.xml
+ec310d091ebb4e16bc4e474514cead4d7e616ab76f5178eba6cf1c301591fed1  macula-greek/18-philemon.xml
+5f6756d30db19952f2f5de6c90425427f23198b1a937ded8953a3f1ebb33effe  macula-greek/19-hebrews.xml
+68f7375975158e5a8e8133e076d8e0a76f1bcde788626d9663392b21a357e01f  macula-greek/20-james.xml
+7f3c0e41b7743cdc008eb99ea5dc12412bd7a56ee0052cb68528f5c3582fd126  macula-greek/21-1peter.xml
+7890c67c425c505edc41c1c7237db51fa0520b1a94bbd100b5ba5325ada0c37b  macula-greek/22-2peter.xml
+7847c84e2f1b198b731308f624e24a1c7ac3acebe78c5824dcf4f7a3b261896a  macula-greek/23-1john.xml
+97173ba79096267e05efb3ede4872aac6ae3c809afdecd3c64401d07961231fb  macula-greek/24-2john.xml
+5778992b84539235143f5c4d8646ad2d3b5023c9c869580e1783efc9cd2b5e4d  macula-greek/25-3john.xml
+7270fcdd6e3482bc6550ab699c56b85391e4b2d00dc06e59a868999b71b52bbc  macula-greek/26-jude.xml
+44371e641abe0296f77e04e2c10b6e71f935d24652327d25cb1762b784e84571  macula-greek/27-revelation.xml
+```
+
 ## Generated artifacts (for offline drift detection)
 
 The committed artifacts regenerate byte-identically from the pinned sources

@@ -21,20 +21,24 @@ import sys
 import time
 from typing import Any, Iterable
 
+from search.corpus.bible_books import OT_BOOKS, NT_BOOKS
 from search.macula.db import DEFAULT_MACULA_DB, MaculaSqliteDB
 from search.macula.extract import (
     parse_all_chapters,
     parse_verse_id,
+    resolve_osis_book,
 )
+from search.macula.extract_greek import parse_all_greek_books
 
 
 def _compile_from_xml_directory(
     db: MaculaSqliteDB,
-    xml_dir: Path,
+    hebrew_dir: Path | None = None,
+    greek_dir: Path | None = None,
     books: Iterable[str] | None = None,
     batch_size: int = 500,
 ) -> None:
-    """Stream-compile Lowfat XML chapters directly into SQLite with low memory."""
+    """Stream-compile Hebrew and Greek Lowfat XML into SQLite with low memory."""
     # Prepare high-speed bulk build settings
     db.init_db(force=True, create_indices=False)
     db.conn.execute("PRAGMA synchronous = OFF;")
@@ -82,8 +86,26 @@ def _compile_from_xml_directory(
         const_rows.clear()
         token_rows.clear()
 
+    ot_set = set(OT_BOOKS)
+    nt_set = set(NT_BOOKS)
+
+    ot_books = None
+    nt_books = None
+    if books is not None:
+        resolved = [resolve_osis_book(b) for b in books]
+        ot_books = [b for b in resolved if b in ot_set]
+        nt_books = [b for b in resolved if b in nt_set]
+
+    def iter_verses():
+        if hebrew_dir is not None and hebrew_dir.is_dir() and (books is None or ot_books):
+            for v in parse_all_chapters(hebrew_dir, books=ot_books or None, canonical_versification=True):
+                yield v
+        if greek_dir is not None and greek_dir.is_dir() and (books is None or nt_books):
+            for v in parse_all_greek_books(greek_dir, books=nt_books or None):
+                yield v
+
     v_count = 0
-    for v in parse_all_chapters(xml_dir, books=books, canonical_versification=True):
+    for v in iter_verses():
         v_count += 1
         b_code, ch, vs = parse_verse_id(v.verse_id)
         verse_rows.append((v.verse_id, b_code, ch, vs, v.mt_id, v.text))
@@ -149,7 +171,9 @@ def _compile_from_xml_directory(
             flush_batch()
 
     if v_count == 0:
-        raise FileNotFoundError(f"No Lowfat XML chapter files found in {xml_dir}")
+        raise FileNotFoundError(
+            f"No Lowfat XML files found in hebrew_dir={hebrew_dir} or greek_dir={greek_dir}"
+        )
 
     flush_batch()
 
@@ -192,6 +216,7 @@ def compile_macula_db(
     repo_root: str | Path = ".",
     from_json: str | Path | None = None,
     xml_dir: str | Path | None = None,
+    greek_dir: str | Path | None = None,
     out_db: str | Path | None = None,
     books: Iterable[str] | None = None,
     batch_size: int = 500,
@@ -203,7 +228,11 @@ def compile_macula_db(
     start_time = time.time()
     db = MaculaSqliteDB(db_path=db_path)
 
-    xml_target = root / (xml_dir or "data/macula-hebrew")
+    hebrew_target = root / (xml_dir or "data/macula-hebrew")
+    greek_target = root / (greek_dir or "data/macula-greek")
+
+    has_hebrew = hebrew_target.is_dir() and any(hebrew_target.glob("*-lowfat.xml"))
+    has_greek = greek_target.is_dir() and any(greek_target.glob("[0-9]*.xml"))
 
     if from_json:
         json_src = root / from_json
@@ -214,8 +243,14 @@ def compile_macula_db(
         crosswalk = data.get("strongs_crosswalk", {})
         db.init_db(force=True)
         db.insert_verse_batch(verses, strongs_crosswalk=crosswalk)
-    elif xml_target.is_dir() and any(xml_target.glob("*-lowfat.xml")):
-        _compile_from_xml_directory(db, xml_target, books=books, batch_size=batch_size)
+    elif has_hebrew or has_greek:
+        _compile_from_xml_directory(
+            db,
+            hebrew_dir=hebrew_target if has_hebrew else None,
+            greek_dir=greek_target if has_greek else None,
+            books=books,
+            batch_size=batch_size,
+        )
     else:
         default_json = root / "lexicons/macula-genesis.json"
         if default_json.is_file():
@@ -242,8 +277,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Compile Macula SQLite database (ADR-0014).")
     parser.add_argument("--repo", default=".", help="Repository root path")
     parser.add_argument("--from-json", default=None, help="Path to macula JSON artifact to compile from")
-    parser.add_argument("--xml-dir", default=None, help="Path to Macula Lowfat XML directory (default: data/macula-hebrew)")
-    parser.add_argument("--books", default=None, help="Comma-separated book list to compile (e.g. Gen,Dan,Isa)")
+    parser.add_argument("--xml-dir", default=None, help="Path to Macula Hebrew Lowfat XML directory (default: data/macula-hebrew)")
+    parser.add_argument("--greek-dir", default=None, help="Path to Macula Greek Lowfat XML directory (default: data/macula-greek)")
+    parser.add_argument("--books", default=None, help="Comma-separated book list to compile (e.g. Gen,Dan,Isa,Matt,John)")
     parser.add_argument("--out", default=None, help="Path to output SQLite database")
     args = parser.parse_args(argv)
 
@@ -252,6 +288,7 @@ def main(argv: list[str] | None = None) -> int:
         repo_root=args.repo,
         from_json=args.from_json,
         xml_dir=args.xml_dir,
+        greek_dir=args.greek_dir,
         out_db=args.out,
         books=book_list,
     )
