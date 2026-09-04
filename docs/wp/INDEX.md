@@ -22,6 +22,7 @@ entries `draft` -> `review`.
 | [WP-010](WP-010-draft-engine.md) | Draft engine | Deterministic word-study draft engine consuming the WordGraph (ADR-0010) | done |
 | [WP-008](WP-008-gen2-sabbath.md) | Gen 2:1-25 | Curate Genesis 2 — Eden, the man and woman, the seventh-day Sabbath (ADR-0009) | done |
 | [WP-011](WP-011-gen3-fall.md) | Gen 3:1-24 | Curate Genesis 3 — the Fall (ADR-0009) | done |
+| [WP-012](WP-012-macula-integration.md) | Pillar B (B1) | Macula Hebrew Linguistic Integration & Strong's-LXX Crosswalk (ADR-0012) | done |
 
 Priority order: WP-001 first (it also completes the already-curated Day 1
 verses 1-3), then ascending.

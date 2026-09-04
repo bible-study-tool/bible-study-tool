@@ -298,6 +298,7 @@ class ProvenanceChecksumGateTests(unittest.TestCase):
             "lexicons/tbesg-glosses.json",
             *(f"lexicons/morphology-genesis{c}.json" for c in range(1, 51)),
             "lexicons/wordgraph-genesis.json",
+            "lexicons/macula-genesis.json",
             "correlations/agreement-ledger.json",
             *(f"correlations/apparatus-genesis{c}.json" for c in range(1, 51)),
         }

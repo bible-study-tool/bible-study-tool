@@ -95,6 +95,71 @@ SHA-256:
 312f723d7b8ef263bbdfb0451c9b8057125804dfff390b6f8544cff2a84b57f4  stepbible/TBESG.txt
 ```
 
+### 5. Clear-Bible Macula Hebrew — Lowfat XML (Genesis 1–50)
+
+| Field | Value |
+| --- | --- |
+| Upstream | <https://github.com/Clear-Bible/macula-hebrew> |
+| Pinned commit | `47db250bd55d0d8577f2a94fba114ef16c35b23c` (master, 2024-04-18) |
+| Path | `WLC/lowfat/01-Gen-001-lowfat.xml` through `01-Gen-050-lowfat.xml` |
+| License | **CC BY 4.0** (Creative Commons Attribution 4.0 International) — Clear-Bible project. Compatible with project CC BY 4.0 content license. |
+| Feeds | `lexicons/macula-genesis.json` via `python -m search.macula.build_crosswalk`: Strong's Hebrew ↔ LXX Greek alignments (`greek`, `greekstrong`), SDBH semantic domains (`sdbh`, `coredomain`, `lexdomain`), and sentence/clause syntax trees (`wg` nodes with grammatical roles). Extracted XML lives in `data/macula-hebrew/` (gitignored; reproduced by `scripts/fetch_sources.sh`). |
+
+SHA-256:
+
+```
+523856a1f2953408d847e8d3fcc231f2bd681e540aa91c349cd9c4e128f30f60  macula-hebrew/01-Gen-001-lowfat.xml
+25c7113185946010ce3444db66830709b89635cc1ce6fe94a57b98623ef53a58  macula-hebrew/01-Gen-002-lowfat.xml
+defb971195c75028e9e978b41cab6d43adae29833c57c118ae083f8159f224e5  macula-hebrew/01-Gen-003-lowfat.xml
+c1097d3b4cdda33b798060af9146f35abf7c6a9452364453db7b950ffd6ede30  macula-hebrew/01-Gen-004-lowfat.xml
+7d75adb21daad48cbede09f18ce4a5e0fe6b2b9c5f14dab75602237bdd3401d6  macula-hebrew/01-Gen-005-lowfat.xml
+3314dfb6c2eb20bad2256bbe2252291620afe891cede5189395d76dbd63c086c  macula-hebrew/01-Gen-006-lowfat.xml
+22481e03b3b3909faf246cd0299b26b398b2dbe90b181d950ee5f034ea575159  macula-hebrew/01-Gen-007-lowfat.xml
+18b95fe07178c10f6e92496b897cd056306e04b47ccdf88bf2c321a96b80d7e5  macula-hebrew/01-Gen-008-lowfat.xml
+be2028a5911c124e99bf3b5a880460c0363fb98dbd4750da1390cc0c4aa9ff83  macula-hebrew/01-Gen-009-lowfat.xml
+8b09b806b8bdae59f0eddfd776e289af1d729274c990d94a12ce1102746d963a  macula-hebrew/01-Gen-010-lowfat.xml
+92fd6a334ec8493e4003de2c1cbe062bbe62ef72a9c8e0583b1278bb6265eb19  macula-hebrew/01-Gen-011-lowfat.xml
+43f903b7a8f3aff964d1874910e58ebe4361113be61a48121676b51c9552f44d  macula-hebrew/01-Gen-012-lowfat.xml
+d3d38e8cf6cf8d3e76a37fed5af639c2e82cb2f13f7dbe0e7e67daedc1ee6e56  macula-hebrew/01-Gen-013-lowfat.xml
+d46812c63994ef0d3a407155b4f6ba820de578d9907b92cd97125cc36134393d  macula-hebrew/01-Gen-014-lowfat.xml
+a6705e7b5cfeea82362ba2b442adcd78877ce8b082af38522383e5a8a8847d5b  macula-hebrew/01-Gen-015-lowfat.xml
+08b413f7e6d2421dd785c1060285d4350e34c450dd400117f9cd452051a0074a  macula-hebrew/01-Gen-016-lowfat.xml
+4b07a4c1235d387e5d7d789ffda2d89a156e9478e7cbdc68e7f252a27529739c  macula-hebrew/01-Gen-017-lowfat.xml
+015385bb2c0e1ed25656b458c8524ccd1df85691ab2289ac9a2ecf746b165903  macula-hebrew/01-Gen-018-lowfat.xml
+e87e81919fa4be44788d40da100fcbedc072d8bb7f228eebffd060a420a4f018  macula-hebrew/01-Gen-019-lowfat.xml
+8bb182a0e47640f50e14badc603b691ffd10e0ee4d165a876382d021b3019698  macula-hebrew/01-Gen-020-lowfat.xml
+2f9c319335b62524f62f6de6b314b8ddff559f3b94842c74dda95e0d36a5e1c7  macula-hebrew/01-Gen-021-lowfat.xml
+dce89ecf995d75c2482339584a1885851bc2eca2ffbcc48d50a61755ffa62dc6  macula-hebrew/01-Gen-022-lowfat.xml
+dd6cfc9b14e440d1ca3ea30c033ab6c389ebb5eee4ff094e42d194010a205c78  macula-hebrew/01-Gen-023-lowfat.xml
+10c2a4590412fafa24a2dbb82d8ec9e603e2e93266e9767d0de206a05d339394  macula-hebrew/01-Gen-024-lowfat.xml
+61105fa1b660b5d0cea033c967587626d523e731ee44c327cb16f731deae981a  macula-hebrew/01-Gen-025-lowfat.xml
+4c410e5188192029ad4d74dcaa426c8125ca60979c6492f96ec6e82ed26e282d  macula-hebrew/01-Gen-026-lowfat.xml
+3055b41d196ea8eef757d66eb79996475cb610a6a178daafaeddb6ebc5519685  macula-hebrew/01-Gen-027-lowfat.xml
+2c9be817e20901dea3a2c721247e103049e3e8befcffc2bf7bd3d51fdceb07ff  macula-hebrew/01-Gen-028-lowfat.xml
+d6e8bef33ea92ecac931b03b398341f8a6bfe8880f788816533a6bf571cf0e72  macula-hebrew/01-Gen-029-lowfat.xml
+bb775c51c36e66f92e6c44df6002d733cb0c2b9dd1fe5d7fdedb33f5e44ba358  macula-hebrew/01-Gen-030-lowfat.xml
+3c6e3f171b01242652a65275a1fbd310066e6150b89f025d6ff307f1ea1682f7  macula-hebrew/01-Gen-031-lowfat.xml
+8d3cc416d08925ce38c29202e44772746743beba50c8e5d312aa2babb91548a1  macula-hebrew/01-Gen-032-lowfat.xml
+a901ab181ad355d2936b5d590da05cb362988d8fcf6c567d95b660e49c80c04f  macula-hebrew/01-Gen-033-lowfat.xml
+5fe300dea28ce470c1fb25cb84d187b3997cee46b60e3a8c243e9656710c7305  macula-hebrew/01-Gen-034-lowfat.xml
+45288cb616a857363d3e18618b6190624b84bdb74fd2899b81f250f469e50bfe  macula-hebrew/01-Gen-035-lowfat.xml
+bd7c4cecc877102c9d9e402e8b40c5ada443f6da688febf32a5abe070669a976  macula-hebrew/01-Gen-036-lowfat.xml
+903306b55fec5ce8c948d42c646b9baddd5c33b2f03d97bc2ff3bcaa08d9b793  macula-hebrew/01-Gen-037-lowfat.xml
+99b938147f7f654de55ee09a0e8d68aa4a4ab68b4eab5b71ce6554305d3fb006  macula-hebrew/01-Gen-038-lowfat.xml
+7ba083d7a53ecc61f5d92a03e4d30672e3bf5cba44b7e551e62fd70ee74ebd81  macula-hebrew/01-Gen-039-lowfat.xml
+12d5df7d164ca342cf956a8c35f831b4a416237e5f15623f565098344e5fcf08  macula-hebrew/01-Gen-040-lowfat.xml
+4ff9adcbdd1547719d5b6d72a0f43ab418e639cf47e55fc317bd348972a5fa72  macula-hebrew/01-Gen-041-lowfat.xml
+ee70a3f05c39bb0b611e76c2ee5bf6256d9e2520bf495185ea1a58b8873d20de  macula-hebrew/01-Gen-042-lowfat.xml
+ead7e5a7e0bda001ef4ee8b3d790b9256b54fee57f66c32fcb23b7fafe9aab1f  macula-hebrew/01-Gen-043-lowfat.xml
+3cf7869eeea89cfd053fa1ad3ce2066c1d6e6978357dd9175d014c9f23a5ae69  macula-hebrew/01-Gen-044-lowfat.xml
+ec3bc5a1fa53bf24fe9e9de90488b0f6a24470ca9a0740f3522233bbc00f3409  macula-hebrew/01-Gen-045-lowfat.xml
+fb35b24bfa6d4198f9acda8cf55bd85e5ba57d93246da57a80c373552e3bc85b  macula-hebrew/01-Gen-046-lowfat.xml
+5a690f4a2c6648fa1c1aeca932d98624da73b5451be7ace5c61cb6720e860886  macula-hebrew/01-Gen-047-lowfat.xml
+8723fe6189556ea3d0ebdfb9ff139827eeac625c83a998699affb42518f14bdf  macula-hebrew/01-Gen-048-lowfat.xml
+4254d4cd76c2b3ffe7a5507dd4947ad1ece013b5de25a53cd35fe07f400fa23a  macula-hebrew/01-Gen-049-lowfat.xml
+ae35301fc336395f0d05b4fab1249ab48acc787438e3534279a154ab953044f9  macula-hebrew/01-Gen-050-lowfat.xml
+```
+
 ## Generated artifacts (for offline drift detection)
 
 The committed artifacts regenerate byte-identically from the pinned sources
@@ -239,6 +304,12 @@ as well (consumes committed artifacts only — no raw sources):
 0d84ce85d40f2a731e473181b01d609c4d6f042bae36aacfad838147beccc01a  ../lexicons/wordgraph-genesis.json
 ```
 
+The Macula Hebrew linguistic and syntactic artifact (ADR-0012) regenerates byte-identically:
+
+```
+63ca95993aab448ea1f7f549d849da70040812069aca6bbd5dd4154f6984930f  ../lexicons/macula-genesis.json
+```
+
 ## Source edition caveats (discovered by the corpus fidelity tests)
 
 1. **Gen 1:2 comma variant** — scrollmapper KJV-osis reads "without form and
@@ -299,6 +370,9 @@ python -c "from search.agreement.apparatus import write_apparatus; write_apparat
 
 # 9. Regenerate the WordGraph lexical knowledge graph (ADR-0010)
 python -m search.corpus.build_wordgraph --repo .
+
+# 10. Regenerate the Macula Hebrew linguistic and syntactic artifact (ADR-0012)
+python -m search.macula.build_crosswalk --repo .
 ```
 
 ## Policy

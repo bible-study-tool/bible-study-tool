@@ -139,5 +139,15 @@ mkdir -p "$DATA/stepbible"
 fetch "$TBESH_URL" "$DATA/stepbible/TBESH.txt"
 fetch "$TBESG_URL" "$DATA/stepbible/TBESG.txt"
 
+# --- 5. Clear-Bible Macula Hebrew Lowfat XML (Genesis 1-50) -------------------
+MACULA_PIN="47db250bd55d0d8577f2a94fba114ef16c35b23c"
+MACULA_BASE="https://raw.githubusercontent.com/Clear-Bible/macula-hebrew/${MACULA_PIN}/WLC/lowfat"
+mkdir -p "$DATA/macula-hebrew"
+for i in $(seq 1 50); do
+  ch=$(printf "%03d" "$i")
+  fetch "${MACULA_BASE}/01-Gen-${ch}-lowfat.xml" "$DATA/macula-hebrew/01-Gen-${ch}-lowfat.xml"
+done
+
 # --- verification ------------------------------------------------------------
 verify
+
