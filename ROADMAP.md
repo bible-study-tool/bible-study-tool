@@ -63,8 +63,8 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 ### D. Application / UX
 - `[ ]` **D1. NotebookLM-like web UI** — long-term vision
 - `[ ]` **D2. Local on-device app** — user-supplied-text model (NOTICE.md)
-- `[ ]` **D3. Reading & study experience** — passage view w/ inline word studies, cross-refs, semantic links, SoP tabs
-- `[ ]` **D4. CLI polish** — stable, documented CLI surface
+- `[x]` **D3. Reading & study experience** — Full-screen curses interactive TUI (`search/ui/tui.py`, `scripts/study.py`) with passage reader, inline Strong's toggle, and tabbed inspector (Original Syntax, Strong's Lexicon, Spirit of Prophecy, Unified Search) — WP-021, ADR-0017
+- `[x]` **D4. CLI polish** — Unified human-friendly CLI surface (`scripts/study.py`) and interactive readline shell (`search/ui/shell.py`) with colored typography, boxed panels, and JSON support — WP-021, ADR-0017
 
 ### E. AI Integration & Review Workflow
 - `[ ]` **E1. AI-assisted study assistant** — query KB → pull materials → structured AI response

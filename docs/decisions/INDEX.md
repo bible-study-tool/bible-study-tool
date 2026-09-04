@@ -22,6 +22,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-0014](ADR-0014-whole-bible-macula-sqlite-architecture.md) | Whole-Bible Macula SQLite Architecture (`data/macula.db`) | Accepted |
 | [ADR-0015](ADR-0015-macula-semantic-enrichment.md) | Macula Semantic Role & Translation-Equivalence Enrichment | Accepted |
 | [ADR-0016](ADR-0016-two-tier-corpus-and-portable-backup.md) | Two-Tier Storage Architecture and Portable Offline Backup | Accepted |
+| [ADR-0017](ADR-0017-terminal-user-interface-and-unified-study-cli.md) | Interactive Terminal User Interface (TUI) and Unified Study CLI | Accepted |
 
 
 ## When to write one
