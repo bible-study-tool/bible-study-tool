@@ -17,6 +17,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -96,87 +97,90 @@ def main(argv: list[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
 
-    db = EgwDB(db_path=args.db, repo_root=_REPO_ROOT)
-
-    if args.init:
-        db.init_db()
-        print(f"Initialized database schema at {db.db_path}")
-        return 0
-
-    if args.seed_core:
-        db.init_db()
-        n = seed_core_genesis_passages(db)
-        print(f"Seeded {n} core Genesis study paragraphs into {db.db_path}")
-        return 0
-
-    if args.ingest_json:
-        try:
-            n = db.ingest_json(args.ingest_json)
-            print(f"Successfully ingested {n} paragraphs from {args.ingest_json}")
+    with EgwDB(db_path=args.db, repo_root=_REPO_ROOT) as db:
+        if args.init:
+            db.init_db()
+            print(f"Initialized database schema at {db.db_path}")
             return 0
-        except Exception as ex:
-            print(f"Error ingesting JSON: {ex}", file=sys.stderr)
-            return 1
 
-    if args.stats:
-        if not db.exists():
-            print(f"Database does not exist at {db.db_path}. Run --init or --seed-core to create it.")
+        if args.seed_core:
+            db.init_db()
+            n = seed_core_genesis_passages(db)
+            print(f"Seeded {n} core Genesis study paragraphs into {db.db_path}")
             return 0
-        total = db.count()
-        print(f"EGW Database: {db.db_path}")
-        print(f"Total paragraphs: {total}")
-        cur = db.conn.execute(
-            "SELECT book_code, book_title, COUNT(*) as cnt FROM egw_paragraphs GROUP BY book_code ORDER BY cnt DESC;"
-        )
-        for row in cur.fetchall():
-            print(f"  - {row['book_code']} ({row['book_title']}): {row['cnt']} paragraphs")
-        return 0
 
-    if args.search:
-        if not db.exists():
-            print(f"Database does not exist at {db.db_path}. Run --seed-core or --init to create it.")
-            return 1
-        results = db.search(args.search, book_code=args.book, limit=args.limit)
-        if not results:
-            print(f"No results found matching '{args.search}'.")
-            return 0
-        print(f"Found {len(results)} result(s) for '{args.search}':\n")
-        for i, r in enumerate(results, 1):
-            ref = r.get("ref_code") or f"{r['book_code']} {r['page']}.{r['paragraph']}"
-            token_id = f"egw:{r['id']}"
-            snippet = r.get("snippet", r["text"][:120] + "...")
-            # Clean snippet tags if any
-            clean_snippet = snippet.replace("[b]", "\033[1m").replace("[/b]", "\033[0m")
-            print(f"{i}. [{ref}] ({token_id}) — {r['book_title']}, p. {r['page']}, para {r['paragraph']}")
-            print(f"   {clean_snippet}\n")
-        return 0
+        if args.ingest_json:
+            try:
+                n = db.ingest_json(args.ingest_json)
+                print(f"Successfully ingested {n} paragraphs from {args.ingest_json}")
+                return 0
+            except Exception as ex:
+                print(f"Error ingesting JSON: {ex}", file=sys.stderr)
+                return 1
 
-    if args.token:
-        if not is_egw_token(args.token):
-            print(f"Invalid EGW citation token '{args.token}'. Shape: BOOK.PAGE.PARA (e.g. PP.57.1)", file=sys.stderr)
-            return 1
-        if not db.exists():
-            print(
-                f"EGW database not found at {db.db_path}.\n"
-                f"Run `python scripts/egw_lookup.py --seed-core` to initialize core reference passages.",
-                file=sys.stderr,
+        if args.stats:
+            if not db.exists():
+                print(f"Database does not exist at {db.db_path}. Run --init or --seed-core to create it.")
+                return 0
+            total = db.count()
+            print(f"EGW Database: {db.db_path}")
+            print(f"Total paragraphs: {total}")
+            cur = db.conn.execute(
+                "SELECT book_code, book_title, COUNT(*) as cnt FROM egw_paragraphs GROUP BY book_code ORDER BY cnt DESC;"
             )
-            return 1
-        para = db.get_paragraph(args.token)
-        if not para:
-            canonical_id, b_code, page, p_num = normalize_token(args.token)
-            b_title = KNOWN_EGW_BOOKS.get(b_code, b_code)
-            print(
-                f"Paragraph not found in local database: {canonical_id} "
-                f"({b_title}, p. {page}, para {p_num}).",
-                file=sys.stderr,
-            )
-            return 1
-        print(db.format_paragraph(para))
-        return 0
+            for row in cur.fetchall():
+                print(f"  - {row['book_code']} ({row['book_title']}): {row['cnt']} paragraphs")
+            return 0
 
-    parser.print_help()
-    return 0
+        if args.search:
+            if not db.exists():
+                print(f"Database does not exist at {db.db_path}. Run --seed-core or --init to create it.")
+                return 1
+            results = db.search(args.search, book_code=args.book, limit=args.limit)
+            if not results:
+                print(f"No results found matching '{args.search}'.")
+                return 0
+            print(f"Found {len(results)} result(s) for '{args.search}':\n")
+            use_color = sys.stdout.isatty() and "NO_COLOR" not in os.environ
+            for i, r in enumerate(results, 1):
+                ref = r.get("ref_code") or f"{r['book_code']} {r['page']}.{r['paragraph']}"
+                token_id = f"egw:{r['id']}"
+                snippet = r.get("snippet", r["text"][:120] + "...")
+                clean_snippet = (
+                    snippet.replace("[b]", "\033[1m").replace("[/b]", "\033[0m")
+                    if use_color
+                    else snippet.replace("[b]", "").replace("[/b]", "")
+                )
+                print(f"{i}. [{ref}] ({token_id}) — {r['book_title']}, p. {r['page']}, para {r['paragraph']}")
+                print(f"   {clean_snippet}\n")
+            return 0
+
+        if args.token:
+            if not is_egw_token(args.token):
+                print(f"Invalid EGW citation token '{args.token}'. Shape: BOOK.PAGE.PARA (e.g. PP.57.1)", file=sys.stderr)
+                return 1
+            if not db.exists():
+                print(
+                    f"EGW database not found at {db.db_path}.\n"
+                    f"Run `python scripts/egw_lookup.py --seed-core` to initialize core reference passages.",
+                    file=sys.stderr,
+                )
+                return 1
+            para = db.get_paragraph(args.token)
+            if not para:
+                canonical_id, b_code, page, p_num = normalize_token(args.token)
+                b_title = KNOWN_EGW_BOOKS.get(b_code, b_code)
+                print(
+                    f"Paragraph not found in local database: {canonical_id} "
+                    f"({b_title}, p. {page}, para {p_num}).",
+                    file=sys.stderr,
+                )
+                return 1
+            print(db.format_paragraph(para))
+            return 0
+
+        parser.print_help()
+        return 0
 
 
 if __name__ == "__main__":

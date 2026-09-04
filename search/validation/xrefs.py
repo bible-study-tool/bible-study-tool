@@ -32,8 +32,8 @@ from .schema import Issue
 _ENTRY_ID_RE = re.compile(r"^(?=.*[a-z])[a-z0-9]+(?:-[a-z0-9]+)+$")
 # Passage shape: "Book Chapter:Verse" (optionally with ranges), e.g. John 1:1 or 2 Peter 3:5-7.
 _PASSAGE_RE = re.compile(r"^[0-9A-Za-z][A-Za-z0-9 ]* \d+:\d+(?:[-–]\d+)?$")
-# EGW canonical citation token shape: "egw:BOOK.PAGE.PARA" or "BOOK.PAGE.PARA" (e.g. egw:PP.57.1).
-_EGW_TOKEN_RE = re.compile(r"^egw:[A-Za-z0-9]+(?:\.[0-9]+(?:\.[0-9]+)?)?$", re.IGNORECASE)
+# EGW canonical citation token shape: "egw:BOOK.PAGE.PARA" or "egw:BOOK.PAGE" (e.g. egw:PP.57.1).
+_EGW_TOKEN_RE = re.compile(r"^egw:[A-Za-z0-9]+\.[0-9]+(?:\.[0-9]+)?$", re.IGNORECASE)
 
 
 def classify_target(target: str) -> str:
@@ -105,7 +105,7 @@ def validate_cross_references(entry, entry_index: dict[str, str], egw_db=None) -
         # EGW citation tokens.
         if kind == "egw":
             if egw_db is not None and egw_db.exists():
-                if egw_db.get_paragraph(target) is not None:
+                if egw_db.has_paragraph(target):
                     continue
                 issues.append(
                     Issue(entry.id, "unresolved-egw-target", "warning",
@@ -126,6 +126,7 @@ def validate_cross_references(entry, entry_index: dict[str, str], egw_db=None) -
 def validate_all(loader, egw_db=None) -> list[Issue]:
     """Validate cross_references across every entry."""
     index = build_entry_index(loader)
+    owned_db = None
     if egw_db is None:
         try:
             from search.linking.egw import EgwDB
@@ -133,13 +134,18 @@ def validate_all(loader, egw_db=None) -> list[Issue]:
             db = EgwDB(repo_root=repo_path)
             if db.exists():
                 egw_db = db
+                owned_db = db
         except Exception:
             egw_db = None
 
-    issues: list[Issue] = []
-    for entry in loader.entries:
-        issues.extend(validate_cross_references(entry, index, egw_db=egw_db))
-    return issues
+    try:
+        issues: list[Issue] = []
+        for entry in loader.entries:
+            issues.extend(validate_cross_references(entry, index, egw_db=egw_db))
+        return issues
+    finally:
+        if owned_db is not None:
+            owned_db.close()
 
 
 def main(argv=None) -> int:

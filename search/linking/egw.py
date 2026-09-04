@@ -37,6 +37,7 @@ KNOWN_EGW_BOOKS: dict[str, str] = {
     "COL": "Christ's Object Lessons",
     "MB": "Thoughts from the Mount of Blessing",
     "Ed": "Education",
+    "ED": "Education",
     "MH": "The Ministry of Healing",
     "1T": "Testimonies for the Church, Vol. 1",
     "2T": "Testimonies for the Church, Vol. 2",
@@ -75,8 +76,8 @@ CREATE INDEX IF NOT EXISTS idx_egw_book_page ON egw_paragraphs(book_code, page);
 
 CREATE VIRTUAL TABLE IF NOT EXISTS egw_fts USING fts5(
     id UNINDEXED,
-    book_code,
-    book_title,
+    book_code UNINDEXED,
+    book_title UNINDEXED,
     chapter_title,
     text,
     content='egw_paragraphs',
@@ -163,6 +164,9 @@ class EgwDB:
             # Enforce SQLite foreign keys and pragmas
             self._conn.execute("PRAGMA foreign_keys = ON;")
             self._conn.execute("PRAGMA journal_mode = WAL;")
+            self._conn.execute("PRAGMA synchronous = NORMAL;")
+            self._conn.execute("PRAGMA busy_timeout = 5000;")
+            self._conn.execute("PRAGMA recursive_triggers = ON;")
         return self._conn
 
     def close(self) -> None:
@@ -176,24 +180,30 @@ class EgwDB:
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.close()
 
-    def init_db(self) -> None:
+    def init_db(self, force: bool = False) -> None:
         """Initialize tables, indices, and FTS5 triggers."""
+        if getattr(self, "_initialized", False) and not force:
+            return
         cur = self.conn.cursor()
         cur.executescript(_SCHEMA)
         cur.executescript(_TRIGGERS)
         self.conn.commit()
+        self._initialized = True
+        self._has_tables = True
 
     def exists(self) -> bool:
         """True if the database file exists on disk and has tables."""
         if not self.db_path.exists():
             return False
-        try:
-            cur = self.conn.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='egw_paragraphs';"
-            )
-            return cur.fetchone() is not None
-        except sqlite3.Error:
-            return False
+        if getattr(self, "_has_tables", None) is None:
+            try:
+                cur = self.conn.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='egw_paragraphs';"
+                )
+                self._has_tables = cur.fetchone() is not None
+            except sqlite3.Error:
+                return False
+        return self._has_tables
 
     def insert_paragraph(
         self,
@@ -218,15 +228,24 @@ class EgwDB:
         title = book_title or KNOWN_EGW_BOOKS.get(book_code, book_code)
         ref = ref_code or f"{book_code} {page}.{paragraph}"
 
-        self.conn.execute(
-            """
-            INSERT OR REPLACE INTO egw_paragraphs (
-                id, book_code, book_title, chapter_num, chapter_title, page, paragraph, ref_code, text
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-            """,
-            (canonical_id, book_code, title, chapter_num, chapter_title, page, paragraph, ref, text.strip()),
-        )
-        self.conn.commit()
+        with self.conn:
+            self.conn.execute(
+                """
+                INSERT INTO egw_paragraphs (
+                    id, book_code, book_title, chapter_num, chapter_title, page, paragraph, ref_code, text
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    book_code = excluded.book_code,
+                    book_title = excluded.book_title,
+                    chapter_num = excluded.chapter_num,
+                    chapter_title = excluded.chapter_title,
+                    page = excluded.page,
+                    paragraph = excluded.paragraph,
+                    ref_code = excluded.ref_code,
+                    text = excluded.text;
+                """,
+                (canonical_id, book_code, title, chapter_num, chapter_title, page, paragraph, ref, text.strip()),
+            )
         return canonical_id
 
     def insert_paragraphs_batch(self, items: Iterable[dict[str, Any]]) -> int:
@@ -248,13 +267,33 @@ class EgwDB:
         with self.conn:
             self.conn.executemany(
                 """
-                INSERT OR REPLACE INTO egw_paragraphs (
+                INSERT INTO egw_paragraphs (
                     id, book_code, book_title, chapter_num, chapter_title, page, paragraph, ref_code, text
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    book_code = excluded.book_code,
+                    book_title = excluded.book_title,
+                    chapter_num = excluded.chapter_num,
+                    chapter_title = excluded.chapter_title,
+                    page = excluded.page,
+                    paragraph = excluded.paragraph,
+                    ref_code = excluded.ref_code,
+                    text = excluded.text;
                 """,
                 rows,
             )
         return len(rows)
+
+    def has_paragraph(self, token: str) -> bool:
+        """Check if a paragraph exists without fetching full text into memory."""
+        if not self.exists():
+            return False
+        try:
+            canonical_id, _, _, _ = normalize_token(token)
+        except ValueError:
+            return False
+        cur = self.conn.execute("SELECT 1 FROM egw_paragraphs WHERE id = ? LIMIT 1;", (canonical_id,))
+        return cur.fetchone() is not None
 
     def get_paragraph(self, token: str) -> dict[str, Any] | None:
         """Lookup a paragraph by token (e.g. 'egw:PP.57.1' or 'PP.57.1')."""
@@ -298,31 +337,24 @@ class EgwDB:
             return []
 
         def _execute_search(fts_query: str):
+            where_clauses = ["egw_fts MATCH ?"]
+            params: list[Any] = [fts_query]
             if book_code:
-                b_code = book_code.strip().upper()
-                sql = """
-                SELECT p.*,
-                       snippet(egw_fts, 4, '[b]', '[/b]', '...', 28) as snippet,
-                       bm25(egw_fts) as rank
-                FROM egw_fts
-                JOIN egw_paragraphs p ON egw_fts.rowid = p.rowid
-                WHERE egw_fts MATCH ? AND p.book_code = ?
-                ORDER BY rank
-                LIMIT ?;
-                """
-                return self.conn.execute(sql, (fts_query, b_code, limit))
-            else:
-                sql = """
-                SELECT p.*,
-                       snippet(egw_fts, 4, '[b]', '[/b]', '...', 28) as snippet,
-                       bm25(egw_fts) as rank
-                FROM egw_fts
-                JOIN egw_paragraphs p ON egw_fts.rowid = p.rowid
-                WHERE egw_fts MATCH ?
-                ORDER BY rank
-                LIMIT ?;
-                """
-                return self.conn.execute(sql, (fts_query, limit))
+                where_clauses.append("p.book_code = ?")
+                params.append(book_code.strip().upper())
+            params.append(limit)
+
+            sql = f"""
+            SELECT p.*,
+                   snippet(egw_fts, 4, '[b]', '[/b]', '...', 28) as snippet,
+                   bm25(egw_fts) as rank
+            FROM egw_fts
+            JOIN egw_paragraphs p ON egw_fts.rowid = p.rowid
+            WHERE {' AND '.join(where_clauses)}
+            ORDER BY rank
+            LIMIT ?;
+            """
+            return self.conn.execute(sql, params)
 
         try:
             cur = _execute_search(clean_q)
@@ -384,8 +416,10 @@ class EgwDB:
 def seed_core_genesis_passages(db: EgwDB) -> int:
     """Seed foundational Patriarchs and Prophets paragraphs for Genesis 1–3 study.
 
-    Provides a clean, verified seed dataset for offline development, cross-referencing,
-    and testing without distributing copyrighted full volumes.
+    Provides a clean, verified, minimal fair-use testing fixture dataset for
+    offline development, cross-referencing, and automated verification without
+    distributing copyrighted full volumes (NOTICE.md, ADR-0011). Full study
+    materials are user-supplied via `--ingest-json`.
     """
     passages = [
         {
