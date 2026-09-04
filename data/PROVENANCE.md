@@ -95,15 +95,15 @@ SHA-256:
 312f723d7b8ef263bbdfb0451c9b8057125804dfff390b6f8544cff2a84b57f4  stepbible/TBESG.txt
 ```
 
-### 5. Clear-Bible Macula Hebrew — Lowfat XML (Genesis 1–50)
+### 5. Clear-Bible Macula Hebrew — Lowfat XML (Whole Old Testament: 39 Books, 929 Chapters)
 
 | Field | Value |
 | --- | --- |
 | Upstream | <https://github.com/Clear-Bible/macula-hebrew> |
 | Pinned commit | `47db250bd55d0d8577f2a94fba114ef16c35b23c` (master, 2024-04-18) |
-| Path | `WLC/lowfat/01-Gen-001-lowfat.xml` through `01-Gen-050-lowfat.xml` |
+| Path | `WLC/lowfat/` (929 chapters from `01-Gen-001-lowfat.xml` through `39-Mal-003-lowfat.xml`) |
 | License | **CC BY 4.0** (Creative Commons Attribution 4.0 International) — Clear-Bible project. Compatible with project CC BY 4.0 content license. |
-| Feeds | `lexicons/macula-genesis.json` via `python -m search.macula.build_crosswalk`: Strong's Hebrew ↔ LXX Greek alignments (`greek`, `greekstrong`), SDBH semantic domains (`sdbh`, `coredomain`, `lexdomain`), and sentence/clause syntax trees (`wg` nodes with grammatical roles). Extracted XML lives in `data/macula-hebrew/` (gitignored; reproduced by `scripts/fetch_sources.sh`). |
+| Feeds | `data/macula.db` (ADR-0014 normalized whole-OT SQLite relational database, 23,206 verses, 102,118 clauses, 678,077 tokens, 8,193 crosswalk entries) via `python -m search.macula.build_db` and `lexicons/macula-genesis.json` (ADR-0012 offline gate artifact) via `python -m search.macula.build_crosswalk`. Extracted XML lives in `data/macula-hebrew/` (gitignored; reproduced by `scripts/fetch_sources.sh`). |
 
 SHA-256:
 

@@ -16,6 +16,7 @@ from typing import Any
 from search.macula.extract import (
     normalize_greek_strongs,
     normalize_hebrew_strongs,
+    resolve_osis_book,
     resolve_role_query,
 )
 from search.macula.db import DEFAULT_MACULA_DB, MaculaSqliteDB
@@ -24,26 +25,43 @@ DEFAULT_ARTIFACT_PATH = "lexicons/macula-genesis.json"
 
 
 def normalize_verse_ref(raw: str) -> str:
-    """Normalize user input to canonical 'Gen.c.v' format.
+    """Normalize user input to canonical 'Book.c.v' format.
 
     Accepts:
-      - 'Gen.1.1'
-      - 'GEN 1:1' or 'gen 1:1'
-      - '1:1' or '1.1'
+      - 'Gen.1.1', 'Dan.8.14', 'Isa.53.5', 'Ps.23.1', 'Ps.51.0b'
+      - 'GEN 1:1', 'DAN 8:14', 'ISA 53:5'
+      - '1:1' or '1.1' (defaults to Gen for single-book compatibility)
       - 'gen-1-1' or 'gen-1-1-kjv'
-      - 'Genesis 1:1'
+      - 'Genesis 1:1', '1 Samuel 16:7', 'Song of Solomon 2:16'
     """
     cleaned = raw.strip()
     # Remove file extension or trailing qualifiers
     cleaned = re.sub(r"\.md$", "", cleaned)
     cleaned = re.sub(r"-kjv$", "", cleaned)
 
-    # Match book, chapter, verse (anchored to entire string)
-    m = re.fullmatch(r"(?:Gen(?:esis)?[\s._-]*)?(\d+)[\s.:_-]+(\d+)", cleaned, re.IGNORECASE)
-    if m:
-        c, v = int(m.group(1)), int(m.group(2))
+    # 1. Bare chapter:verse numbers (defaults to Gen)
+    m_num = re.fullmatch(r"(\d+)[\s.:_-]+(\d+[a-zA-Z]?)", cleaned)
+    if m_num:
+        c = int(m_num.group(1))
+        v_str = m_num.group(2)
+        v = int(v_str) if v_str.isdigit() else v_str
         return f"Gen.{c}.{v}"
-    raise ValueError(f"Cannot parse Genesis verse reference from '{raw}'")
+
+    # 2. Book chapter:verse or Book.chapter.verse
+    m_full = re.fullmatch(
+        r"([0-9A-Za-z\s]+?)[\s._-]+(\d+)[\s.:_-]+(\d+[a-zA-Z]?)",
+        cleaned,
+        re.IGNORECASE,
+    )
+    if m_full:
+        book_str = m_full.group(1).strip()
+        osis_b = resolve_osis_book(book_str)
+        c = int(m_full.group(2))
+        v_str = m_full.group(3)
+        v = int(v_str) if v_str.isdigit() else v_str
+        return f"{osis_b}.{c}.{v}"
+
+    raise ValueError(f"Cannot parse verse reference from '{raw}'")
 
 
 class MaculaDB:

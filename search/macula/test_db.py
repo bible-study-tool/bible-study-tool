@@ -268,16 +268,12 @@ class TestMaculaParityWithJson(unittest.TestCase):
 
         cls.json_engine = MaculaDB(cls.json_data)
 
-        # If data/macula.db exists on disk, use it; otherwise build a temporary one
-        if SQLITE_DB_PATH.is_file():
-            cls.sqlite_engine = MaculaSqliteDB(SQLITE_DB_PATH)
-            cls.cleanup_sqlite = False
-        else:
-            cls.temp_dir = tempfile.TemporaryDirectory()
-            temp_db = Path(cls.temp_dir.name) / "macula_parity.db"
-            compile_macula_db(from_json=GENESIS_JSON_PATH, out_db=temp_db)
-            cls.sqlite_engine = MaculaSqliteDB(temp_db)
-            cls.cleanup_sqlite = True
+        # Build dedicated parity database from GENESIS_JSON_PATH to test JSON <-> SQLite 1-to-1 parity
+        cls.temp_dir = tempfile.TemporaryDirectory()
+        temp_db = Path(cls.temp_dir.name) / "macula_parity.db"
+        compile_macula_db(from_json=GENESIS_JSON_PATH, out_db=temp_db)
+        cls.sqlite_engine = MaculaSqliteDB(temp_db)
+        cls.cleanup_sqlite = True
 
     @classmethod
     def tearDownClass(cls):
@@ -385,6 +381,86 @@ class TestMaculaCLI(unittest.TestCase):
         rc = macula_cli.main(["--strongs", "H99999"])
         self.assertEqual(rc, 1)
 
+
+class TestWholeBibleMaculaDB(unittest.TestCase):
+    """Tests for Whole-Bible (all 39 OT books) Macula SQLite database."""
+
+    @classmethod
+    def setUpClass(cls):
+        if not SQLITE_DB_PATH.is_file():
+            raise unittest.SkipTest("data/macula.db not present on disk")
+        cls.db = MaculaSqliteDB(SQLITE_DB_PATH)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+
+    def test_whole_bible_stats(self):
+        counts = self.db.counts
+        self.assertEqual(counts["chapters"], 929)
+        self.assertEqual(counts["verses"], 23206)
+        self.assertGreaterEqual(counts["clauses"], 100000)
+        self.assertGreaterEqual(counts["constituents"], 250000)
+        self.assertGreaterEqual(counts["tokens"], 600000)
+        self.assertGreaterEqual(counts["strongs_crosswalk_entries"], 8000)
+
+    def test_multi_book_verses(self):
+        targets = [
+            ("Gen.1.1", "GEN 1:1", 1),
+            ("Exod.20.3", "EXO 20:3", 1),
+            ("Deut.6.4", "DEU 6:4", 1),
+            ("Isa.53.5", "ISA 53:5", 4),
+            ("Dan.8.14", "DAN 8:14", 3),
+            ("Ps.23.1", "PSA 23:1", 3),
+            ("Ps.51.0b", "PSA 51:2", 1),
+            ("Mal.4.6", "MAL 3:24", 6),
+            ("Num.26.1", "NUM 25:19, NUM 26:1", 2),
+        ]
+        for vref, expected_mt, min_clauses in targets:
+            v = self.db.lookup_verse(vref)
+            self.assertIsNotNone(v, f"Verse {vref} not found")
+            self.assertEqual(v["verse_id"], vref)
+            self.assertEqual(v["mt_id"], expected_mt)
+            self.assertGreaterEqual(len(v["clauses"]), min_clauses)
+            self.assertTrue(len(v["text"]) > 0)
+
+    def test_cross_book_strongs(self):
+        s = self.db.lookup_strongs("H7225")
+        self.assertIsNotNone(s)
+        self.assertEqual(s["strongs"], "H7225")
+        # In Genesis alone it was 5; across whole OT it is 68
+        self.assertEqual(s["occurrences"], 68)
+        self.assertIn("G536", s["lxx"])
+        self.assertEqual(s["lxx"]["G536"]["count"], 23)
+        self.assertTrue(len(s["lxx"]["G536"]["greek"]) > 0)
+
+        # Verify lookup_lxx returns populated greek forms
+        lxx_matches = self.db.lookup_lxx("G536")
+        self.assertTrue(len(lxx_matches) > 0)
+        h7225_match = next((m for m in lxx_matches if m["hebrew_strongs"] == "H7225"), None)
+        self.assertIsNotNone(h7225_match)
+        self.assertTrue(len(h7225_match["greek_forms"]) > 0)
+
+    def test_book_scoped_role_queries(self):
+        dan_subj = self.db.search_by_role("subj", book="DAN", limit=5)
+        self.assertEqual(len(dan_subj), 5)
+        for r in dan_subj:
+            self.assertTrue(r["verse_id"].startswith("Dan."))
+
+        isa_pred = self.db.search_by_role("pred", book_code="ISA", limit=5)
+        self.assertEqual(len(isa_pred), 5)
+        for r in isa_pred:
+            self.assertTrue(r["verse_id"].startswith("Isa."))
+
+    def test_cli_multi_book(self):
+        rc = macula_cli.main(["--verse", "Dan.8.14"])
+        self.assertEqual(rc, 0)
+
+        rc = macula_cli.main(["--verse", "Isaiah 53:5", "--frame"])
+        self.assertEqual(rc, 0)
+
+        rc = macula_cli.main(["--strongs", "H7225", "--equiv"])
+        self.assertEqual(rc, 0)
 
 
 if __name__ == "__main__":

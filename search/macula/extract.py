@@ -11,6 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 import re
+from typing import Any, Iterable, Iterator
 import xml.etree.ElementTree as ET
 
 _HEBREW_RE = re.compile(r"^[Hh]?0*(\d+)[a-zA-Z]?$")
@@ -99,21 +100,190 @@ def normalize_greek_strongs(raw: str | None) -> str | None:
     return _normalize_strongs(raw, _GREEK_RE, "G", 5624)
 
 
-def map_mt_to_canonical_verse(chapter: int, verse_num: int) -> tuple[str, str]:
+# Canonical 39 Old Testament books: Macula lowfat XML abbreviation -> OSIS code
+MACULA_TO_OSIS: dict[str, str] = {
+    "GEN": "Gen",
+    "EXO": "Exod",
+    "LEV": "Lev",
+    "NUM": "Num",
+    "DEU": "Deut",
+    "JOS": "Josh",
+    "JDG": "Judg",
+    "RUT": "Ruth",
+    "1SA": "1Sam",
+    "2SA": "2Sam",
+    "1KI": "1Kgs",
+    "2KI": "2Kgs",
+    "1CH": "1Chr",
+    "2CH": "2Chr",
+    "EZR": "Ezra",
+    "NEH": "Neh",
+    "EST": "Esth",
+    "JOB": "Job",
+    "PSA": "Ps",
+    "PRO": "Prov",
+    "ECC": "Eccl",
+    "SNG": "Song",
+    "ISA": "Isa",
+    "JER": "Jer",
+    "LAM": "Lam",
+    "EZK": "Ezek",
+    "DAN": "Dan",
+    "HOS": "Hos",
+    "JOL": "Joel",
+    "AMO": "Amos",
+    "OBA": "Obad",
+    "JON": "Jonah",
+    "MIC": "Mic",
+    "NAM": "Nah",
+    "HAB": "Hab",
+    "ZEP": "Zeph",
+    "HAG": "Hag",
+    "ZEC": "Zech",
+    "MAL": "Mal",
+}
+
+OSIS_TO_MACULA: dict[str, str] = {v: k for k, v in MACULA_TO_OSIS.items()}
+
+# Common aliases and names for Old Testament books -> canonical OSIS code
+OSIS_BOOK_ALIASES: dict[str, str] = {
+    "genesis": "Gen", "gen": "Gen",
+    "exodus": "Exod", "exod": "Exod", "exo": "Exod",
+    "leviticus": "Lev", "lev": "Lev",
+    "numbers": "Num", "num": "Num",
+    "deuteronomy": "Deut", "deut": "Deut", "deu": "Deut",
+    "joshua": "Josh", "josh": "Josh", "jos": "Josh",
+    "judges": "Judg", "judg": "Judg", "jdg": "Judg",
+    "ruth": "Ruth", "rut": "Ruth",
+    "1 samuel": "1Sam", "1samuel": "1Sam", "1sam": "1Sam", "1sa": "1Sam", "i samuel": "1Sam", "1-samuel": "1Sam",
+    "2 samuel": "2Sam", "2samuel": "2Sam", "2sam": "2Sam", "2sa": "2Sam", "ii samuel": "2Sam", "2-samuel": "2Sam",
+    "1 kings": "1Kgs", "1kings": "1Kgs", "1kgs": "1Kgs", "1ki": "1Kgs", "i kings": "1Kgs", "1-kings": "1Kgs",
+    "2 kings": "2Kgs", "2kings": "2Kgs", "2kgs": "2Kgs", "2ki": "2Kgs", "ii kings": "2Kgs", "2-kings": "2Kgs",
+    "1 chronicles": "1Chr", "1chronicles": "1Chr", "1chr": "1Chr", "1ch": "1Chr", "i chronicles": "1Chr", "1-chronicles": "1Chr",
+    "2 chronicles": "2Chr", "2chronicles": "2Chr", "2chr": "2Chr", "2ch": "2Chr", "ii chronicles": "2Chr", "2-chronicles": "2Chr",
+    "ezra": "Ezra", "ezr": "Ezra",
+    "nehemiah": "Neh", "neh": "Neh",
+    "esther": "Esth", "esth": "Esth", "est": "Esth",
+    "job": "Job",
+    "psalms": "Ps", "psalm": "Ps", "ps": "Ps", "psa": "Ps",
+    "proverbs": "Prov", "prov": "Prov", "pro": "Prov",
+    "ecclesiastes": "Eccl", "eccl": "Eccl", "ecc": "Eccl",
+    "song of solomon": "Song", "song of songs": "Song", "song": "Song", "sng": "Song", "canticles": "Song",
+    "isaiah": "Isa", "isa": "Isa",
+    "jeremiah": "Jer", "jer": "Jer",
+    "lamentations": "Lam", "lam": "Lam",
+    "ezekiel": "Ezek", "ezek": "Ezek", "ezk": "Ezek",
+    "daniel": "Dan", "dan": "Dan",
+    "hosea": "Hos", "hos": "Hos",
+    "joel": "Joel", "jol": "Joel",
+    "amos": "Amos", "amo": "Amos",
+    "obadiah": "Obad", "obad": "Obad", "oba": "Obad",
+    "jonah": "Jonah", "jon": "Jonah",
+    "micah": "Mic", "mic": "Mic",
+    "nahum": "Nah", "nah": "Nah", "nam": "Nah",
+    "habakkuk": "Hab", "hab": "Hab",
+    "zephaniah": "Zeph", "zeph": "Zeph", "zep": "Zeph",
+    "haggai": "Hag", "hag": "Hag",
+    "zechariah": "Zech", "zech": "Zech", "zec": "Zech",
+    "malachi": "Mal", "mal": "Mal",
+}
+
+
+def resolve_osis_book(book_str: str) -> str:
+    """Resolve any book name, abbreviation, or alias to canonical OSIS code (e.g. 'Gen', 'Ps', 'Dan')."""
+    clean = book_str.strip().lower()
+    if clean in OSIS_BOOK_ALIASES:
+        return OSIS_BOOK_ALIASES[clean]
+    clean_upper = book_str.strip().upper()
+    if clean_upper in MACULA_TO_OSIS:
+        return MACULA_TO_OSIS[clean_upper]
+    return book_str.strip().capitalize()
+
+
+_VERSIFICATION_CACHE: tuple[dict[str, str], set[int], set[int]] | None = None
+
+
+def get_versification_map(versemap_path: Path | str | None = None) -> tuple[dict[str, str], set[int], set[int]]:
+    """Return cached (vmap, ps_1title_chapters, ps_2title_chapters) from OSHB VerseMap.xml."""
+    global _VERSIFICATION_CACHE
+    if _VERSIFICATION_CACHE is not None and versemap_path is None:
+        return _VERSIFICATION_CACHE
+
+    vmap: dict[str, str] = {}
+    # Genesis & Malachi baseline fallback (guaranteed offline determinism)
+    vmap["Gen.32.1"] = "Gen.31.55"
+    for v in range(2, 34):
+        vmap[f"Gen.32.{v}"] = f"Gen.32.{v - 1}"
+    for idx, v in enumerate(range(19, 25), 1):
+        vmap[f"Mal.3.{v}"] = f"Mal.4.{idx}"
+
+    ps_2title = {51, 52, 54, 60}
+    ps_1title: set[int] = set()
+
+    p = Path(versemap_path or "data/oshb/VerseMap.xml")
+    if p.is_file():
+        try:
+            tree = ET.parse(p)
+            ns = {"ns": "http://www.APTBibleTools.com/namespace"}
+            for v_el in tree.findall(".//ns:verse", ns):
+                wlc_ref = v_el.attrib.get("wlc", "").split("!")[0].strip()
+                kjv_ref = v_el.attrib.get("kjv", "").split("!")[0].strip()
+                if wlc_ref and kjv_ref:
+                    vmap[wlc_ref] = kjv_ref
+                    if wlc_ref.startswith("Ps.") and wlc_ref.endswith(".2") and kjv_ref.endswith(".1"):
+                        ch = int(wlc_ref.split(".")[1])
+                        ps_1title.add(ch)
+            ps_1title -= ps_2title
+        except ET.ParseError as e:
+            raise ValueError(f"Corrupt or invalid VerseMap.xml at {p}: {e}") from e
+
+    res = (vmap, ps_1title, ps_2title)
+    if versemap_path is None:
+        _VERSIFICATION_CACHE = res
+    return res
+
+
+def map_mt_to_canonical_verse(
+    chapter: int,
+    verse_num: int,
+    book_code: str = "GEN",
+    versemap_data: tuple[dict[str, str], set[int], set[int]] | None = None,
+) -> tuple[str, str]:
     """Map Masoretic Text (MT) chapter:verse to canonical KJV corpus reference.
 
-    Genesis 31-32 has traditional versification differences between MT and KJV:
-      - MT Gen 32:1 -> KJV Gen 31:55
-      - MT Gen 32:2..33 -> KJV Gen 32:1..32
+    Uses OSHB VerseMap.xml to align MT numbering (including Psalms titles,
+    Malachi 3/4, Genesis 31/32, etc.) to standard KJV versification.
 
-    Returns (canonical_ref, mt_ref) e.g. ('Gen.31.55', 'GEN 32:1').
+    Returns (canonical_ref, mt_ref) e.g. ('Gen.31.55', 'GEN 32:1') or ('Mal.4.1', 'MAL 3:19').
     """
-    mt_ref = f"GEN {chapter}:{verse_num}"
-    if chapter == 32 and verse_num == 1:
-        return "Gen.31.55", mt_ref
-    elif chapter == 32 and verse_num > 1:
-        return f"Gen.32.{verse_num - 1}", mt_ref
-    return f"Gen.{chapter}.{verse_num}", mt_ref
+    clean_b = book_code.strip().upper()
+    osis_b = MACULA_TO_OSIS.get(clean_b, resolve_osis_book(book_code))
+    mt_ref = f"{clean_b} {chapter}:{verse_num}"
+
+    vmap, ps_1title, ps_2title = versemap_data if versemap_data is not None else get_versification_map()
+    wlc_key = f"{osis_b}.{chapter}.{verse_num}"
+
+    if osis_b == "Ps" and verse_num == 1 and (chapter in ps_1title or chapter in ps_2title):
+        canonical_ref = f"Ps.{chapter}.0"
+    elif osis_b == "Ps" and verse_num == 2 and chapter in ps_2title:
+        canonical_ref = f"Ps.{chapter}.0b"
+    else:
+        canonical_ref = vmap.get(wlc_key, wlc_key)
+
+    return canonical_ref, mt_ref
+
+
+def parse_verse_id(verse_id: str) -> tuple[str, int, int]:
+    """Parse a canonical verse ID (e.g. 'Gen.1.1' or 'Ps.51.0b') into (book_code, chapter, verse_num)."""
+    parts = verse_id.split(".")
+    b_code = parts[0].upper() if len(parts) > 0 else "GEN"
+    ch = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 1
+    vs = 1
+    if len(parts) > 2:
+        m_vs = re.match(r"^(\d+)", parts[2])
+        if m_vs:
+            vs = int(m_vs.group(1))
+    return b_code, ch, vs
 
 
 @dataclass
@@ -297,23 +467,33 @@ def parse_clause(cl_el: ET.Element) -> ClauseRecord:
 
 
 def parse_sentence(
-    s_el: ET.Element, chapter: int, canonical_versification: bool = True
+    s_el: ET.Element,
+    chapter: int | None = None,
+    canonical_versification: bool = True,
+    book_code: str | None = None,
+    versemap_data: tuple[dict[str, str], set[int], set[int]] | None = None,
 ) -> VerseRecord:
     """Parse a <sentence> element representing a single verse."""
-    sid = s_el.attrib.get("id", "")  # e.g. "GEN 1:1"
-    # Extract verse number from id
-    parts = sid.replace("GEN ", "").split(":")
-    if len(parts) != 2:
-        raise ValueError(f"Malformed sentence ID: '{sid}' (expected 'GEN c:v')")
-    c_num = int(parts[0])
-    v_num = int(parts[1])
+    sid = s_el.attrib.get("id", "").strip()  # e.g. "GEN 1:1" or "ISA 53:5"
+    m = re.match(r"^([0-9A-Za-z]+)\s+(\d+):(\d+)$", sid)
+    if not m:
+        raise ValueError(f"Malformed sentence ID: '{sid}' (expected 'BOOK c:v')")
+
+    raw_b = m.group(1).upper()
+    c_num = int(m.group(2))
+    v_num = int(m.group(3))
+
+    b_code = book_code.upper() if book_code else raw_b
     if chapter is not None and c_num != chapter:
         raise ValueError(f"Sentence chapter mismatch: got {c_num}, expected {chapter} in '{sid}'")
 
+    osis_book = MACULA_TO_OSIS.get(b_code, resolve_osis_book(b_code))
     if canonical_versification:
-        verse_id, mt_id = map_mt_to_canonical_verse(c_num, v_num)
+        verse_id, mt_id = map_mt_to_canonical_verse(
+            c_num, v_num, book_code=b_code, versemap_data=versemap_data
+        )
     else:
-        verse_id = f"Gen.{c_num}.{v_num}"
+        verse_id = f"{osis_book}.{c_num}.{v_num}"
         mt_id = sid
 
     # Extract verse surface text from <p> milestone
@@ -339,10 +519,37 @@ def parse_sentence(
     )
 
 
+def merge_verse_records(records: Iterable[VerseRecord]) -> list[VerseRecord]:
+    """Merge consecutive VerseRecords that share the same canonical verse_id.
+
+    This preserves complete text, clauses, and token trees when an English KJV
+    verse maps to multiple Hebrew sentences (e.g. Num 25:19 + Num 26:1 -> Num 26:1).
+    """
+    merged: list[VerseRecord] = []
+    by_id: dict[str, VerseRecord] = {}
+
+    for rec in records:
+        vid = rec.verse_id
+        if vid in by_id:
+            existing = by_id[vid]
+            existing.text = f"{existing.text} {rec.text}".strip()
+            existing.mt_id = f"{existing.mt_id}, {rec.mt_id}"
+            existing.clauses.extend(rec.clauses)
+        else:
+            by_id[vid] = rec
+            merged.append(rec)
+    return merged
+
+
 def parse_chapter_xml(
-    source: str | Path | ET.Element, chapter: int, canonical_versification: bool = True
+    source: str | Path | ET.Element,
+    chapter: int | None = None,
+    canonical_versification: bool = True,
+    book_code: str | None = None,
+    versemap_data: tuple[dict[str, str], set[int], set[int]] | None = None,
+    merge_multi_sentences: bool = True,
 ) -> list[VerseRecord]:
-    """Parse one Lowfat XML chapter file (e.g. 01-Gen-001-lowfat.xml)."""
+    """Parse one Lowfat XML chapter file (e.g. 01-Gen-001-lowfat.xml or 23-Isa-053-lowfat.xml)."""
     if isinstance(source, ET.Element):
         root = source
     else:
@@ -350,12 +557,24 @@ def parse_chapter_xml(
 
     sentences = root.findall(".//sentence")
     if not sentences:
-        raise ValueError(f"No <sentence> elements found in Lowfat XML for chapter {chapter}")
+        ch_label = f" for chapter {chapter}" if chapter is not None else ""
+        raise ValueError(f"No <sentence> elements found in Lowfat XML{ch_label}")
 
-    verses: list[VerseRecord] = []
+    raw_verses: list[VerseRecord] = []
     for s in sentences:
-        verses.append(parse_sentence(s, chapter, canonical_versification=canonical_versification))
-    return verses
+        raw_verses.append(
+            parse_sentence(
+                s,
+                chapter=chapter,
+                canonical_versification=canonical_versification,
+                book_code=book_code,
+                versemap_data=versemap_data,
+            )
+        )
+
+    if merge_multi_sentences:
+        return merge_verse_records(raw_verses)
+    return raw_verses
 
 
 def parse_book_directory(
@@ -363,7 +582,7 @@ def parse_book_directory(
     chapters: range | tuple[int, ...] = range(1, 51),
     canonical_versification: bool = True,
 ) -> list[VerseRecord]:
-    """Parse all chapters in macula_dir in order, returning list of VerseRecords."""
+    """Parse all Genesis chapters in macula_dir in order, returning list of VerseRecords."""
     macula_path = Path(macula_dir)
     all_verses: list[VerseRecord] = []
     for ch in chapters:
@@ -374,5 +593,74 @@ def parse_book_directory(
                 f"Macula Hebrew file missing: {file_path}. "
                 "Run scripts/fetch_sources.sh to download pinned data."
             )
-        all_verses.extend(parse_chapter_xml(file_path, ch, canonical_versification=canonical_versification))
+        all_verses.extend(
+            parse_chapter_xml(
+                file_path,
+                ch,
+                canonical_versification=canonical_versification,
+                book_code="GEN",
+            )
+        )
     return all_verses
+
+
+def iter_chapter_files(
+    macula_dir: str | Path,
+    books: Iterable[str] | None = None,
+) -> list[Path]:
+    """Find all Lowfat XML chapter files in macula_dir in canonical OT sequence."""
+    p = Path(macula_dir)
+    if not p.is_dir():
+        return []
+
+    allowed_osis = {resolve_osis_book(b) for b in books} if books else None
+
+    files: list[tuple[int, int, Path]] = []
+    for f in p.glob("*-lowfat.xml"):
+        if f.name == "macula-hebrew-lowfat.xml":
+            continue
+        parts = f.stem.split("-")
+        if len(parts) >= 3 and parts[0].isdigit() and parts[2].isdigit():
+            book_num = int(parts[0])
+            bcode = parts[1].upper()
+            osis = MACULA_TO_OSIS.get(bcode, resolve_osis_book(bcode))
+            ch_num = int(parts[2])
+            if allowed_osis is None or osis in allowed_osis:
+                files.append((book_num, ch_num, f))
+
+    files.sort(key=lambda item: (item[0], item[1]))
+    return [item[2] for item in files]
+
+
+def parse_all_chapters(
+    macula_dir: str | Path,
+    books: Iterable[str] | None = None,
+    canonical_versification: bool = True,
+) -> Iterator[VerseRecord]:
+    """Stream all VerseRecords across the requested books or whole Old Testament,
+    merging multi-sentence verses even across chapter boundaries (e.g. Num 25:19 + Num 26:1).
+    """
+    vmap_data = get_versification_map() if canonical_versification else None
+    pending: VerseRecord | None = None
+
+    for f in iter_chapter_files(macula_dir, books=books):
+        verses = parse_chapter_xml(
+            f,
+            canonical_versification=canonical_versification,
+            versemap_data=vmap_data,
+            merge_multi_sentences=False,
+        )
+        for rec in verses:
+            if pending is None:
+                pending = rec
+            elif pending.verse_id == rec.verse_id:
+                # Merge into pending
+                pending.text = f"{pending.text} {rec.text}".strip()
+                pending.mt_id = f"{pending.mt_id}, {rec.mt_id}"
+                pending.clauses.extend(rec.clauses)
+            else:
+                yield pending
+                pending = rec
+
+    if pending is not None:
+        yield pending

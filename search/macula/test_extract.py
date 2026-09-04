@@ -145,5 +145,100 @@ class MaculaXmlParserTests(unittest.TestCase):
         self.assertEqual(verses[-1].verse_id, "Gen.1.31")
 
 
+class MaculaMultiBookExtractTests(unittest.TestCase):
+    """Tests for Whole-OT book normalization, versification, and chapter parsing."""
+
+    def test_resolve_osis_book(self):
+        from search.macula.extract import resolve_osis_book
+        self.assertEqual(resolve_osis_book("genesis"), "Gen")
+        self.assertEqual(resolve_osis_book("GEN"), "Gen")
+        self.assertEqual(resolve_osis_book("1 samuel"), "1Sam")
+        self.assertEqual(resolve_osis_book("II Kings"), "2Kgs")
+        self.assertEqual(resolve_osis_book("psalms"), "Ps")
+        self.assertEqual(resolve_osis_book("psalm"), "Ps")
+        self.assertEqual(resolve_osis_book("song of solomon"), "Song")
+        self.assertEqual(resolve_osis_book("dan"), "Dan")
+        self.assertEqual(resolve_osis_book("malachi"), "Mal")
+
+    def test_map_mt_to_canonical_verse_multi_book(self):
+        # Malachi 3:19 MT -> Malachi 4:1 KJV
+        self.assertEqual(
+            map_mt_to_canonical_verse(3, 19, book_code="MAL"),
+            ("Mal.4.1", "MAL 3:19"),
+        )
+        self.assertEqual(
+            map_mt_to_canonical_verse(3, 24, book_code="MAL"),
+            ("Mal.4.6", "MAL 3:24"),
+        )
+        # Daniel 8:14 identity
+        self.assertEqual(
+            map_mt_to_canonical_verse(8, 14, book_code="DAN"),
+            ("Dan.8.14", "DAN 8:14"),
+        )
+        # Psalm 3 (shifted title)
+        self.assertEqual(
+            map_mt_to_canonical_verse(3, 1, book_code="PSA"),
+            ("Ps.3.0", "PSA 3:1"),
+        )
+        self.assertEqual(
+            map_mt_to_canonical_verse(3, 2, book_code="PSA"),
+            ("Ps.3.1", "PSA 3:2"),
+        )
+        # Psalm 51 (2-verse title)
+        self.assertEqual(
+            map_mt_to_canonical_verse(51, 1, book_code="PSA"),
+            ("Ps.51.0", "PSA 51:1"),
+        )
+        self.assertEqual(
+            map_mt_to_canonical_verse(51, 2, book_code="PSA"),
+            ("Ps.51.0b", "PSA 51:2"),
+        )
+        self.assertEqual(
+            map_mt_to_canonical_verse(51, 3, book_code="PSA"),
+            ("Ps.51.1", "PSA 51:3"),
+        )
+
+    def test_parse_real_files_isaiah_daniel_malachi(self):
+        isa_path = Path("data/macula-hebrew/23-Isa-053-lowfat.xml")
+        dan_path = Path("data/macula-hebrew/27-Dan-008-lowfat.xml")
+        mal_path = Path("data/macula-hebrew/39-Mal-003-lowfat.xml")
+
+        if not isa_path.exists():
+            self.skipTest("Whole-OT Macula XMLs not present")
+
+        isa_verses = parse_chapter_xml(isa_path)
+        self.assertEqual(len(isa_verses), 12)
+        self.assertEqual(isa_verses[0].verse_id, "Isa.53.1")
+        self.assertEqual(isa_verses[4].verse_id, "Isa.53.5")
+        self.assertIn("מְחֹלָ֣ל", isa_verses[4].text)
+
+        dan_verses = parse_chapter_xml(dan_path)
+        self.assertEqual(len(dan_verses), 27)
+        dan8_14 = next(v for v in dan_verses if v.verse_id == "Dan.8.14")
+        self.assertEqual(dan8_14.mt_id, "DAN 8:14")
+        self.assertGreaterEqual(len(dan8_14.clauses), 3)
+
+        mal_verses = parse_chapter_xml(mal_path)
+        self.assertEqual(len(mal_verses), 24)
+        mal4_6 = mal_verses[-1]
+        self.assertEqual(mal4_6.verse_id, "Mal.4.6")
+        self.assertEqual(mal4_6.mt_id, "MAL 3:24")
+
+    def test_iter_chapter_files(self):
+        from search.macula.extract import iter_chapter_files
+        xml_dir = Path("data/macula-hebrew")
+        if not xml_dir.exists():
+            self.skipTest("data/macula-hebrew not present")
+
+        all_files = iter_chapter_files(xml_dir)
+        self.assertEqual(len(all_files), 929)
+
+        dan_files = iter_chapter_files(xml_dir, books=["Dan"])
+        self.assertEqual(len(dan_files), 12)
+
+        gen_files = iter_chapter_files(xml_dir, books=["Genesis"])
+        self.assertEqual(len(gen_files), 50)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

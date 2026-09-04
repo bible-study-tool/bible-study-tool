@@ -17,12 +17,13 @@ from __future__ import annotations
 from collections import defaultdict
 import json
 from pathlib import Path
+import re
 import sqlite3
 from typing import Any, Iterable
 
 DEFAULT_MACULA_DB = "data/macula.db"
 
-_SCHEMA = """
+_TABLES_SCHEMA = """
 CREATE TABLE IF NOT EXISTS verses (
     id TEXT PRIMARY KEY,
     book_code TEXT NOT NULL,
@@ -78,8 +79,9 @@ CREATE TABLE IF NOT EXISTS strongs_crosswalk (
     lxx_json TEXT NOT NULL,
     occurrences INTEGER NOT NULL
 );
+"""
 
--- B-Tree indices for instant relational lookup
+_INDICES_SCHEMA = """
 CREATE INDEX IF NOT EXISTS idx_tokens_strongs ON tokens(strongs);
 CREATE INDEX IF NOT EXISTS idx_tokens_lxx ON tokens(lxx_strongs);
 CREATE INDEX IF NOT EXISTS idx_tokens_verse ON tokens(verse_id);
@@ -89,6 +91,8 @@ CREATE INDEX IF NOT EXISTS idx_constituents_role_label ON constituents(role_labe
 CREATE INDEX IF NOT EXISTS idx_clauses_verse ON clauses(verse_id);
 CREATE INDEX IF NOT EXISTS idx_verses_book_ch ON verses(book_code, chapter, verse);
 """
+
+_SCHEMA = _TABLES_SCHEMA + "\n" + _INDICES_SCHEMA
 
 
 
@@ -129,8 +133,8 @@ class MaculaSqliteDB:
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.close()
 
-    def init_db(self, force: bool = False) -> None:
-        """Initialize database schema and indices."""
+    def init_db(self, force: bool = False, create_indices: bool = True) -> None:
+        """Initialize database schema and optionally indices."""
         if force:
             drop_script = """
             DROP TABLE IF EXISTS tokens;
@@ -143,10 +147,15 @@ class MaculaSqliteDB:
             self.conn.commit()
             self._has_tables = False
         if not self._has_tables:
-            self.conn.cursor().executescript(_SCHEMA)
+            schema_to_run = _SCHEMA if create_indices else _TABLES_SCHEMA
+            self.conn.cursor().executescript(schema_to_run)
             self.conn.commit()
             self._has_tables = True
 
+    def create_indices(self) -> None:
+        """Create B-Tree indices on tables."""
+        self.conn.cursor().executescript(_INDICES_SCHEMA)
+        self.conn.commit()
 
     def exists(self) -> bool:
         """True if the database file exists on disk and has tables."""
@@ -175,14 +184,11 @@ class MaculaSqliteDB:
         const_rows = []
         token_rows = []
 
+        from search.macula.extract import parse_verse_id
+
         for v in verses:
             v_id = v["verse_id"]
-            # Extract book code, chapter, verse from "Gen.1.1"
-            parts = v_id.split(".")
-            b_code = parts[0].upper() if len(parts) > 0 else "GEN"
-            ch = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 1
-            vs = int(parts[2]) if len(parts) > 2 and parts[2].isdigit() else 1
-
+            b_code, ch, vs = parse_verse_id(v_id)
             verse_rows.append((v_id, b_code, ch, vs, v.get("mt_id"), v.get("text", "")))
 
             for cl_idx, cl in enumerate(v.get("clauses", []), 1):
@@ -409,7 +415,7 @@ class MaculaSqliteDB:
                 "hebrew_strongs": row["strongs"],
                 "lemmas": json.loads(row["lemmas_json"]),
                 "glosses": json.loads(row["glosses_json"]),
-                "greek_forms": g_rec.get("greek", []),
+                "greek_forms": g_rec.get("greek") or g_rec.get("forms", []),
                 "count": g_rec.get("count", 0),
             })
 
@@ -448,13 +454,14 @@ class MaculaSqliteDB:
     def search_by_role(
         self,
         role: str,
-        limit: int = 50,
+        book: str | None = None,
         book_code: str | None = None,
+        limit: int = 50,
     ) -> list[dict[str, Any]]:
-        """Search constituents by grammatical role (e.g. 'subj', 'pred', 'obj', 'adv')."""
-        if not self.exists():
+        """Find syntactic constituents matching a grammatical role."""
+        if not self.exists() or not role:
             return []
-        from search.macula.extract import resolve_role_query
+        from search.macula.extract import resolve_role_query, resolve_osis_book
         target_roles = resolve_role_query(role)
         placeholders = ", ".join("?" for _ in target_roles)
         query = f"""
@@ -465,11 +472,12 @@ class MaculaSqliteDB:
         WHERE (c.role IN ({placeholders}) OR c.role_label IN ({placeholders}))
         """
         params: list[Any] = list(target_roles) + list(target_roles)
-        if book_code:
+        target_book = book or book_code
+        if target_book:
             query += " AND v.book_code = ?"
-            params.append(book_code.strip().upper())
+            params.append(resolve_osis_book(target_book).upper())
 
-        query += " ORDER BY v.chapter, v.verse, cl.clause_num, c.constituent_num LIMIT ?;"
+        query += " ORDER BY v.book_code, v.chapter, v.verse, cl.clause_num, c.constituent_num LIMIT ?;"
         params.append(limit)
 
         cur = self.conn.execute(query, params)

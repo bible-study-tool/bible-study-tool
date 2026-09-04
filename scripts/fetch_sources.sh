@@ -139,14 +139,22 @@ mkdir -p "$DATA/stepbible"
 fetch "$TBESH_URL" "$DATA/stepbible/TBESH.txt"
 fetch "$TBESG_URL" "$DATA/stepbible/TBESG.txt"
 
-# --- 5. Clear-Bible Macula Hebrew Lowfat XML (Genesis 1-50) -------------------
+# --- 5. Clear-Bible Macula Hebrew Lowfat XML (Whole Old Testament: 39 books, 929 chapters) ---
 MACULA_PIN="47db250bd55d0d8577f2a94fba114ef16c35b23c"
-MACULA_BASE="https://raw.githubusercontent.com/Clear-Bible/macula-hebrew/${MACULA_PIN}/WLC/lowfat"
 mkdir -p "$DATA/macula-hebrew"
-for i in $(seq 1 50); do
-  ch=$(printf "%03d" "$i")
-  fetch "${MACULA_BASE}/01-Gen-${ch}-lowfat.xml" "$DATA/macula-hebrew/01-Gen-${ch}-lowfat.xml"
-done
+if [[ ! -f "$DATA/macula-hebrew/39-Mal-003-lowfat.xml" ]]; then
+  echo "[get ] Macula Hebrew Lowfat XML (39 books, 929 chapters) from Clear-Bible/macula-hebrew ..."
+  TMP="$(mktemp -d)"
+  trap 'rm -rf "$TMP"' EXIT
+  git clone --filter=blob:none --no-checkout https://github.com/Clear-Bible/macula-hebrew.git "$TMP/macula"
+  git -C "$TMP/macula" sparse-checkout set WLC/lowfat
+  git -C "$TMP/macula" checkout "$MACULA_PIN"
+  cp "$TMP/macula/WLC/lowfat"/*.xml "$DATA/macula-hebrew/"
+  rm -rf "$TMP"
+  trap - EXIT
+else
+  echo "[skip] macula-hebrew/*.xml (all 39 OT books) already present"
+fi
 
 # --- verification ------------------------------------------------------------
 verify

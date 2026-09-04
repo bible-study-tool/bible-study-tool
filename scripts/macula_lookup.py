@@ -30,7 +30,7 @@ def format_strongs(entry: dict) -> str:
         f"Strong's: {entry['strongs']}",
         f"Lemmas:   {', '.join(entry['lemmas'])}",
         f"Glosses:  {', '.join(entry['glosses'])}",
-        f"Occurrences in Genesis: {entry['occurrences']}",
+        f"Occurrences: {entry['occurrences']}",
     ]
     if entry.get("sdbh"):
         lines.append(f"SDBH Senses:  {', '.join(entry['sdbh'])}")
@@ -43,7 +43,7 @@ def format_strongs(entry: dict) -> str:
     if lxx:
         lines.append("Septuagint (LXX) Equivalents:")
         for g_id, g_rec in sorted(lxx.items(), key=lambda x: x[1]["count"], reverse=True):
-            forms = ", ".join(g_rec.get("greek", []))
+            forms = ", ".join(g_rec.get("greek") or g_rec.get("forms", []))
             lines.append(f"  - {g_id} ({forms}): {g_rec['count']}x")
     return "\n".join(lines)
 
@@ -54,7 +54,7 @@ def format_equivalences(eqs: list[dict], strongs: str) -> str:
         g_id = eq.get("greek_strongs")
         h_id = eq.get("hebrew_strongs")
         count = eq.get("count", 0)
-        forms = ", ".join(eq.get("greek_forms", []))
+        forms = ", ".join(eq.get("greek_forms") or eq.get("forms", []))
         lemmas = ", ".join(eq.get("hebrew_lemmas", []))
         glosses = ", ".join(eq.get("hebrew_glosses", []))
         lines.append(f"  {idx}. {h_id} ({lemmas} / '{glosses}') ↔ {g_id} ({forms}): {count}x")

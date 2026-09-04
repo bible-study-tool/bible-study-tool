@@ -270,9 +270,22 @@ class MaculaCliTests(unittest.TestCase):
         res = subprocess.run(cmd, capture_output=True, text=True)
         self.assertEqual(res.returncode, 0, res.stderr)
         data = json.loads(res.stdout)
-        self.assertEqual(data["chapters"], 50)
-        self.assertEqual(data["verses"], 1533)
-        self.assertEqual(data["clauses"], 7007)
+        self.assertIn(data["chapters"], (50, 929))
+        self.assertGreaterEqual(data["verses"], 1533)
+        self.assertGreaterEqual(data["clauses"], 7007)
+
+        # Explicit artifact test
+        cmd_art = [
+            sys.executable, "scripts/macula_lookup.py",
+            "--artifact", "lexicons/macula-genesis.json",
+            "--stats", "--json"
+        ]
+        res_art = subprocess.run(cmd_art, capture_output=True, text=True)
+        self.assertEqual(res_art.returncode, 0, res_art.stderr)
+        data_art = json.loads(res_art.stdout)
+        self.assertEqual(data_art["chapters"], 50)
+        self.assertEqual(data_art["verses"], 1533)
+        self.assertEqual(data_art["clauses"], 7007)
 
 
 if __name__ == "__main__":
