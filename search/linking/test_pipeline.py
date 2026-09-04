@@ -152,7 +152,19 @@ class CandidateTests(unittest.TestCase):
             langs = {e["language"] for e in c["entries"]}
             self.assertEqual(len(langs), 2, "candidates must be cross-language")
 
+    def test_discover_candidates_with_macula_enrichment(self):
+        loader = Loader(".")
+        loader.load_entries()
+        cands = discover_candidates(loader, top_k=5, include_macula=True, min_lxx_count=2)
+        self.assertGreater(len(cands), 0)
+        macula_cands = [c for c in cands if c.get("source") == "macula/lxx-alignment"]
+        self.assertGreater(len(macula_cands), 0)
+        c0 = macula_cands[0]
+        self.assertEqual(c0["type"], "relation/translation-equivalence")
+        self.assertGreaterEqual(c0["lxx_count"], 2)
+
     def test_merge_preserves_review_annotations(self):
+
         """Human review metadata must survive regeneration (no clobbering)."""
         prior = [
             {

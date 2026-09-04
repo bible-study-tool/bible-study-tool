@@ -56,6 +56,8 @@ def main(argv=None):
         help="Minimum similarity for a candidate to pass the gate "
         "(default: 0.82 transformer space / 0.70 deterministic space)",
     )
+    parser.add_argument("--macula-enrich", action="store_true", help="Include empirical Macula Septuagint (LXX) translation-equivalence candidates")
+    parser.add_argument("--min-lxx-count", type=int, default=2, help="Minimum LXX alignment count for Macula candidate discovery (default: 2)")
     parser.add_argument("--seed", action="store_true", help="Print discovered candidates to stdout (JSON)")
     args = parser.parse_args(argv)
 
@@ -87,15 +89,22 @@ def main(argv=None):
             0.82 if embedder.name == "sentence-transformers" else 0.70
         )
         cands = write_candidates(
-            loader, embedder=embedder, top_k=args.top_k, min_similarity=min_sim, db=db
+            loader,
+            embedder=embedder,
+            top_k=args.top_k,
+            min_similarity=min_sim,
+            db=db,
+            include_macula=args.macula_enrich,
+            min_lxx_count=args.min_lxx_count,
         )
         label = "candidate" if len(cands) == 1 else "candidates"
         print(f"[c] {len(cands)} {label} written to correlations/ai-discovered-links.json "
-              f"(pending human review; embedder={embedder.name}, min_sim={min_sim})")
+              f"(pending human review; embedder={embedder.name}, min_sim={min_sim}, macula_enrich={args.macula_enrich})")
         if args.seed:
             print(json.dumps(cands, indent=2, ensure_ascii=False))
 
     return 0
+
 
 
 if __name__ == "__main__":

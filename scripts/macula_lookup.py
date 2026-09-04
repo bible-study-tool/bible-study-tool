@@ -22,6 +22,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from search.macula.lookup import MaculaDB, normalize_verse_ref
+from search.macula.enrichment import get_translation_equivalences, get_verse_semantic_frame
 
 
 def format_strongs(entry: dict) -> str:
@@ -44,6 +45,49 @@ def format_strongs(entry: dict) -> str:
         for g_id, g_rec in sorted(lxx.items(), key=lambda x: x[1]["count"], reverse=True):
             forms = ", ".join(g_rec.get("greek", []))
             lines.append(f"  - {g_id} ({forms}): {g_rec['count']}x")
+    return "\n".join(lines)
+
+
+def format_equivalences(eqs: list[dict], strongs: str) -> str:
+    lines = [f"LXX Translation Equivalences for {strongs.upper()} ({len(eqs)} found):"]
+    for idx, eq in enumerate(eqs, 1):
+        g_id = eq.get("greek_strongs")
+        h_id = eq.get("hebrew_strongs")
+        count = eq.get("count", 0)
+        forms = ", ".join(eq.get("greek_forms", []))
+        lemmas = ", ".join(eq.get("hebrew_lemmas", []))
+        glosses = ", ".join(eq.get("hebrew_glosses", []))
+        lines.append(f"  {idx}. {h_id} ({lemmas} / '{glosses}') ↔ {g_id} ({forms}): {count}x")
+        if eq.get("core_domains"):
+            lines.append(f"     SDBH Core Domains: {', '.join(eq['core_domains'])}")
+    return "\n".join(lines)
+
+
+def format_semantic_frame(frame: dict) -> str:
+    lines = [
+        f"Verse: {frame.get('verse_id')} [MT: {frame.get('mt_id')}]",
+        f"Text:  {frame.get('text')}",
+        "",
+        "Semantic Participant Roles & Clauses:",
+    ]
+    for cl in frame.get("clauses", []):
+        num = cl.get("clause_num")
+        rule = cl.get("rule", "")
+        lines.append(f"  Clause {num} [rule: {rule}]:")
+        if cl.get("agents"):
+            ag = ", ".join(a["text"] for a in cl["agents"])
+            lines.append(f"    - Agent (Subject):          {ag}")
+        if cl.get("actions"):
+            ac = ", ".join(a["text"] for a in cl["actions"])
+            lines.append(f"    - Action (Predicate Verb):   {ac}")
+        if cl.get("patients"):
+            pt = ", ".join(p["text"] for p in cl["patients"])
+            lines.append(f"    - Patient (Object/Theme):   {pt}")
+        if cl.get("context"):
+            cx = ", ".join(c["text"] for c in cl["context"])
+            lines.append(f"    - Context (Preposition/Adv): {cx}")
+        if cl.get("summary"):
+            lines.append(f"    Summary: {cl['summary']}")
     return "\n".join(lines)
 
 
@@ -106,6 +150,8 @@ def main(argv: list[str] | None = None) -> int:
     query_group.add_argument("-d", "--domain", help="SDBH Core Domain code (e.g. 168, 028)")
     query_group.add_argument("-r", "--role", help="Constituent syntactic role (e.g. subj, pred, obj, adv)")
     query_group.add_argument("--stats", action="store_true", help="Display summary statistics")
+    parser.add_argument("--frame", action="store_true", help="Display semantic participant frame for verse")
+    parser.add_argument("--equiv", action="store_true", help="Display Septuagint (LXX) translation equivalences for Strong's")
     parser.add_argument("--limit", type=int, default=50, help="Maximum results for role queries (default: 50)")
     parser.add_argument("--book", help="Filter role query to book code (e.g. GEN)")
     parser.add_argument("--json", action="store_true", help="Output results in JSON format")
@@ -122,6 +168,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Error: {e}", file=sys.stderr)
         return 1
 
+    if args.frame and not args.verse:
+        print("Error: --frame requires --verse (e.g. --verse Gen.1.1 --frame)", file=sys.stderr)
+        return 1
+    if args.equiv and not (args.strongs or args.lxx):
+        print("Error: --equiv requires --strongs or --lxx (e.g. --strongs H1254 --equiv)", file=sys.stderr)
+        return 1
+
     if args.stats:
         counts = db.counts
         backend = "SQLite" if db.is_sqlite else "In-Memory JSON"
@@ -136,6 +189,17 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.strongs:
+        if args.equiv:
+            eqs = get_translation_equivalences(args.strongs, db=db, repo_root=REPO_ROOT)
+            if not eqs:
+                print(f"No LXX translation equivalences found for '{args.strongs}'.", file=sys.stderr)
+                return 1
+            if args.json:
+                print(json.dumps(eqs, ensure_ascii=False, indent=2))
+            else:
+                print(format_equivalences(eqs, args.strongs))
+            return 0
+
         res = db.lookup_strongs(args.strongs)
         if not res:
             print(f"Strong's number '{args.strongs}' not found in Macula corpus.", file=sys.stderr)
@@ -147,6 +211,17 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.verse:
+        if args.frame:
+            frame = get_verse_semantic_frame(args.verse, db=db, repo_root=REPO_ROOT)
+            if not frame:
+                print(f"Verse '{args.verse}' not found in Macula dataset.", file=sys.stderr)
+                return 1
+            if args.json:
+                print(json.dumps(frame, ensure_ascii=False, indent=2))
+            else:
+                print(format_semantic_frame(frame))
+            return 0
+
         res = db.lookup_verse(args.verse)
         if not res:
             print(f"Verse '{args.verse}' not found in Macula dataset.", file=sys.stderr)
@@ -158,6 +233,17 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.lxx:
+        if args.equiv:
+            eqs = get_translation_equivalences(args.lxx, db=db, repo_root=REPO_ROOT)
+            if not eqs:
+                print(f"No LXX translation equivalences found for '{args.lxx}'.", file=sys.stderr)
+                return 1
+            if args.json:
+                print(json.dumps(eqs, ensure_ascii=False, indent=2))
+            else:
+                print(format_equivalences(eqs, args.lxx))
+            return 0
+
         res = db.lookup_lxx(args.lxx)
         if not res:
             print(f"Greek LXX Strong's '{args.lxx}' has no alignments in Macula corpus.", file=sys.stderr)

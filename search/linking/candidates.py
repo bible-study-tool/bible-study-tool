@@ -254,7 +254,13 @@ def _curated_pairs(loader) -> set:
 
 
 def discover_candidates(
-    loader, embedder=None, top_k: int = 5, min_similarity: float = RULE_ARCHIVE["min_similarity"], db=None
+    loader,
+    embedder=None,
+    top_k: int = 5,
+    min_similarity: float = RULE_ARCHIVE["min_similarity"],
+    db=None,
+    include_macula: bool = False,
+    min_lxx_count: int = 2,
 ) -> list[dict]:
     lexemes = _read_lexemes(loader, db=db)
     embedder = embedder or get_embedder()
@@ -293,7 +299,7 @@ def discover_candidates(
     proposals.sort(key=lambda c: c.similarity, reverse=True)
     proposals = proposals[:top_k]
 
-    return [
+    results = [
         {
             "id": f"aid-{date.today():%Y%m%d}-{i + 1:03d}",
             "type": c.relation,
@@ -326,6 +332,26 @@ def discover_candidates(
         }
         for i, c in enumerate(proposals)
     ]
+
+    if include_macula:
+        from search.macula.enrichment import discover_translation_equivalence_candidates
+
+        hebrew_strongs = [lx.strongs for lx in lexemes if lx.language == "hebrew"]
+        macula_proposals = discover_translation_equivalence_candidates(
+            strongs_filter=hebrew_strongs,
+            min_lxx_count=min_lxx_count,
+            limit=top_k,
+            repo_root=getattr(loader, "repo_root", getattr(loader, "repo", ".")),
+        )
+        existing_keys = {_candidate_key(r) for r in results}
+        for mc in macula_proposals:
+            key = _candidate_key(mc)
+            if key not in existing_keys:
+                results.append(mc)
+                existing_keys.add(key)
+
+    return results
+
 
 
 def _candidate_key(cand: dict) -> frozenset:

@@ -24,7 +24,8 @@ entries `draft` -> `review`.
 | [WP-011](WP-011-gen3-fall.md) | Gen 3:1-24 | Curate Genesis 3 — the Fall (ADR-0009) | done |
 | [WP-012](WP-012-macula-integration.md) | Pillar B (B1) | Macula Hebrew Linguistic Integration & Strong's-LXX Crosswalk (ADR-0012) | done |
 | [WP-013](WP-013-egw-bulk-ingestion.md) | Pillar A (A7) | Spirit of Prophecy (EGW) Bulk Ingestion Engine & Importers (ADR-0011, ADR-0013) | done |
-| [WP-014](WP-014-whole-bible-macula-sqlite.md) | Pillar B (B2) | Whole-Bible Macula SQLite Architecture (ADR-0013, ADR-0014) | done |
+| [WP-015](WP-015-macula-semantic-enrichment.md) | Pillar B (B3) | Macula Semantic Role & Translation-Equivalence Enrichment (ADR-0015) | done |
+
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1

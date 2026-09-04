@@ -30,6 +30,12 @@ from search.macula.lookup import (
     search_by_domain,
     search_by_role,
 )
+from search.macula.enrichment import (
+    discover_translation_equivalence_candidates,
+    enrich_curated_link,
+    get_translation_equivalences,
+    get_verse_semantic_frame,
+)
 
 __all__ = [
     "ClauseRecord",
@@ -40,7 +46,11 @@ __all__ = [
     "MaculaSqliteDB",
     "TokenRecord",
     "VerseRecord",
+    "discover_translation_equivalence_candidates",
+    "enrich_curated_link",
     "get_db",
+    "get_translation_equivalences",
+    "get_verse_semantic_frame",
     "lookup_lxx",
     "lookup_strongs",
     "lookup_verse",
@@ -57,4 +67,5 @@ __all__ = [
     "search_by_domain",
     "search_by_role",
 ]
+
 
