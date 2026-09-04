@@ -38,6 +38,7 @@ try:
     from search.linking.egw_importer import (
         BulkImporter,
         harvest_public_domain,
+        verify_book_anchors,
         PUBLIC_DOMAIN_SOURCES,
     )
 except ModuleNotFoundError as err:
@@ -112,6 +113,11 @@ def main(argv: list[str] | None = None) -> int:
         help=f"Download and ingest verified pre-1929 public domain works ({', '.join(PUBLIC_DOMAIN_SOURCES.keys())})",
     )
     parser.add_argument(
+        "--verify-anchors",
+        action="store_true",
+        help="Verify ingested edition paragraphs against canonical verification anchor checkpoints",
+    )
+    parser.add_argument(
         "--ingest-json",
         help="Path to JSON file containing paragraph entries to import (legacy alias)",
     )
@@ -128,6 +134,25 @@ def main(argv: list[str] | None = None) -> int:
             db.init_db()
             n = seed_core_genesis_passages(db)
             print(f"Seeded {n} core Genesis study paragraphs into {db.db_path}")
+            return 0
+
+        if args.verify_anchors:
+            if not db.exists():
+                print(f"Database does not exist at {db.db_path}.", file=sys.stderr)
+                return 1
+            results = verify_book_anchors(db, book_code=args.book)
+            matches = [r for r in results if r["status"] == "match"]
+            mismatches = [r for r in results if r["status"] == "mismatch"]
+            missing = [r for r in results if r["status"] == "missing"]
+
+            print(f"Canonical Anchor Verification Results ({db.db_path}):")
+            print(f"  ✔ Matches:    {len(matches)}")
+            print(f"  ⚠ Mismatches: {len(mismatches)}")
+            print(f"  - Missing:    {len(missing)}")
+            for r in matches:
+                print(f"    [OK] {r['token']}: {r['message']}")
+            for r in mismatches:
+                print(f"    [WARNING] {r['token']}: {r['message']}", file=sys.stderr)
             return 0
 
         if args.fetch_public_domain:

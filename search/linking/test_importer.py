@@ -324,5 +324,41 @@ class CliImporterTests(unittest.TestCase):
         self.assertEqual([p["paragraph"] for p in paragraphs], [1, 2, 3])
 
 
+class AnchorVerificationTests(unittest.TestCase):
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.db_path = Path(self.temp_dir.name) / "test_anchors.db"
+        self.db = EgwDB(db_path=self.db_path)
+
+    def tearDown(self):
+        self.db.close()
+        self.temp_dir.cleanup()
+
+    def test_anchor_match(self):
+        self.db.insert_paragraph(
+            book_code="PP",
+            page=57,
+            paragraph=1,
+            text="They heard the voice of the Lord God walking in the garden in the cool of the day.",
+        )
+        from search.linking.egw_importer import verify_book_anchors
+        results = verify_book_anchors(self.db, book_code="PP")
+        pp57 = next(r for r in results if r["token"] == "PP.57.1")
+        self.assertEqual(pp57["status"], "match")
+
+    def test_anchor_mismatch_warning(self):
+        self.db.insert_paragraph(
+            book_code="PP",
+            page=57,
+            paragraph=1,
+            text="Some completely different edition text or preface material here.",
+        )
+        from search.linking.egw_importer import verify_book_anchors
+        results = verify_book_anchors(self.db, book_code="PP")
+        pp57 = next(r for r in results if r["token"] == "PP.57.1")
+        self.assertEqual(pp57["status"], "mismatch")
+        self.assertIn("Anchor mismatch on PP.57.1", pp57["message"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -15,6 +15,7 @@ Zero external dependencies: uses Python standard library (zipfile, xml.etree, ht
 
 from __future__ import annotations
 
+import hashlib
 import html
 from html.parser import HTMLParser
 import json
@@ -30,6 +31,116 @@ from search.linking.egw import (
     EgwDB,
     normalize_token,
 )
+
+# Canonical verification anchors (token -> expected text start)
+# Used to verify whether ingested editions match canonical pagination without blocking.
+CANONICAL_ANCHORS: dict[str, dict[str, Any]] = {
+    "PP.44.1": {
+        "book_code": "PP",
+        "text_start": "The earth came forth from the hand of its Maker surpassing lovely",
+    },
+    "PP.57.1": {
+        "book_code": "PP",
+        "text_start": "They heard the voice of the Lord God walking in the garden in the cool of the day",
+    },
+    "PP.66.1": {
+        "book_code": "PP",
+        "text_start": "To man the first intimation of redemption was communicated in the sentence",
+    },
+    "DA.19.1": {
+        "book_code": "DA",
+        "text_start": "His name shall be called Emmanuel, God with us",
+    },
+    "GC.582.1": {
+        "book_code": "GC",
+        "text_start": "From the very beginning of the great controversy in heaven it has been Satan",
+    },
+    "SC.9.1": {
+        "book_code": "SC",
+        "text_start": "Nature and revelation alike testify of God",
+    },
+    "SC.15.1": {
+        "book_code": "SC",
+        "text_start": "It was possible for Adam, before the fall, to form a righteous character",
+    },
+    "ED.13.1": {
+        "book_code": "ED",
+        "text_start": "True education means more than the pursual of a certain course of study",
+    },
+}
+
+
+def normalize_for_hash(text: str) -> str:
+    """Normalize text for invariant comparison across editions and typography."""
+    norm = re.sub(r"[’']", "'", text.lower())
+    norm = re.sub(r'["“”]', '"', norm)
+    norm = re.sub(r"[—–\-]", " ", norm)
+    norm = re.sub(r"[^\w\s]", "", norm)
+    return re.sub(r"\s+", " ", norm).strip()
+
+
+def compute_text_hash(text: str) -> str:
+    """Compute deterministic SHA-256 of normalized text."""
+    norm = normalize_for_hash(text)
+    return hashlib.sha256(norm.encode("utf-8")).hexdigest()
+
+
+def verify_book_anchors(db: EgwDB, book_code: str | None = None) -> list[dict[str, Any]]:
+    """Verify local paragraphs against canonical checkpoint anchors.
+
+    Returns a list of check results per anchor:
+      {
+        "token": "PP.57.1",
+        "book_code": "PP",
+        "status": "match" | "mismatch" | "missing",
+        "message": "...",
+      }
+    Does NOT block ingestion; provides clear diagnostic warnings for edition discrepancies.
+    """
+    target_books = {book_code.upper()} if book_code else None
+    results = []
+
+    for token, spec in CANONICAL_ANCHORS.items():
+        b = spec["book_code"]
+        if target_books and b not in target_books:
+            continue
+
+        row = db.get_paragraph(token)
+        if not row:
+            results.append({
+                "token": token,
+                "book_code": b,
+                "status": "missing",
+                "message": f"Anchor paragraph {token} not present in local database.",
+            })
+            continue
+
+        local_text = row["text"]
+        norm_local = normalize_for_hash(local_text)
+        norm_expected = normalize_for_hash(spec["text_start"])
+
+        if norm_expected in norm_local:
+            results.append({
+                "token": token,
+                "book_code": b,
+                "status": "match",
+                "message": f"Paragraph {token} matches canonical edition text.",
+            })
+        else:
+            snippet = local_text[:80] + "..." if len(local_text) > 80 else local_text
+            results.append({
+                "token": token,
+                "book_code": b,
+                "status": "mismatch",
+                "expected": spec["text_start"],
+                "found": snippet,
+                "message": (
+                    f"Anchor mismatch on {token}. Expected text starting with '{spec['text_start'][:50]}...', "
+                    f"but found '{snippet}'. Your copy may have non-standard pagination or be a different edition."
+                ),
+            })
+
+    return results
 
 # Standard citation token in text: {PP 57.1}, [PP 57.1], {57.1}, (PP 57.1)
 _INLINE_TOKEN_RE = re.compile(
