@@ -109,8 +109,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--fetch-public-domain",
         type=str.upper,
-        choices=list(PUBLIC_DOMAIN_SOURCES.keys()),
-        help=f"Download and ingest verified pre-1929 public domain works ({', '.join(PUBLIC_DOMAIN_SOURCES.keys())})",
+        help="Download and ingest verified public-domain works ('ALL', single code, or 'SC,PP,DA')",
+    )
+    parser.add_argument(
+        "--list-sources",
+        action="store_true",
+        help="List verified public-domain and official free editions available to harvest",
     )
     parser.add_argument(
         "--verify-anchors",
@@ -125,6 +129,16 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     with EgwDB(db_path=args.db, repo_root=_REPO_ROOT) as db:
+        if args.list_sources:
+            print("Verified Public-Domain & Official Free Editions:")
+            for code, spec in PUBLIC_DOMAIN_SOURCES.items():
+                fmt = spec.get("format", "epub").upper()
+                print(f"  [{code:<8}] [{fmt:<4}] {spec['title']}")
+            print("\nUsage:")
+            print("  python scripts/egw_lookup.py --fetch-public-domain ALL")
+            print("  python scripts/egw_lookup.py --fetch-public-domain SC,PP,DA")
+            return 0
+
         if args.init:
             db.init_db()
             print(f"Initialized database schema at {db.db_path}")
@@ -158,11 +172,21 @@ def main(argv: list[str] | None = None) -> int:
         if args.fetch_public_domain:
             try:
                 db.init_db()
-                code = args.fetch_public_domain.upper()
-                print(f"Fetching public-domain edition for {code} ({PUBLIC_DOMAIN_SOURCES[code]['title']})...")
-                n = harvest_public_domain(code, db, dest_dir=_REPO_ROOT / "data" / "egw-sources")
-                print(f"Successfully ingested {n} paragraphs into {db.db_path}")
-                return 0
+                raw_arg = args.fetch_public_domain.strip()
+                print(f"Harvesting public-domain edition(s): {raw_arg}...")
+                results = harvest_public_domain(
+                    raw_arg, db, dest_dir=_REPO_ROOT / "data" / "egw-sources"
+                )
+                succeeded = {k: v for k, v in results.items() if v >= 0}
+                failed = {k: v for k, v in results.items() if v < 0}
+                total = sum(succeeded.values())
+
+                print(f"\nIngestion summary: {total} paragraphs across {len(succeeded)}/{len(results)} work(s):")
+                for code, cnt in succeeded.items():
+                    print(f"  ✔ {code}: {cnt} paragraphs")
+                for code in failed:
+                    print(f"  ✖ {code}: FAILED", file=sys.stderr)
+                return 1 if failed else 0
             except Exception as ex:
                 print(f"Error fetching public domain work: {ex}", file=sys.stderr)
                 return 1

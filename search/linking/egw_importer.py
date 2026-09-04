@@ -21,6 +21,7 @@ from html.parser import HTMLParser
 import json
 from pathlib import Path
 import re
+import sys
 import urllib.request
 import zipfile
 from typing import Any, Generator, Iterable
@@ -590,44 +591,179 @@ class BulkImporter:
         return results
 
 
-# Verified public-domain editions (pre-1929) available via public archives
+# Verified public-domain and officially distributed free editions
 PUBLIC_DOMAIN_SOURCES: dict[str, dict[str, str]] = {
+    # The Conflict of the Ages Series (Official White Estate free EPUBs)
+    "PP": {
+        "title": "Patriarchs and Prophets",
+        "url": "https://media2.egwwritings.org/epub/en_PP.epub",
+        "book_code": "PP",
+        "format": "epub",
+    },
+    "PK": {
+        "title": "Prophets and Kings",
+        "url": "https://media2.egwwritings.org/epub/en_PK.epub",
+        "book_code": "PK",
+        "format": "epub",
+    },
+    "DA": {
+        "title": "The Desire of Ages",
+        "url": "https://media2.egwwritings.org/epub/en_DA.epub",
+        "book_code": "DA",
+        "format": "epub",
+    },
+    "AA": {
+        "title": "The Acts of the Apostles",
+        "url": "https://media2.egwwritings.org/epub/en_AA.epub",
+        "book_code": "AA",
+        "format": "epub",
+    },
     "GC": {
         "title": "The Great Controversy Between Christ and Satan",
-        "url": "https://www.gutenberg.org/cache/epub/25833/pg25833.txt",
+        "url": "https://media2.egwwritings.org/epub/en_GC.epub",
         "book_code": "GC",
+        "format": "epub",
+    },
+    # Core Devotional, Educational, and Health Masterworks
+    "SC": {
+        "title": "Steps to Christ",
+        "url": "https://media2.egwwritings.org/epub/en_SC.epub",
+        "book_code": "SC",
+        "format": "epub",
+    },
+    "COL": {
+        "title": "Christ's Object Lessons",
+        "url": "https://media2.egwwritings.org/epub/en_COL.epub",
+        "book_code": "COL",
+        "format": "epub",
+    },
+    "MB": {
+        "title": "Thoughts from the Mount of Blessing",
+        "url": "https://media2.egwwritings.org/epub/en_MB.epub",
+        "book_code": "MB",
+        "format": "epub",
+    },
+    "MH": {
+        "title": "The Ministry of Healing",
+        "url": "https://media2.egwwritings.org/epub/en_MH.epub",
+        "book_code": "MH",
+        "format": "epub",
     },
     "ED": {
         "title": "Education",
+        "url": "https://media2.egwwritings.org/epub/en_Ed.epub",
+        "book_code": "ED",
+        "format": "epub",
+    },
+    # Verified Project Gutenberg historical editions (plain text)
+    "GC-1888": {
+        "title": "The Great Controversy (1888 Edition)",
+        "url": "https://www.gutenberg.org/cache/epub/25833/pg25833.txt",
+        "book_code": "GC",
+        "format": "txt",
+    },
+    "ED-TXT": {
+        "title": "Education (Plain Text)",
         "url": "https://www.gutenberg.org/cache/epub/62102/pg62102.txt",
         "book_code": "ED",
+        "format": "txt",
     },
 }
 
 
 def harvest_public_domain(
-    work: str,
+    work: str | Iterable[str],
     db: EgwDB,
     dest_dir: str | Path = "data/egw-sources",
-) -> int:
-    """Download and ingest a verified public-domain EGW edition."""
-    code = work.strip().upper()
-    if code not in PUBLIC_DOMAIN_SOURCES:
-        valid = ", ".join(PUBLIC_DOMAIN_SOURCES.keys())
-        raise ValueError(f"Unknown public-domain work '{work}'. Available options: {valid}")
+    fast: bool = True,
+) -> dict[str, int]:
+    """Download and ingest verified public-domain / official free EGW editions.
 
-    spec = PUBLIC_DOMAIN_SOURCES[code]
-    dest_path = Path(dest_dir) / f"{code}.txt"
-    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    Args:
+        work: A single book code (e.g. 'SC', 'PP'), a comma-separated string,
+              an iterable of codes, or 'ALL' for the core 10 volumes.
+        db: Initialized EgwDB instance.
+        dest_dir: Target directory to save raw source files.
+        fast: Use fast bulk insertion with trigger disabling.
 
-    # Download if not already cached locally
-    if not dest_path.is_file():
-        req = urllib.request.Request(
-            spec["url"],
-            headers={"User-Agent": "AdventistBibleStudyTool/1.0 (offline research)"},
-        )
-        with urllib.request.urlopen(req, timeout=30) as resp, open(dest_path, "wb") as f:
-            f.write(resp.read())
+    Returns:
+        Mapping of book_code to count of paragraphs ingested.
+    """
+    if isinstance(work, str):
+        work_str = work.strip().upper()
+        if not work_str:
+            raise ValueError("No work code provided.")
+        if work_str == "ALL":
+            target_codes = [k for k, v in PUBLIC_DOMAIN_SOURCES.items() if v.get("format") == "epub"]
+        elif "," in work_str:
+            target_codes = [c.strip() for c in work_str.split(",") if c.strip()]
+        else:
+            target_codes = [work_str]
+    else:
+        target_codes = [str(c).strip().upper() for c in work]
+
+    # Deduplicate while preserving sequence
+    target_codes = list(dict.fromkeys(target_codes))
+
+    # Validate all requested codes upfront
+    for code in target_codes:
+        if code not in PUBLIC_DOMAIN_SOURCES:
+            valid = ", ".join(PUBLIC_DOMAIN_SOURCES.keys())
+            raise ValueError(f"Unknown public-domain work '{code}'. Available options: {valid}")
+
+    dest_p = Path(dest_dir)
+    dest_p.mkdir(parents=True, exist_ok=True)
+
+    # 1. Download any files that are not already cached locally
+    for code in target_codes:
+        spec = PUBLIC_DOMAIN_SOURCES[code]
+        fmt = spec.get("format", "epub").lower()
+        dest_path = dest_p / f"{code}.{fmt}"
+        if not (dest_path.is_file() and dest_path.stat().st_size > 0):
+            req = urllib.request.Request(
+                spec["url"],
+                headers={"User-Agent": "AdventistBibleStudyTool/1.0 (offline research)"},
+            )
+            tmp_path = dest_path.with_name(f"{dest_path.name}.tmp")
+            try:
+                with urllib.request.urlopen(req, timeout=45) as resp, open(tmp_path, "wb") as f:
+                    while chunk := resp.read(65536):
+                        f.write(chunk)
+                tmp_path.replace(dest_path)
+            except Exception:
+                if tmp_path.exists():
+                    tmp_path.unlink()
+                raise
+
+    # 2. Ingest downloaded files
+    db.init_db()
+    if fast:
+        with db.conn:
+            db.conn.execute("DROP TRIGGER IF EXISTS egw_ai;")
+            db.conn.execute("DROP TRIGGER IF EXISTS egw_ad;")
+            db.conn.execute("DROP TRIGGER IF EXISTS egw_au;")
 
     importer = BulkImporter(db)
-    return importer.import_file(dest_path, book_code=code)
+    results: dict[str, int] = {}
+    total_inserted = 0
+
+    try:
+        for code in target_codes:
+            spec = PUBLIC_DOMAIN_SOURCES[code]
+            fmt = spec.get("format", "epub").lower()
+            dest_path = dest_p / f"{code}.{fmt}"
+            try:
+                cnt = importer.import_file(dest_path, book_code=spec["book_code"], fast=False)
+                results[code] = cnt
+                total_inserted += max(0, cnt)
+            except Exception as ex:
+                results[code] = -1
+                sys.stderr.write(f"[WARN] Failed to ingest {code} from {dest_path.name}: {ex}\n")
+    finally:
+        if fast:
+            with db.conn:
+                db.conn.executescript(_TRIGGERS)
+                if total_inserted > 0:
+                    db.conn.execute("INSERT INTO egw_fts(egw_fts) VALUES('rebuild');")
+
+    return results

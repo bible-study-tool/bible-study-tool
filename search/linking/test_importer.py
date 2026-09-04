@@ -360,5 +360,110 @@ class AnchorVerificationTests(unittest.TestCase):
         self.assertIn("Anchor mismatch on PP.57.1", pp57["message"])
 
 
+class PublicDomainHarvesterTests(unittest.TestCase):
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.db_path = Path(self.temp_dir.name) / "test_harvest.db"
+        self.db = EgwDB(db_path=self.db_path)
+
+    def tearDown(self):
+        self.db.close()
+        self.temp_dir.cleanup()
+
+    def test_catalog_inventory(self):
+        from search.linking.egw_importer import PUBLIC_DOMAIN_SOURCES
+        core_expected = {"PP", "PK", "DA", "AA", "GC", "SC", "COL", "MB", "MH", "ED"}
+        for code in core_expected:
+            self.assertIn(code, PUBLIC_DOMAIN_SOURCES)
+            spec = PUBLIC_DOMAIN_SOURCES[code]
+            self.assertTrue(spec["url"].startswith("https://"))
+            self.assertEqual(spec["book_code"], code)
+
+    def test_unknown_work_raises_value_error(self):
+        from search.linking.egw_importer import harvest_public_domain
+        with self.assertRaises(ValueError) as ctx:
+            harvest_public_domain("UNKNOWN_BOOK_XYZ", self.db, dest_dir=self.temp_dir.name)
+        self.assertIn("Unknown public-domain work", str(ctx.exception))
+
+    def test_harvest_with_cached_local_file(self):
+        from search.linking.egw_importer import harvest_public_domain
+        # Create a mock cached text file for ED-TXT
+        dest_dir = Path(self.temp_dir.name) / "sources"
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        cached_file = dest_dir / "ED-TXT.txt"
+        cached_file.write_text(
+            "*** START OF THE PROJECT GUTENBERG EBOOK ***\n\n"
+            "True education means more than the pursual of a certain course of study.\n\n"
+            "It has to do with the whole being.\n\n"
+            "*** END OF THE PROJECT GUTENBERG EBOOK ***\n",
+            encoding="utf-8",
+        )
+        results = harvest_public_domain("ED-TXT", self.db, dest_dir=dest_dir)
+        self.assertIn("ED-TXT", results)
+        self.assertEqual(results["ED-TXT"], 2)
+        self.assertEqual(self.db.count(), 2)
+
+    def test_all_code_expansion(self):
+        from search.linking.egw_importer import PUBLIC_DOMAIN_SOURCES
+        epub_keys = [k for k, v in PUBLIC_DOMAIN_SOURCES.items() if v.get("format") == "epub"]
+        self.assertEqual(len(epub_keys), 10)
+        self.assertIn("PP", epub_keys)
+        self.assertIn("DA", epub_keys)
+        self.assertIn("GC", epub_keys)
+        self.assertNotIn("ED-TXT", epub_keys)
+
+    def test_multi_work_harvest_and_fts_search(self):
+        from search.linking.egw_importer import harvest_public_domain
+        dest_dir = Path(self.temp_dir.name) / "sources"
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        (dest_dir / "ED-TXT.txt").write_text(
+            "*** START OF THE PROJECT GUTENBERG EBOOK ***\n\n"
+            "True education means more than the pursual of study.\n\n"
+            "*** END OF THE PROJECT GUTENBERG EBOOK ***",
+            encoding="utf-8",
+        )
+        (dest_dir / "GC-1888.txt").write_text(
+            "*** START OF THE PROJECT GUTENBERG EBOOK ***\n\n"
+            "The great controversy between Christ and Satan began in heaven.\n\n"
+            "*** END OF THE PROJECT GUTENBERG EBOOK ***",
+            encoding="utf-8",
+        )
+        results = harvest_public_domain("ED-TXT,GC-1888", self.db, dest_dir=dest_dir, fast=True)
+        self.assertEqual(results.get("ED-TXT"), 1)
+        self.assertEqual(results.get("GC-1888"), 1)
+        self.assertEqual(self.db.count(), 2)
+
+        # Verify FTS5 rebuild succeeded and BM25 search works
+        hits = self.db.search("education")
+        self.assertGreaterEqual(len(hits), 1)
+        self.assertIn("education", hits[0]["snippet"].lower())
+
+    def test_deduplication_of_work_codes(self):
+        from search.linking.egw_importer import harvest_public_domain
+        dest_dir = Path(self.temp_dir.name) / "sources"
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        (dest_dir / "ED-TXT.txt").write_text(
+            "*** START OF THE PROJECT GUTENBERG EBOOK ***\n\n"
+            "Sample text for deduplication test.\n\n"
+            "*** END OF THE PROJECT GUTENBERG EBOOK ***",
+            encoding="utf-8",
+        )
+        results = harvest_public_domain(["ED-TXT", "ED-TXT"], self.db, dest_dir=dest_dir)
+        self.assertEqual(list(results.keys()), ["ED-TXT"])
+        self.assertEqual(self.db.count(), 1)
+
+    def test_cli_list_sources(self):
+        res = subprocess.run(
+            [sys.executable, str(CLI_SCRIPT), "--list-sources"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(res.returncode, 0)
+        self.assertIn("Patriarchs and Prophets", res.stdout)
+        self.assertIn("The Desire of Ages", res.stdout)
+        self.assertIn("Steps to Christ", res.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
