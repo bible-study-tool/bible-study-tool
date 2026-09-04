@@ -57,7 +57,10 @@ KNOWN_EGW_BOOKS: dict[str, str] = {
     "ST": "Signs of the Times",
 }
 
-_TOKEN_RE = re.compile(r"^(?:egw:)?([A-Za-z0-9]+)\.([0-9]+)(?:\.([0-9]+))?$", re.IGNORECASE)
+_TOKEN_RE = re.compile(
+    r"^(?:egw:)?(?=[0-9A-Za-z]*[A-Za-z])([A-Za-z0-9]+)\.([0-9]+)(?:\.([0-9]+))?$",
+    re.IGNORECASE,
+)
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS egw_paragraphs (

@@ -151,7 +151,8 @@ def main(argv: list[str] | None = None) -> int:
                     if use_color
                     else snippet.replace("[b]", "").replace("[/b]", "")
                 )
-                print(f"{i}. [{ref}] ({token_id}) — {r['book_title']}, p. {r['page']}, para {r['paragraph']}")
+                chap_info = f" ({r['chapter_title']})" if r.get("chapter_title") else ""
+                print(f"{i}. [{ref}] ({token_id}) — {r['book_title']}, p. {r['page']}, para {r['paragraph']}{chap_info}")
                 print(f"   {clean_snippet}\n")
             return 0
 

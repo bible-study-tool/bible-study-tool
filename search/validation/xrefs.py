@@ -33,7 +33,10 @@ _ENTRY_ID_RE = re.compile(r"^(?=.*[a-z])[a-z0-9]+(?:-[a-z0-9]+)+$")
 # Passage shape: "Book Chapter:Verse" (optionally with ranges), e.g. John 1:1 or 2 Peter 3:5-7.
 _PASSAGE_RE = re.compile(r"^[0-9A-Za-z][A-Za-z0-9 ]* \d+:\d+(?:[-–]\d+)?$")
 # EGW canonical citation token shape: "egw:BOOK.PAGE.PARA" or "egw:BOOK.PAGE" (e.g. egw:PP.57.1).
-_EGW_TOKEN_RE = re.compile(r"^egw:[A-Za-z0-9]+\.[0-9]+(?:\.[0-9]+)?$", re.IGNORECASE)
+_EGW_TOKEN_RE = re.compile(
+    r"^egw:(?=[0-9A-Za-z]*[A-Za-z])[A-Za-z0-9]+\.[0-9]+(?:\.[0-9]+)?$",
+    re.IGNORECASE,
+)
 
 
 def classify_target(target: str) -> str:
