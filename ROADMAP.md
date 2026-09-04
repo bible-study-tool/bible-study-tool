@@ -50,7 +50,8 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 ### B. Macula / Linguistic Data Integration
 - `[x]` **B0. WordGraph foundation** (ADR-0010) — lemma-centric lexical knowledge graph, complete for whole-book Genesis (`lexicons/wordgraph-genesis.json`); the substrate that Macula integration will enrich (WP-010 draft engine consumes it)
 - `[x]` **B1. Phase 1: reference integration** — Pin upstream Clear-Bible Macula Hebrew (`47db250bd55d0d8577f2a94fba114ef16c35b23c`), download Lowfat XML datasets (Gen 1-50), extract Strong's Hebrew ↔ LXX Greek Strong's crosswalk and SDBH semantic domains into `lexicons/macula-genesis.json` (ADR-0012)
-- `[x]` **B2. Phase 2: automated lookup** — Zero-dependency query engine (`search/macula/lookup.py`) and CLI (`scripts/macula_lookup.py`) for looking up Strong's LXX alignments, SDBH domains, and clause syntax trees by verse/token without heavyweight external libraries
+- `[x]` **B2. Phase 2: automated lookup** — Zero-dependency query engine (`search/macula/lookup.py`), whole-Bible SQLite database (`data/macula.db`, ADR-0014), and CLI (`scripts/macula_lookup.py`) for looking up Strong's LXX alignments, SDBH domains, and clause syntax trees/participant roles by verse/token without heavyweight external libraries
+
 - `[ ]` **B3. Phase 3: semantic enrichment** — use Macula roles/syntax to enrich semantic-links + translation-equivalence
 
 ### C. Search & Semantic Engine

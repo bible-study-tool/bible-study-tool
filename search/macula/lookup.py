@@ -13,7 +13,12 @@ from pathlib import Path
 import re
 from typing import Any
 
-from search.macula.extract import normalize_hebrew_strongs, normalize_greek_strongs
+from search.macula.extract import (
+    normalize_greek_strongs,
+    normalize_hebrew_strongs,
+    resolve_role_query,
+)
+from search.macula.db import DEFAULT_MACULA_DB, MaculaSqliteDB
 
 DEFAULT_ARTIFACT_PATH = "lexicons/macula-genesis.json"
 
@@ -42,61 +47,94 @@ def normalize_verse_ref(raw: str) -> str:
 
 
 class MaculaDB:
-    """Query engine backed by lexicons/macula-genesis.json."""
+    """Query engine backed by SQLite (data/macula.db) or JSON (lexicons/macula-genesis.json)."""
 
     def __init__(self, data_or_path: str | Path | dict | None = None):
+        self._sqlite: MaculaSqliteDB | None = None
+        self._data: dict | None = None
+
         if data_or_path is None:
-            data_or_path = DEFAULT_ARTIFACT_PATH
+            db_path = Path(DEFAULT_MACULA_DB)
+            candidate = MaculaSqliteDB(db_path)
+            if candidate.exists():
+                self._sqlite = candidate
+            else:
+                candidate.close()
+                data_or_path = DEFAULT_ARTIFACT_PATH
 
-        if isinstance(data_or_path, dict):
-            self._data = data_or_path
-        else:
-            p = Path(data_or_path)
-            if not p.exists():
-                raise FileNotFoundError(
-                    f"Macula artifact missing: {p}. "
-                    "Run 'python -m search.macula.build_crosswalk' to generate it."
-                )
-            with open(p, encoding="utf-8") as f:
-                self._data = json.load(f)
+        if self._sqlite is None:
+            if isinstance(data_or_path, (str, Path)) and str(data_or_path).endswith((".db", ".sqlite")):
+                self._sqlite = MaculaSqliteDB(data_or_path)
+            elif isinstance(data_or_path, dict):
+                self._data = data_or_path
+            else:
+                p = Path(data_or_path)
 
-        self._crosswalk: dict[str, dict] = self._data.get("strongs_crosswalk", {})
-        self._verses: dict[str, dict] = self._data.get("verses", {})
+                if not p.exists():
+                    raise FileNotFoundError(
+                        f"Macula artifact missing: {p}. "
+                        "Run 'python -m search.macula.build_crosswalk' to generate it."
+                    )
+                with open(p, encoding="utf-8") as f:
+                    self._data = json.load(f)
 
-        # Build reverse index for Greek LXX Strong's
-        self._greek_to_hebrew: dict[str, list[dict]] = {}
-        # Build index for SDBH core domains
-        self._domain_to_hebrew: dict[str, list[dict]] = {}
+        if self._data is not None:
+            self._crosswalk: dict[str, dict] = self._data.get("strongs_crosswalk", {})
+            self._verses: dict[str, dict] = self._data.get("verses", {})
 
-        for h_id, entry in self._crosswalk.items():
-            for g_id, g_rec in entry.get("lxx", {}).items():
-                self._greek_to_hebrew.setdefault(g_id, []).append({
-                    "hebrew_strongs": h_id,
-                    "lemmas": entry.get("lemmas", []),
-                    "glosses": entry.get("glosses", []),
-                    "count": g_rec.get("count", 0),
-                    "greek_forms": g_rec.get("greek", []),
-                })
-            for cd in entry.get("core_domains", []):
-                self._domain_to_hebrew.setdefault(cd, []).append({
-                    "hebrew_strongs": h_id,
-                    "lemmas": entry.get("lemmas", []),
-                    "glosses": entry.get("glosses", []),
-                })
+            # Build reverse index for Greek LXX Strong's
+            self._greek_to_hebrew: dict[str, list[dict]] = {}
+            # Build index for SDBH core domains
+            self._domain_to_hebrew: dict[str, list[dict]] = {}
 
-        # Pre-sort each Greek index list once during initialization
-        for entries in self._greek_to_hebrew.values():
-            entries.sort(key=lambda x: x["count"], reverse=True)
+            for h_id, entry in self._crosswalk.items():
+                for g_id, g_rec in entry.get("lxx", {}).items():
+                    self._greek_to_hebrew.setdefault(g_id, []).append({
+                        "hebrew_strongs": h_id,
+                        "lemmas": entry.get("lemmas", []),
+                        "glosses": entry.get("glosses", []),
+                        "count": g_rec.get("count", 0),
+                        "greek_forms": g_rec.get("greek", []),
+                    })
+                for cd in entry.get("core_domains", []):
+                    self._domain_to_hebrew.setdefault(cd, []).append({
+                        "hebrew_strongs": h_id,
+                        "lemmas": entry.get("lemmas", []),
+                        "glosses": entry.get("glosses", []),
+                    })
+
+            # Pre-sort each Greek index list once during initialization
+            for entries in self._greek_to_hebrew.values():
+                entries.sort(key=lambda x: x["count"], reverse=True)
+
+    @property
+    def is_sqlite(self) -> bool:
+        return self._sqlite is not None
 
     @property
     def counts(self) -> dict[str, int]:
-        return self._data.get("counts", {})
+        if self._sqlite:
+            return self._sqlite.counts
+        return self._data.get("counts", {}) if self._data else {}
+
+    def close(self) -> None:
+        """Close backing SQLite connection if active."""
+        if self._sqlite is not None:
+            self._sqlite.close()
+
+    def __enter__(self) -> MaculaDB:
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        self.close()
 
     def lookup_strongs(self, query: str) -> dict | None:
         """Look up Hebrew Strong's entry (e.g. 'H7225', '7225', '0722', 'H430')."""
         norm = normalize_hebrew_strongs(query)
         if not norm:
             return None
+        if self._sqlite:
+            return self._sqlite.lookup_strongs(norm)
         return self._crosswalk.get(norm)
 
     def lookup_verse(self, query: str) -> dict | None:
@@ -105,6 +143,8 @@ class MaculaDB:
             v_ref = normalize_verse_ref(query)
         except ValueError:
             return None
+        if self._sqlite:
+            return self._sqlite.lookup_verse(v_ref)
         return self._verses.get(v_ref)
 
     def lookup_lxx(self, query: str) -> list[dict]:
@@ -112,23 +152,68 @@ class MaculaDB:
         norm = normalize_greek_strongs(query)
         if not norm:
             return []
+        if self._sqlite:
+            return self._sqlite.lookup_lxx(norm)
         return self._greek_to_hebrew.get(norm, [])
 
     def search_by_domain(self, domain_code: str) -> list[dict]:
         """Find all Hebrew Strong's entries annotated with an SDBH core domain code."""
         code = domain_code.strip().zfill(3)
+        if self._sqlite:
+            return self._sqlite.search_by_domain(code)
         return self._domain_to_hebrew.get(code, [])
+
+    def search_by_role(
+        self,
+        role: str,
+        limit: int = 50,
+        book_code: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Search constituents by grammatical role (e.g. 'subj', 'pred', 'obj', 'adv')."""
+        if self._sqlite:
+            return self._sqlite.search_by_role(role, limit=limit, book_code=book_code)
+
+        # In-memory JSON fallback
+        target_roles = set(resolve_role_query(role))
+        clean_book = book_code.strip().upper() if book_code else None
+        results = []
+        for v_id, v in self._verses.items():
+            if clean_book and not v_id.upper().startswith(clean_book):
+                continue
+            for cl in v.get("clauses", []):
+                for const in cl.get("constituents", []):
+                    c_role = (const.get("role") or "").lower()
+                    c_label = (const.get("role_label") or "").lower()
+                    if c_role in target_roles or c_label in target_roles:
+                        results.append({
+                            "verse_id": v_id,
+                            "role": const.get("role"),
+                            "role_label": const.get("role_label"),
+                            "class": const.get("class"),
+                            "constituent_text": const.get("text"),
+                            "clause_rule": cl.get("rule"),
+                            "verse_text": v.get("text"),
+                        })
+                        if len(results) >= limit:
+                            return results
+        return results
+
+
 
 
 _DEFAULT_DB: MaculaDB | None = None
 
 
 def get_db(repo_root: str | Path = ".") -> MaculaDB:
-    """Return singleton MaculaDB instance."""
+    """Return singleton MaculaDB instance (prefers SQLite, falls back to JSON)."""
     global _DEFAULT_DB
     if _DEFAULT_DB is None:
-        path = Path(repo_root) / DEFAULT_ARTIFACT_PATH
-        _DEFAULT_DB = MaculaDB(path)
+        db_path = Path(repo_root) / DEFAULT_MACULA_DB
+        if db_path.is_file():
+            _DEFAULT_DB = MaculaDB(db_path)
+        else:
+            path = Path(repo_root) / DEFAULT_ARTIFACT_PATH
+            _DEFAULT_DB = MaculaDB(path)
     return _DEFAULT_DB
 
 
@@ -146,3 +231,12 @@ def lookup_lxx(query: str, repo_root: str | Path = ".") -> list[dict]:
 
 def search_by_domain(domain_code: str, repo_root: str | Path = ".") -> list[dict]:
     return get_db(repo_root).search_by_domain(domain_code)
+
+
+def search_by_role(
+    role: str,
+    limit: int = 50,
+    book_code: str | None = None,
+    repo_root: str | Path = ".",
+) -> list[dict]:
+    return get_db(repo_root).search_by_role(role, limit=limit, book_code=book_code)

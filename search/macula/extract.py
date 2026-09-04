@@ -29,6 +29,45 @@ ROLE_LABELS: dict[str, str] = {
     "cl": "clause",
 }
 
+ROLE_ALIASES: dict[str, tuple[str, str]] = {
+    "s": ("s", "subject"),
+    "subj": ("s", "subject"),
+    "subject": ("s", "subject"),
+    "v": ("v", "predicate_verb"),
+    "verb": ("v", "predicate_verb"),
+    "predicate_verb": ("v", "predicate_verb"),
+    "pred_verb": ("v", "predicate_verb"),
+    "o": ("o", "object"),
+    "obj": ("o", "object"),
+    "object": ("o", "object"),
+    "o2": ("o2", "indirect_object"),
+    "iobj": ("o2", "indirect_object"),
+    "indirect_object": ("o2", "indirect_object"),
+    "p": ("p", "predicate"),
+    "pred": ("p", "predicate"),
+    "predicate": ("p", "predicate"),
+    "pp": ("pp", "prepositional_phrase"),
+    "prep": ("pp", "prepositional_phrase"),
+    "prepositional_phrase": ("pp", "prepositional_phrase"),
+    "adv": ("adv", "adverbial"),
+    "adverbial": ("adv", "adverbial"),
+    "voc": ("voc", "vocative"),
+    "vocative": ("voc", "vocative"),
+    "cl": ("cl", "clause"),
+    "clause": ("cl", "clause"),
+    "cjp": ("cjp", "conjunction_phrase"),
+    "conjunction_phrase": ("cjp", "conjunction_phrase"),
+}
+
+
+def resolve_role_query(role_query: str) -> tuple[str, ...]:
+    """Resolve a user role string to matching role codes and labels."""
+    clean = role_query.strip().lower()
+    if clean in ROLE_ALIASES:
+        return ROLE_ALIASES[clean]
+    return (clean,)
+
+
 
 def _normalize_strongs(raw: str | None, pattern: re.Pattern, prefix: str, max_num: int) -> str | None:
     if not raw:

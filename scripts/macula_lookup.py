@@ -82,6 +82,21 @@ def format_verse(entry: dict) -> str:
     return "\n".join(lines)
 
 
+def format_roles(results: list[dict], role: str) -> str:
+    lines = [f"Syntactic Role '{role.upper()}' Matches ({len(results)} found):"]
+    for idx, r in enumerate(results, 1):
+        v_id = r.get("verse_id", "")
+        c_text = r.get("constituent_text", "")
+        r_label = r.get("role_label") or r.get("role") or ""
+        cl_rule = r.get("clause_rule", "")
+        lines.append(f"  {idx}. [{v_id}] [{r_label.upper()}]: {c_text}")
+        if cl_rule:
+            lines.append(f"     Clause Rule: {cl_rule}")
+        if r.get("verse_text"):
+            lines.append(f"     Verse Text:  {r['verse_text']}")
+    return "\n".join(lines)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Query Macula Hebrew linguistic and syntactic data.")
     query_group = parser.add_mutually_exclusive_group()
@@ -89,24 +104,33 @@ def main(argv: list[str] | None = None) -> int:
     query_group.add_argument("-v", "--verse", help="Verse reference (e.g. Gen.1.1, 1:1)")
     query_group.add_argument("-l", "--lxx", help="Greek LXX Strong's number (e.g. G4160, 4160)")
     query_group.add_argument("-d", "--domain", help="SDBH Core Domain code (e.g. 168, 028)")
+    query_group.add_argument("-r", "--role", help="Constituent syntactic role (e.g. subj, pred, obj, adv)")
     query_group.add_argument("--stats", action="store_true", help="Display summary statistics")
+    parser.add_argument("--limit", type=int, default=50, help="Maximum results for role queries (default: 50)")
+    parser.add_argument("--book", help="Filter role query to book code (e.g. GEN)")
     parser.add_argument("--json", action="store_true", help="Output results in JSON format")
-    parser.add_argument("--artifact", default="lexicons/macula-genesis.json", help="Path to macula-genesis.json")
+    parser.add_argument("--db", help="Explicit path to SQLite database (e.g. data/macula.db)")
+    parser.add_argument("--artifact", default=None, help="Explicit path to JSON artifact (e.g. lexicons/macula-genesis.json)")
 
     args = parser.parse_args(argv)
 
+    raw_path = args.db or args.artifact
+    target_path = (REPO_ROOT / raw_path) if raw_path else None
     try:
-        db = MaculaDB(REPO_ROOT / args.artifact)
+        db = MaculaDB(target_path)
     except FileNotFoundError as e:
         print(f"Error: {e}", file=sys.stderr)
         return 1
 
     if args.stats:
         counts = db.counts
+        backend = "SQLite" if db.is_sqlite else "In-Memory JSON"
         if args.json:
-            print(json.dumps(counts, indent=2))
+            out = dict(counts)
+            out["backend"] = backend
+            print(json.dumps(out, indent=2))
         else:
-            print("Macula Hebrew Genesis Corpus Statistics:")
+            print(f"Macula Hebrew Corpus Statistics [Backend: {backend}]:")
             for k, v in counts.items():
                 print(f"  {k}: {v}")
         return 0
@@ -114,7 +138,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.strongs:
         res = db.lookup_strongs(args.strongs)
         if not res:
-            print(f"Strong's number '{args.strongs}' not found in Genesis.", file=sys.stderr)
+            print(f"Strong's number '{args.strongs}' not found in Macula corpus.", file=sys.stderr)
             return 1
         if args.json:
             print(json.dumps(res, ensure_ascii=False, indent=2))
@@ -136,12 +160,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.lxx:
         res = db.lookup_lxx(args.lxx)
         if not res:
-            print(f"Greek LXX Strong's '{args.lxx}' has no alignments in Genesis.", file=sys.stderr)
+            print(f"Greek LXX Strong's '{args.lxx}' has no alignments in Macula corpus.", file=sys.stderr)
             return 1
         if args.json:
             print(json.dumps(res, ensure_ascii=False, indent=2))
         else:
-            print(f"Hebrew words aligned with {args.lxx.upper()} in Genesis:")
+            print(f"Hebrew words aligned with {args.lxx.upper()} in Macula corpus:")
             for item in res:
                 h_id = item["hebrew_strongs"]
                 lemmas = ", ".join(item["lemmas"])
@@ -149,6 +173,7 @@ def main(argv: list[str] | None = None) -> int:
                 greek = ", ".join(item["greek_forms"])
                 print(f"  - {h_id} ({lemmas} / '{glosses}'): {item['count']}x [forms: {greek}]")
         return 0
+
 
     if args.domain:
         res = db.search_by_domain(args.domain)
@@ -166,9 +191,21 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"  - {h_id} ({lemmas}): {glosses}")
         return 0
 
+    if args.role:
+        res = db.search_by_role(args.role, limit=args.limit, book_code=args.book)
+        if not res:
+            print(f"No constituents found with role '{args.role}'.", file=sys.stderr)
+            return 1
+        if args.json:
+            print(json.dumps(res, ensure_ascii=False, indent=2))
+        else:
+            print(format_roles(res, args.role))
+        return 0
+
     parser.print_help()
     return 0
 
 
 if __name__ == "__main__":
     sys.exit(main())
+

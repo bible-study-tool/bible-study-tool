@@ -19,6 +19,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-0011](ADR-0011-whole-book-scaffolding-and-jit-egw.md) | Whole-Book Draft Scaffolding and JIT Spirit of Prophecy Resolution | Accepted |
 | [ADR-0012](ADR-0012-macula-hebrew-linguistic-integration.md) | Macula Hebrew Linguistic Integration & Strong's-LXX Crosswalk | Accepted |
 | [ADR-0013](ADR-0013-design-principles-stewardship-and-scalability.md) | Design principles — stewardship, excellence, scalable simplicity ("Doing the best for God without waste") | Accepted |
+| [ADR-0014](ADR-0014-whole-bible-macula-sqlite-architecture.md) | Whole-Bible Macula SQLite Architecture (`data/macula.db`) | Accepted |
 
 ## When to write one
 

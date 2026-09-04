@@ -1,5 +1,9 @@
 """Macula Hebrew linguistic and syntactic integration package."""
 
+from search.macula.db import (
+    DEFAULT_MACULA_DB,
+    MaculaSqliteDB,
+)
 from search.macula.extract import (
     ClauseRecord,
     ConstituentRecord,
@@ -16,6 +20,7 @@ from search.macula.extract import (
     parse_token,
 )
 from search.macula.lookup import (
+    DEFAULT_ARTIFACT_PATH,
     MaculaDB,
     get_db,
     lookup_lxx,
@@ -23,12 +28,16 @@ from search.macula.lookup import (
     lookup_verse,
     normalize_verse_ref,
     search_by_domain,
+    search_by_role,
 )
 
 __all__ = [
     "ClauseRecord",
     "ConstituentRecord",
+    "DEFAULT_ARTIFACT_PATH",
+    "DEFAULT_MACULA_DB",
     "MaculaDB",
+    "MaculaSqliteDB",
     "TokenRecord",
     "VerseRecord",
     "get_db",
@@ -46,4 +55,6 @@ __all__ = [
     "parse_sentence",
     "parse_token",
     "search_by_domain",
+    "search_by_role",
 ]
+
