@@ -32,8 +32,13 @@ class ClassifyTargetTests(unittest.TestCase):
         self.assertEqual(classify_target("2 Peter 3:5-7"), "passage")
         self.assertEqual(classify_target("1 Corinthians 13:1"), "passage")
 
+    def test_egw_token(self):
+        self.assertEqual(classify_target("egw:PP.57.1"), "egw")
+        self.assertEqual(classify_target("egw:DA.19"), "egw")
+        self.assertEqual(classify_target("egw:GC.582.2"), "egw")
+
     def test_malformed(self):
-        for bad in ("", "garbage!!!", "John 1", "1:1", "John:1:1", "a b c", "1-1"):
+        for bad in ("", "garbage!!!", "John 1", "1:1", "John:1:1", "a b c", "1-1", "egw:"):
             self.assertEqual(classify_target(bad), "malformed", f"{bad!r} should be malformed")
 
 
@@ -76,6 +81,34 @@ class XrefValidationTests(unittest.TestCase):
         self.assertEqual(len(issues), 1)
         self.assertEqual(issues[0].code, "malformed-xref-target")
         self.assertEqual(issues[0].severity, "error")
+
+    def test_egw_target_without_db(self):
+        idx = {}
+        entry = _entry("x", xrefs=[{"type": "xref/spirit-prophecy", "target": "egw:PP.57.1"}])
+        issues = validate_cross_references(entry, idx, egw_db=None)
+        self.assertEqual(issues, [])
+
+    def test_egw_target_with_db_resolution(self):
+        import tempfile
+        from search.linking.egw import EgwDB
+        with tempfile.TemporaryDirectory() as tmpdir:
+            db_path = f"{tmpdir}/test_egw.db"
+            db = EgwDB(db_path=db_path)
+            db.init_db()
+            db.insert_paragraph("PP", 57, 1, "They heard the voice of the Lord God.")
+
+            idx = {}
+            # Resolved target
+            entry1 = _entry("x", xrefs=[{"type": "xref/spirit-prophecy", "target": "egw:PP.57.1"}])
+            issues1 = validate_cross_references(entry1, idx, egw_db=db)
+            self.assertEqual(issues1, [])
+
+            # Unresolved target -> warning
+            entry2 = _entry("y", xrefs=[{"type": "xref/spirit-prophecy", "target": "egw:PP.999.1"}])
+            issues2 = validate_cross_references(entry2, idx, egw_db=db)
+            self.assertEqual(len(issues2), 1)
+            self.assertEqual(issues2[0].code, "unresolved-egw-target")
+            self.assertEqual(issues2[0].severity, "warning")
 
     def test_validate_all_real_corpus(self):
         """Real corpus uses forward references (john-1-1 etc.) -> warnings, no errors."""

@@ -32,6 +32,8 @@ def find_repo_root() -> Path:
     for p in [current, *current.parents]:
         if (p / "ROADMAP.md").exists() and (p / "materials").exists():
             return p
+    if (_REPO_ROOT / "ROADMAP.md").exists() and (_REPO_ROOT / "materials").exists():
+        return _REPO_ROOT
     return current
 
 

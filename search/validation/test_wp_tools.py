@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+import os
+import subprocess
 import unittest
 from pathlib import Path
 
 from scripts.curate_context import build_briefing, find_wp_file, parse_verse_range
 from scripts.wp_check import check_entry_ai_markers, resolve_wp_files, run_wp_check
 from search.testutil import require_raw_sources
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+BOOTSTRAP_SCRIPT = REPO_ROOT / "scripts" / "bootstrap.sh"
 
 
 class CurateContextTests(unittest.TestCase):
@@ -86,19 +91,15 @@ class WpCheckTests(unittest.TestCase):
 
 class BootstrapScriptTests(unittest.TestCase):
     def test_bootstrap_script_exists_and_is_executable(self):
-        script = Path("scripts/bootstrap.sh")
-        self.assertTrue(script.exists(), "scripts/bootstrap.sh must exist")
-        import os
-        self.assertTrue(os.access(script, os.X_OK), "scripts/bootstrap.sh must be executable")
+        self.assertTrue(BOOTSTRAP_SCRIPT.exists(), "scripts/bootstrap.sh must exist")
+        self.assertTrue(os.access(BOOTSTRAP_SCRIPT, os.X_OK), "scripts/bootstrap.sh must be executable")
 
     def test_bootstrap_script_syntax(self):
-        import subprocess
-        res = subprocess.run(["bash", "-n", "scripts/bootstrap.sh"], capture_output=True, text=True)
+        res = subprocess.run(["bash", "-n", str(BOOTSTRAP_SCRIPT)], capture_output=True, text=True)
         self.assertEqual(res.returncode, 0, f"bash -n failed: {res.stderr}")
 
     def test_bootstrap_script_help(self):
-        import subprocess
-        res = subprocess.run(["bash", "scripts/bootstrap.sh", "--help"], capture_output=True, text=True)
+        res = subprocess.run(["bash", str(BOOTSTRAP_SCRIPT), "--help"], capture_output=True, text=True)
         self.assertEqual(res.returncode, 0)
         self.assertIn("Usage:", res.stdout)
         self.assertIn("--ml", res.stdout)
@@ -109,9 +110,8 @@ class StatusScriptTests(unittest.TestCase):
     def test_status_test_count(self):
         from scripts.status import test_count
         res = test_count()
-        self.assertTrue(isinstance(res, str))
-        self.assertTrue(len(res) > 0)
-        self.assertNotIn("pytest failed", res)
+        self.assertIsInstance(res, str)
+        self.assertRegex(res, r"\d+ tests collected")
 
 
 if __name__ == "__main__":

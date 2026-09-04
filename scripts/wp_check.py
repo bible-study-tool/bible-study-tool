@@ -39,8 +39,9 @@ try:
     from search.validation.schema import Taxonomy, validate_all as schema_all
     from search.validation.strongs import StrongsCanonical, validate_all as strongs_all
 except ModuleNotFoundError as err:
+    dep_name = getattr(err, "name", None) or err
     sys.stderr.write(
-        f"\n[ERROR] Missing required dependency or module: {err.name}\n"
+        f"\n[ERROR] Missing required dependency or module: {dep_name}\n"
         "To set up the environment and install dependencies, run:\n"
         "    ./scripts/bootstrap.sh\n"
         "Or activate your virtual environment:\n"
@@ -54,6 +55,8 @@ def find_repo_root() -> Path:
     for p in [current, *current.parents]:
         if (p / "ROADMAP.md").exists() and (p / "materials").exists():
             return p
+    if (_REPO_ROOT / "ROADMAP.md").exists() and (_REPO_ROOT / "materials").exists():
+        return _REPO_ROOT
     return current
 
 

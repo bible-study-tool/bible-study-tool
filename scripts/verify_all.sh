@@ -32,9 +32,11 @@ cd "$REPO_ROOT"
 FAILURES=()
 
 # Determine python interpreter (prefer active python/PATH, fallback to .venv)
-PYTHON="python"
-if ! command -v "$PYTHON" >/dev/null 2>&1 || ! "$PYTHON" -m pytest --version >/dev/null 2>&1; then
-  if [[ -x "$REPO_ROOT/.venv/bin/python" ]] && "$REPO_ROOT/.venv/bin/python" -m pytest --version >/dev/null 2>&1; then
+PYTHON="${PYTHON:-python}"
+check_deps() { "$1" -c "import pytest, yaml, numpy" >/dev/null 2>&1; }
+
+if ! command -v "$PYTHON" >/dev/null 2>&1 || ! check_deps "$PYTHON"; then
+  if [[ -x "$REPO_ROOT/.venv/bin/python" ]] && check_deps "$REPO_ROOT/.venv/bin/python"; then
     PYTHON="$REPO_ROOT/.venv/bin/python"
   else
     echo "ERROR: Python test dependencies not found (pytest, PyYAML, numpy)." >&2

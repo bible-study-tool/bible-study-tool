@@ -32,13 +32,17 @@ from .schema import Issue
 _ENTRY_ID_RE = re.compile(r"^(?=.*[a-z])[a-z0-9]+(?:-[a-z0-9]+)+$")
 # Passage shape: "Book Chapter:Verse" (optionally with ranges), e.g. John 1:1 or 2 Peter 3:5-7.
 _PASSAGE_RE = re.compile(r"^[0-9A-Za-z][A-Za-z0-9 ]* \d+:\d+(?:[-–]\d+)?$")
+# EGW canonical citation token shape: "egw:BOOK.PAGE.PARA" or "BOOK.PAGE.PARA" (e.g. egw:PP.57.1).
+_EGW_TOKEN_RE = re.compile(r"^egw:[A-Za-z0-9]+(?:\.[0-9]+(?:\.[0-9]+)?)?$", re.IGNORECASE)
 
 
 def classify_target(target: str) -> str:
-    """Return 'entry' | 'passage' | 'malformed' for a target string."""
+    """Return 'entry' | 'passage' | 'egw' | 'malformed' for a target string."""
     t = (target or "").strip()
     if not t:
         return "malformed"
+    if _EGW_TOKEN_RE.match(t):
+        return "egw"
     if _ENTRY_ID_RE.match(t) and "-" in t:
         return "entry"
     if _PASSAGE_RE.match(t):
@@ -75,7 +79,7 @@ def build_entry_index(loader) -> dict[str, str]:
     return index
 
 
-def validate_cross_references(entry, entry_index: dict[str, str]) -> list[Issue]:
+def validate_cross_references(entry, entry_index: dict[str, str], egw_db=None) -> list[Issue]:
     """Validate one entry's cross_references. Returns issues."""
     issues: list[Issue] = []
     fm = entry.frontmatter or {}
@@ -95,10 +99,21 @@ def validate_cross_references(entry, entry_index: dict[str, str]) -> list[Issue]
         if kind == "malformed":
             issues.append(
                 Issue(entry.id, "malformed-xref-target", "error",
-                      f"cross_references[{i}] target '{target}' is neither an entry id nor a passage reference")
+                      f"cross_references[{i}] target '{target}' is neither an entry id, passage reference, nor EGW citation token")
             )
             continue
-        # Resolvability.
+        # EGW citation tokens.
+        if kind == "egw":
+            if egw_db is not None and egw_db.exists():
+                if egw_db.get_paragraph(target) is not None:
+                    continue
+                issues.append(
+                    Issue(entry.id, "unresolved-egw-target", "warning",
+                          f"cross_references[{i}] target '{target}' is not found in local data/egw.db")
+                )
+            # If egw_db is not present, token shape is valid per ADR-0011 (no warning/error).
+            continue
+        # Resolvability for entry ids and passage references.
         if target.strip() in entry_index:
             continue
         issues.append(
@@ -108,12 +123,22 @@ def validate_cross_references(entry, entry_index: dict[str, str]) -> list[Issue]
     return issues
 
 
-def validate_all(loader) -> list[Issue]:
+def validate_all(loader, egw_db=None) -> list[Issue]:
     """Validate cross_references across every entry."""
     index = build_entry_index(loader)
+    if egw_db is None:
+        try:
+            from search.linking.egw import EgwDB
+            repo_path = getattr(loader, "repo_root", ".")
+            db = EgwDB(repo_root=repo_path)
+            if db.exists():
+                egw_db = db
+        except Exception:
+            egw_db = None
+
     issues: list[Issue] = []
     for entry in loader.entries:
-        issues.extend(validate_cross_references(entry, index))
+        issues.extend(validate_cross_references(entry, index, egw_db=egw_db))
     return issues
 
 

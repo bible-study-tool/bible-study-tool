@@ -50,14 +50,6 @@ echo "Adventist Bible Study Tool — Environment Bootstrap"
 echo "=============================================================="
 
 find_python() {
-  if [[ -n "${VIRTUAL_ENV:-}" ]]; then
-    for cmd in python3 python; do
-      if command -v "$cmd" >/dev/null 2>&1; then
-        echo "$cmd"
-        return 0
-      fi
-    done
-  fi
   for cmd in python3 python; do
     if command -v "$cmd" >/dev/null 2>&1; then
       if "$cmd" -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)" 2>/dev/null; then
@@ -84,7 +76,7 @@ VENV_PYTHON="$VENV_DIR/bin/python"
 if [[ ! -d "$VENV_DIR" ]]; then
   echo "Creating virtual environment at $VENV_DIR ..."
   if command -v uv >/dev/null 2>&1; then
-    uv venv "$VENV_DIR"
+    uv venv --python "$SYSTEM_PYTHON" "$VENV_DIR"
   else
     "$SYSTEM_PYTHON" -m venv "$VENV_DIR"
   fi
@@ -111,7 +103,7 @@ echo "Verifying environment..."
 if [[ "$RUN_VERIFY" == true ]]; then
   echo
   echo "Running full verification suite..."
-  bash "$REPO_ROOT/scripts/verify_all.sh"
+  PYTHON="$VENV_PYTHON" bash "$REPO_ROOT/scripts/verify_all.sh"
 fi
 
 echo
