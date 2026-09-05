@@ -103,17 +103,8 @@ def get_translation_equivalences(
     return []
 
 
-def get_verse_semantic_frame(
-    verse_ref: str,
-    db: MaculaDB | None = None,
-    repo_root: str | Path = ".",
-) -> dict[str, Any] | None:
-    """Extract syntactic semantic frame (Agent, Action, Patient, Context) for a verse."""
-    database = db or get_db(repo_root)
-    verse_data = database.lookup_verse(verse_ref)
-    if not verse_data:
-        return None
-
+def extract_semantic_frames_from_verse(verse_data: dict[str, Any]) -> dict[str, Any]:
+    """Extract syntactic semantic frame (Agent, Action, Patient, Context) from raw verse data."""
     clause_frames = []
     for idx, cl in enumerate(verse_data.get("clauses", []), 1):
         rule = cl.get("rule", "")
@@ -185,6 +176,49 @@ def get_verse_semantic_frame(
         "text": verse_data.get("text"),
         "clauses": clause_frames,
     }
+
+
+def get_verse_semantic_frame(
+    verse_ref: str,
+    db: MaculaDB | None = None,
+    repo_root: str | Path = ".",
+) -> dict[str, Any] | None:
+    """Extract syntactic semantic frame (Agent, Action, Patient, Context) for a verse."""
+    database = db or get_db(repo_root)
+    verse_data = database.lookup_verse(verse_ref)
+    if not verse_data:
+        return None
+    return extract_semantic_frames_from_verse(verse_data)
+
+
+def get_verse_semantic_frames_batch(
+    verse_refs: list[str],
+    db: MaculaDB | None = None,
+    repo_root: str | Path = ".",
+) -> dict[str, dict[str, Any]]:
+    """Extract syntactic semantic frames for multiple verses in a fast batch query."""
+    if not verse_refs:
+        return {}
+    database = db or get_db(repo_root)
+    raw_map: dict[str, dict[str, Any]] = {}
+    if hasattr(database, "lookup_verses_batch"):
+        raw_map = database.lookup_verses_batch(verse_refs)
+    elif hasattr(database, "_sqlite") and database._sqlite and hasattr(database._sqlite, "lookup_verses_batch"):
+        raw_map = database._sqlite.lookup_verses_batch(verse_refs)
+    else:
+        for r in verse_refs:
+            vd = database.lookup_verse(r)
+            if vd:
+                raw_map[r] = vd
+
+    results: dict[str, dict[str, Any]] = {}
+    extracted_by_id: dict[int, dict[str, Any]] = {}
+    for ref_key, vd in raw_map.items():
+        vd_id = id(vd)
+        if vd_id not in extracted_by_id:
+            extracted_by_id[vd_id] = extract_semantic_frames_from_verse(vd)
+        results[ref_key] = extracted_by_id[vd_id]
+    return results
 
 
 def enrich_curated_link(

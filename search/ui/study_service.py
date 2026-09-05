@@ -16,7 +16,11 @@ from typing import Any
 from search.corpus.bible_books import BIBLE_BOOKS, parse_passage_ref, resolve_book_code
 from search.corpus.extract_kjv import BibleDB, DEFAULT_BIBLE_DB
 from search.macula.db import MaculaSqliteDB, DEFAULT_MACULA_DB
-from search.macula.enrichment import get_verse_semantic_frame, get_translation_equivalences
+from search.macula.enrichment import (
+    get_verse_semantic_frame,
+    get_translation_equivalences,
+    get_verse_semantic_frames_batch,
+)
 from search.linking.egw import EgwDB, DEFAULT_EGW_DB, is_egw_token, normalize_token
 
 DEFAULT_STRONGS_LEXICON = Path("lexicons/strongs-lexicon.json")
@@ -92,6 +96,8 @@ class StudyService:
         self._lexicon_cache: dict[str, Any] | None = None
         self._tbesh_cache: dict[str, str] | None = None
         self._tbesg_cache: dict[str, str] | None = None
+        self._word_cache: dict[str, WordStudyResult] = {}
+        self._verse_frame_cache: dict[str, dict[str, Any]] = {}
 
     def _load_lexicons(self) -> None:
         if self._lexicon_cache is None:
@@ -115,7 +121,7 @@ class StudyService:
             else:
                 self._tbesg_cache = {}
 
-    def get_passage_study(self, passage_ref: str) -> PassageStudy:
+    def get_passage_study(self, passage_ref: str, eager_frames: bool = True) -> PassageStudy:
         """Fetch complete multi-dimensional study for a passage reference."""
         book_code, ch, v1, v2 = parse_passage_ref(passage_ref)
         book_info = BIBLE_BOOKS.get(book_code)
@@ -134,6 +140,16 @@ class StudyService:
         verse_studies: list[VerseStudy] = []
         all_strongs: set[str] = set()
 
+        # Pre-fetch semantic frames for the whole chapter in a single batch query
+        batch_frames: dict[str, dict[str, Any]] = {}
+        if eager_frames and self.macula_db and verses_raw:
+            v_refs = [f"{vr['osis']}.{vr['chapter']}.{vr['verse']}" for vr in verses_raw]
+            try:
+                batch_frames = get_verse_semantic_frames_batch(v_refs, db=self.macula_db)
+                self._verse_frame_cache.update(batch_frames)
+            except Exception:
+                batch_frames = {}
+
         for vr in verses_raw:
             verse_id = f"{vr['osis']}.{vr['chapter']}.{vr['verse']}"
             tokens = vr.get("tokens", [])
@@ -149,21 +165,19 @@ class StudyService:
             # 2. Extract Macula semantic frame & original language text
             frames: list[dict[str, Any]] = []
             orig_text = ""
-            if self.macula_db:
+            if verse_id in self._verse_frame_cache:
+                c_data = self._verse_frame_cache[verse_id]
+                frames = c_data.get("clauses", [])
+                orig_text = c_data.get("text", "")
+            elif eager_frames and self.macula_db:
                 try:
                     frame_data = get_verse_semantic_frame(verse_id, db=self.macula_db)
                     if frame_data:
                         frames = frame_data.get("clauses", [])
                         orig_text = frame_data.get("text", "")
+                        self._verse_frame_cache[verse_id] = frame_data
                 except Exception:
                     frames = []
-                if not orig_text:
-                    try:
-                        mac_v = self.macula_db.lookup_verse(verse_id)
-                        if mac_v and mac_v.get("tokens"):
-                            orig_text = " ".join(t.get("text", "") for t in mac_v["tokens"])
-                    except Exception:
-                        orig_text = ""
 
             verse_studies.append(
                 VerseStudy(
@@ -213,26 +227,48 @@ class StudyService:
             egw_correlations=egw_correlations,
         )
 
-    def lookup_word(self, strongs_or_lemma: str) -> WordStudyResult | None:
-        """Fetch in-depth lexical study for a Strong's number."""
+    def ensure_verse_frames(self, verse: VerseStudy) -> None:
+        """Populate semantic frames and original language text on-demand if missing."""
+        if verse.osis in self._verse_frame_cache:
+            c_data = self._verse_frame_cache[verse.osis]
+            verse.semantic_frames = c_data.get("clauses", [])
+            verse.original_text = c_data.get("text", "")
+            return
+        if verse.semantic_frames and verse.original_text:
+            return
+        if not self.macula_db:
+            return
+
+        try:
+            frame_data = get_verse_semantic_frame(verse.osis, db=self.macula_db) or {}
+            verse.semantic_frames = frame_data.get("clauses", [])
+            verse.original_text = frame_data.get("text", "")
+            self._verse_frame_cache[verse.osis] = frame_data
+        except Exception:
+            self._verse_frame_cache[verse.osis] = {}
+
+    def lookup_word(self, strongs_or_lemma: str, sample_limit: int = 5) -> WordStudyResult | None:
+        """Fetch in-depth lexical study for a Strong's number with high-speed indexing."""
         self._load_lexicons()
         raw = strongs_or_lemma.strip().upper()
         
         # Normalize Strong's format
         if not (raw.startswith("H") or raw.startswith("G")):
-            # Try finding by lemma or query
             return None
 
         is_hebrew = raw.startswith("H")
         num_str = raw[1:].lstrip("0") or "0"
         canonical_id = f"{raw[0]}{num_str}"
         
+        cache_key = f"{canonical_id}:{sample_limit}"
+        if cache_key in self._word_cache:
+            return self._word_cache[cache_key]
+
         lex_section = "hebrew" if is_hebrew else "greek"
         lex_dict = (self._lexicon_cache or {}).get(lex_section, {})
         entry = lex_dict.get(canonical_id)
 
         if not entry:
-            # Fallback check
             return None
 
         word = entry.get("word", "")
@@ -254,12 +290,27 @@ class StudyService:
             except sqlite3.Error:
                 lxx_equiv = []
 
-        # Bible occurrences count and samples
+        # Bible occurrences count — prefer precomputed indexed count from macula.db
         occ_count = 0
+        if self.macula_db:
+            try:
+                cw = self.macula_db.lookup_strongs(canonical_id)
+                if cw and "occurrences" in cw:
+                    occ_count = int(cw["occurrences"])
+            except Exception:
+                occ_count = 0
+
+        # Sample verses (only fetch if requested, avoiding table scans in TUI)
         sample_verses: list[dict[str, Any]] = []
-        if self.bible_db:
-            sample_verses = self.bible_db.find_by_strongs(canonical_id, limit=5)
-            # High-performance SQL COUNT without deserializing thousands of JSON rows
+        if sample_limit > 0 and self.bible_db:
+            try:
+                sample_verses = self.bible_db.find_by_strongs(canonical_id, limit=sample_limit)
+                if occ_count == 0 and len(sample_verses) < sample_limit:
+                    occ_count = len(sample_verses)
+            except Exception:
+                sample_verses = []
+
+        if occ_count == 0 and self.bible_db:
             try:
                 search_pat = f'%"{canonical_id}"%'
                 cur = self.bible_db.conn.execute(
@@ -271,7 +322,7 @@ class StudyService:
             except sqlite3.Error:
                 occ_count = len(sample_verses)
 
-        return WordStudyResult(
+        res = WordStudyResult(
             strongs_id=canonical_id,
             language="Hebrew" if is_hebrew else "Greek",
             word=word,
@@ -282,6 +333,8 @@ class StudyService:
             occurrences_count=occ_count,
             sample_verses=sample_verses,
         )
+        self._word_cache[cache_key] = res
+        return res
 
     def search_unified(
         self,
@@ -355,3 +408,19 @@ class StudyService:
             if prev_info:
                 return f"{prev_info.osis} {prev_info.chapters}"
         return None
+
+    def close(self) -> None:
+        """Close database connections."""
+        if self.bible_db is not None:
+            self.bible_db.close()
+        if self.macula_db is not None:
+            self.macula_db.close()
+        if self.egw_db is not None:
+            self.egw_db.close()
+
+    def __enter__(self) -> StudyService:
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        self.close()
+

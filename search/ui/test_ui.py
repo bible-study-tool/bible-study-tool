@@ -70,6 +70,10 @@ class StudyServiceTests(unittest.TestCase):
     def setUpClass(cls):
         cls.service = StudyService()
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.service.close()
+
     def test_passage_study_ot_genesis(self):
         ps = self.service.get_passage_study("Gen 1:1-2")
         self.assertEqual(ps.book_code, "Gen")
@@ -146,6 +150,32 @@ class StudyServiceTests(unittest.TestCase):
     def test_invalid_strongs_returns_none(self):
         self.assertIsNone(self.service.lookup_word("XYZ999"))
         self.assertIsNone(self.service.lookup_word("H999999"))
+
+    def test_passage_study_lazy_and_ensure_frames(self):
+        # Fresh service to test lazy loading without pre-warmed cache
+        fresh_service = StudyService()
+        ps = fresh_service.get_passage_study("Lev 1:1-2", eager_frames=False)
+        self.assertEqual(len(ps.verses), 2)
+        v1 = ps.verses[0]
+        # Frame initially empty
+        self.assertEqual(len(v1.semantic_frames), 0)
+        # Ensure frames on-demand
+        fresh_service.ensure_verse_frames(v1)
+        self.assertTrue(len(v1.semantic_frames) >= 1)
+        self.assertTrue(len(v1.original_text) > 0)
+        fresh_service.close()
+
+    def test_word_lookup_caching_and_zero_samples(self):
+        # sample_limit=0 avoids table scans
+        w1 = self.service.lookup_word("H7225", sample_limit=0)
+        self.assertIsNotNone(w1)
+        self.assertEqual(len(w1.sample_verses), 0)
+        self.assertEqual(w1.occurrences_count, 68)
+
+        # Second call should hit the in-memory cache
+        w2 = self.service.lookup_word("H7225", sample_limit=0)
+        self.assertIs(w1, w2)
+
 
 
 class StudyShellTests(unittest.TestCase):

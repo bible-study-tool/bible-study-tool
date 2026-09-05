@@ -86,6 +86,7 @@ CREATE INDEX IF NOT EXISTS idx_tokens_strongs ON tokens(strongs);
 CREATE INDEX IF NOT EXISTS idx_tokens_lxx ON tokens(lxx_strongs);
 CREATE INDEX IF NOT EXISTS idx_tokens_verse ON tokens(verse_id);
 CREATE INDEX IF NOT EXISTS idx_constituents_clause ON constituents(clause_id);
+CREATE INDEX IF NOT EXISTS idx_constituents_verse ON constituents(verse_id);
 CREATE INDEX IF NOT EXISTS idx_constituents_role ON constituents(role COLLATE NOCASE);
 CREATE INDEX IF NOT EXISTS idx_constituents_role_label ON constituents(role_label COLLATE NOCASE);
 CREATE INDEX IF NOT EXISTS idx_clauses_verse ON clauses(verse_id);
@@ -397,6 +398,114 @@ class MaculaSqliteDB:
             "text": v_row["text"],
             "clauses": clauses,
         }
+
+    def lookup_verses_batch(self, verse_refs: list[str]) -> dict[str, dict[str, Any]]:
+        """Lookup multiple verse syntax trees from database in batched queries."""
+        if not self.exists() or not verse_refs:
+            return {}
+
+        from search.macula.lookup import normalize_verse_ref
+        norm_map: dict[str, str] = {}
+        for r in verse_refs:
+            try:
+                n = normalize_verse_ref(r)
+                if n:
+                    norm_map[r] = n
+            except ValueError:
+                pass
+
+        if not norm_map:
+            return {}
+
+        unique_norm_refs = list(set(norm_map.values()))
+        placeholders = ",".join("?" * len(unique_norm_refs))
+
+        # 1. Fetch verses
+        v_cur = self.conn.execute(
+            f"SELECT * FROM verses WHERE id IN ({placeholders});",
+            unique_norm_refs,
+        )
+        verse_rows = {r["id"]: r for r in v_cur.fetchall()}
+        if not verse_rows:
+            return {}
+
+        found_verse_ids = list(verse_rows.keys())
+        v_placeholders = ",".join("?" * len(found_verse_ids))
+
+        # 2. Fetch clauses
+        c_cur = self.conn.execute(
+            f"SELECT * FROM clauses WHERE verse_id IN ({v_placeholders}) ORDER BY verse_id, clause_num ASC;",
+            found_verse_ids,
+        )
+        clause_rows = c_cur.fetchall()
+
+        # 3. Fetch constituents
+        const_cur = self.conn.execute(
+            f"SELECT * FROM constituents WHERE verse_id IN ({v_placeholders}) ORDER BY clause_id, constituent_num ASC;",
+            found_verse_ids,
+        )
+        constituents_by_clause: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        const_map: dict[str, dict[str, Any]] = {}
+        for r in const_cur.fetchall():
+            c_dict = {
+                "role": r["role"],
+                "role_label": r["role_label"],
+                "class": r["class"],
+                "text": r["text"],
+                "tokens": [],
+            }
+            constituents_by_clause[r["clause_id"]].append(c_dict)
+            const_map[r["id"]] = c_dict
+
+        # 4. Fetch tokens
+        t_cur = self.conn.execute(
+            f"SELECT * FROM tokens WHERE verse_id IN ({v_placeholders}) ORDER BY constituent_id, token_num ASC;",
+            found_verse_ids,
+        )
+        for tr in t_cur.fetchall():
+            tok_dict = {
+                "text": tr["text"],
+                "lemma": tr["lemma"],
+                "morph": tr["morph"],
+                "pos": tr["pos"],
+                "strongs": tr["strongs"],
+                "lxx": tr["lxx"],
+                "lxx_strongs": tr["lxx_strongs"],
+                "sdbh": tr["sdbh"],
+                "core_domains": json.loads(tr["core_domains"]),
+                "lex_domains": json.loads(tr["lex_domains"]),
+                "gloss": tr["gloss"],
+            }
+            c_target = const_map.get(tr["constituent_id"])
+            if c_target is not None:
+                c_target["tokens"].append(tok_dict)
+
+        clauses_by_verse: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        for cl in clause_rows:
+            cl_consts = constituents_by_clause.get(cl["id"], [])
+            cl_text = " ".join(c["text"] for c in cl_consts if c.get("text"))
+            clauses_by_verse[cl["verse_id"]].append({
+                "rule": cl["rule"],
+                "text": cl_text,
+                "constituents": cl_consts,
+            })
+
+        out_by_norm: dict[str, dict[str, Any]] = {}
+        for v_id, v_row in verse_rows.items():
+            out_by_norm[v_id] = {
+                "verse_id": v_row["id"],
+                "mt_id": v_row["mt_id"],
+                "text": v_row["text"],
+                "clauses": clauses_by_verse.get(v_id, []),
+            }
+
+        res: dict[str, dict[str, Any]] = {}
+        for orig_ref, norm_ref in norm_map.items():
+            if norm_ref in out_by_norm:
+                res[orig_ref] = out_by_norm[norm_ref]
+                res[norm_ref] = out_by_norm[norm_ref]
+
+        return res
 
     def lookup_lxx(self, greek_strongs: str) -> list[dict[str, Any]]:
         """Find Hebrew words aligned with given Greek LXX Strong's number."""

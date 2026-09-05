@@ -40,6 +40,8 @@ class BibleStudyTUI:
         self.last_search_query: str = ""
         self.status_msg: str = "Welcome! Use [g]oto, [n/p] nav, [Space] pin, [1-4] sections, [f]ocus, [q]uit."
         self.stdscr: Any = None
+        self._cached_inspector_lines: list[tuple[str, int]] = []
+        self._cached_inspector_key: tuple[Any, ...] | None = None
 
     def start(self) -> None:
         """Entry point with curses initialization and graceful fallback."""
@@ -439,107 +441,126 @@ class BibleStudyTUI:
         if self.current_passage and self.current_passage.verses:
             if 0 <= inspected_idx < len(self.current_passage.verses):
                 cur_verse = self.current_passage.verses[inspected_idx]
-
-        content_lines: list[tuple[str, int]] = []
+                if self.show_syntax:
+                    self.service.ensure_verse_frames(cur_verse)
 
         is_pinned = self.pinned_verse_idx is not None
-        pin_tag = " [PINNED]" if is_pinned else ""
-        v_title = f"VERSE INSPECTOR: {cur_verse.osis}{pin_tag}" if cur_verse else "VERSE INSPECTOR"
-        content_lines.append((v_title, curses.color_pair(2) | curses.A_BOLD))
-        content_lines.append(("", 0))
+        cache_key = (
+            cur_verse.osis if cur_verse else None,
+            is_pinned,
+            self.show_syntax,
+            self.show_lexicon,
+            self.show_commentary,
+            self.show_search,
+            len(self.search_results),
+            self.last_search_query,
+            width,
+        )
 
-        if not (self.show_syntax or self.show_lexicon or self.show_commentary or self.show_search):
-            content_lines.append(("ALL INSPECTOR SECTIONS ARE HIDDEN", curses.color_pair(1) | curses.A_BOLD))
+        if cache_key == self._cached_inspector_key:
+            content_lines = self._cached_inspector_lines
+        else:
+            content_lines = []
+            pin_tag = " [PINNED]" if is_pinned else ""
+            v_title = f"VERSE INSPECTOR: {cur_verse.osis}{pin_tag}" if cur_verse else "VERSE INSPECTOR"
+            content_lines.append((v_title, curses.color_pair(2) | curses.A_BOLD))
             content_lines.append(("", 0))
-            content_lines.append(("Press [1] to toggle Original Syntax", curses.A_NORMAL))
-            content_lines.append(("Press [2] to toggle Concordance & Strong's", curses.A_NORMAL))
-            content_lines.append(("Press [3] to toggle Spirit of Prophecy / EGW", curses.A_NORMAL))
-            content_lines.append(("Press [4] to toggle Search Results", curses.A_NORMAL))
-            content_lines.append(("", 0))
-            content_lines.append(("Press [Space] or [Enter] on a verse to pin it.", curses.A_DIM))
 
-        # Section 1: Original Language Syntax & Semantic Frames
-        if self.show_syntax:
-            content_lines.append(("── [1: ORIGINAL SYNTAX & CLAUSE FRAMES] ──", curses.color_pair(1) | curses.A_BOLD))
-            if cur_verse:
-                if cur_verse.original_text:
-                    content_lines.append((f"Text: {cur_verse.original_text}", curses.color_pair(3) | curses.A_BOLD))
-                    content_lines.append(("", 0))
+            if not (self.show_syntax or self.show_lexicon or self.show_commentary or self.show_search):
+                content_lines.append(("ALL INSPECTOR SECTIONS ARE HIDDEN", curses.color_pair(1) | curses.A_BOLD))
+                content_lines.append(("", 0))
+                content_lines.append(("Press [1] to toggle Original Syntax", curses.A_NORMAL))
+                content_lines.append(("Press [2] to toggle Concordance & Strong's", curses.A_NORMAL))
+                content_lines.append(("Press [3] to toggle Spirit of Prophecy / EGW", curses.A_NORMAL))
+                content_lines.append(("Press [4] to toggle Search Results", curses.A_NORMAL))
+                content_lines.append(("", 0))
+                content_lines.append(("Press [Space] or [Enter] on a verse to pin it.", curses.A_DIM))
 
-                if cur_verse.semantic_frames:
-                    for cl in cur_verse.semantic_frames:
-                        c_num = cl.get("clause_num", 1)
-                        content_lines.append((f"Clause {c_num} [{cl.get('rule', '')}]:", curses.color_pair(1) | curses.A_BOLD))
-                        for label, items in [
-                            ("Agent", cl.get("agents", [])),
-                            ("Action", cl.get("actions", [])),
-                            ("Patient", cl.get("patients", [])),
-                            ("Context", cl.get("context", [])),
-                        ]:
-                            if items:
-                                it_str = ", ".join(f"{it['text']}" for it in items)
-                                content_lines.append((f"  * {label}: {it_str}", 0))
+            # Section 1: Original Language Syntax & Semantic Frames
+            if self.show_syntax:
+                content_lines.append(("── [1: ORIGINAL SYNTAX & CLAUSE FRAMES] ──", curses.color_pair(1) | curses.A_BOLD))
+                if cur_verse:
+                    if cur_verse.original_text:
+                        content_lines.append((f"Text: {cur_verse.original_text}", curses.color_pair(3) | curses.A_BOLD))
+                        content_lines.append(("", 0))
+
+                    if cur_verse.semantic_frames:
+                        for cl in cur_verse.semantic_frames:
+                            c_num = cl.get("clause_num", 1)
+                            content_lines.append((f"Clause {c_num} [{cl.get('rule', '')}]:", curses.color_pair(1) | curses.A_BOLD))
+                            for label, items in [
+                                ("Agent", cl.get("agents", [])),
+                                ("Action", cl.get("actions", [])),
+                                ("Patient", cl.get("patients", [])),
+                                ("Context", cl.get("context", [])),
+                            ]:
+                                if items:
+                                    it_str = ", ".join(f"{it['text']}" for it in items)
+                                    content_lines.append((f"  * {label}: {it_str}", 0))
+                            content_lines.append(("", 0))
+                    else:
+                        content_lines.append(("No syntactic clause tree available for this verse.", curses.A_DIM))
+                else:
+                    content_lines.append(("No verse selected.", curses.A_DIM))
+                content_lines.append(("", 0))
+
+            # Section 2: Lexicon & Strong's Concordance
+            if self.show_lexicon:
+                content_lines.append(("── [2: CONCORDANCE & STRONG'S LEXICON] ──", curses.color_pair(4) | curses.A_BOLD))
+                if cur_verse:
+                    seen = set()
+                    strongs_entries_found = 0
+                    for s_code in cur_verse.strongs_list:
+                        if s_code in seen:
+                            continue
+                        seen.add(s_code)
+                        w_res = self.service.lookup_word(s_code, sample_limit=0)
+                        if w_res:
+                            strongs_entries_found += 1
+                            content_lines.append((f"• {w_res.strongs_id} ({w_res.language}): {w_res.word} ({w_res.translit})", curses.color_pair(3) | curses.A_BOLD))
+                            if w_res.gloss:
+                                content_lines.append((f"  Gloss: {w_res.gloss}", curses.color_pair(1)))
+                            content_lines.append((f"  Occurrences in KJV: {w_res.occurrences_count}", curses.A_DIM))
+                            def_lines = [l.strip() for l in w_res.definition.splitlines() if l.strip() and not l.startswith("Strong's Number")]
+                            if def_lines:
+                                content_lines.append((f"  Def: {def_lines[0]}", 0))
+                            content_lines.append(("", 0))
+                    if strongs_entries_found == 0:
+                        content_lines.append(("No Strong's concordance numbers tagged for this verse.", curses.A_DIM))
+                else:
+                    content_lines.append(("No verse selected.", curses.A_DIM))
+                content_lines.append(("", 0))
+
+            # Section 3: Spirit of Prophecy / EGW Correlations
+            if self.show_commentary:
+                content_lines.append(("── [3: SPIRIT OF PROPHECY CORRELATIONS] ──", curses.color_pair(2) | curses.A_BOLD))
+                if self.current_passage and self.current_passage.egw_correlations:
+                    for egw in self.current_passage.egw_correlations:
+                        content_lines.append((f"[{egw['token']}] {egw.get('heading', '')}", curses.color_pair(1) | curses.A_BOLD))
+                        snip = egw.get("snippet", "").replace("[b]", "").replace("[/b]", "")
+                        content_lines.append((snip, 0))
                         content_lines.append(("", 0))
                 else:
-                    content_lines.append(("No syntactic clause tree available for this verse.", curses.A_DIM))
-            else:
-                content_lines.append(("No verse selected.", curses.A_DIM))
-            content_lines.append(("", 0))
+                    content_lines.append(("No direct EGW chapter correlations found for this chapter.", curses.A_DIM))
+                    content_lines.append(("Press [/] to search all EGW writings by keyword.", curses.A_DIM))
+                content_lines.append(("", 0))
 
-        # Section 2: Lexicon & Strong's Concordance
-        if self.show_lexicon:
-            content_lines.append(("── [2: CONCORDANCE & STRONG'S LEXICON] ──", curses.color_pair(4) | curses.A_BOLD))
-            if cur_verse:
-                seen = set()
-                strongs_entries_found = 0
-                for s_code in cur_verse.strongs_list:
-                    if s_code in seen:
-                        continue
-                    seen.add(s_code)
-                    w_res = self.service.lookup_word(s_code)
-                    if w_res:
-                        strongs_entries_found += 1
-                        content_lines.append((f"• {w_res.strongs_id} ({w_res.language}): {w_res.word} ({w_res.translit})", curses.color_pair(3) | curses.A_BOLD))
-                        if w_res.gloss:
-                            content_lines.append((f"  Gloss: {w_res.gloss}", curses.color_pair(1)))
-                        content_lines.append((f"  Occurrences in KJV: {w_res.occurrences_count}", curses.A_DIM))
-                        def_lines = [l.strip() for l in w_res.definition.splitlines() if l.strip() and not l.startswith("Strong's Number")]
-                        if def_lines:
-                            content_lines.append((f"  Def: {def_lines[0]}", 0))
+            # Section 4: Search Results & Findings
+            if self.show_search:
+                content_lines.append((f"── [4: SEARCH FINDINGS: '{self.last_search_query}'] ──", curses.color_pair(5) | curses.A_BOLD))
+                if self.search_results:
+                    for item in self.search_results:
+                        tag = "[BIBLE]" if item["type"] == "bible" else "[EGW]"
+                        color = curses.color_pair(2) if item["type"] == "bible" else curses.color_pair(1)
+                        content_lines.append((f"{tag} {item['ref']}", color | curses.A_BOLD))
+                        content_lines.append((item["text"][:width - 4], 0))
                         content_lines.append(("", 0))
-                if strongs_entries_found == 0:
-                    content_lines.append(("No Strong's concordance numbers tagged for this verse.", curses.A_DIM))
-            else:
-                content_lines.append(("No verse selected.", curses.A_DIM))
-            content_lines.append(("", 0))
+                else:
+                    content_lines.append(("No search performed yet. Press [/] to search.", curses.A_DIM))
+                content_lines.append(("", 0))
 
-        # Section 3: Spirit of Prophecy / EGW Correlations
-        if self.show_commentary:
-            content_lines.append(("── [3: SPIRIT OF PROPHECY CORRELATIONS] ──", curses.color_pair(2) | curses.A_BOLD))
-            if self.current_passage and self.current_passage.egw_correlations:
-                for egw in self.current_passage.egw_correlations:
-                    content_lines.append((f"[{egw['token']}] {egw.get('heading', '')}", curses.color_pair(1) | curses.A_BOLD))
-                    snip = egw.get("snippet", "").replace("[b]", "").replace("[/b]", "")
-                    content_lines.append((snip, 0))
-                    content_lines.append(("", 0))
-            else:
-                content_lines.append(("No direct EGW chapter correlations found for this chapter.", curses.A_DIM))
-                content_lines.append(("Press [/] to search all EGW writings by keyword.", curses.A_DIM))
-            content_lines.append(("", 0))
-
-        # Section 4: Search Results & Findings
-        if self.show_search:
-            content_lines.append((f"── [4: SEARCH FINDINGS: '{self.last_search_query}'] ──", curses.color_pair(5) | curses.A_BOLD))
-            if self.search_results:
-                for item in self.search_results:
-                    tag = "[BIBLE]" if item["type"] == "bible" else "[EGW]"
-                    color = curses.color_pair(2) if item["type"] == "bible" else curses.color_pair(1)
-                    content_lines.append((f"{tag} {item['ref']}", color | curses.A_BOLD))
-                    content_lines.append((item["text"][:width - 4], 0))
-                    content_lines.append(("", 0))
-            else:
-                content_lines.append(("No search performed yet. Press [/] to search.", curses.A_DIM))
-            content_lines.append(("", 0))
+            self._cached_inspector_key = cache_key
+            self._cached_inspector_lines = content_lines
 
         # Render content lines with word wrap and inspector scroll
         y = 1

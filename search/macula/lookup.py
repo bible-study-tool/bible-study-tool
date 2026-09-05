@@ -169,6 +169,17 @@ class MaculaDB:
             return self._sqlite.lookup_verse(v_ref)
         return self._verses.get(v_ref)
 
+    def lookup_verses_batch(self, queries: list[str]) -> dict[str, dict]:
+        """Look up multiple verse syntactic structures in batch."""
+        if self._sqlite:
+            return self._sqlite.lookup_verses_batch(queries)
+        out = {}
+        for q in queries:
+            v = self.lookup_verse(q)
+            if v:
+                out[q] = v
+        return out
+
     def lookup_lxx(self, query: str) -> list[dict]:
         """Reverse lookup: find Hebrew Strong's words translated by Greek LXX Strong's."""
         norm = normalize_greek_strongs(query)
