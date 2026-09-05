@@ -27,6 +27,13 @@ from search.corpus.grammar_nuance import (
     get_verse_grammar_nuances,
     get_verses_grammar_nuances_batch,
 )
+from search.corpus.discourse_flow import (
+    DiscourseMarker,
+    ArgumentFlowStep,
+    extract_passage_discourse_batch,
+    extract_verse_discourse_markers,
+    analyze_passage_argument_flow,
+)
 from search.linking.egw import EgwDB, DEFAULT_EGW_DB, is_egw_token, normalize_token
 
 DEFAULT_STRONGS_LEXICON = Path("lexicons/strongs-lexicon.json")
@@ -35,6 +42,7 @@ DEFAULT_TBESG = Path("lexicons/tbesg-glosses.json")
 EBOOK_METADATA_KEYWORDS = ("isbn", "ebook", "estate", "overview this")
 PRIORITY_EGW_ORDER = ("PP", "PK", "DA", "MB", "COL", "AA", "GC", "SC", "ED", "MH", "SR")
 PRIORITY_EGW_RANK = {code: i for i, code in enumerate(PRIORITY_EGW_ORDER)}
+
 
 
 
@@ -51,6 +59,7 @@ class VerseStudy:
     strongs_list: list[str] = field(default_factory=list)
     verbal_nuances: list[GrammarNuance] = field(default_factory=list)
     translations: dict[str, str] = field(default_factory=dict)
+    discourse_markers: list[DiscourseMarker] = field(default_factory=list)
 
 
 
@@ -65,6 +74,7 @@ class PassageStudy:
     end_verse: int
     verses: list[VerseStudy]
     egw_correlations: list[dict[str, Any]] = field(default_factory=list)
+    argument_flow: list[ArgumentFlowStep] = field(default_factory=list)
 
 
 @dataclass
@@ -184,6 +194,10 @@ class StudyService:
                 except Exception:
                     batch_translations = {}
 
+            # Pre-fetch discourse markers and passage argument flow (<0.2ms)
+            batch_discourse = extract_passage_discourse_batch(verses_raw)
+            argument_flow = analyze_passage_argument_flow(verses_raw, markers_by_verse=batch_discourse)
+
             for vr in verses_raw:
                 verse_id = f"{vr['osis']}.{vr['chapter']}.{vr['verse']}"
                 tokens = vr.get("tokens", [])
@@ -217,6 +231,7 @@ class StudyService:
                 v_trans = batch_translations.get(vr["verse"], {})
                 if not v_trans.get("kjv"):
                     v_trans["kjv"] = vr.get("clean_text") or vr["text"]
+                v_discourse = batch_discourse.get(verse_id, [])
 
                 verse_studies.append(
                     VerseStudy(
@@ -231,6 +246,7 @@ class StudyService:
                         strongs_list=strongs_in_v,
                         verbal_nuances=v_nuances,
                         translations=v_trans,
+                        discourse_markers=v_discourse,
                     )
                 )
 
@@ -318,6 +334,7 @@ class StudyService:
                 end_verse=e_v,
                 verses=verse_studies,
                 egw_correlations=egw_correlations,
+                argument_flow=argument_flow,
             )
 
     def ensure_verse_frames(self, verse: VerseStudy) -> None:
@@ -348,6 +365,12 @@ class StudyService:
                         self._verse_nuance_cache[verse.osis] = v_nuances
                     except Exception:
                         verse.verbal_nuances = []
+
+            # 3. Discourse markers (if not already extracted)
+            if not verse.discourse_markers and verse.tokens:
+                verse.discourse_markers = extract_verse_discourse_markers(
+                    verse.tokens, text=verse.text, verse_osis=verse.osis
+                )
 
     def get_verse_nuance_for_strongs(self, verse: VerseStudy, strongs_code: str) -> list[GrammarNuance]:
         """Return verbal nuances for a specific Strong's number in a verse."""

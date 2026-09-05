@@ -509,6 +509,33 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             await pilot.pause()
             self.assertEqual(tabs.active, "tab-search")
 
+    async def test_reader_pane_discourse_badges(self):
+        """Verify verse widget in reader pane displays discourse logic badges."""
+        app = BibleStudyApp(initial_ref="Rom 1:16")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            w = app.verse_widgets[0]
+            w_text = _extract_text(w)
+            self.assertIn("Premise", w_text)
+            self.assertIn("γάρ", w_text)
+
+    async def test_syntax_tab_discourse_section(self):
+        """Verify syntax tab renders detailed argument flow and discourse connector breakdown."""
+        app = BibleStudyApp(initial_ref="Rom 12:1")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            # Tab 1 (syntax) is active by default
+            syntax_scroll = app.query_one("#syntax-content", VerticalScroll)
+            syntax_text = _extract_text(syntax_scroll)
+
+            self.assertIn("ARGUMENT FLOW & LOGICAL CONNECTORS", syntax_text)
+            self.assertIn("Deductive Turning Point / Therefore", syntax_text)
+            self.assertIn("οὖν", syntax_text)
+            self.assertIn("G3767", syntax_text)
+            self.assertIn("therefore", syntax_text)
+            self.assertIn("doctrine to holy living", syntax_text)
+            self.assertIn("Passage Context:", syntax_text)
+
 
 
 class StudyCLITextualIntegrationTests(unittest.TestCase):

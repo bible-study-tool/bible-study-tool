@@ -281,6 +281,30 @@ class StudyServiceTests(unittest.TestCase):
         self.assertIn("asv", t_ids)
         self.assertIn("ylt", t_ids)
 
+    def test_passage_study_discourse_markers(self):
+        """Verify PassageStudy verses have discourse markers and argument flow pre-populated."""
+        ps = self.service.get_passage_study("Rom 1:16-18")
+        self.assertEqual(len(ps.verses), 3)
+        v16 = ps.verses[0]
+        self.assertTrue(len(v16.discourse_markers) > 0)
+        self.assertEqual(v16.discourse_markers[0].category.value, "PREMISE")
+        self.assertEqual(v16.discourse_markers[0].strongs, "G1063")
+
+        # Verify argument flow outline
+        self.assertEqual(len(ps.argument_flow), 3)
+        self.assertIn("Premise", ps.argument_flow[0].primary_role)
+        self.assertIn("Deepening Premise", ps.argument_flow[1].primary_role)
+        self.assertIn("Deepening Premise", ps.argument_flow[2].primary_role)
+
+    def test_ensure_verse_frames_populates_discourse_if_missing(self):
+        """Verify ensure_verse_frames populates discourse markers if empty."""
+        ps = self.service.get_passage_study("Rom 12:1")
+        v = ps.verses[0]
+        v.discourse_markers = []
+        self.service.ensure_verse_frames(v)
+        self.assertTrue(len(v.discourse_markers) > 0)
+        self.assertEqual(v.discourse_markers[0].category.value, "CONCLUSION")
+
 
 
 

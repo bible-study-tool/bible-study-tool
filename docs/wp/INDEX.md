@@ -34,7 +34,8 @@ entries `draft` -> `review`.
 | [WP-021](WP-021-study-tui-and-cli.md) | Pillar D (D3, D4) | Interactive Terminal User Interface (TUI) & Unified Study CLI | done |
 | [WP-022](WP-022-textual-study-workstation.md) | Pillar D (D3, D4) | Modern Textual Study Workstation & Theme System | done |
 | [WP-023](WP-023-accessible-study-and-egw-reader.md) | Pillar D (D3, D4) | Human-Accessible Original Language Framing & Direct Commentary Navigation | done |
-| [WP-024](WP-024-workstation-performance-and-comprehension-tools.md) | Pillar D (D3, D4) | Textual Workstation Performance & Biblical Comprehension Tools | open |
+| [WP-024](WP-024-workstation-performance-and-comprehension-tools.md) | Pillar D (D3, D4) | Textual Workstation Performance & Biblical Comprehension Tools | done |
+| [WP-025](WP-025-pauline-argument-flow-and-discourse-markers.md) | Pillar B (B4), Pillar D (D3) | Pauline Argument Flow & Discourse Markers (Comprehension Feature 3) | done |
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1

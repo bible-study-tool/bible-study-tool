@@ -28,6 +28,11 @@ from textual.widgets import (
     TabPane,
 )
 
+from search.corpus.discourse_flow import (
+    DISCOURSE_CATEGORY_COLORS,
+    DiscourseCategory,
+    format_discourse_badge,
+)
 from search.ui.study_service import PassageStudy, StudyService, VerseStudy
 from search.ui.themes import (
     DEFAULT_THEME,
@@ -75,6 +80,10 @@ class VerseWidget(Static):
         pin_indicator = "📌 " if is_pinned else ""
         num_str = f"[bold cyan]{pin_indicator}{self.verse.verse}[/bold cyan] "
 
+        # Discourse logic cue badge (e.g. ⟨Premise: γάρ⟩, ⟨Therefore: οὖν⟩)
+        badge = format_discourse_badge(self.verse.discourse_markers)
+        badge_str = f"{badge} " if badge else ""
+
         if self.show_strongs and self.verse.tokens:
             token_parts = []
             for tok in self.verse.tokens:
@@ -88,7 +97,7 @@ class VerseWidget(Static):
         else:
             text = escape(self.verse.text)
 
-        lines = [f"{num_str}{text}"]
+        lines = [f"{num_str}{badge_str}{text}"]
 
         if self.show_parallel and self.verse.translations:
             # Render BSB, ASV, and YLT stacked under the primary KJV verse
@@ -512,6 +521,28 @@ class BibleStudyApp(App):
 
         if v.original_text:
             lines.append(f"[bold green]Original Text:[/bold green] {escape(v.original_text)}\n")
+
+        # Argument Flow & Discourse Connectors
+        lines.append("[bold cyan]ARGUMENT FLOW & LOGICAL CONNECTORS:[/bold cyan]")
+        if v.discourse_markers:
+            for m in v.discourse_markers:
+                color = DISCOURSE_CATEGORY_COLORS.get(m.category, "green")
+                orig_tag = f"{m.original_word} ({m.transliteration} / {m.strongs})" if m.strongs else m.original_word
+                lines.append(f"  • [bold {color}]● {m.role_label}[/bold {color}] ➔ [bold white]\"{escape(m.english_text)}\"[/bold white] [dim]({escape(orig_tag)})[/dim]")
+                lines.append(f"    [bold]Function:[/] {escape(m.function_summary)}")
+                lines.append(f"    [bold]Theological Insight:[/] {escape(m.theological_significance)}")
+                lines.append("")
+        else:
+            lines.append("  [dim]No explicit logical discourse connector (continuation of established argument).[/dim]\n")
+
+        # Passage Argument Context
+        if self.current_passage and self.current_passage.argument_flow:
+            step = next(
+                (s for s in self.current_passage.argument_flow if s.osis == v.osis or (s.chapter == v.chapter and s.verse == v.verse)),
+                None,
+            )
+            if step:
+                lines.append(f"  [dim]Passage Context:[/] [bold]{escape(step.primary_role)}[/bold] — {escape(step.flow_description)}\n")
 
         if v.semantic_frames:
             for cl in v.semantic_frames:
