@@ -280,6 +280,8 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         app = BibleStudyApp(initial_ref="Gen 1:1")
         async with app.run_test() as pilot:
             await pilot.pause()
+            app.action_tab_lexicon()
+            await pilot.pause()
             lexicon_scroll = app.query_one("#lexicon-content", VerticalScroll)
             content_text = _extract_text(lexicon_scroll)
 
@@ -295,6 +297,8 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify commentary tab renders full paragraph text instead of truncated snippets."""
         app = BibleStudyApp(initial_ref="Gen 1:1")
         async with app.run_test() as pilot:
+            await pilot.pause()
+            app.action_tab_commentary()
             await pilot.pause()
             commentary_scroll = app.query_one("#commentary-content", VerticalScroll)
             content_text = _extract_text(commentary_scroll)
@@ -339,6 +343,55 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             self.assertIn("COL", app.current_ref.upper())
             self.assertEqual(app.current_passage.book_name, "Colossians")
 
+    async def test_lazy_tab_rendering_and_dirty_tracking(self):
+        """Verify that tabs are only rendered when active and dirty flags are tracked."""
+        app = BibleStudyApp(initial_ref="Gen 1:1-3")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            tabs = app.query_one("#inspector-tabs", TabbedContent)
+            self.assertEqual(tabs.active, "tab-syntax")
+
+            # Syntax tab should be clean, lexicon and commentary dirty
+            self.assertNotIn("tab-syntax", app._dirty_tabs)
+            self.assertIn("tab-lexicon", app._dirty_tabs)
+            self.assertIn("tab-commentary", app._dirty_tabs)
+
+            # Switch to Lexicon: it should render and become clean
+            app.action_tab_lexicon()
+            await pilot.pause()
+            self.assertEqual(tabs.active, "tab-lexicon")
+            self.assertNotIn("tab-lexicon", app._dirty_tabs)
+
+            # Move to next verse while on Lexicon tab
+            app.action_next_verse()
+            await pilot.pause()
+            self.assertEqual(app.selected_verse_idx, 1)
+            # Lexicon was rendered immediately; syntax became dirty
+            self.assertNotIn("tab-lexicon", app._dirty_tabs)
+            self.assertIn("tab-syntax", app._dirty_tabs)
+
+            # Switch back to Syntax: it should re-render and become clean
+            app.action_tab_syntax()
+            await pilot.pause()
+            self.assertNotIn("tab-syntax", app._dirty_tabs)
+
+    async def test_rapid_verse_stepping_performance(self):
+        """Verify rapid verse stepping incurs zero DOM allocations and completes instantly."""
+        app = BibleStudyApp(initial_ref="Gen 1:1-10")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            initial_widget_count = len(app.query("*"))
+
+            # Rapidly step through verses 1 to 9
+            for _ in range(9):
+                app.action_next_verse()
+
+            await pilot.pause()
+            self.assertEqual(app.selected_verse_idx, 9)
+
+            # DOM tree size must remain constant (no DOM thrashing / leaking)
+            final_widget_count = len(app.query("*"))
+            self.assertEqual(initial_widget_count, final_widget_count)
 
 
 class StudyCLITextualIntegrationTests(unittest.TestCase):

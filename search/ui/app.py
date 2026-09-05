@@ -15,6 +15,7 @@ from textual.binding import Binding
 from textual.containers import Container, Horizontal, Vertical, VerticalScroll
 from textual.message import Message
 from textual.screen import ModalScreen
+from textual.widget import Widget
 from textual.widgets import (
     Button,
     Footer,
@@ -238,6 +239,7 @@ class BibleStudyApp(App):
         self.show_strongs: bool = False
         self.focus_mode: bool = False
         self.verse_widgets: List[VerseWidget] = []
+        self._dirty_tabs: set[str] = {"tab-syntax", "tab-lexicon", "tab-commentary"}
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -247,13 +249,17 @@ class BibleStudyApp(App):
             with Container(id="inspector-pane"):
                 with TabbedContent(initial="tab-syntax", id="inspector-tabs"):
                     with TabPane("1: Syntax & Frames", id="tab-syntax"):
-                        yield VerticalScroll(id="syntax-content")
+                        with VerticalScroll(id="syntax-content"):
+                            yield Static(id="syntax-body")
                     with TabPane("2: Lexicon", id="tab-lexicon"):
-                        yield VerticalScroll(id="lexicon-content")
+                        with VerticalScroll(id="lexicon-content"):
+                            yield Static(id="lexicon-body")
                     with TabPane("3: Commentary", id="tab-commentary"):
-                        yield VerticalScroll(id="commentary-content")
+                        with VerticalScroll(id="commentary-content"):
+                            yield Static(id="commentary-body")
                     with TabPane("4: Search Findings", id="tab-search"):
-                        yield VerticalScroll(id="search-content")
+                        with VerticalScroll(id="search-content"):
+                            yield Static(id="search-body")
         yield Footer()
 
     def on_mount(self) -> None:
@@ -264,10 +270,18 @@ class BibleStudyApp(App):
 
     @work(exclusive=True, thread=True)
     def load_passage_async(self, passage_ref: str) -> None:
-        """Asynchronously fetch passage study and populate UI."""
+        """Asynchronously fetch passage study, pre-warm caches, and populate UI."""
         try:
             # Eager batch fetch ensures syntax frames are loaded in ~50ms
             study = self.service.get_passage_study(passage_ref, eager_frames=True)
+            # Pre-warm lexical data for all verses in the passage in background thread
+            unique_strongs = set()
+            for v in study.verses:
+                for sc in v.strongs_list:
+                    unique_strongs.add(sc)
+            for sc in unique_strongs:
+                self.service.lookup_word(sc, sample_limit=0)
+
             self.call_from_thread(self._apply_loaded_passage, study)
         except Exception as e:
             self.call_from_thread(self.notify, f"Error loading passage '{passage_ref}': {e}", severity="error")
@@ -282,22 +296,24 @@ class BibleStudyApp(App):
         focus_str = " [FOCUS MODE]" if self.focus_mode else ""
         self.title = f"Adventist Bible Study — {study.ref.upper()} (KJV){focus_str}"
 
-        # Populate Reader Pane
+        # Populate Reader Pane in single batch mount
         reader_pane = self.query_one("#reader-pane", VerticalScroll)
         reader_pane.remove_children()
         self.verse_widgets = []
 
         header_label = Static(f"[bold green]── {study.book_name.upper()} CHAPTER {study.start_chapter} ──[/bold green]\n")
-        reader_pane.mount(header_label)
+        widgets_to_mount: list[Widget] = [header_label]
 
         for idx, v in enumerate(study.verses):
             w = VerseWidget(v, idx, show_strongs=self.show_strongs)
             self.verse_widgets.append(w)
-            reader_pane.mount(w)
+            widgets_to_mount.append(w)
+
+        reader_pane.mount_all(widgets_to_mount)
 
         self._update_selection_visuals()
-        self._update_commentary()
-        self._update_inspector()
+        self._dirty_tabs = {"tab-syntax", "tab-lexicon", "tab-commentary"}
+        self._render_active_tab()
 
     def _update_selection_visuals(self, previous_idx: Optional[int] = None) -> None:
         """Refresh highlight classes only for changed verse widgets (or all if previous_idx is None)."""
@@ -319,7 +335,8 @@ class BibleStudyApp(App):
         prev = self.selected_verse_idx
         self.selected_verse_idx = event.verse_index
         self._update_selection_visuals(previous_idx=prev)
-        self._update_inspector()
+        self._dirty_tabs.update({"tab-syntax", "tab-lexicon"})
+        self._render_active_tab()
 
     def _get_inspected_verse(self) -> Optional[VerseStudy]:
         if not self.current_passage or not self.current_passage.verses:
@@ -329,11 +346,42 @@ class BibleStudyApp(App):
             return self.current_passage.verses[idx]
         return None
 
+    @on(TabbedContent.TabActivated)
+    def handle_tab_activated(self, event: TabbedContent.TabActivated) -> None:
+        """When switching tabs, render if the activated tab is marked dirty."""
+        self._render_active_tab()
+
+    def _render_active_tab(self, force: bool = False) -> None:
+        """Render the currently active inspector tab if marked dirty (or force=True)."""
+        try:
+            tabs = self.query_one("#inspector-tabs", TabbedContent)
+            active_tab = tabs.active
+        except Exception:
+            return
+
+        if not force and active_tab not in self._dirty_tabs:
+            return
+
+        if active_tab == "tab-syntax":
+            self._update_syntax_viewport()
+            self._dirty_tabs.discard("tab-syntax")
+        elif active_tab == "tab-lexicon":
+            self._update_lexicon_viewport()
+            self._dirty_tabs.discard("tab-lexicon")
+        elif active_tab == "tab-commentary":
+            self._update_commentary_viewport()
+            self._dirty_tabs.discard("tab-commentary")
+
     def _update_commentary(self) -> None:
+        """Backward-compatible commentary update: marks commentary dirty and renders if active."""
+        self._dirty_tabs.add("tab-commentary")
+        self._render_active_tab()
+
+    def _update_commentary_viewport(self) -> None:
         """Update Commentary Tab (chapter-level correlations)."""
-        commentary_box = self.query_one("#commentary-content", VerticalScroll)
-        commentary_box.remove_children()
-        commentary_box.mount(Label("SPIRIT OF PROPHECY CORRELATIONS", classes="inspector-title"))
+        commentary_body = self.query_one("#commentary-body", Static)
+        lines: list[str] = []
+        lines.append("[bold cyan]SPIRIT OF PROPHECY CORRELATIONS[/bold cyan]\n")
 
         if self.current_passage and self.current_passage.egw_correlations:
             for egw in self.current_passage.egw_correlations:
@@ -345,35 +393,41 @@ class BibleStudyApp(App):
                 full_text = egw.get("text") or egw.get("snippet", "").replace("[b]", "**").replace("[/b]", "**")
 
                 loc_str = f"Page {page}, par. {para}" if page else ""
-                hdr_sub = f" — *{ch_title}*" if ch_title else ""
-                md_text = f"### [{token}] {book_title}{hdr_sub}\n*{loc_str}*\n\n{full_text}\n\n---"
-                commentary_box.mount(Markdown(md_text))
+                hdr_sub = f" — {ch_title}" if ch_title else ""
+                lines.append(f"[bold yellow]### [{token}] {book_title}{hdr_sub}[/bold yellow]")
+                if loc_str:
+                    lines.append(f"[dim]{loc_str}[/dim]")
+                lines.append(f"\n{full_text}\n\n[dim]────────────────────────────────────────[/dim]\n")
         else:
-            commentary_box.mount(
-                Static("[dim]No direct Spirit of Prophecy correlations for this chapter. Press [/] to search all writings or [g] to jump directly to a citation (e.g. PP 44.1).[/dim]")
+            lines.append(
+                "[dim]No direct Spirit of Prophecy correlations for this chapter. Press [/] to search all writings or [g] to jump directly to a citation (e.g. PP 44.1).[/dim]"
             )
 
-    def _update_inspector(self) -> None:
-        v = self._get_inspected_verse()
-        if not v:
-            return
+        commentary_body.update("\n".join(lines))
 
-        # Ensure frames are loaded
-        self.service.ensure_verse_frames(v)
+    def _update_inspector(self, force_all: bool = False) -> None:
+        """Update inspector views: marks tabs dirty and updates viewports without DOM thrashing."""
+        self._dirty_tabs.update({"tab-syntax", "tab-lexicon"})
+        if force_all:
+            self._update_syntax_viewport()
+            self._update_lexicon_viewport()
+            self._dirty_tabs.discard("tab-syntax")
+            self._dirty_tabs.discard("tab-lexicon")
+        else:
+            self._render_active_tab()
 
-        # 1. Update Syntax Tab
-        syntax_box = self.query_one("#syntax-content", VerticalScroll)
-        syntax_box.remove_children()
+    def _render_syntax_content(self, v: VerseStudy) -> str:
+        lines: list[str] = []
         pin_tag = " [PINNED]" if self.pinned_verse_idx is not None else ""
-        syntax_box.mount(Label(f"VERSE SYNTAX & CLAUSE FRAMES: {v.osis}{pin_tag}", classes="inspector-title"))
+        lines.append(f"[bold cyan]VERSE SYNTAX & CLAUSE FRAMES: {v.osis}{pin_tag}[/bold cyan]\n")
 
         if v.original_text:
-            syntax_box.mount(Static(f"[bold green]Original Text:[/bold green] {escape(v.original_text)}\n"))
+            lines.append(f"[bold green]Original Text:[/bold green] {escape(v.original_text)}\n")
 
         if v.semantic_frames:
             for cl in v.semantic_frames:
                 c_num = cl.get("clause_num", 1)
-                syntax_box.mount(Label(f"[bold cyan]Clause {c_num} [{cl.get('rule', '')}]:[/bold cyan]"))
+                lines.append(f"[bold cyan]Clause {c_num} [{cl.get('rule', '')}]:[/bold cyan]")
                 for label, items in [
                     ("Agent", cl.get("agents", [])),
                     ("Action", cl.get("actions", [])),
@@ -395,15 +449,27 @@ class BibleStudyApp(App):
                             else:
                                 val_strs.append(orig)
                         val_joined = ", ".join(val_strs)
-                        syntax_box.mount(Static(f"  • [bold]{label}:[/bold] {val_joined}"))
-                syntax_box.mount(Static(""))
+                        lines.append(f"  • [bold]{label}:[/bold] {val_joined}")
+                lines.append("")
         else:
-            syntax_box.mount(Static("[dim]No syntactic clause tree available for this verse.[/dim]"))
+            lines.append("[dim]No syntactic clause tree available for this verse.[/dim]")
 
-        # 2. Update Lexicon Tab
-        lexicon_box = self.query_one("#lexicon-content", VerticalScroll)
-        lexicon_box.remove_children()
-        lexicon_box.mount(Label(f"STRONG'S CONCORDANCE & LEXICON: {v.osis}", classes="inspector-title"))
+        return "\n".join(lines)
+
+    def _update_syntax_viewport(self) -> None:
+        """Render syntactic analysis and semantic clause frames for inspected verse."""
+        v = self._get_inspected_verse()
+        if not v:
+            return
+
+        self.service.ensure_verse_frames(v)
+        rendered = self._render_syntax_content(v)
+        syntax_body = self.query_one("#syntax-body", Static)
+        syntax_body.update(rendered)
+
+    def _render_lexicon_content(self, v: VerseStudy) -> str:
+        lines: list[str] = []
+        lines.append(f"[bold cyan]STRONG'S CONCORDANCE & LEXICON: {v.osis}[/bold cyan]\n")
 
         # Build Strong's to KJV word(s) mapping from verse tokens
         s_to_kjv: dict[str, list[str]] = {}
@@ -431,17 +497,17 @@ class BibleStudyApp(App):
                 matching_words = [escape(w) for w in (s_to_kjv.get(w_res.strongs_id, []) or s_to_kjv.get(s_code.upper(), []))]
                 kjv_prefix = f"[bold yellow]\"{', '.join(matching_words)}\"[/bold yellow] ➔ " if matching_words else ""
 
-                lexicon_box.mount(
-                    Label(f"{kjv_prefix}[bold cyan]{w_res.strongs_id}[/bold cyan] ({w_res.language}): [bold green]{w_res.word}[/bold green] [dim]({w_res.translit})[/dim]")
+                lines.append(
+                    f"{kjv_prefix}[bold cyan]{w_res.strongs_id}[/bold cyan] ({w_res.language}): [bold green]{w_res.word}[/bold green] [dim]({w_res.translit})[/dim]"
                 )
                 if w_res.gloss:
-                    lexicon_box.mount(Static(f"  [bold]Translation Gloss:[/bold] [yellow]{escape(w_res.gloss)}[/yellow]"))
-                lexicon_box.mount(Static(f"  [dim]KJV Occurrences: {w_res.occurrences_count}[/dim]"))
+                    lines.append(f"  [bold]Translation Gloss:[/bold] [yellow]{escape(w_res.gloss)}[/yellow]")
+                lines.append(f"  [dim]KJV Occurrences: {w_res.occurrences_count}[/dim]")
 
                 # Definition clean up
                 def_lines = [l.strip() for l in w_res.definition.splitlines() if l.strip() and not l.startswith("Strong's Number")]
                 if def_lines:
-                    lexicon_box.mount(Static(f"  [bold]Definition:[/bold] {escape(def_lines[0])}"))
+                    lines.append(f"  [bold]Definition:[/bold] {escape(def_lines[0])}")
 
                 # Septuagint translation equivalences with Greek glosses
                 if w_res.lxx_equivalences:
@@ -456,18 +522,31 @@ class BibleStudyApp(App):
                             lxx_parts.append(f"{g_sc} ({g_forms} — \"{escape(g_gloss)}\"): {g_count}x")
                         else:
                             lxx_parts.append(f"{g_sc} ({g_forms}): {g_count}x")
-                    lexicon_box.mount(Static(f"  [dim]LXX Equivalences: {' | '.join(lxx_parts)}[/dim]"))
-                lexicon_box.mount(Static(""))
+                    lines.append(f"  [dim]LXX Equivalences: {' | '.join(lxx_parts)}[/dim]")
+                lines.append("")
 
         if words_found == 0:
-            lexicon_box.mount(Static("[dim]No Strong's concordance tags found for this verse.[/dim]"))
+            lines.append("[dim]No Strong's concordance tags found for this verse.[/dim]")
+
+        return "\n".join(lines)
+
+    def _update_lexicon_viewport(self) -> None:
+        """Render Strong's concordance, word definitions, and LXX translation equivalences."""
+        v = self._get_inspected_verse()
+        if not v:
+            return
+
+        rendered = self._render_lexicon_content(v)
+        lexicon_body = self.query_one("#lexicon-body", Static)
+        lexicon_body.update(rendered)
 
     def action_next_verse(self) -> None:
         if self.current_passage and self.selected_verse_idx + 1 < len(self.current_passage.verses):
             prev = self.selected_verse_idx
             self.selected_verse_idx += 1
             self._update_selection_visuals(previous_idx=prev)
-            self._update_inspector()
+            self._dirty_tabs.update({"tab-syntax", "tab-lexicon"})
+            self._render_active_tab()
             self._scroll_to_selected()
 
     def action_prev_verse(self) -> None:
@@ -475,7 +554,8 @@ class BibleStudyApp(App):
             prev = self.selected_verse_idx
             self.selected_verse_idx -= 1
             self._update_selection_visuals(previous_idx=prev)
-            self._update_inspector()
+            self._dirty_tabs.update({"tab-syntax", "tab-lexicon"})
+            self._render_active_tab()
             self._scroll_to_selected()
 
     def _scroll_to_selected(self) -> None:
@@ -494,7 +574,8 @@ class BibleStudyApp(App):
             v_ref = v.osis if v else ""
             self.notify(f"Verse {v_ref} pinned for inspection", timeout=2)
         self._update_selection_visuals(previous_idx=prev)
-        self._update_inspector()
+        self._dirty_tabs.update({"tab-syntax", "tab-lexicon"})
+        self._render_active_tab()
 
 
     def action_next_chapter(self) -> None:
@@ -554,8 +635,7 @@ class BibleStudyApp(App):
 
     def _apply_loaded_egw_citation(self, p: dict[str, Any]) -> None:
         """Render a fetched EGW citation and surrounding page context into the Commentary tab."""
-        commentary_box = self.query_one("#commentary-content", VerticalScroll)
-        commentary_box.remove_children()
+        commentary_body = self.query_one("#commentary-body", Static)
 
         cid = p.get("id") or p.get("token", "")
         btitle = p.get("book_title") or p.get("book_code", "")
@@ -563,10 +643,9 @@ class BibleStudyApp(App):
         page = p.get("page", 0)
         ref_code = p.get("ref_code") or f"{btitle} {page}"
 
-        commentary_box.mount(Label(f"SPIRIT OF PROPHECY READER: {ref_code}", classes="inspector-title"))
-
-        header_md = f"## {btitle}\n**{chtitle}**\n*Page {page}*\n---"
-        commentary_box.mount(Markdown(header_md))
+        lines: list[str] = []
+        lines.append(f"[bold cyan]SPIRIT OF PROPHECY READER: {ref_code}[/bold cyan]\n")
+        lines.append(f"[bold]{btitle}[/bold]\n[bold green]{chtitle}[/bold green]\n[dim]Page {page}[/dim]\n[dim]────────────────────────────────────────[/dim]\n")
 
         # If page paragraphs are included, render all paragraphs on that page
         page_paras = p.get("page_paragraphs")
@@ -576,15 +655,17 @@ class BibleStudyApp(App):
                 is_target = item_id == cid
                 item_para = item.get("paragraph", 1)
                 item_text = item.get("text", "")
-                prefix = f"### [{item_id}] (Paragraph {item_para})\n"
+                prefix = f"[bold yellow]### [{item_id}] (Paragraph {item_para})[/bold yellow]\n"
                 if is_target:
-                    md = f"{prefix}> **{item_text}**\n\n---"
+                    lines.append(f"{prefix}[bold white]{item_text}[/bold white]\n\n[dim]────────────────────────────────────────[/dim]\n")
                 else:
-                    md = f"{prefix}{item_text}\n\n---"
-                commentary_box.mount(Markdown(md))
+                    lines.append(f"{prefix}{item_text}\n\n[dim]────────────────────────────────────────[/dim]\n")
         else:
             p_text = p.get("text", "")
-            commentary_box.mount(Markdown(f"### [{cid}]\n{p_text}\n\n---"))
+            lines.append(f"[bold yellow]### [{cid}][/bold yellow]\n{p_text}\n\n[dim]────────────────────────────────────────[/dim]\n")
+
+        commentary_body.update("\n".join(lines))
+        self._dirty_tabs.discard("tab-commentary")
 
         # Switch to Commentary tab
         tabs = self.query_one("#inspector-tabs", TabbedContent)
@@ -608,26 +689,28 @@ class BibleStudyApp(App):
             self.call_from_thread(self.notify, f"Search error: {e}", severity="error")
 
     def _apply_search_results(self, query: str, res: Any) -> None:
-        search_box = self.query_one("#search-content", VerticalScroll)
-        search_box.remove_children()
-        search_box.mount(Label(f"SEARCH RESULTS FOR: '{query}'", classes="inspector-title"))
-
+        search_body = self.query_one("#search-body", Static)
         total_hits = len(res.bible_hits) + len(res.egw_hits)
-        search_box.mount(Static(f"[bold]Found {total_hits} matches[/bold] ({len(res.bible_hits)} Scripture, {len(res.egw_hits)} Spirit of Prophecy)\n"))
+
+        lines: list[str] = []
+        lines.append(f"[bold cyan]SEARCH RESULTS FOR: '{query}'[/bold cyan]\n")
+        lines.append(f"[bold]Found {total_hits} matches[/bold] ({len(res.bible_hits)} Scripture, {len(res.egw_hits)} Spirit of Prophecy)\n")
 
         if res.bible_hits:
-            search_box.mount(Label("[bold green]── SCRIPTURE RESULTS ──[/bold green]"))
+            lines.append("[bold green]── SCRIPTURE RESULTS ──[/bold green]")
             for b in res.bible_hits:
                 osis_str = f"{b.get('osis')}.{b.get('chapter')}.{b.get('verse')}"
                 b_text = b.get("clean_text") or b.get("text", "")
-                search_box.mount(Static(f"[bold cyan]{osis_str}:[/bold cyan] {b_text}\n"))
+                lines.append(f"[bold cyan]{osis_str}:[/bold cyan] {b_text}\n")
 
         if res.egw_hits:
-            search_box.mount(Label("[bold yellow]── SPIRIT OF PROPHECY RESULTS ──[/bold yellow]"))
+            lines.append("[bold yellow]── SPIRIT OF PROPHECY RESULTS ──[/bold yellow]")
             for e in res.egw_hits:
                 tok = e.get("token", "")
                 snippet = e.get("snippet", "").replace("[b]", "**").replace("[/b]", "**")
-                search_box.mount(Markdown(f"**[{tok}]** {snippet}\n"))
+                lines.append(f"[bold yellow]**[{tok}]**[/bold yellow] {snippet}\n")
+
+        search_body.update("\n".join(lines))
 
         # Switch to Search tab
         tabs = self.query_one("#inspector-tabs", TabbedContent)
@@ -667,18 +750,22 @@ class BibleStudyApp(App):
     def action_tab_syntax(self) -> None:
         tabs = self.query_one("#inspector-tabs", TabbedContent)
         tabs.active = "tab-syntax"
+        self._render_active_tab()
 
     def action_tab_lexicon(self) -> None:
         tabs = self.query_one("#inspector-tabs", TabbedContent)
         tabs.active = "tab-lexicon"
+        self._render_active_tab()
 
     def action_tab_commentary(self) -> None:
         tabs = self.query_one("#inspector-tabs", TabbedContent)
         tabs.active = "tab-commentary"
+        self._render_active_tab()
 
     def action_tab_search(self) -> None:
         tabs = self.query_one("#inspector-tabs", TabbedContent)
         tabs.active = "tab-search"
+        self._render_active_tab()
 
     def action_show_help(self) -> None:
         self.push_screen(HelpModal())
