@@ -24,6 +24,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-0016](ADR-0016-two-tier-corpus-and-portable-backup.md) | Two-Tier Storage Architecture and Portable Offline Backup | Accepted |
 | [ADR-0017](ADR-0017-terminal-user-interface-and-unified-study-cli.md) | Interactive Terminal User Interface (TUI) and Unified Study CLI | Accepted |
 | [ADR-0018](ADR-0018-textual-study-workstation-and-themes.md) | Textual Study Workstation and Theme System | Accepted |
+| [ADR-0019](ADR-0019-accessible-original-languages-and-commentary-integration.md) | Human-Accessible Original Language Framing and Direct Commentary Navigation | Accepted |
 
 
 ## When to write one

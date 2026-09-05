@@ -176,6 +176,69 @@ class StudyServiceTests(unittest.TestCase):
         w2 = self.service.lookup_word("H7225", sample_limit=0)
         self.assertIs(w1, w2)
 
+    def test_tbesh_and_tbesg_glosses_loaded(self):
+        """Verify English translation glosses are populated from TBESH and TBESG."""
+        w_heb = self.service.lookup_word("H1254", sample_limit=0)
+        self.assertIsNotNone(w_heb)
+        self.assertEqual(w_heb.gloss, "to create")
+
+        w_grk = self.service.lookup_word("G4160", sample_limit=0)
+        self.assertIsNotNone(w_grk)
+        self.assertEqual(w_grk.gloss, "to do/make: do")
+
+    def test_get_greek_gloss(self):
+        """Verify helper retrieves Greek English gloss for LXX translation equivalences."""
+        gloss1 = self.service.get_greek_gloss("G4160")
+        self.assertEqual(gloss1, "to do/make: do")
+
+        gloss2 = self.service.get_greek_gloss("G2936")
+        self.assertEqual(gloss2, "to create")
+
+    def test_lookup_egw_citation_flexible_formats(self):
+        """Verify EGW citation lookup supports both dot and space formats."""
+        p_space = self.service.lookup_egw_citation("PP 44.1")
+        self.assertIsNotNone(p_space)
+        self.assertEqual(p_space["id"], "PP.44.1")
+        self.assertEqual(p_space["book_title"], "Patriarchs and Prophets")
+        self.assertIn("Genesis 1 and 2", p_space["text"])
+
+        p_dot = self.service.lookup_egw_citation("PP.44.1")
+        self.assertIsNotNone(p_dot)
+        self.assertEqual(p_dot["id"], "PP.44.1")
+
+        p_colon = self.service.lookup_egw_citation("PP 44:1")
+        self.assertIsNotNone(p_colon)
+        self.assertEqual(p_colon["id"], "PP.44.1")
+
+    def test_lookup_egw_citation_includes_page_paragraphs(self):
+        """Verify looking up an EGW citation attaches all paragraphs on the page."""
+        p = self.service.lookup_egw_citation("PP 44.1")
+        self.assertIsNotNone(p)
+        page_paras = p.get("page_paragraphs", [])
+        self.assertTrue(len(page_paras) >= 3)
+        self.assertEqual(page_paras[0]["id"], "PP.44.1")
+
+    def test_get_egw_page(self):
+        """Verify direct retrieval of an EGW book page."""
+        paras = self.service.get_egw_page("PP", 44)
+        self.assertTrue(len(paras) >= 3)
+        self.assertEqual(paras[0]["page"], 44)
+
+    def test_passage_study_full_egw_text(self):
+        """Verify PassageStudy retains full paragraph text and chapter title in egw_correlations."""
+        ps = self.service.get_passage_study("Gen 1:1")
+        self.assertTrue(len(ps.egw_correlations) > 0)
+        c0 = ps.egw_correlations[0]
+        self.assertIn("text", c0)
+        self.assertTrue(len(c0["text"]) > 0)
+        self.assertIn("chapter_title", c0)
+
+    def test_lookup_egw_citation_unknown_token_returns_none(self):
+        """Verify that an exact EGW citation token not in the database safely returns None without FTS fallback."""
+        res = self.service.lookup_egw_citation("PP 99999.1")
+        self.assertIsNone(res)
+
+
 
 
 class StudyShellTests(unittest.TestCase):

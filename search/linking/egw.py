@@ -139,7 +139,7 @@ ALL_OFFICIAL_EGW_CODES: dict[str, str] = {
 }
 
 _TOKEN_RE = re.compile(
-    r"^(?:egw:)?(?=[0-9A-Za-z]*[A-Za-z])([A-Za-z0-9]+)\.([0-9]+)(?:\.([0-9]+))?$",
+    r"^(?:egw:)?(?=[0-9A-Za-z]*[A-Za-z])([A-Za-z0-9]+)[\.\s]+([0-9]+)(?:[\.:]([0-9]+))?$",
     re.IGNORECASE,
 )
 
@@ -226,6 +226,13 @@ def normalize_token(token: str) -> tuple[str, str, int, int]:
             f"Expected shape: BOOK.PAGE.PARAGRAPH or egw:BOOK.PAGE.PARAGRAPH (e.g., PP.57.1)"
         )
     book_code = m.group(1).upper()
+    has_egw_prefix = s.lower().startswith("egw:")
+    if not has_egw_prefix:
+        if book_code not in ALL_OFFICIAL_EGW_CODES:
+            raise ValueError(
+                f"Unknown EGW book code '{book_code}' in citation '{token}'. "
+                f"Expected recognized EGW book abbreviation (e.g. PP, DA, GC, SC)."
+            )
     page = int(m.group(2))
     para = int(m.group(3)) if m.group(3) is not None else 1
     canonical_id = f"{book_code}.{page}.{para}"

@@ -84,7 +84,7 @@ class VerseWidget(Static):
 
 
 class GotoModal(ModalScreen[Optional[str]]):
-    """Modal dialog for jumping to a specific passage."""
+    """Modal dialog for jumping to a specific passage or Spirit of Prophecy citation."""
 
     BINDINGS = [
         Binding("escape", "cancel", "Cancel"),
@@ -95,9 +95,9 @@ class GotoModal(ModalScreen[Optional[str]]):
 
     def compose(self) -> ComposeResult:
         with Vertical(classes="modal-dialog"):
-            yield Label("GOTO PASSAGE", classes="modal-title")
-            yield Label("Enter reference (e.g. 'John 3:16', 'Ps 23', 'Rom 8', 'Gen 1'):")
-            yield Input(id="goto-input", placeholder="Book Chapter:Verse")
+            yield Label("GOTO PASSAGE OR SPIRIT OF PROPHECY", classes="modal-title")
+            yield Label("Enter Scripture (e.g. 'John 3:16', 'Rom 8') or EGW citation (e.g. 'PP 44.1', 'DA 25.3'):")
+            yield Input(id="goto-input", placeholder="e.g. 'John 3:16' or 'PP 44.1'")
             with Horizontal():
                 yield Button("Go", variant="primary", id="btn-go")
                 yield Button("Cancel", variant="default", id="btn-cancel")
@@ -174,7 +174,7 @@ class HelpModal(ModalScreen[None]):
 | **`k` / `Up`** | Move to previous verse |
 | **`n` / `p`** | Next / Previous chapter |
 | **`Space` / `Enter`** | Pin / unpin selected verse for side panel study |
-| **`g` / `Ctrl+P`** | Jump to passage (e.g. *John 3:16*, *Ps 23*) |
+| **`g` / `Ctrl+P`** | Jump to passage (e.g. *John 3:16*) or EGW citation (e.g. *PP 44.1*) |
 | **`/`** | Search Bible & Spirit of Prophecy writings |
 | **`s`** | Toggle inline Strong's concordance numbers |
 | **`t`** | Cycle color themes (Transparent, Dracula, Catppuccin, etc.) |
@@ -337,13 +337,21 @@ class BibleStudyApp(App):
 
         if self.current_passage and self.current_passage.egw_correlations:
             for egw in self.current_passage.egw_correlations:
-                heading = egw.get("heading") or egw.get("book_title") or ""
+                book_title = egw.get("book_title") or egw.get("book_code") or "Spirit of Prophecy"
+                ch_title = egw.get("chapter_title") or egw.get("heading") or ""
                 token = egw.get("token", "")
-                snippet = egw.get("snippet", "").replace("[b]", "**").replace("[/b]", "**")
-                md_text = f"### [{token}] {heading}\n{snippet}\n---"
+                page = egw.get("page")
+                para = egw.get("paragraph")
+                full_text = egw.get("text") or egw.get("snippet", "").replace("[b]", "**").replace("[/b]", "**")
+
+                loc_str = f"Page {page}, par. {para}" if page else ""
+                hdr_sub = f" — *{ch_title}*" if ch_title else ""
+                md_text = f"### [{token}] {book_title}{hdr_sub}\n*{loc_str}*\n\n{full_text}\n\n---"
                 commentary_box.mount(Markdown(md_text))
         else:
-            commentary_box.mount(Static("[dim]No direct Spirit of Prophecy correlations for this chapter. Press [/] to search all writings.[/dim]"))
+            commentary_box.mount(
+                Static("[dim]No direct Spirit of Prophecy correlations for this chapter. Press [/] to search all writings or [g] to jump directly to a citation (e.g. PP 44.1).[/dim]")
+            )
 
     def _update_inspector(self) -> None:
         v = self._get_inspected_verse()
@@ -360,7 +368,7 @@ class BibleStudyApp(App):
         syntax_box.mount(Label(f"VERSE SYNTAX & CLAUSE FRAMES: {v.osis}{pin_tag}", classes="inspector-title"))
 
         if v.original_text:
-            syntax_box.mount(Static(f"[bold green]Original Text:[/bold green] {v.original_text}\n"))
+            syntax_box.mount(Static(f"[bold green]Original Text:[/bold green] {escape(v.original_text)}\n"))
 
         if v.semantic_frames:
             for cl in v.semantic_frames:
@@ -373,8 +381,21 @@ class BibleStudyApp(App):
                     ("Context", cl.get("context", [])),
                 ]:
                     if items:
-                        val_str = ", ".join(it["text"] for it in items)
-                        syntax_box.mount(Static(f"  • [bold]{label}:[/bold] {val_str}"))
+                        val_strs = []
+                        for it in items:
+                            orig = escape(it.get("text", ""))
+                            gloss_parts = [
+                                t.get("gloss")
+                                for t in it.get("tokens", [])
+                                if t.get("gloss") and t.get("gloss") not in ("(et)", "-", None)
+                            ]
+                            gloss_str = escape(" ".join(gloss_parts).replace(".", " "))
+                            if gloss_str:
+                                val_strs.append(f"{orig} [green]({gloss_str})[/green]")
+                            else:
+                                val_strs.append(orig)
+                        val_joined = ", ".join(val_strs)
+                        syntax_box.mount(Static(f"  • [bold]{label}:[/bold] {val_joined}"))
                 syntax_box.mount(Static(""))
         else:
             syntax_box.mount(Static("[dim]No syntactic clause tree available for this verse.[/dim]"))
@@ -383,6 +404,19 @@ class BibleStudyApp(App):
         lexicon_box = self.query_one("#lexicon-content", VerticalScroll)
         lexicon_box.remove_children()
         lexicon_box.mount(Label(f"STRONG'S CONCORDANCE & LEXICON: {v.osis}", classes="inspector-title"))
+
+        # Build Strong's to KJV word(s) mapping from verse tokens
+        s_to_kjv: dict[str, list[str]] = {}
+        for tok in v.tokens:
+            t_text = tok.get("text", "").strip()
+            for sc in tok.get("strongs", []):
+                norm_sc = sc.upper()
+                canon_sc = norm_sc[0] + norm_sc[1:].lstrip("0") if len(norm_sc) > 1 else norm_sc
+                for key in (norm_sc, canon_sc):
+                    if key not in s_to_kjv:
+                        s_to_kjv[key] = []
+                    if t_text and t_text not in s_to_kjv[key]:
+                        s_to_kjv[key].append(t_text)
 
         seen = set()
         words_found = 0
@@ -393,21 +427,36 @@ class BibleStudyApp(App):
             w_res = self.service.lookup_word(s_code, sample_limit=0)
             if w_res:
                 words_found += 1
-                lexicon_box.mount(Label(f"[bold cyan]{w_res.strongs_id}[/bold cyan] ({w_res.language}): [bold green]{w_res.word}[/bold green] [dim]({w_res.translit})[/dim]"))
+                # Find matching KJV word
+                matching_words = [escape(w) for w in (s_to_kjv.get(w_res.strongs_id, []) or s_to_kjv.get(s_code.upper(), []))]
+                kjv_prefix = f"[bold yellow]\"{', '.join(matching_words)}\"[/bold yellow] ➔ " if matching_words else ""
+
+                lexicon_box.mount(
+                    Label(f"{kjv_prefix}[bold cyan]{w_res.strongs_id}[/bold cyan] ({w_res.language}): [bold green]{w_res.word}[/bold green] [dim]({w_res.translit})[/dim]")
+                )
                 if w_res.gloss:
-                    lexicon_box.mount(Static(f"  [bold]Translation Gloss:[/bold] [yellow]{w_res.gloss}[/yellow]"))
+                    lexicon_box.mount(Static(f"  [bold]Translation Gloss:[/bold] [yellow]{escape(w_res.gloss)}[/yellow]"))
                 lexicon_box.mount(Static(f"  [dim]KJV Occurrences: {w_res.occurrences_count}[/dim]"))
 
                 # Definition clean up
                 def_lines = [l.strip() for l in w_res.definition.splitlines() if l.strip() and not l.startswith("Strong's Number")]
                 if def_lines:
-                    lexicon_box.mount(Static(f"  [bold]Definition:[/bold] {def_lines[0]}"))
+                    lexicon_box.mount(Static(f"  [bold]Definition:[/bold] {escape(def_lines[0])}"))
 
-                # Septuagint translation equivalences
+                # Septuagint translation equivalences with Greek glosses
                 if w_res.lxx_equivalences:
                     lxx_top = w_res.lxx_equivalences[:3]
-                    lxx_strs = [f"{eq.get('greek_strongs')}: {','.join(eq.get('greek_forms', []))} ({eq.get('count')}x)" for eq in lxx_top]
-                    lexicon_box.mount(Static(f"  [dim]LXX Equivalences: {' | '.join(lxx_strs)}[/dim]"))
+                    lxx_parts = []
+                    for eq in lxx_top:
+                        g_sc = eq.get("greek_strongs", "")
+                        g_forms = ",".join(eq.get("greek_forms", []))
+                        g_count = eq.get("count", 0)
+                        g_gloss = self.service.get_greek_gloss(g_sc) if g_sc else ""
+                        if g_gloss:
+                            lxx_parts.append(f"{g_sc} ({g_forms} — \"{escape(g_gloss)}\"): {g_count}x")
+                        else:
+                            lxx_parts.append(f"{g_sc} ({g_forms}): {g_count}x")
+                    lexicon_box.mount(Static(f"  [dim]LXX Equivalences: {' | '.join(lxx_parts)}[/dim]"))
                 lexicon_box.mount(Static(""))
 
         if words_found == 0:
@@ -469,9 +518,78 @@ class BibleStudyApp(App):
     def action_goto_passage(self) -> None:
         def on_goto_done(ref: Optional[str]) -> None:
             if ref:
-                self.load_passage_async(ref)
+                # Check if reference is a valid Bible passage within canon bounds
+                try:
+                    from search.corpus.bible_books import parse_passage_ref, BIBLE_BOOKS
+                    osis, ch, _, _ = parse_passage_ref(ref)
+                    if osis in BIBLE_BOOKS and 1 <= ch <= BIBLE_BOOKS[osis].chapters:
+                        self.load_passage_async(ref)
+                        return
+                except Exception:
+                    pass
+
+                from search.linking.egw import is_egw_token
+                if is_egw_token(ref):
+                    self.load_egw_citation_async(ref)
+                else:
+                    self.load_passage_async(ref)
 
         self.push_screen(GotoModal(), on_goto_done)
+
+    @work(exclusive=True, thread=True)
+    def load_egw_citation_async(self, citation_or_token: str) -> None:
+        """Asynchronously load and display a specific Spirit of Prophecy citation."""
+        try:
+            res = self.service.lookup_egw_citation(citation_or_token)
+            if res:
+                self.call_from_thread(self._apply_loaded_egw_citation, res)
+            else:
+                self.call_from_thread(
+                    self.notify,
+                    f"Citation '{citation_or_token}' not found in Spirit of Prophecy corpus.",
+                    severity="warning",
+                )
+        except Exception as e:
+            self.call_from_thread(self.notify, f"Error loading EGW citation: {e}", severity="error")
+
+    def _apply_loaded_egw_citation(self, p: dict[str, Any]) -> None:
+        """Render a fetched EGW citation and surrounding page context into the Commentary tab."""
+        commentary_box = self.query_one("#commentary-content", VerticalScroll)
+        commentary_box.remove_children()
+
+        cid = p.get("id") or p.get("token", "")
+        btitle = p.get("book_title") or p.get("book_code", "")
+        chtitle = p.get("chapter_title", "")
+        page = p.get("page", 0)
+        ref_code = p.get("ref_code") or f"{btitle} {page}"
+
+        commentary_box.mount(Label(f"SPIRIT OF PROPHECY READER: {ref_code}", classes="inspector-title"))
+
+        header_md = f"## {btitle}\n**{chtitle}**\n*Page {page}*\n---"
+        commentary_box.mount(Markdown(header_md))
+
+        # If page paragraphs are included, render all paragraphs on that page
+        page_paras = p.get("page_paragraphs")
+        if page_paras:
+            for item in page_paras:
+                item_id = item.get("id", "")
+                is_target = item_id == cid
+                item_para = item.get("paragraph", 1)
+                item_text = item.get("text", "")
+                prefix = f"### [{item_id}] (Paragraph {item_para})\n"
+                if is_target:
+                    md = f"{prefix}> **{item_text}**\n\n---"
+                else:
+                    md = f"{prefix}{item_text}\n\n---"
+                commentary_box.mount(Markdown(md))
+        else:
+            p_text = p.get("text", "")
+            commentary_box.mount(Markdown(f"### [{cid}]\n{p_text}\n\n---"))
+
+        # Switch to Commentary tab
+        tabs = self.query_one("#inspector-tabs", TabbedContent)
+        tabs.active = "tab-commentary"
+        self.notify(f"Loaded: {ref_code} ({btitle})", timeout=3)
 
     def action_search_dialog(self) -> None:
         def on_search_done(query: Optional[str]) -> None:

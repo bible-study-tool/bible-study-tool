@@ -109,19 +109,22 @@ class StudyService:
             else:
                 self._lexicon_cache = {}
 
+        def _load_gloss_file(path: Path) -> dict[str, str]:
+            if not path.exists():
+                return {}
+            with open(path, encoding="utf-8") as f:
+                raw_data = json.load(f)
+                entries = raw_data.get("entries") or raw_data.get("glosses", {})
+                return {
+                    code: (items[0].get("gloss", "") if isinstance(items, list) and items else str(items))
+                    for code, items in entries.items()
+                }
+
         if self._tbesh_cache is None:
-            if self.tbesh_path.exists():
-                with open(self.tbesh_path, encoding="utf-8") as f:
-                    self._tbesh_cache = json.load(f).get("glosses", {})
-            else:
-                self._tbesh_cache = {}
+            self._tbesh_cache = _load_gloss_file(self.tbesh_path)
 
         if self._tbesg_cache is None:
-            if self.tbesg_path.exists():
-                with open(self.tbesg_path, encoding="utf-8") as f:
-                    self._tbesg_cache = json.load(f).get("glosses", {})
-            else:
-                self._tbesg_cache = {}
+            self._tbesg_cache = _load_gloss_file(self.tbesg_path)
 
     def get_passage_study(self, passage_ref: str, eager_frames: bool = True) -> PassageStudy:
         """Fetch complete multi-dimensional study for a passage reference."""
@@ -201,7 +204,7 @@ class StudyService:
             if self.egw_db:
                 search_query = f'"{book_name} {s_ch}"'
                 try:
-                    hits = self.egw_db.search(search_query, limit=5)
+                    hits = self.egw_db.search(search_query, limit=10)
                     for h in hits:
                         tok = h.get("id") or h.get("canonical_token") or h.get("ref_code", "")
                         egw_correlations.append(
@@ -209,10 +212,12 @@ class StudyService:
                                 "token": tok,
                                 "book_code": h.get("book_code", ""),
                                 "book_title": h.get("book_title", ""),
+                                "chapter_title": h.get("chapter_title", ""),
                                 "page": h.get("page", 0),
                                 "paragraph": h.get("paragraph") or h.get("paragraph_num", 0),
                                 "heading": h.get("chapter_title") or h.get("heading", ""),
                                 "snippet": h.get("snippet", ""),
+                                "text": h.get("text", "") or h.get("snippet", ""),
                             }
                         )
                 except sqlite3.Error:
@@ -414,6 +419,56 @@ class StudyService:
             if prev_info:
                 return f"{prev_info.osis} {prev_info.chapters}"
         return None
+
+    def lookup_egw_citation(self, token_or_query: str) -> dict[str, Any] | None:
+        """Lookup an exact EGW paragraph citation (e.g. 'PP 44.1' or 'PP.44.1') or search query."""
+        with self._lock:
+            if not self.egw_db:
+                return None
+            from search.linking.egw import is_egw_token, normalize_token
+            if is_egw_token(token_or_query):
+                canonical_id, b_code, page, _ = normalize_token(token_or_query)
+                p = self.egw_db.get_paragraph(canonical_id)
+                page_paras = self.egw_db.get_page(b_code, page)
+                if p:
+                    p["page_paragraphs"] = page_paras
+                    return p
+                if page_paras:
+                    first_p = page_paras[0]
+                    first_p["page_paragraphs"] = page_paras
+                    return first_p
+                return None
+            hits = self.egw_db.search(token_or_query, limit=1)
+            if hits:
+                h = hits[0]
+                b_code = h.get("book_code", "")
+                page = h.get("page", 0)
+                if b_code and page:
+                    h["page_paragraphs"] = self.egw_db.get_page(b_code, page)
+                return h
+            return None
+
+    def get_egw_page(self, book_code: str, page: int) -> list[dict[str, Any]]:
+        """Retrieve all paragraphs on a given EGW book page."""
+        with self._lock:
+            if not self.egw_db:
+                return []
+            return self.egw_db.get_page(book_code, page)
+
+    def get_greek_gloss(self, greek_strongs: str) -> str:
+        """Fetch concise English translation gloss for a Greek Strong's code (e.g. 'G4160' -> 'to do/make: do')."""
+        with self._lock:
+            self._load_lexicons()
+            raw = greek_strongs.strip().upper()
+            if not raw.startswith("G"):
+                raw = f"G{raw}"
+            num_str = raw[1:].lstrip("0") or "0"
+            canonical_id = f"G{num_str}"
+            if self._tbesg_cache and canonical_id in self._tbesg_cache:
+                return self._tbesg_cache[canonical_id]
+            ws = self.lookup_word(canonical_id, sample_limit=0)
+            return ws.gloss if ws else ""
+
 
     def close(self) -> None:
         """Close database connections."""

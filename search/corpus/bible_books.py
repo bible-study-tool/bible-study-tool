@@ -154,7 +154,7 @@ BOOK_ALIASES: dict[str, str] = {
     "JEREMIAH": "Jer", "JER": "Jer", "JE": "Jer",
     "LAMENTATIONS": "Lam", "LAM": "Lam", "LA": "Lam",
     "EZEKIEL": "Ezek", "EZEK": "Ezek", "EZE": "Ezek", "EZK": "Ezek",
-    "DANIEL": "Dan", "DAN": "Dan", "DA": "Dan", "DN": "Dan",
+    "DANIEL": "Dan", "DAN": "Dan", "DN": "Dan",
     "HOSEA": "Hos", "HOS": "Hos", "HO": "Hos",
     "JOEL": "Joel", "JOE": "Joel", "JL": "Joel",
     "AMOS": "Amos", "AMO": "Amos", "AM": "Amos",

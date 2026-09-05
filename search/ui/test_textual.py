@@ -13,7 +13,22 @@ from search.ui.themes import (
     get_next_theme,
     get_theme_css,
 )
+from textual.containers import VerticalScroll
 from textual.widgets import TabbedContent
+
+
+def _extract_text(widget) -> str:
+    """Recursively extract text representations from a Textual widget tree."""
+    texts: list[str] = []
+    for node in widget.walk_children():
+        if hasattr(node, "render"):
+            try:
+                r = str(node.render())
+                if r and not r.startswith("<"):
+                    texts.append(r)
+            except Exception:
+                pass
+    return " ".join(texts)
 
 
 class ThemeSystemTests(unittest.TestCase):
@@ -245,6 +260,84 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             app.screen.action_cancel()
             await pilot.pause()
             self.assertNotIsInstance(app.screen, SearchModal)
+
+    async def test_syntax_frames_rendering_with_glosses(self):
+        """Verify syntax & frames inspector tab displays both original text and English glosses."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            syntax_scroll = app.query_one("#syntax-content", VerticalScroll)
+            content_text = _extract_text(syntax_scroll)
+
+            # Both Hebrew original and English translation gloss must be present
+            self.assertIn("אֱלֹהִ֑ים", content_text)
+            self.assertIn("God", content_text)
+            self.assertIn("בָּרָ֣א", content_text)
+            self.assertIn("he created", content_text)
+
+    async def test_lexicon_rendering_with_kjv_word_mapping_and_lxx_glosses(self):
+        """Verify lexicon tab displays KJV word mapping and Septuagint English glosses."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            lexicon_scroll = app.query_one("#lexicon-content", VerticalScroll)
+            content_text = _extract_text(lexicon_scroll)
+
+            # KJV word to Strong's code mapping
+            self.assertIn('"created" ➔ H1254', content_text)
+            self.assertIn("Translation Gloss: to create", content_text)
+
+            # LXX equivalence with Greek English gloss
+            self.assertIn("G4160", content_text)
+            self.assertIn("to do/make: do", content_text)
+
+    async def test_commentary_rendering_full_text(self):
+        """Verify commentary tab renders full paragraph text instead of truncated snippets."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            commentary_scroll = app.query_one("#commentary-content", VerticalScroll)
+            content_text = _extract_text(commentary_scroll)
+
+            # Must contain heading and paragraph text
+            self.assertIn("SPIRIT OF PROPHECY CORRELATIONS", content_text)
+            self.assertIn("Genesis 1", content_text)
+
+    async def test_egw_citation_direct_navigation(self):
+        """Verify direct jump to an EGW citation renders full page context in the commentary tab."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            tabs = app.query_one("#inspector-tabs", TabbedContent)
+
+            # Direct jump to PP 44.1
+            worker = app.load_egw_citation_async("PP 44.1")
+            await worker.wait()
+            await pilot.pause()
+
+            self.assertEqual(tabs.active, "tab-commentary")
+            commentary_scroll = app.query_one("#commentary-content", VerticalScroll)
+            content_text = _extract_text(commentary_scroll)
+
+            self.assertIn("Patriarchs and Prophets", content_text)
+            self.assertIn("PP.44.1", content_text)
+            self.assertIn("This chapter is based on Genesis 1 and 2", content_text)
+
+    async def test_goto_modal_disambiguation_bible_vs_egw(self):
+        """Verify that Goto correctly loads Bible book Colossians for 'Col 1:1' instead of EGW Christ's Object Lessons."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            # Simulate goto "Col 1:1"
+            app.action_goto_passage()
+            await pilot.pause()
+            self.assertIsInstance(app.screen, GotoModal)
+            app.screen.dismiss("Col 1:1")
+            await pilot.pause()
+            # Wait for background worker
+            await pilot.pause(0.2)
+            self.assertIn("COL", app.current_ref.upper())
+            self.assertEqual(app.current_passage.book_name, "Colossians")
 
 
 

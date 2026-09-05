@@ -33,6 +33,7 @@ entries `draft` -> `review`.
 | [WP-020](WP-020-macula-greek-nt-integration.md) | Pillar B (B1-B3, NT) | Macula Greek (NT) Linguistic Integration & Canon Unification | done |
 | [WP-021](WP-021-study-tui-and-cli.md) | Pillar D (D3, D4) | Interactive Terminal User Interface (TUI) & Unified Study CLI | done |
 | [WP-022](WP-022-textual-study-workstation.md) | Pillar D (D3, D4) | Modern Textual Study Workstation & Theme System | done |
+| [WP-023](WP-023-accessible-study-and-egw-reader.md) | Pillar D (D3, D4) | Human-Accessible Original Language Framing & Direct Commentary Navigation | done |
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1
