@@ -292,7 +292,7 @@ class BibleStudyApp(App):
                 self.call_from_thread(self._apply_loaded_passage, study)
         except Exception as e:
             if not worker.is_cancelled:
-                self.call_from_thread(self.notify, f"Error loading passage '{passage_ref}': {e}", severity="error")
+                self.call_from_thread(self.notify, f"Error loading passage '{passage_ref}': {e}", severity="error", markup=False)
 
     def _apply_loaded_passage(self, study: PassageStudy) -> None:
         self.current_passage = study
@@ -407,7 +407,7 @@ class BibleStudyApp(App):
                 lines.append(f"\n{escape(full_text)}\n\n[dim]────────────────────────────────────────[/dim]\n")
         else:
             lines.append(
-                "[dim]No direct Spirit of Prophecy correlations for this chapter. Press [/] to search all writings or [g] to jump directly to a citation (e.g. PP 44.1).[/dim]"
+                "[dim]No direct Spirit of Prophecy correlations for this chapter. Press \\[/\\] to search all writings or \\[g\\] to jump directly to a citation (e.g. PP 44.1).[/dim]"
             )
 
         commentary_body.update("\n".join(lines))
@@ -638,9 +638,10 @@ class BibleStudyApp(App):
                     self.notify,
                     f"Citation '{citation_or_token}' not found in Spirit of Prophecy corpus.",
                     severity="warning",
+                    markup=False,
                 )
         except Exception as e:
-            self.call_from_thread(self.notify, f"Error loading EGW citation: {e}", severity="error")
+            self.call_from_thread(self.notify, f"Error loading EGW citation: {e}", severity="error", markup=False)
 
     def _apply_loaded_egw_citation(self, p: dict[str, Any]) -> None:
         """Render a fetched EGW citation and surrounding page context into the Commentary tab."""
@@ -680,7 +681,7 @@ class BibleStudyApp(App):
         # Switch to Commentary tab
         tabs = self.query_one("#inspector-tabs", TabbedContent)
         tabs.active = "tab-commentary"
-        self.notify(f"Loaded: {ref_code} ({btitle})", timeout=3)
+        self.notify(f"Loaded: {ref_code} ({btitle})", timeout=3, markup=False)
 
     def action_search_dialog(self) -> None:
         def on_search_done(query: Optional[str]) -> None:
@@ -696,7 +697,7 @@ class BibleStudyApp(App):
             res = self.service.search_unified(query, limit_bible=10, limit_egw=5)
             self.call_from_thread(self._apply_search_results, query, res)
         except Exception as e:
-            self.call_from_thread(self.notify, f"Search error: {e}", severity="error")
+            self.call_from_thread(self.notify, f"Search error: {e}", severity="error", markup=False)
 
     def _apply_search_results(self, query: str, res: Any) -> None:
         search_body = self.query_one("#search-body", Static)

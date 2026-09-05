@@ -27,6 +27,10 @@ from search.linking.egw import EgwDB, DEFAULT_EGW_DB, is_egw_token, normalize_to
 DEFAULT_STRONGS_LEXICON = Path("lexicons/strongs-lexicon.json")
 DEFAULT_TBESH = Path("lexicons/tbesh-glosses.json")
 DEFAULT_TBESG = Path("lexicons/tbesg-glosses.json")
+EBOOK_METADATA_KEYWORDS = ("isbn", "ebook", "estate", "overview this")
+PRIORITY_EGW_ORDER = ("PP", "PK", "DA", "MB", "COL", "AA", "GC", "SC", "ED", "MH", "SR")
+PRIORITY_EGW_RANK = {code: i for i, code in enumerate(PRIORITY_EGW_ORDER)}
+
 
 
 @dataclass
@@ -204,22 +208,72 @@ class StudyService:
             if self.egw_db:
                 search_query = f'"{book_name} {s_ch}"'
                 try:
-                    hits = self.egw_db.search(search_query, limit=10)
+                    hits = self.egw_db.search(search_query, limit=30)
+                    candidate_hits: list[dict[str, Any]] = []
                     for h in hits:
-                        tok = h.get("id") or h.get("canonical_token") or h.get("ref_code", "")
-                        egw_correlations.append(
+                        b_code = h.get("book_code", "")
+                        page_num = int(h.get("page") or 0)
+                        hit_para = int(h.get("paragraph") or h.get("paragraph_num") or 0)
+                        raw_text = (h.get("text", "") or h.get("snippet", "")).strip()
+
+                        # Skip front matter eBook metadata (e.g. ISBN, Online Books overview)
+                        if page_num <= 2 and any(meta in raw_text.lower() for meta in EBOOK_METADATA_KEYWORDS):
+                            continue
+
+                        candidate_hits.append(
                             {
-                                "token": tok,
-                                "book_code": h.get("book_code", ""),
+                                "token": h.get("id") or h.get("canonical_token") or h.get("ref_code", ""),
+                                "book_code": b_code,
                                 "book_title": h.get("book_title", ""),
                                 "chapter_title": h.get("chapter_title", ""),
-                                "page": h.get("page", 0),
-                                "paragraph": h.get("paragraph") or h.get("paragraph_num", 0),
+                                "page": page_num,
+                                "paragraph": hit_para,
                                 "heading": h.get("chapter_title") or h.get("heading", ""),
                                 "snippet": h.get("snippet", ""),
-                                "text": h.get("text", "") or h.get("snippet", ""),
+                                "text": raw_text,
                             }
                         )
+
+                    # Prioritize canonical pages of primary Conflict of the Ages and commentary books
+                    candidate_hits.sort(
+                        key=lambda c: (
+                            0 if (c["book_code"] in PRIORITY_EGW_RANK and c["page"] > 1) else (1 if c["book_code"] in PRIORITY_EGW_RANK else 2),
+                            PRIORITY_EGW_RANK.get(c["book_code"], 999),
+                            c["page"],
+                            c["paragraph"],
+                        )
+                    )
+                    top_hits = candidate_hits[:10]
+
+                    # Expand introductory notes only for top hits to avoid N+1 DB queries
+                    for item in top_hits:
+                        raw_text = item["text"]
+                        b_code = item["book_code"]
+                        page_num = item["page"]
+                        hit_para = item["paragraph"]
+
+                        if (
+                            page_num
+                            and b_code
+                            and (
+                                hit_para <= 1
+                                or len(raw_text) < 120
+                                or any(k in raw_text.lower() for k in ("based on", "see egw", "vol."))
+                            )
+                        ):
+                            page_paras = self.get_egw_page(b_code, page_num)
+                            if page_paras:
+                                subsequent = [
+                                    p.get("text", "").strip()
+                                    for p in page_paras
+                                    if int(p.get("paragraph") or p.get("paragraph_num") or 0) > hit_para
+                                    and p.get("text", "").strip()
+                                    and not any(meta in p.get("text", "").lower() for meta in EBOOK_METADATA_KEYWORDS)
+                                ][:4]
+                                if subsequent:
+                                    item["text"] = f"{raw_text}\n\n" + "\n\n".join(subsequent)
+
+                    egw_correlations = top_hits
                 except sqlite3.Error:
                     egw_correlations = []
 
