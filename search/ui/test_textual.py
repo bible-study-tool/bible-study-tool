@@ -393,6 +393,50 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             final_widget_count = len(app.query("*"))
             self.assertEqual(initial_widget_count, final_widget_count)
 
+    async def test_syntax_viewport_verbal_nuances(self):
+        """Verify syntax viewport displays verbal stems and theological nuances."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            syntax_scroll = app.query_one("#syntax-content", VerticalScroll)
+            content_text = _extract_text(syntax_scroll)
+
+            self.assertIn("VERBAL STEMS & THEOLOGICAL NUANCES", content_text)
+            self.assertIn("Qal (Simple Active)", content_text)
+            self.assertIn("Exclusively Divine Initiative", content_text)
+
+    async def test_lexicon_viewport_verbal_nuances(self):
+        """Verify lexicon viewport displays verbal stems and theological nuances on Strong's cards."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            app.action_tab_lexicon()
+            await pilot.pause()
+            lexicon_scroll = app.query_one("#lexicon-content", VerticalScroll)
+            content_text = _extract_text(lexicon_scroll)
+
+            self.assertIn("Verbal Stem / Form:", content_text)
+            self.assertIn("Qal (Simple Active)", content_text)
+            self.assertIn("Exclusively Divine Initiative", content_text)
+
+    async def test_greek_verbal_nuances_ephesians(self):
+        """Verify Greek verbal nuances (Middle Voice loving choice) render in Ephesians 1:4."""
+        app = BibleStudyApp(initial_ref="Eph 1:4")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            syntax_scroll = app.query_one("#syntax-content", VerticalScroll)
+            syntax_text = _extract_text(syntax_scroll)
+            self.assertIn("Aorist Middle", syntax_text)
+            self.assertIn("Loving Personal Choice", syntax_text)
+
+            app.action_tab_lexicon()
+            await pilot.pause()
+            lexicon_scroll = app.query_one("#lexicon-content", VerticalScroll)
+            lexicon_text = _extract_text(lexicon_scroll)
+            self.assertIn("Aorist Middle", lexicon_text)
+            self.assertIn("Loving Personal Choice", lexicon_text)
+
+
 
 class StudyCLITextualIntegrationTests(unittest.TestCase):
     """Test CLI help flags and theme options for study.py."""

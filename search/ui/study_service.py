@@ -22,6 +22,11 @@ from search.macula.enrichment import (
     get_translation_equivalences,
     get_verse_semantic_frames_batch,
 )
+from search.corpus.grammar_nuance import (
+    GrammarNuance,
+    get_verse_grammar_nuances,
+    get_verses_grammar_nuances_batch,
+)
 from search.linking.egw import EgwDB, DEFAULT_EGW_DB, is_egw_token, normalize_token
 
 DEFAULT_STRONGS_LEXICON = Path("lexicons/strongs-lexicon.json")
@@ -44,6 +49,8 @@ class VerseStudy:
     semantic_frames: list[dict[str, Any]] = field(default_factory=list)
     original_text: str = ""
     strongs_list: list[str] = field(default_factory=list)
+    verbal_nuances: list[GrammarNuance] = field(default_factory=list)
+
 
 
 @dataclass
@@ -103,6 +110,7 @@ class StudyService:
         self._tbesg_cache: dict[str, str] | None = None
         self._word_cache: dict[str, WordStudyResult] = {}
         self._verse_frame_cache: dict[str, dict[str, Any]] = {}
+        self._verse_nuance_cache: dict[str, list[GrammarNuance]] = {}
         self._lock = threading.RLock()
 
     def _load_lexicons(self) -> None:
@@ -150,15 +158,22 @@ class StudyService:
             verse_studies: list[VerseStudy] = []
             all_strongs: set[str] = set()
 
-            # Pre-fetch semantic frames for the whole chapter in a single batch query
+            # Pre-fetch semantic frames and verbal grammar nuances in batch queries
             batch_frames: dict[str, dict[str, Any]] = {}
-            if eager_frames and self.macula_db and verses_raw:
+            batch_nuances: dict[str, list[GrammarNuance]] = {}
+            if self.macula_db and verses_raw:
                 v_refs = [f"{vr['osis']}.{vr['chapter']}.{vr['verse']}" for vr in verses_raw]
+                if eager_frames:
+                    try:
+                        batch_frames = get_verse_semantic_frames_batch(v_refs, db=self.macula_db)
+                        self._verse_frame_cache.update(batch_frames)
+                    except Exception:
+                        batch_frames = {}
                 try:
-                    batch_frames = get_verse_semantic_frames_batch(v_refs, db=self.macula_db)
-                    self._verse_frame_cache.update(batch_frames)
+                    batch_nuances = get_verses_grammar_nuances_batch(v_refs, db=self.macula_db)
+                    self._verse_nuance_cache.update(batch_nuances)
                 except Exception:
-                    batch_frames = {}
+                    batch_nuances = {}
 
             for vr in verses_raw:
                 verse_id = f"{vr['osis']}.{vr['chapter']}.{vr['verse']}"
@@ -189,6 +204,8 @@ class StudyService:
                     except Exception:
                         frames = []
 
+                v_nuances = batch_nuances.get(verse_id, [])
+
                 verse_studies.append(
                     VerseStudy(
                         osis=verse_id,
@@ -200,6 +217,7 @@ class StudyService:
                         semantic_frames=frames,
                         original_text=orig_text,
                         strongs_list=strongs_in_v,
+                        verbal_nuances=v_nuances,
                     )
                 )
 
@@ -290,25 +308,50 @@ class StudyService:
             )
 
     def ensure_verse_frames(self, verse: VerseStudy) -> None:
-        """Populate semantic frames and original language text on-demand if missing."""
+        """Populate semantic frames, verbal nuances, and original language text on-demand if missing."""
         with self._lock:
+            # 1. Frames & original text
             if verse.osis in self._verse_frame_cache:
                 c_data = self._verse_frame_cache[verse.osis]
                 verse.semantic_frames = c_data.get("clauses", [])
                 verse.original_text = c_data.get("text", "")
-                return
-            if verse.semantic_frames and verse.original_text:
-                return
-            if not self.macula_db:
-                return
+            elif not (verse.semantic_frames and verse.original_text) and self.macula_db:
+                try:
+                    frame_data = get_verse_semantic_frame(verse.osis, db=self.macula_db) or {}
+                    verse.semantic_frames = frame_data.get("clauses", [])
+                    verse.original_text = frame_data.get("text", "")
+                    self._verse_frame_cache[verse.osis] = frame_data
+                except Exception:
+                    self._verse_frame_cache[verse.osis] = {}
 
-            try:
-                frame_data = get_verse_semantic_frame(verse.osis, db=self.macula_db) or {}
-                verse.semantic_frames = frame_data.get("clauses", [])
-                verse.original_text = frame_data.get("text", "")
-                self._verse_frame_cache[verse.osis] = frame_data
-            except Exception:
-                self._verse_frame_cache[verse.osis] = {}
+            # 2. Verbal grammar nuances
+            if not verse.verbal_nuances and self.macula_db:
+                if verse.osis in self._verse_nuance_cache:
+                    verse.verbal_nuances = self._verse_nuance_cache[verse.osis]
+                else:
+                    try:
+                        v_nuances = get_verse_grammar_nuances(verse.osis, db=self.macula_db)
+                        verse.verbal_nuances = v_nuances
+                        self._verse_nuance_cache[verse.osis] = v_nuances
+                    except Exception:
+                        verse.verbal_nuances = []
+
+    def get_verse_nuance_for_strongs(self, verse: VerseStudy, strongs_code: str) -> list[GrammarNuance]:
+        """Return verbal nuances for a specific Strong's number in a verse."""
+        if not verse or not verse.verbal_nuances or not strongs_code:
+            return []
+        norm = strongs_code.upper()
+        canon = norm[0] + norm[1:].lstrip("0") if len(norm) > 1 else norm
+        matches = []
+        for n in verse.verbal_nuances:
+            if not n.strongs:
+                continue
+            sc = n.strongs.upper()
+            sc_canon = sc[0] + sc[1:].lstrip("0") if len(sc) > 1 else sc
+            if sc == norm or sc_canon == canon:
+                matches.append(n)
+        return matches
+
 
     def lookup_word(self, strongs_or_lemma: str, sample_limit: int = 5) -> WordStudyResult | None:
         """Fetch in-depth lexical study for a Strong's number with high-speed indexing."""

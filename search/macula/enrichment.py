@@ -126,6 +126,8 @@ def extract_semantic_frames_from_verse(verse_data: dict[str, Any]) -> dict[str, 
                     {
                         "text": tok.get("text"),
                         "lemma": tok.get("lemma"),
+                        "morph": tok.get("morph"),
+                        "pos": tok.get("pos"),
                         "strongs": tok.get("strongs"),
                         "lxx_strongs": tok.get("lxx_strongs"),
                         "gloss": tok.get("gloss"),

@@ -462,6 +462,18 @@ class BibleStudyApp(App):
         else:
             lines.append("[dim]No syntactic clause tree available for this verse.[/dim]")
 
+        # Verbal Stems & Theological Nuances
+        if v.verbal_nuances:
+            lines.append("\n[bold magenta]VERBAL STEMS & THEOLOGICAL NUANCES:[/bold magenta]")
+            for n in v.verbal_nuances:
+                lang_tag = "Hebrew" if n.language == "hebrew" else ("Greek" if n.language == "greek" else "Aramaic")
+                orig_disp = f"[bold green]{escape(n.text)}[/bold green] ({escape(n.lemma)})" if n.text else escape(n.lemma)
+                lines.append(f"  • {orig_disp} [dim][{lang_tag}][/dim] ➔ [bold yellow]{escape(n.plain_summary)}[/bold yellow]")
+                lines.append(f"    {escape(n.theological_nuance)}")
+                if n.aspect_meaning and n.aspect_meaning != n.theological_nuance:
+                    lines.append(f"    [dim]Aspect: {escape(n.aspect_meaning)}[/dim]")
+                lines.append("")
+
         return "\n".join(lines)
 
     def _update_syntax_viewport(self) -> None:
@@ -519,6 +531,13 @@ class BibleStudyApp(App):
                 if def_lines:
                     lines.append(f"  [bold]Definition:[/bold] {escape(def_lines[0])}")
 
+                # Verbal stem and theological nuances for verbs
+                v_nuances = self.service.get_verse_nuance_for_strongs(v, w_res.strongs_id) or self.service.get_verse_nuance_for_strongs(v, s_code)
+                if v_nuances:
+                    for vn in v_nuances:
+                        lines.append(f"  [bold magenta]Verbal Stem / Form:[/bold magenta] [bold yellow]{escape(vn.plain_summary)}[/bold yellow]")
+                        lines.append(f"  [bold magenta]Theological Nuance:[/bold magenta] {escape(vn.theological_nuance)}")
+
                 # Septuagint translation equivalences with Greek glosses
                 if w_res.lxx_equivalences:
                     lxx_top = w_res.lxx_equivalences[:3]
@@ -548,6 +567,7 @@ class BibleStudyApp(App):
             lexicon_body.update("[dim]No verse selected.[/dim]")
             return
 
+        self.service.ensure_verse_frames(v)
         rendered = self._render_lexicon_content(v)
         lexicon_body.update(rendered)
         self.query_one("#lexicon-content", VerticalScroll).scroll_home(animate=False)

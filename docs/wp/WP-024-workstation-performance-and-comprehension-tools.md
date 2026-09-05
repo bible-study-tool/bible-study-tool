@@ -29,8 +29,10 @@ Deliver a fluid, instant, 60 FPS terminal study workstation (<1ms per verse step
 - [x] Subagent review with `code-reviewer`.
 
 ### Phase 2: Plain-English Verbal Stems & Theological Nuances
-- [ ] Create `search/corpus/grammar_nuance.py` to decompose Hebrew (Qal, Niphal, Piel, Hiphil, Hitpael) and Greek (Aorist, Present, Perfect, Middle) verbal morphology into plain-English theological explanations.
-- [ ] Surface verbal nuance callout cards in the Lexicon and Syntax inspector tabs.
+- [x] Create `search/corpus/grammar_nuance.py` to decompose Hebrew (Qal, Niphal, Piel, Hiphil, Hitpael) and Greek (Aorist, Present, Perfect, Middle) verbal morphology into plain-English theological explanations.
+- [x] Surface verbal nuance callout cards in the Lexicon and Syntax inspector tabs.
+- [x] Add comprehensive test suites (`search/corpus/test_grammar_nuance.py`, `search/ui/test_ui.py`, `search/ui/test_textual.py`).
+- [x] Subagent review with `code-reviewer`.
 
 ### Phase 3: Multi-Translation Parallel Engine
 - [ ] Ingest public-domain ASV and WEB into `data/bible.db`.

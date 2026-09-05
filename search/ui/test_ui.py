@@ -238,6 +238,28 @@ class StudyServiceTests(unittest.TestCase):
         res = self.service.lookup_egw_citation("PP 99999.1")
         self.assertIsNone(res)
 
+    def test_passage_study_verbal_nuances(self):
+        """Verify PassageStudy verses have verbal grammar nuances pre-populated."""
+        ps = self.service.get_passage_study("Gen 1:1")
+        self.assertTrue(len(ps.verses) >= 1)
+        v = ps.verses[0]
+        self.assertTrue(len(v.verbal_nuances) >= 1)
+        self.assertEqual(v.verbal_nuances[0].lemma, "בָּרָא")
+        self.assertIn("Exclusively Divine Initiative", v.verbal_nuances[0].theological_nuance)
+
+    def test_get_verse_nuance_for_strongs(self):
+        """Verify retrieval of verbal nuances for a specific Strong's number in a verse."""
+        ps = self.service.get_passage_study("Gen 1:1")
+        v = ps.verses[0]
+        nuances = self.service.get_verse_nuance_for_strongs(v, "H1254")
+        self.assertEqual(len(nuances), 1)
+        self.assertIn("Qal (Simple Active)", nuances[0].plain_summary)
+
+        # Test non-matching Strong's code returns empty list
+        no_match = self.service.get_verse_nuance_for_strongs(v, "H9999")
+        self.assertEqual(len(no_match), 0)
+
+
 
 
 

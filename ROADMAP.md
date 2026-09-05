@@ -63,7 +63,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 ### D. Application / UX
 - `[ ]` **D1. NotebookLM-like web UI** — long-term vision
 - `[ ]` **D2. Local on-device app** — user-supplied-text model (NOTICE.md)
-- `[x]` **D3. Reading & study experience** — Modern Textual interactive workstation (`search/ui/app.py`, `search/ui/themes.py`, `scripts/study.py`) with dual-language syntax framing, KJV word-to-Strong's mapping, full-text EGW reader, direct citation navigation (`PP 44.1`), 7 themes, smooth mouse scrolling, and tabbed inspector with classic curses fallback — WP-021, WP-022, WP-023, ADR-0017, ADR-0018, ADR-0019
+- `[x]` **D3. Reading & study experience** — Modern Textual interactive workstation (`search/ui/app.py`, `search/ui/themes.py`, `scripts/study.py`) with persistent viewport architecture (<1ms navigation), plain-English verbal stems & theological nuances (`search/corpus/grammar_nuance.py`: Qal, Niphal, Piel, Hiphil, Hitpael, Aorist Middle, Perfect Passive), dual-language syntax framing, KJV word-to-Strong's mapping, full-text EGW reader, direct citation navigation (`PP 44.1`), 7 themes, and tabbed inspector — WP-021..WP-024, ADR-0017..ADR-0020
 - `[x]` **D4. CLI polish** — Unified human-friendly CLI surface (`scripts/study.py`) and interactive readline shell (`search/ui/shell.py`) with colored typography, boxed panels, and JSON support — WP-021, ADR-0017
 
 ### E. AI Integration & Review Workflow
