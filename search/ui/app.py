@@ -271,20 +271,28 @@ class BibleStudyApp(App):
     @work(exclusive=True, thread=True)
     def load_passage_async(self, passage_ref: str) -> None:
         """Asynchronously fetch passage study, pre-warm caches, and populate UI."""
+        from textual.worker import get_current_worker
+        worker = get_current_worker()
         try:
             # Eager batch fetch ensures syntax frames are loaded in ~50ms
             study = self.service.get_passage_study(passage_ref, eager_frames=True)
-            # Pre-warm lexical data for all verses in the passage in background thread
-            unique_strongs = set()
-            for v in study.verses:
-                for sc in v.strongs_list:
-                    unique_strongs.add(sc)
-            for sc in unique_strongs:
-                self.service.lookup_word(sc, sample_limit=0)
+            if worker.is_cancelled:
+                return
 
-            self.call_from_thread(self._apply_loaded_passage, study)
+            try:
+                unique_strongs = {sc for v in study.verses for sc in v.strongs_list}
+                for sc in unique_strongs:
+                    if worker.is_cancelled:
+                        return
+                    self.service.lookup_word(sc, sample_limit=0)
+            except Exception:
+                pass  # Non-fatal cache pre-warm failure
+
+            if not worker.is_cancelled:
+                self.call_from_thread(self._apply_loaded_passage, study)
         except Exception as e:
-            self.call_from_thread(self.notify, f"Error loading passage '{passage_ref}': {e}", severity="error")
+            if not worker.is_cancelled:
+                self.call_from_thread(self.notify, f"Error loading passage '{passage_ref}': {e}", severity="error")
 
     def _apply_loaded_passage(self, study: PassageStudy) -> None:
         self.current_passage = study
@@ -335,8 +343,7 @@ class BibleStudyApp(App):
         prev = self.selected_verse_idx
         self.selected_verse_idx = event.verse_index
         self._update_selection_visuals(previous_idx=prev)
-        self._dirty_tabs.update({"tab-syntax", "tab-lexicon"})
-        self._render_active_tab()
+        self._update_inspector()
 
     def _get_inspected_verse(self) -> Optional[VerseStudy]:
         if not self.current_passage or not self.current_passage.verses:
@@ -390,20 +397,21 @@ class BibleStudyApp(App):
                 token = egw.get("token", "")
                 page = egw.get("page")
                 para = egw.get("paragraph")
-                full_text = egw.get("text") or egw.get("snippet", "").replace("[b]", "**").replace("[/b]", "**")
+                full_text = egw.get("text") or egw.get("snippet", "")
 
                 loc_str = f"Page {page}, par. {para}" if page else ""
-                hdr_sub = f" — {ch_title}" if ch_title else ""
-                lines.append(f"[bold yellow]### [{token}] {book_title}{hdr_sub}[/bold yellow]")
+                hdr_sub = f" — {escape(ch_title)}" if ch_title else ""
+                lines.append(f"[bold yellow]\\[{escape(token)}\\] {escape(book_title)}{hdr_sub}[/bold yellow]")
                 if loc_str:
-                    lines.append(f"[dim]{loc_str}[/dim]")
-                lines.append(f"\n{full_text}\n\n[dim]────────────────────────────────────────[/dim]\n")
+                    lines.append(f"[dim]{escape(loc_str)}[/dim]")
+                lines.append(f"\n{escape(full_text)}\n\n[dim]────────────────────────────────────────[/dim]\n")
         else:
             lines.append(
                 "[dim]No direct Spirit of Prophecy correlations for this chapter. Press [/] to search all writings or [g] to jump directly to a citation (e.g. PP 44.1).[/dim]"
             )
 
         commentary_body.update("\n".join(lines))
+        self.query_one("#commentary-content", VerticalScroll).scroll_home(animate=False)
 
     def _update_inspector(self, force_all: bool = False) -> None:
         """Update inspector views: marks tabs dirty and updates viewports without DOM thrashing."""
@@ -459,13 +467,15 @@ class BibleStudyApp(App):
     def _update_syntax_viewport(self) -> None:
         """Render syntactic analysis and semantic clause frames for inspected verse."""
         v = self._get_inspected_verse()
+        syntax_body = self.query_one("#syntax-body", Static)
         if not v:
+            syntax_body.update("[dim]No verse selected.[/dim]")
             return
 
         self.service.ensure_verse_frames(v)
         rendered = self._render_syntax_content(v)
-        syntax_body = self.query_one("#syntax-body", Static)
         syntax_body.update(rendered)
+        self.query_one("#syntax-content", VerticalScroll).scroll_home(animate=False)
 
     def _render_lexicon_content(self, v: VerseStudy) -> str:
         lines: list[str] = []
@@ -533,20 +543,21 @@ class BibleStudyApp(App):
     def _update_lexicon_viewport(self) -> None:
         """Render Strong's concordance, word definitions, and LXX translation equivalences."""
         v = self._get_inspected_verse()
+        lexicon_body = self.query_one("#lexicon-body", Static)
         if not v:
+            lexicon_body.update("[dim]No verse selected.[/dim]")
             return
 
         rendered = self._render_lexicon_content(v)
-        lexicon_body = self.query_one("#lexicon-body", Static)
         lexicon_body.update(rendered)
+        self.query_one("#lexicon-content", VerticalScroll).scroll_home(animate=False)
 
     def action_next_verse(self) -> None:
         if self.current_passage and self.selected_verse_idx + 1 < len(self.current_passage.verses):
             prev = self.selected_verse_idx
             self.selected_verse_idx += 1
             self._update_selection_visuals(previous_idx=prev)
-            self._dirty_tabs.update({"tab-syntax", "tab-lexicon"})
-            self._render_active_tab()
+            self._update_inspector()
             self._scroll_to_selected()
 
     def action_prev_verse(self) -> None:
@@ -554,8 +565,7 @@ class BibleStudyApp(App):
             prev = self.selected_verse_idx
             self.selected_verse_idx -= 1
             self._update_selection_visuals(previous_idx=prev)
-            self._dirty_tabs.update({"tab-syntax", "tab-lexicon"})
-            self._render_active_tab()
+            self._update_inspector()
             self._scroll_to_selected()
 
     def _scroll_to_selected(self) -> None:
@@ -574,8 +584,7 @@ class BibleStudyApp(App):
             v_ref = v.osis if v else ""
             self.notify(f"Verse {v_ref} pinned for inspection", timeout=2)
         self._update_selection_visuals(previous_idx=prev)
-        self._dirty_tabs.update({"tab-syntax", "tab-lexicon"})
-        self._render_active_tab()
+        self._update_inspector()
 
 
     def action_next_chapter(self) -> None:
@@ -644,8 +653,8 @@ class BibleStudyApp(App):
         ref_code = p.get("ref_code") or f"{btitle} {page}"
 
         lines: list[str] = []
-        lines.append(f"[bold cyan]SPIRIT OF PROPHECY READER: {ref_code}[/bold cyan]\n")
-        lines.append(f"[bold]{btitle}[/bold]\n[bold green]{chtitle}[/bold green]\n[dim]Page {page}[/dim]\n[dim]────────────────────────────────────────[/dim]\n")
+        lines.append(f"[bold cyan]SPIRIT OF PROPHECY READER: {escape(ref_code)}[/bold cyan]\n")
+        lines.append(f"[bold]{escape(btitle)}[/bold]\n[bold green]{escape(chtitle)}[/bold green]\n[dim]Page {page}[/dim]\n[dim]────────────────────────────────────────[/dim]\n")
 
         # If page paragraphs are included, render all paragraphs on that page
         page_paras = p.get("page_paragraphs")
@@ -654,18 +663,19 @@ class BibleStudyApp(App):
                 item_id = item.get("id", "")
                 is_target = item_id == cid
                 item_para = item.get("paragraph", 1)
-                item_text = item.get("text", "")
-                prefix = f"[bold yellow]### [{item_id}] (Paragraph {item_para})[/bold yellow]\n"
+                item_text = escape(item.get("text", ""))
+                prefix = f"[bold yellow]\\[{escape(item_id)}\\] (Paragraph {item_para})[/bold yellow]\n"
                 if is_target:
                     lines.append(f"{prefix}[bold white]{item_text}[/bold white]\n\n[dim]────────────────────────────────────────[/dim]\n")
                 else:
                     lines.append(f"{prefix}{item_text}\n\n[dim]────────────────────────────────────────[/dim]\n")
         else:
-            p_text = p.get("text", "")
-            lines.append(f"[bold yellow]### [{cid}][/bold yellow]\n{p_text}\n\n[dim]────────────────────────────────────────[/dim]\n")
+            p_text = escape(p.get("text", ""))
+            lines.append(f"[bold yellow]\\[{escape(cid)}\\][/bold yellow]\n{p_text}\n\n[dim]────────────────────────────────────────[/dim]\n")
 
         commentary_body.update("\n".join(lines))
         self._dirty_tabs.discard("tab-commentary")
+        self.query_one("#commentary-content", VerticalScroll).scroll_home(animate=False)
 
         # Switch to Commentary tab
         tabs = self.query_one("#inspector-tabs", TabbedContent)
@@ -693,7 +703,7 @@ class BibleStudyApp(App):
         total_hits = len(res.bible_hits) + len(res.egw_hits)
 
         lines: list[str] = []
-        lines.append(f"[bold cyan]SEARCH RESULTS FOR: '{query}'[/bold cyan]\n")
+        lines.append(f"[bold cyan]SEARCH RESULTS FOR: '{escape(query)}'[/bold cyan]\n")
         lines.append(f"[bold]Found {total_hits} matches[/bold] ({len(res.bible_hits)} Scripture, {len(res.egw_hits)} Spirit of Prophecy)\n")
 
         if res.bible_hits:
@@ -701,16 +711,18 @@ class BibleStudyApp(App):
             for b in res.bible_hits:
                 osis_str = f"{b.get('osis')}.{b.get('chapter')}.{b.get('verse')}"
                 b_text = b.get("clean_text") or b.get("text", "")
-                lines.append(f"[bold cyan]{osis_str}:[/bold cyan] {b_text}\n")
+                lines.append(f"[bold cyan]{escape(osis_str)}:[/bold cyan] {escape(b_text)}\n")
 
         if res.egw_hits:
             lines.append("[bold yellow]── SPIRIT OF PROPHECY RESULTS ──[/bold yellow]")
             for e in res.egw_hits:
                 tok = e.get("token", "")
-                snippet = e.get("snippet", "").replace("[b]", "**").replace("[/b]", "**")
-                lines.append(f"[bold yellow]**[{tok}]**[/bold yellow] {snippet}\n")
+                raw_snippet = escape(e.get("snippet", ""))
+                formatted_snippet = raw_snippet.replace("\\[b\\]", "[bold underline]").replace("\\[/b\\]", "[/bold underline]")
+                lines.append(f"[bold yellow]\\[{escape(tok)}\\][/bold yellow] {formatted_snippet}\n")
 
         search_body.update("\n".join(lines))
+        self.query_one("#search-content", VerticalScroll).scroll_home(animate=False)
 
         # Switch to Search tab
         tabs = self.query_one("#inspector-tabs", TabbedContent)
@@ -747,25 +759,23 @@ class BibleStudyApp(App):
         self.sub_title = f"{th_info.name} | [?] Help"
         self.notify(f"Theme switched to: {th_info.name}", timeout=2)
 
-    def action_tab_syntax(self) -> None:
+    def _switch_tab(self, tab_id: str) -> None:
+        """Switch active inspector tab and re-render if dirty."""
         tabs = self.query_one("#inspector-tabs", TabbedContent)
-        tabs.active = "tab-syntax"
+        tabs.active = tab_id
         self._render_active_tab()
+
+    def action_tab_syntax(self) -> None:
+        self._switch_tab("tab-syntax")
 
     def action_tab_lexicon(self) -> None:
-        tabs = self.query_one("#inspector-tabs", TabbedContent)
-        tabs.active = "tab-lexicon"
-        self._render_active_tab()
+        self._switch_tab("tab-lexicon")
 
     def action_tab_commentary(self) -> None:
-        tabs = self.query_one("#inspector-tabs", TabbedContent)
-        tabs.active = "tab-commentary"
-        self._render_active_tab()
+        self._switch_tab("tab-commentary")
 
     def action_tab_search(self) -> None:
-        tabs = self.query_one("#inspector-tabs", TabbedContent)
-        tabs.active = "tab-search"
-        self._render_active_tab()
+        self._switch_tab("tab-search")
 
     def action_show_help(self) -> None:
         self.push_screen(HelpModal())
