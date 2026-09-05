@@ -1,0 +1,576 @@
+"""Modern interactive Terminal Study Workstation built with Textual.
+
+Provides fluid, asynchronous Scripture reading, original language syntax inspection,
+Strong's lexical concordance, Spirit of Prophecy commentary, and multi-theme support.
+"""
+
+from __future__ import annotations
+
+from typing import Any, List, Optional
+
+from rich.markup import escape
+from textual import on, work
+from textual.app import App, ComposeResult
+from textual.binding import Binding
+from textual.containers import Container, Horizontal, Vertical, VerticalScroll
+from textual.message import Message
+from textual.screen import ModalScreen
+from textual.widgets import (
+    Button,
+    Footer,
+    Header,
+    Input,
+    Label,
+    Markdown,
+    Static,
+    TabbedContent,
+    TabPane,
+)
+
+from search.ui.study_service import PassageStudy, StudyService, VerseStudy
+from search.ui.themes import (
+    DEFAULT_THEME,
+    THEMES,
+    build_app_tcss,
+    get_next_theme,
+)
+
+
+class VerseClicked(Message):
+    """Event emitted when a verse is clicked in the reader."""
+
+    def __init__(self, verse_index: int) -> None:
+        super().__init__()
+        self.verse_index = verse_index
+
+
+class VerseWidget(Static):
+    """Interactive verse row in the Scripture Reader."""
+
+    def __init__(self, verse: VerseStudy, index: int, show_strongs: bool = False) -> None:
+        super().__init__(classes="verse-item")
+        self.verse = verse
+        self.index = index
+        self.show_strongs = show_strongs
+
+    def on_click(self) -> None:
+        self.post_message(VerseClicked(self.index))
+
+    def render_content(self, is_selected: bool, is_pinned: bool) -> str:
+        self.remove_class("verse-selected")
+        self.remove_class("verse-pinned")
+        if is_selected:
+            self.add_class("verse-selected")
+        elif is_pinned:
+            self.add_class("verse-pinned")
+
+        pin_indicator = "📌 " if is_pinned else ""
+        num_str = f"[bold cyan]{pin_indicator}{self.verse.verse}[/bold cyan] "
+
+        if self.show_strongs and self.verse.tokens:
+            token_parts = []
+            for tok in self.verse.tokens:
+                t_word = escape(tok.get("text", ""))
+                s_codes = tok.get("strongs", [])
+                if s_codes:
+                    token_parts.append(f"{t_word}[green]\\[{','.join(s_codes)}][/green]")
+                else:
+                    token_parts.append(t_word)
+            text = " ".join(token_parts)
+        else:
+            text = escape(self.verse.text)
+
+        return f"{num_str}{text}"
+
+
+class GotoModal(ModalScreen[Optional[str]]):
+    """Modal dialog for jumping to a specific passage."""
+
+    BINDINGS = [
+        Binding("escape", "cancel", "Cancel"),
+    ]
+
+    def action_cancel(self) -> None:
+        self.dismiss(None)
+
+    def compose(self) -> ComposeResult:
+        with Vertical(classes="modal-dialog"):
+            yield Label("GOTO PASSAGE", classes="modal-title")
+            yield Label("Enter reference (e.g. 'John 3:16', 'Ps 23', 'Rom 8', 'Gen 1'):")
+            yield Input(id="goto-input", placeholder="Book Chapter:Verse")
+            with Horizontal():
+                yield Button("Go", variant="primary", id="btn-go")
+                yield Button("Cancel", variant="default", id="btn-cancel")
+
+    @on(Input.Submitted, "#goto-input")
+    def on_submit(self, event: Input.Submitted) -> None:
+        val = event.value.strip()
+        self.dismiss(val if val else None)
+
+    @on(Button.Pressed, "#btn-go")
+    def on_go(self) -> None:
+        inp = self.query_one("#goto-input", Input)
+        val = inp.value.strip()
+        self.dismiss(val if val else None)
+
+    @on(Button.Pressed, "#btn-cancel")
+    def on_cancel(self) -> None:
+        self.dismiss(None)
+
+
+class SearchModal(ModalScreen[Optional[str]]):
+    """Modal dialog for searching Bible and Spirit of Prophecy."""
+
+    BINDINGS = [
+        Binding("escape", "cancel", "Cancel"),
+    ]
+
+    def action_cancel(self) -> None:
+        self.dismiss(None)
+
+    def compose(self) -> ComposeResult:
+        with Vertical(classes="modal-dialog"):
+            yield Label("SEARCH SCRIPTURE & SPIRIT OF PROPHECY", classes="modal-title")
+            yield Label("Enter search keywords or phrase:")
+            yield Input(id="search-input", placeholder="e.g. 'covenant', 'sanctuary', 'sabbath'")
+            with Horizontal():
+                yield Button("Search", variant="primary", id="btn-search")
+                yield Button("Cancel", variant="default", id="btn-cancel")
+
+    @on(Input.Submitted, "#search-input")
+    def on_submit(self, event: Input.Submitted) -> None:
+        val = event.value.strip()
+        self.dismiss(val if val else None)
+
+    @on(Button.Pressed, "#btn-search")
+    def on_search(self) -> None:
+        inp = self.query_one("#search-input", Input)
+        val = inp.value.strip()
+        self.dismiss(val if val else None)
+
+    @on(Button.Pressed, "#btn-cancel")
+    def on_cancel(self) -> None:
+        self.dismiss(None)
+
+
+class HelpModal(ModalScreen[None]):
+    """Modal dialog displaying keyboard shortcuts and study workflow."""
+
+    BINDINGS = [
+        Binding("escape", "dismiss_modal", "Dismiss"),
+        Binding("q", "dismiss_modal", "Dismiss"),
+    ]
+
+    def action_dismiss_modal(self) -> None:
+        self.dismiss()
+
+    def compose(self) -> ComposeResult:
+        with Vertical(classes="modal-dialog"):
+            yield Label("BIBLE STUDY WORKSTATION — KEYBOARD SHORTCUTS", classes="modal-title")
+            help_md = """
+| Key | Action |
+| :--- | :--- |
+| **`j` / `Down`** | Move to next verse |
+| **`k` / `Up`** | Move to previous verse |
+| **`n` / `p`** | Next / Previous chapter |
+| **`Space` / `Enter`** | Pin / unpin selected verse for side panel study |
+| **`g` / `Ctrl+P`** | Jump to passage (e.g. *John 3:16*, *Ps 23*) |
+| **`/`** | Search Bible & Spirit of Prophecy writings |
+| **`s`** | Toggle inline Strong's concordance numbers |
+| **`t`** | Cycle color themes (Transparent, Dracula, Catppuccin, etc.) |
+| **`f`** | Toggle Focus Mode (full-width Scripture reader) |
+| **`1 - 4`** | Jump directly to Inspector tabs (Syntax, Lexicon, EGW, Search) |
+| **`Tab`** | Toggle focus between Reader and Inspector panes |
+| **`?`** | Open this help screen |
+| **`q`** | Quit application |
+            """
+            yield Markdown(help_md)
+            yield Button("Close", variant="primary", id="btn-close-help")
+
+    @on(Button.Pressed, "#btn-close-help")
+    def on_close(self) -> None:
+        self.dismiss(None)
+
+
+class BibleStudyApp(App):
+    """Textual interactive Bible Study Workstation."""
+
+    TITLE = "Adventist Bible Study Workstation"
+    SUB_TITLE = "Offline-First Deterministic Knowledge Base"
+    CSS = build_app_tcss()
+
+    BINDINGS = [
+        Binding("q", "quit", "Quit", show=True),
+        Binding("j", "next_verse", "Down", show=False),
+        Binding("k", "prev_verse", "Up", show=False),
+        Binding("down", "next_verse", "Down", show=False),
+        Binding("up", "prev_verse", "Up", show=False),
+        Binding("n", "next_chapter", "Next Ch", show=True),
+        Binding("p", "prev_chapter", "Prev Ch", show=True),
+        Binding("space", "toggle_pin", "Pin Verse", show=True),
+        Binding("enter", "toggle_pin", "Pin", show=False),
+        Binding("g", "goto_passage", "Goto", show=True),
+        Binding("ctrl+p", "goto_passage", "Goto", show=False),
+        Binding("slash", "search_dialog", "Find", show=True),
+        Binding("s", "toggle_strongs", "Strong's", show=True),
+        Binding("t", "cycle_theme", "Theme", show=True),
+        Binding("f", "toggle_focus", "Focus", show=True),
+        Binding("1", "tab_syntax", "1:Syntax", show=False),
+        Binding("2", "tab_lexicon", "2:Lexicon", show=False),
+        Binding("3", "tab_commentary", "3:EGW", show=False),
+        Binding("4", "tab_search", "4:Search", show=False),
+        Binding("question_mark", "show_help", "Help", show=True),
+    ]
+
+    def __init__(
+        self,
+        service: StudyService | None = None,
+        initial_ref: str = "Gen 1:1",
+        initial_theme: str = DEFAULT_THEME,
+    ) -> None:
+        super().__init__()
+        self.service = service or StudyService()
+        self.current_ref = initial_ref
+        self.active_theme_id = initial_theme if initial_theme in THEMES else DEFAULT_THEME
+        self.current_passage: Optional[PassageStudy] = None
+        self.selected_verse_idx: int = 0
+        self.pinned_verse_idx: Optional[int] = None
+        self.show_strongs: bool = False
+        self.focus_mode: bool = False
+        self.verse_widgets: List[VerseWidget] = []
+
+    def compose(self) -> ComposeResult:
+        yield Header(show_clock=True)
+        with Horizontal(id="main-container"):
+            with VerticalScroll(id="reader-pane"):
+                yield Label("Loading scripture...", id="reader-loading")
+            with Container(id="inspector-pane"):
+                with TabbedContent(initial="tab-syntax", id="inspector-tabs"):
+                    with TabPane("1: Syntax & Frames", id="tab-syntax"):
+                        yield VerticalScroll(id="syntax-content")
+                    with TabPane("2: Lexicon", id="tab-lexicon"):
+                        yield VerticalScroll(id="lexicon-content")
+                    with TabPane("3: Commentary", id="tab-commentary"):
+                        yield VerticalScroll(id="commentary-content")
+                    with TabPane("4: Search Findings", id="tab-search"):
+                        yield VerticalScroll(id="search-content")
+        yield Footer()
+
+    def on_mount(self) -> None:
+        # Apply theme class
+        self.screen.add_class(f"theme-{self.active_theme_id}")
+        self.sub_title = f"{THEMES[self.active_theme_id].name} | [?] Help"
+        self.load_passage_async(self.current_ref)
+
+    @work(exclusive=True, thread=True)
+    def load_passage_async(self, passage_ref: str) -> None:
+        """Asynchronously fetch passage study and populate UI."""
+        try:
+            # Eager batch fetch ensures syntax frames are loaded in ~50ms
+            study = self.service.get_passage_study(passage_ref, eager_frames=True)
+            self.call_from_thread(self._apply_loaded_passage, study)
+        except Exception as e:
+            self.call_from_thread(self.notify, f"Error loading passage '{passage_ref}': {e}", severity="error")
+
+    def _apply_loaded_passage(self, study: PassageStudy) -> None:
+        self.current_passage = study
+        self.selected_verse_idx = 0
+        self.pinned_verse_idx = None
+        self.current_ref = study.ref
+
+        # Update app title
+        focus_str = " [FOCUS MODE]" if self.focus_mode else ""
+        self.title = f"Adventist Bible Study — {study.ref.upper()} (KJV){focus_str}"
+
+        # Populate Reader Pane
+        reader_pane = self.query_one("#reader-pane", VerticalScroll)
+        reader_pane.remove_children()
+        self.verse_widgets = []
+
+        header_label = Static(f"[bold green]── {study.book_name.upper()} CHAPTER {study.start_chapter} ──[/bold green]\n")
+        reader_pane.mount(header_label)
+
+        for idx, v in enumerate(study.verses):
+            w = VerseWidget(v, idx, show_strongs=self.show_strongs)
+            self.verse_widgets.append(w)
+            reader_pane.mount(w)
+
+        self._update_selection_visuals()
+        self._update_commentary()
+        self._update_inspector()
+
+    def _update_selection_visuals(self, previous_idx: Optional[int] = None) -> None:
+        """Refresh highlight classes only for changed verse widgets (or all if previous_idx is None)."""
+        if previous_idx is not None:
+            indices = {self.selected_verse_idx, self.pinned_verse_idx, previous_idx}
+            targets = [i for i in indices if i is not None and 0 <= i < len(self.verse_widgets)]
+        else:
+            targets = list(range(len(self.verse_widgets)))
+
+        for idx in targets:
+            w = self.verse_widgets[idx]
+            is_sel = idx == self.selected_verse_idx
+            is_pin = idx == self.pinned_verse_idx
+            rendered = w.render_content(is_selected=is_sel, is_pinned=is_pin)
+            w.update(rendered)
+
+    @on(VerseClicked)
+    def handle_verse_clicked(self, event: VerseClicked) -> None:
+        prev = self.selected_verse_idx
+        self.selected_verse_idx = event.verse_index
+        self._update_selection_visuals(previous_idx=prev)
+        self._update_inspector()
+
+    def _get_inspected_verse(self) -> Optional[VerseStudy]:
+        if not self.current_passage or not self.current_passage.verses:
+            return None
+        idx = self.pinned_verse_idx if self.pinned_verse_idx is not None else self.selected_verse_idx
+        if 0 <= idx < len(self.current_passage.verses):
+            return self.current_passage.verses[idx]
+        return None
+
+    def _update_commentary(self) -> None:
+        """Update Commentary Tab (chapter-level correlations)."""
+        commentary_box = self.query_one("#commentary-content", VerticalScroll)
+        commentary_box.remove_children()
+        commentary_box.mount(Label("SPIRIT OF PROPHECY CORRELATIONS", classes="inspector-title"))
+
+        if self.current_passage and self.current_passage.egw_correlations:
+            for egw in self.current_passage.egw_correlations:
+                heading = egw.get("heading") or egw.get("book_title") or ""
+                token = egw.get("token", "")
+                snippet = egw.get("snippet", "").replace("[b]", "**").replace("[/b]", "**")
+                md_text = f"### [{token}] {heading}\n{snippet}\n---"
+                commentary_box.mount(Markdown(md_text))
+        else:
+            commentary_box.mount(Static("[dim]No direct Spirit of Prophecy correlations for this chapter. Press [/] to search all writings.[/dim]"))
+
+    def _update_inspector(self) -> None:
+        v = self._get_inspected_verse()
+        if not v:
+            return
+
+        # Ensure frames are loaded
+        self.service.ensure_verse_frames(v)
+
+        # 1. Update Syntax Tab
+        syntax_box = self.query_one("#syntax-content", VerticalScroll)
+        syntax_box.remove_children()
+        pin_tag = " [PINNED]" if self.pinned_verse_idx is not None else ""
+        syntax_box.mount(Label(f"VERSE SYNTAX & CLAUSE FRAMES: {v.osis}{pin_tag}", classes="inspector-title"))
+
+        if v.original_text:
+            syntax_box.mount(Static(f"[bold green]Original Text:[/bold green] {v.original_text}\n"))
+
+        if v.semantic_frames:
+            for cl in v.semantic_frames:
+                c_num = cl.get("clause_num", 1)
+                syntax_box.mount(Label(f"[bold cyan]Clause {c_num} [{cl.get('rule', '')}]:[/bold cyan]"))
+                for label, items in [
+                    ("Agent", cl.get("agents", [])),
+                    ("Action", cl.get("actions", [])),
+                    ("Patient", cl.get("patients", [])),
+                    ("Context", cl.get("context", [])),
+                ]:
+                    if items:
+                        val_str = ", ".join(it["text"] for it in items)
+                        syntax_box.mount(Static(f"  • [bold]{label}:[/bold] {val_str}"))
+                syntax_box.mount(Static(""))
+        else:
+            syntax_box.mount(Static("[dim]No syntactic clause tree available for this verse.[/dim]"))
+
+        # 2. Update Lexicon Tab
+        lexicon_box = self.query_one("#lexicon-content", VerticalScroll)
+        lexicon_box.remove_children()
+        lexicon_box.mount(Label(f"STRONG'S CONCORDANCE & LEXICON: {v.osis}", classes="inspector-title"))
+
+        seen = set()
+        words_found = 0
+        for s_code in v.strongs_list:
+            if s_code in seen:
+                continue
+            seen.add(s_code)
+            w_res = self.service.lookup_word(s_code, sample_limit=0)
+            if w_res:
+                words_found += 1
+                lexicon_box.mount(Label(f"[bold cyan]{w_res.strongs_id}[/bold cyan] ({w_res.language}): [bold green]{w_res.word}[/bold green] [dim]({w_res.translit})[/dim]"))
+                if w_res.gloss:
+                    lexicon_box.mount(Static(f"  [bold]Translation Gloss:[/bold] [yellow]{w_res.gloss}[/yellow]"))
+                lexicon_box.mount(Static(f"  [dim]KJV Occurrences: {w_res.occurrences_count}[/dim]"))
+
+                # Definition clean up
+                def_lines = [l.strip() for l in w_res.definition.splitlines() if l.strip() and not l.startswith("Strong's Number")]
+                if def_lines:
+                    lexicon_box.mount(Static(f"  [bold]Definition:[/bold] {def_lines[0]}"))
+
+                # Septuagint translation equivalences
+                if w_res.lxx_equivalences:
+                    lxx_top = w_res.lxx_equivalences[:3]
+                    lxx_strs = [f"{eq.get('greek_strongs')}: {','.join(eq.get('greek_forms', []))} ({eq.get('count')}x)" for eq in lxx_top]
+                    lexicon_box.mount(Static(f"  [dim]LXX Equivalences: {' | '.join(lxx_strs)}[/dim]"))
+                lexicon_box.mount(Static(""))
+
+        if words_found == 0:
+            lexicon_box.mount(Static("[dim]No Strong's concordance tags found for this verse.[/dim]"))
+
+    def action_next_verse(self) -> None:
+        if self.current_passage and self.selected_verse_idx + 1 < len(self.current_passage.verses):
+            prev = self.selected_verse_idx
+            self.selected_verse_idx += 1
+            self._update_selection_visuals(previous_idx=prev)
+            self._update_inspector()
+            self._scroll_to_selected()
+
+    def action_prev_verse(self) -> None:
+        if self.selected_verse_idx > 0:
+            prev = self.selected_verse_idx
+            self.selected_verse_idx -= 1
+            self._update_selection_visuals(previous_idx=prev)
+            self._update_inspector()
+            self._scroll_to_selected()
+
+    def _scroll_to_selected(self) -> None:
+        if 0 <= self.selected_verse_idx < len(self.verse_widgets):
+            w = self.verse_widgets[self.selected_verse_idx]
+            w.scroll_visible()
+
+    def action_toggle_pin(self) -> None:
+        prev = self.pinned_verse_idx
+        if self.pinned_verse_idx is not None:
+            self.pinned_verse_idx = None
+            self.notify("Verse unpinned: Inspector now follows cursor", timeout=2)
+        else:
+            self.pinned_verse_idx = self.selected_verse_idx
+            v = self._get_inspected_verse()
+            v_ref = v.osis if v else ""
+            self.notify(f"Verse {v_ref} pinned for inspection", timeout=2)
+        self._update_selection_visuals(previous_idx=prev)
+        self._update_inspector()
+
+
+    def action_next_chapter(self) -> None:
+        if not self.current_passage:
+            return
+        nxt = self.service.next_passage(self.current_passage)
+        if nxt:
+            self.load_passage_async(nxt)
+        else:
+            self.notify("Reached the end of Revelation!", severity="warning")
+
+    def action_prev_chapter(self) -> None:
+        if not self.current_passage:
+            return
+        prv = self.service.prev_passage(self.current_passage)
+        if prv:
+            self.load_passage_async(prv)
+        else:
+            self.notify("Reached the beginning of Genesis!", severity="warning")
+
+    def action_goto_passage(self) -> None:
+        def on_goto_done(ref: Optional[str]) -> None:
+            if ref:
+                self.load_passage_async(ref)
+
+        self.push_screen(GotoModal(), on_goto_done)
+
+    def action_search_dialog(self) -> None:
+        def on_search_done(query: Optional[str]) -> None:
+            if query:
+                self.execute_search_async(query)
+
+        self.push_screen(SearchModal(), on_search_done)
+
+    @work(exclusive=True, thread=True)
+    def execute_search_async(self, query: str) -> None:
+        """Run unified search in background thread."""
+        try:
+            res = self.service.search_unified(query, limit_bible=10, limit_egw=5)
+            self.call_from_thread(self._apply_search_results, query, res)
+        except Exception as e:
+            self.call_from_thread(self.notify, f"Search error: {e}", severity="error")
+
+    def _apply_search_results(self, query: str, res: Any) -> None:
+        search_box = self.query_one("#search-content", VerticalScroll)
+        search_box.remove_children()
+        search_box.mount(Label(f"SEARCH RESULTS FOR: '{query}'", classes="inspector-title"))
+
+        total_hits = len(res.bible_hits) + len(res.egw_hits)
+        search_box.mount(Static(f"[bold]Found {total_hits} matches[/bold] ({len(res.bible_hits)} Scripture, {len(res.egw_hits)} Spirit of Prophecy)\n"))
+
+        if res.bible_hits:
+            search_box.mount(Label("[bold green]── SCRIPTURE RESULTS ──[/bold green]"))
+            for b in res.bible_hits:
+                osis_str = f"{b.get('osis')}.{b.get('chapter')}.{b.get('verse')}"
+                b_text = b.get("clean_text") or b.get("text", "")
+                search_box.mount(Static(f"[bold cyan]{osis_str}:[/bold cyan] {b_text}\n"))
+
+        if res.egw_hits:
+            search_box.mount(Label("[bold yellow]── SPIRIT OF PROPHECY RESULTS ──[/bold yellow]"))
+            for e in res.egw_hits:
+                tok = e.get("token", "")
+                snippet = e.get("snippet", "").replace("[b]", "**").replace("[/b]", "**")
+                search_box.mount(Markdown(f"**[{tok}]** {snippet}\n"))
+
+        # Switch to Search tab
+        tabs = self.query_one("#inspector-tabs", TabbedContent)
+        tabs.active = "tab-search"
+        self.notify(f"Search completed: {total_hits} results found", timeout=3)
+
+    def action_toggle_strongs(self) -> None:
+        self.show_strongs = not self.show_strongs
+        for w in self.verse_widgets:
+            w.show_strongs = self.show_strongs
+        state_str = "ENABLED" if self.show_strongs else "DISABLED"
+        self.notify(f"Strong's display: {state_str}", timeout=2)
+        self._update_selection_visuals()
+
+    def action_toggle_focus(self) -> None:
+        self.focus_mode = not self.focus_mode
+        reader = self.query_one("#reader-pane", VerticalScroll)
+        inspector = self.query_one("#inspector-pane", Container)
+        if self.focus_mode:
+            reader.add_class("focus-mode")
+            inspector.add_class("hidden-pane")
+            self.notify("Focus mode: Enabled (Full-Width Reader)", timeout=2)
+        else:
+            reader.remove_class("focus-mode")
+            inspector.remove_class("hidden-pane")
+            self.notify("Focus mode: Disabled (Dual Pane)", timeout=2)
+
+    def action_cycle_theme(self) -> None:
+        old_theme = self.active_theme_id
+        self.active_theme_id = get_next_theme(self.active_theme_id)
+        self.screen.remove_class(f"theme-{old_theme}")
+        self.screen.add_class(f"theme-{self.active_theme_id}")
+        th_info = THEMES[self.active_theme_id]
+        self.sub_title = f"{th_info.name} | [?] Help"
+        self.notify(f"Theme switched to: {th_info.name}", timeout=2)
+
+    def action_tab_syntax(self) -> None:
+        tabs = self.query_one("#inspector-tabs", TabbedContent)
+        tabs.active = "tab-syntax"
+
+    def action_tab_lexicon(self) -> None:
+        tabs = self.query_one("#inspector-tabs", TabbedContent)
+        tabs.active = "tab-lexicon"
+
+    def action_tab_commentary(self) -> None:
+        tabs = self.query_one("#inspector-tabs", TabbedContent)
+        tabs.active = "tab-commentary"
+
+    def action_tab_search(self) -> None:
+        tabs = self.query_one("#inspector-tabs", TabbedContent)
+        tabs.active = "tab-search"
+
+    def action_show_help(self) -> None:
+        self.push_screen(HelpModal())
+
+
+def run_textual_app(service: StudyService | None = None, initial_ref: str = "Gen 1:1", initial_theme: str = DEFAULT_THEME) -> None:
+    """Launch the modern Textual Bible Study workstation."""
+    app = BibleStudyApp(service=service, initial_ref=initial_ref, initial_theme=initial_theme)
+    app.run()
+
+
+if __name__ == "__main__":
+    run_textual_app()

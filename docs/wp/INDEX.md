@@ -32,6 +32,7 @@ entries `draft` -> `review`.
 | [WP-019](WP-019-whole-bible-english-corpus.md) | Pillar A (A2, A3, A6) | Whole-Bible English Text Integration (All 66 Books) | done |
 | [WP-020](WP-020-macula-greek-nt-integration.md) | Pillar B (B1-B3, NT) | Macula Greek (NT) Linguistic Integration & Canon Unification | done |
 | [WP-021](WP-021-study-tui-and-cli.md) | Pillar D (D3, D4) | Interactive Terminal User Interface (TUI) & Unified Study CLI | done |
+| [WP-022](WP-022-textual-study-workstation.md) | Pillar D (D3, D4) | Modern Textual Study Workstation & Theme System | done |
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1

@@ -23,6 +23,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-0015](ADR-0015-macula-semantic-enrichment.md) | Macula Semantic Role & Translation-Equivalence Enrichment | Accepted |
 | [ADR-0016](ADR-0016-two-tier-corpus-and-portable-backup.md) | Two-Tier Storage Architecture and Portable Offline Backup | Accepted |
 | [ADR-0017](ADR-0017-terminal-user-interface-and-unified-study-cli.md) | Interactive Terminal User Interface (TUI) and Unified Study CLI | Accepted |
+| [ADR-0018](ADR-0018-textual-study-workstation-and-themes.md) | Textual Study Workstation and Theme System | Accepted |
 
 
 ## When to write one
