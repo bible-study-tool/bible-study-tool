@@ -48,13 +48,14 @@ def format_bytes(bytes_count: int) -> str:
 
 def handle_export(args: argparse.Namespace) -> int:
     """Handle export subcommand."""
+    repo_root = Path(args.repo_root).resolve() if getattr(args, "repo_root", None) else REPO_ROOT
     out_path = args.output
     if not out_path:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         out_path = f"data/study_backup_{ts}.tar.gz"
 
     db_paths: list[Path] = []
-    root_data = REPO_ROOT / "data"
+    root_data = repo_root / "data"
 
     if not args.sources_only:
         if args.include_egw and (root_data / "egw.db").exists():
@@ -119,7 +120,7 @@ def handle_export(args: argparse.Namespace) -> int:
         source_paths=source_paths,
         include_sources=include_sources,
         note=args.note or "",
-        repo_root=REPO_ROOT,
+        repo_root=repo_root,
     )
 
     total_bytes = sum(f["size_bytes"] for f in manifest["files"])
@@ -283,6 +284,7 @@ def main() -> int:
     )
     exp_parser.add_argument("--db", action="append", help="Additional SQLite database path to include")
     exp_parser.add_argument("--user-data", action="append", help="Additional user annotation file/dir to include")
+    exp_parser.add_argument("--repo-root", help="Custom repository root directory (default: project root)")
 
     # inspect
     insp_parser = subparsers.add_parser("inspect", help="Inspect backup archive manifest and statistics")

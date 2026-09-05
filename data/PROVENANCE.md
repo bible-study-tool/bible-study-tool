@@ -62,6 +62,54 @@ scrollmapper reading is authoritative for GENERATED entries, hand-curated
 entries keep their own reading. Compare translations against a standard
 edition when curating.
 
+### 2b. American Standard Version (1901) — `ASV.json`
+
+| Field | Value |
+| --- | --- |
+| Upstream | <https://github.com/scrollmapper/bible_databases> |
+| Pinned commit | `e1b254cef86d0e65b1a5d1a94b8b112d0f296a2c` (master, 2026-07-10) |
+| Path | `sources/en/ASV/ASV.json` |
+| License | Public Domain (1901) |
+| Feeds | `data/bible.db` multi-translation parallel engine (WP-024 Phase 3) |
+
+SHA-256:
+
+```
+1589f16be31b2aa2e9374951ac2ba1ce9566bf3704248b2daf034b3ff9b47b40  ASV.json
+```
+
+### 2c. Berean Standard Bible (2020) — `BSB.json`
+
+| Field | Value |
+| --- | --- |
+| Upstream | <https://github.com/scrollmapper/bible_databases> |
+| Pinned commit | `e1b254cef86d0e65b1a5d1a94b8b112d0f296a2c` (master, 2026-07-10) |
+| Path | `sources/en/BSB/BSB.json` |
+| License | Public Domain (CC0 dedication by Bible Hub / Berean Bible, 2023) |
+| Feeds | `data/bible.db` modern English parallel engine (WP-024 Phase 3) |
+
+SHA-256:
+
+```
+24668c9497def405e472fa157a888fa1a4709a13e3d0e03c1dc0bdcd38fa3adf  BSB.json
+```
+
+### 2d. Young's Literal Translation (1898) — `YLT.json`
+
+| Field | Value |
+| --- | --- |
+| Upstream | <https://github.com/scrollmapper/bible_databases> |
+| Pinned commit | `e1b254cef86d0e65b1a5d1a94b8b112d0f296a2c` (master, 2026-07-10) |
+| Path | `sources/en/YLT/YLT.json` |
+| License | Public Domain (1898) |
+| Feeds | `data/bible.db` literal verbal-aspect engine (WP-024 Phase 3) |
+
+SHA-256:
+
+```
+73c9dd9466ee24cdab7872ec956aae2a8ada2d1c92203e40caeba5a14587dcea  YLT.json
+```
+
 ### 3. Open Scriptures Hebrew Bible — `OSHB-v.2.2.zip`
 
 | Field | Value |

@@ -259,6 +259,28 @@ class StudyServiceTests(unittest.TestCase):
         no_match = self.service.get_verse_nuance_for_strongs(v, "H9999")
         self.assertEqual(len(no_match), 0)
 
+    def test_passage_study_translations(self):
+        """Verify PassageStudy verses have parallel translations pre-populated."""
+        ps = self.service.get_passage_study("Gen 1:1")
+        self.assertTrue(len(ps.verses) >= 1)
+        v = ps.verses[0]
+        self.assertIn("kjv", v.translations)
+        self.assertIn("asv", v.translations)
+        self.assertIn("bsb", v.translations)
+        self.assertIn("ylt", v.translations)
+        self.assertIn("created the heaven", v.translations["kjv"])
+        self.assertIn("created the heavens", v.translations["bsb"])
+
+    def test_get_available_translations(self):
+        """Verify StudyService returns available translations list."""
+        translations = self.service.get_available_translations()
+        self.assertGreaterEqual(len(translations), 4)
+        t_ids = {t["id"] for t in translations}
+        self.assertIn("kjv", t_ids)
+        self.assertIn("bsb", t_ids)
+        self.assertIn("asv", t_ids)
+        self.assertIn("ylt", t_ids)
+
 
 
 

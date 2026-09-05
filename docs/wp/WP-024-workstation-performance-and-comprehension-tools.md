@@ -1,7 +1,7 @@
 # WP-024: Textual Workstation Performance & Biblical Comprehension Tools
 
-status: open
-scope: Eliminate interaction-layer sluggishness via the persistent viewport pattern and lazy tab rendering (Phase 1), then implement plain-English verbal stems and multi-translation view (Phase 2-3).
+status: completed
+scope: Eliminate interaction-layer sluggishness via the persistent viewport pattern and lazy tab rendering (Phase 1), then implement plain-English verbal stems (Phase 2) and multi-translation parallel engine (Phase 3).
 priority: high
 
 ## Objective
@@ -35,11 +35,20 @@ Deliver a fluid, instant, 60 FPS terminal study workstation (<1ms per verse step
 - [x] Subagent review with `code-reviewer`.
 
 ### Phase 3: Multi-Translation Parallel Engine
-- [ ] Ingest public-domain ASV and WEB into `data/bible.db`.
-- [ ] Implement translation comparison card and side-by-side toggle (`v`).
+- [x] Pinned upstream public-domain translations (ASV 1901, BSB 2020, YLT 1898) with SHA-256 provenance in `data/PROVENANCE.md` and `scripts/fetch_sources.sh`.
+- [x] Extended `BibleDB` (`search/corpus/extract_kjv.py`) with `translations` and `translation_verses` schema and batch queries (`get_verse_translations`, `get_chapter_translations`).
+- [x] Implemented ingestion engine in `search/corpus/extract_translations.py` (ingested 31,102 verses each for ASV, BSB, and YLT).
+- [x] Integrated into `VerseStudy.translations` and `StudyService` with chapter-level batch prefetching.
+- [x] Surfaced in Textual workstation:
+  - Inspector Tab 4: `Parallel` (`tab-parallel`) with full translation comparison cards.
+  - Reader Pane toggle: `v` key toggles stacked parallel translation lines under each verse.
+- [x] Added unit and async tests (`search/corpus/test_extract_translations.py`, `search/ui/test_ui.py`, `search/ui/test_textual.py`).
+- [x] Full verification with `bash scripts/verify_all.sh` (511 tests passing clean).
+- [x] Subagent review with `code-reviewer`.
 
 ## Acceptance Criteria
-- [ ] Verse cursor movement (`j`/`k`, up/down) is instantaneous with zero DOM allocations on keypress.
-- [ ] Inactive tabs are never rendered during cursor movement.
-- [ ] Switching tabs updates the viewport immediately with the active verse data.
-- [ ] All 474+ tests pass clean via `bash scripts/verify_all.sh`.
+- [x] Verse cursor movement (`j`/`k`, up/down) is instantaneous with zero DOM allocations on keypress.
+- [x] Inactive tabs are never rendered during cursor movement.
+- [x] Switching tabs updates the viewport immediately with the active verse data.
+- [x] Parallel translations (KJV, BSB, ASV, YLT) are available both as an inspector comparison tab and stacked reader view.
+- [x] All 511 tests pass clean via `bash scripts/verify_all.sh`.

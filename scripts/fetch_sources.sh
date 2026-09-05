@@ -21,6 +21,9 @@ GMLEWIS_PIN="c9432716b19d039f06a2aebbd1f10b911c6254b0"
 GMLEWIS_URL="https://github.com/gmlewis/bible-codes/archive/${GMLEWIS_PIN}.zip"
 SCROLLMAPPER_PIN="e1b254cef86d0e65b1a5d1a94b8b112d0f296a2c"
 SCROLLMAPPER_URL="https://raw.githubusercontent.com/scrollmapper/bible_databases/${SCROLLMAPPER_PIN}/sources/en/KJV/KJV-osis.json"
+SCROLLMAPPER_ASV_URL="https://raw.githubusercontent.com/scrollmapper/bible_databases/${SCROLLMAPPER_PIN}/sources/en/ASV/ASV.json"
+SCROLLMAPPER_BSB_URL="https://raw.githubusercontent.com/scrollmapper/bible_databases/${SCROLLMAPPER_PIN}/sources/en/BSB/BSB.json"
+SCROLLMAPPER_YLT_URL="https://raw.githubusercontent.com/scrollmapper/bible_databases/${SCROLLMAPPER_PIN}/sources/en/YLT/YLT.json"
 OSHB_URL="https://github.com/openscriptures/morphhb/archive/refs/tags/v.2.2.zip"
 STEPBIBLE_PIN="efe428a0047bf7b9c3ce2624f60c252c6e435945"
 TBESH_URL="https://raw.githubusercontent.com/STEPBible/STEPBible-Data/${STEPBIBLE_PIN}/Lexicons/TBESH%20-%20Translators%20Brief%20lexicon%20of%20Extended%20Strongs%20for%20Hebrew%20-%20STEPBible.org%20CC%20BY.txt"
@@ -107,8 +110,11 @@ else
   echo "[skip] strongs/*.go already present"
 fi
 
-# --- 2. scrollmapper KJV-osis ------------------------------------------------
+# --- 2. scrollmapper KJV-osis & parallel translations ------------------------
 fetch "$SCROLLMAPPER_URL" "$DATA/KJV-osis.json"
+fetch "$SCROLLMAPPER_ASV_URL" "$DATA/ASV.json"
+fetch "$SCROLLMAPPER_BSB_URL" "$DATA/BSB.json"
+fetch "$SCROLLMAPPER_YLT_URL" "$DATA/YLT.json"
 
 # --- 3. Open Scriptures Hebrew Bible v.2.2 -----------------------------------
 fetch "$OSHB_URL" "$DATA/OSHB-v.2.2.zip"

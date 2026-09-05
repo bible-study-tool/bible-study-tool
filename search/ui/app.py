@@ -48,11 +48,18 @@ class VerseClicked(Message):
 class VerseWidget(Static):
     """Interactive verse row in the Scripture Reader."""
 
-    def __init__(self, verse: VerseStudy, index: int, show_strongs: bool = False) -> None:
+    def __init__(
+        self,
+        verse: VerseStudy,
+        index: int,
+        show_strongs: bool = False,
+        show_parallel: bool = False,
+    ) -> None:
         super().__init__(classes="verse-item")
         self.verse = verse
         self.index = index
         self.show_strongs = show_strongs
+        self.show_parallel = show_parallel
 
     def on_click(self) -> None:
         self.post_message(VerseClicked(self.index))
@@ -81,7 +88,16 @@ class VerseWidget(Static):
         else:
             text = escape(self.verse.text)
 
-        return f"{num_str}{text}"
+        lines = [f"{num_str}{text}"]
+
+        if self.show_parallel and self.verse.translations:
+            # Render BSB, ASV, and YLT stacked under the primary KJV verse
+            for t_id, label, color in [("bsb", "BSB", "green"), ("asv", "ASV", "magenta"), ("ylt", "YLT", "blue")]:
+                t_val = self.verse.translations.get(t_id)
+                if t_val:
+                    lines.append(f"   [bold {color}]{label}:[/bold {color}] [dim]{escape(t_val)}[/dim]")
+
+        return "\n".join(lines)
 
 
 class GotoModal(ModalScreen[Optional[str]]):
@@ -178,9 +194,10 @@ class HelpModal(ModalScreen[None]):
 | **`g` / `Ctrl+P`** | Jump to passage (e.g. *John 3:16*) or EGW citation (e.g. *PP 44.1*) |
 | **`/`** | Search Bible & Spirit of Prophecy writings |
 | **`s`** | Toggle inline Strong's concordance numbers |
+| **`v`** | Toggle stacked parallel translations (BSB, ASV, YLT) in Reader |
 | **`t`** | Cycle color themes (Transparent, Dracula, Catppuccin, etc.) |
 | **`f`** | Toggle Focus Mode (full-width Scripture reader) |
-| **`1 - 4`** | Jump directly to Inspector tabs (Syntax, Lexicon, EGW, Search) |
+| **`1 - 5`** | Jump directly to Inspector tabs (Syntax, Lexicon, EGW, Parallel, Search) |
 | **`Tab`** | Toggle focus between Reader and Inspector panes |
 | **`?`** | Open this help screen |
 | **`q`** | Quit application |
@@ -214,12 +231,14 @@ class BibleStudyApp(App):
         Binding("ctrl+p", "goto_passage", "Goto", show=False),
         Binding("slash", "search_dialog", "Find", show=True),
         Binding("s", "toggle_strongs", "Strong's", show=True),
+        Binding("v", "toggle_parallel", "Parallel", show=True),
         Binding("t", "cycle_theme", "Theme", show=True),
         Binding("f", "toggle_focus", "Focus", show=True),
         Binding("1", "tab_syntax", "1:Syntax", show=False),
         Binding("2", "tab_lexicon", "2:Lexicon", show=False),
         Binding("3", "tab_commentary", "3:EGW", show=False),
-        Binding("4", "tab_search", "4:Search", show=False),
+        Binding("4", "tab_parallel", "4:Parallel", show=False),
+        Binding("5", "tab_search", "5:Search", show=False),
         Binding("question_mark", "show_help", "Help", show=True),
     ]
 
@@ -237,9 +256,10 @@ class BibleStudyApp(App):
         self.selected_verse_idx: int = 0
         self.pinned_verse_idx: Optional[int] = None
         self.show_strongs: bool = False
+        self.show_parallel: bool = False
         self.focus_mode: bool = False
         self.verse_widgets: List[VerseWidget] = []
-        self._dirty_tabs: set[str] = {"tab-syntax", "tab-lexicon", "tab-commentary"}
+        self._dirty_tabs: set[str] = {"tab-syntax", "tab-lexicon", "tab-commentary", "tab-parallel"}
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -257,7 +277,10 @@ class BibleStudyApp(App):
                     with TabPane("3: Commentary", id="tab-commentary"):
                         with VerticalScroll(id="commentary-content"):
                             yield Static(id="commentary-body")
-                    with TabPane("4: Search Findings", id="tab-search"):
+                    with TabPane("4: Parallel", id="tab-parallel"):
+                        with VerticalScroll(id="parallel-content"):
+                            yield Static(id="parallel-body")
+                    with TabPane("5: Search Findings", id="tab-search"):
                         with VerticalScroll(id="search-content"):
                             yield Static(id="search-body")
         yield Footer()
@@ -313,14 +336,14 @@ class BibleStudyApp(App):
         widgets_to_mount: list[Widget] = [header_label]
 
         for idx, v in enumerate(study.verses):
-            w = VerseWidget(v, idx, show_strongs=self.show_strongs)
+            w = VerseWidget(v, idx, show_strongs=self.show_strongs, show_parallel=self.show_parallel)
             self.verse_widgets.append(w)
             widgets_to_mount.append(w)
 
         reader_pane.mount_all(widgets_to_mount)
 
         self._update_selection_visuals()
-        self._dirty_tabs = {"tab-syntax", "tab-lexicon", "tab-commentary"}
+        self._dirty_tabs = {"tab-syntax", "tab-lexicon", "tab-commentary", "tab-parallel"}
         self._render_active_tab()
 
     def _update_selection_visuals(self, previous_idx: Optional[int] = None) -> None:
@@ -378,6 +401,9 @@ class BibleStudyApp(App):
         elif active_tab == "tab-commentary":
             self._update_commentary_viewport()
             self._dirty_tabs.discard("tab-commentary")
+        elif active_tab == "tab-parallel":
+            self._update_parallel_viewport()
+            self._dirty_tabs.discard("tab-parallel")
 
     def _update_commentary(self) -> None:
         """Backward-compatible commentary update: marks commentary dirty and renders if active."""
@@ -413,14 +439,69 @@ class BibleStudyApp(App):
         commentary_body.update("\n".join(lines))
         self.query_one("#commentary-content", VerticalScroll).scroll_home(animate=False)
 
+    def _render_parallel_content(self, v: VerseStudy) -> str:
+        """Format parallel translations comparison for the active verse."""
+        lines: list[str] = []
+        pin_tag = " [PINNED]" if self.pinned_verse_idx is not None else ""
+        lines.append(f"[bold cyan]PARALLEL TRANSLATIONS — {v.osis}{pin_tag}[/bold cyan]\n")
+
+        # 1. Primary Reference: KJV
+        kjv_text = v.translations.get("kjv") or v.text
+        lines.append("[bold yellow]King James Version (KJV 1769)[/bold yellow]")
+        lines.append(f"  {escape(kjv_text)}\n")
+
+        # 2. Modern English: BSB
+        bsb_text = v.translations.get("bsb")
+        if bsb_text:
+            lines.append("[bold green]Berean Standard Bible (BSB 2020) — Accessible Modern English[/bold green]")
+            lines.append(f"  {escape(bsb_text)}\n")
+
+        # 3. Classic Literal: ASV
+        asv_text = v.translations.get("asv")
+        if asv_text:
+            lines.append("[bold magenta]American Standard Version (ASV 1901) — Formal Equivalence[/bold magenta]")
+            lines.append(f"  {escape(asv_text)}\n")
+
+        # 4. Ultra-Literal Verbal Aspect: YLT
+        ylt_text = v.translations.get("ylt")
+        if ylt_text:
+            lines.append("[bold blue]Young's Literal Translation (YLT 1898) — Strict Verbal Aspect[/bold blue]")
+            lines.append(f"  {escape(ylt_text)}\n")
+
+        # 5. Any additional ingested translations
+        known_keys = {"kjv", "bsb", "asv", "ylt"}
+        for tid, ttext in sorted(v.translations.items()):
+            if tid not in known_keys and ttext:
+                lines.append(f"[bold white]{escape(tid.upper())}[/bold white]")
+                lines.append(f"  {escape(ttext)}\n")
+
+        lines.append("[dim]────────────────────────────────────────[/dim]")
+        lines.append("[dim]Press \\[v\\] in the Reader pane to toggle stacked parallel translations under each verse.[/dim]")
+
+        return "\n".join(lines)
+
+    def _update_parallel_viewport(self) -> None:
+        """Update Parallel Translations Tab."""
+        v = self._get_inspected_verse()
+        parallel_body = self.query_one("#parallel-body", Static)
+        if not v:
+            parallel_body.update("[dim]No verse selected.[/dim]")
+            return
+
+        rendered = self._render_parallel_content(v)
+        parallel_body.update(rendered)
+        self.query_one("#parallel-content", VerticalScroll).scroll_home(animate=False)
+
     def _update_inspector(self, force_all: bool = False) -> None:
         """Update inspector views: marks tabs dirty and updates viewports without DOM thrashing."""
-        self._dirty_tabs.update({"tab-syntax", "tab-lexicon"})
+        self._dirty_tabs.update({"tab-syntax", "tab-lexicon", "tab-parallel"})
         if force_all:
             self._update_syntax_viewport()
             self._update_lexicon_viewport()
+            self._update_parallel_viewport()
             self._dirty_tabs.discard("tab-syntax")
             self._dirty_tabs.discard("tab-lexicon")
+            self._dirty_tabs.discard("tab-parallel")
         else:
             self._render_active_tab()
 
@@ -758,6 +839,15 @@ class BibleStudyApp(App):
         self.notify(f"Strong's display: {state_str}", timeout=2)
         self._update_selection_visuals()
 
+    def action_toggle_parallel(self) -> None:
+        """Toggle stacked parallel translations display in the Reader pane."""
+        self.show_parallel = not self.show_parallel
+        for w in self.verse_widgets:
+            w.show_parallel = self.show_parallel
+        state_str = "ENABLED" if self.show_parallel else "DISABLED"
+        self.notify(f"Stacked parallel translations: {state_str}", timeout=2)
+        self._update_selection_visuals()
+
     def action_toggle_focus(self) -> None:
         self.focus_mode = not self.focus_mode
         reader = self.query_one("#reader-pane", VerticalScroll)
@@ -794,6 +884,9 @@ class BibleStudyApp(App):
 
     def action_tab_commentary(self) -> None:
         self._switch_tab("tab-commentary")
+
+    def action_tab_parallel(self) -> None:
+        self._switch_tab("tab-parallel")
 
     def action_tab_search(self) -> None:
         self._switch_tab("tab-search")

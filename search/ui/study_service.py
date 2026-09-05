@@ -50,6 +50,7 @@ class VerseStudy:
     original_text: str = ""
     strongs_list: list[str] = field(default_factory=list)
     verbal_nuances: list[GrammarNuance] = field(default_factory=list)
+    translations: dict[str, str] = field(default_factory=dict)
 
 
 
@@ -175,6 +176,14 @@ class StudyService:
                 except Exception:
                     batch_nuances = {}
 
+            # Pre-fetch parallel translations in a single fast query
+            batch_translations: dict[int, dict[str, str]] = {}
+            if self.bible_db and verses_raw:
+                try:
+                    batch_translations = self.bible_db.get_chapter_translations(book_code, ch)
+                except Exception:
+                    batch_translations = {}
+
             for vr in verses_raw:
                 verse_id = f"{vr['osis']}.{vr['chapter']}.{vr['verse']}"
                 tokens = vr.get("tokens", [])
@@ -205,6 +214,9 @@ class StudyService:
                         frames = []
 
                 v_nuances = batch_nuances.get(verse_id, [])
+                v_trans = batch_translations.get(vr["verse"], {})
+                if not v_trans.get("kjv"):
+                    v_trans["kjv"] = vr.get("clean_text") or vr["text"]
 
                 verse_studies.append(
                     VerseStudy(
@@ -218,6 +230,7 @@ class StudyService:
                         original_text=orig_text,
                         strongs_list=strongs_in_v,
                         verbal_nuances=v_nuances,
+                        translations=v_trans,
                     )
                 )
 
@@ -351,6 +364,16 @@ class StudyService:
             if sc == norm or sc_canon == canon:
                 matches.append(n)
         return matches
+
+    def get_available_translations(self) -> list[dict[str, Any]]:
+        """Return metadata for all available Bible translations."""
+        if not self.bible_db:
+            return []
+        with self._lock:
+            try:
+                return self.bible_db.list_translations()
+            except Exception:
+                return []
 
 
     def lookup_word(self, strongs_or_lemma: str, sample_limit: int = 5) -> WordStudyResult | None:

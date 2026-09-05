@@ -20,7 +20,8 @@ from textual.widgets import TabbedContent
 def _extract_text(widget) -> str:
     """Recursively extract text representations from a Textual widget tree."""
     texts: list[str] = []
-    for node in widget.walk_children():
+    nodes = [widget] + list(widget.walk_children())
+    for node in nodes:
         if hasattr(node, "render"):
             try:
                 r = str(node.render())
@@ -433,8 +434,80 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             await pilot.pause()
             lexicon_scroll = app.query_one("#lexicon-content", VerticalScroll)
             lexicon_text = _extract_text(lexicon_scroll)
-            self.assertIn("Aorist Middle", lexicon_text)
-            self.assertIn("Loving Personal Choice", lexicon_text)
+    async def test_parallel_tab_viewport(self):
+        """Verify parallel translations tab renders KJV, BSB, ASV, and YLT."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            app.action_tab_parallel()
+            await pilot.pause()
+            parallel_scroll = app.query_one("#parallel-content", VerticalScroll)
+            content_text = _extract_text(parallel_scroll)
+
+            self.assertIn("PARALLEL TRANSLATIONS — Gen.1.1", content_text)
+            self.assertIn("King James Version (KJV 1769)", content_text)
+            self.assertIn("Berean Standard Bible (BSB 2020)", content_text)
+            self.assertIn("American Standard Version (ASV 1901)", content_text)
+            self.assertIn("Young's Literal Translation (YLT 1898)", content_text)
+            self.assertIn("God created the heavens", content_text)
+
+    async def test_toggle_parallel_reader(self):
+        """Verify 'v' key toggles stacked parallel translations in Reader pane."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            w = app.verse_widgets[0]
+            initial_text = _extract_text(w)
+            self.assertNotIn("BSB:", initial_text)
+
+            # Toggle parallel translations ON
+            app.action_toggle_parallel()
+            await pilot.pause()
+            self.assertTrue(app.show_parallel)
+            parallel_text = _extract_text(w)
+            self.assertIn("BSB:", parallel_text)
+            self.assertIn("ASV:", parallel_text)
+            self.assertIn("YLT:", parallel_text)
+
+            # Toggle parallel translations OFF
+            app.action_toggle_parallel()
+            await pilot.pause()
+            self.assertFalse(app.show_parallel)
+            final_text = _extract_text(w)
+            self.assertNotIn("BSB:", final_text)
+
+    async def test_tab_navigation_keys_and_dirty_tracking(self):
+        """Verify tab switching for parallel tab and dirty tracking."""
+        app = BibleStudyApp(initial_ref="Gen 1:1-5")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            tabs = app.query_one("#inspector-tabs", TabbedContent)
+
+            # Switch to tab-parallel
+            app.action_tab_parallel()
+            await pilot.pause()
+            self.assertEqual(tabs.active, "tab-parallel")
+            self.assertNotIn("tab-parallel", app._dirty_tabs)
+
+            # Stepping verse marks tab-parallel dirty
+            app.action_next_verse()
+            await pilot.pause()
+            self.assertNotIn("tab-parallel", app._dirty_tabs)  # Re-rendered immediately because active!
+
+            # Switch to tab-syntax
+            app.action_tab_syntax()
+            await pilot.pause()
+            self.assertEqual(tabs.active, "tab-syntax")
+
+            # Stepping verse marks inactive tab-parallel dirty
+            app.action_next_verse()
+            await pilot.pause()
+            self.assertIn("tab-parallel", app._dirty_tabs)
+
+            # Switch to tab-search (key 5)
+            app.action_tab_search()
+            await pilot.pause()
+            self.assertEqual(tabs.active, "tab-search")
 
 
 

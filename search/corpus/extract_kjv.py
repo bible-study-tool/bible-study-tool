@@ -131,11 +131,31 @@ CREATE TABLE IF NOT EXISTS verses (
     strongs_json TEXT NOT NULL,
     tokens_json TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS translations (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    year INTEGER,
+    license TEXT NOT NULL,
+    is_default INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS translation_verses (
+    translation_id TEXT NOT NULL REFERENCES translations(id),
+    verse_id TEXT NOT NULL,
+    osis TEXT NOT NULL REFERENCES books(osis),
+    chapter INTEGER NOT NULL,
+    verse INTEGER NOT NULL,
+    text TEXT NOT NULL,
+    PRIMARY KEY (translation_id, verse_id)
+);
 """
 
 _INDICES_SCHEMA = """
 CREATE INDEX IF NOT EXISTS idx_verses_osis_ch ON verses(osis, chapter, verse);
 CREATE INDEX IF NOT EXISTS idx_verses_osis ON verses(osis);
+CREATE INDEX IF NOT EXISTS idx_trans_verses_verse ON translation_verses(verse_id);
+CREATE INDEX IF NOT EXISTS idx_trans_verses_ch ON translation_verses(translation_id, osis, chapter);
 """
 
 _FTS_SCHEMA = """
@@ -187,6 +207,7 @@ class BibleDB:
             self._conn.row_factory = sqlite3.Row
             self._conn.execute("PRAGMA foreign_keys = ON;")
             self._conn.execute("PRAGMA journal_mode = WAL;")
+            self._ensure_translation_tables()
         return self._conn
 
     def exists(self) -> bool:
@@ -356,6 +377,249 @@ class BibleDB:
             (search_pattern, limit),
         )
         return [self._format_verse_row(r) for r in cur.fetchall()]
+
+    def _ensure_translation_tables(self) -> None:
+        """Ensure multi-translation tables and indices exist."""
+        if not self.db_path.exists() or self.db_path.stat().st_size == 0:
+            return
+        if self._conn is None:
+            _ = self.conn
+            return
+        try:
+            with self._conn:
+                self._conn.execute("""
+                CREATE TABLE IF NOT EXISTS translations (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    year INTEGER,
+                    license TEXT NOT NULL,
+                    is_default INTEGER NOT NULL DEFAULT 0
+                );
+                """)
+                self._conn.execute("""
+                CREATE TABLE IF NOT EXISTS translation_verses (
+                    translation_id TEXT NOT NULL,
+                    verse_id TEXT NOT NULL,
+                    osis TEXT NOT NULL,
+                    chapter INTEGER NOT NULL,
+                    verse INTEGER NOT NULL,
+                    text TEXT NOT NULL,
+                    PRIMARY KEY (translation_id, verse_id)
+                );
+                """)
+                self._conn.execute("CREATE INDEX IF NOT EXISTS idx_trans_verses_verse ON translation_verses(verse_id);")
+                self._conn.execute("CREATE INDEX IF NOT EXISTS idx_trans_verses_ch ON translation_verses(translation_id, osis, chapter);")
+                self._conn.execute("""
+                INSERT OR IGNORE INTO translations (id, name, year, license, is_default)
+                VALUES ('kjv', 'King James Version', 1769, 'Public Domain', 1);
+                """)
+        except sqlite3.OperationalError:
+            pass
+
+    def list_translations(self) -> list[dict[str, Any]]:
+        """List all available translations in the database."""
+        if not self.exists():
+            return []
+        try:
+            with self.conn:
+                cur = self.conn.execute(
+                    "SELECT id, name, year, license, is_default FROM translations ORDER BY is_default DESC, year ASC, id ASC;"
+                )
+                return [dict(r) for r in cur.fetchall()]
+        except sqlite3.OperationalError:
+            return []
+
+    def get_verse_translations(
+        self,
+        verse_ref: str,
+        translation_ids: list[str] | None = None,
+    ) -> dict[str, str]:
+        """Fetch all translation renderings for a specific verse (e.g. 'Gen.1.1' or 'John 3:16').
+
+        Returns mapping of translation_id -> verse text (including 'kjv' from verses table).
+        """
+        if not self.exists():
+            return {}
+        try:
+            osis, ch, v1, _ = parse_passage_ref(verse_ref)
+        except ValueError:
+            return {}
+        v_num = v1 if v1 is not None else 1
+        v_id = f"{osis}.{ch}.{v_num}"
+
+        result: dict[str, str] = {}
+        wanted_kjv = translation_ids is None or "kjv" in {t.lower() for t in translation_ids}
+
+        # 1. Fetch KJV clean_text from primary verses table if requested and present
+        if wanted_kjv:
+            try:
+                cur_kjv = self.conn.execute(
+                    "SELECT clean_text FROM verses WHERE osis = ? AND chapter = ? AND verse = ?;",
+                    (osis, ch, v_num),
+                )
+                row_kjv = cur_kjv.fetchone()
+                if row_kjv:
+                    result["kjv"] = row_kjv["clean_text"]
+            except sqlite3.OperationalError:
+                pass
+
+        # 2. Fetch parallel translations
+        try:
+            if translation_ids is not None:
+                wanted = [t.lower() for t in translation_ids if t.lower() != "kjv"]
+                if wanted:
+                    placeholders = ",".join("?" for _ in wanted)
+                    sql = (
+                        f"SELECT translation_id, text FROM translation_verses "
+                        f"WHERE verse_id = ? AND translation_id IN ({placeholders});"
+                    )
+                    cur = self.conn.execute(sql, [v_id] + wanted)
+                    for r in cur.fetchall():
+                        result[r["translation_id"]] = r["text"]
+            else:
+                cur = self.conn.execute(
+                    "SELECT translation_id, text FROM translation_verses WHERE verse_id = ?;",
+                    (v_id,),
+                )
+                for r in cur.fetchall():
+                    result[r["translation_id"]] = r["text"]
+        except sqlite3.OperationalError:
+            pass
+
+        return result
+
+    def get_chapter_translations(
+        self,
+        osis: str,
+        chapter: int,
+        translation_ids: list[str] | None = None,
+    ) -> dict[int, dict[str, str]]:
+        """Fetch all translation renderings for an entire chapter in a single batch query.
+
+        Returns mapping: verse_number -> {translation_id: text}.
+        """
+        if not self.exists():
+            return {}
+        try:
+            norm_osis = resolve_book_code(osis)
+        except ValueError:
+            return {}
+
+        result: dict[int, dict[str, str]] = {}
+        wanted_kjv = translation_ids is None or "kjv" in {t.lower() for t in translation_ids}
+
+        # 1. Fetch KJV verses if requested and present
+        if wanted_kjv:
+            try:
+                cur_kjv = self.conn.execute(
+                    "SELECT verse, clean_text FROM verses WHERE osis = ? AND chapter = ? ORDER BY verse ASC;",
+                    (norm_osis, chapter),
+                )
+                for r in cur_kjv.fetchall():
+                    v_num = r["verse"]
+                    if v_num not in result:
+                        result[v_num] = {}
+                    result[v_num]["kjv"] = r["clean_text"]
+            except sqlite3.OperationalError:
+                pass
+
+        # 2. Fetch parallel translation verses
+        try:
+            if translation_ids is not None:
+                wanted = [t.lower() for t in translation_ids if t.lower() != "kjv"]
+                if wanted:
+                    placeholders = ",".join("?" for _ in wanted)
+                    sql = (
+                        f"SELECT verse, translation_id, text FROM translation_verses "
+                        f"WHERE osis = ? AND chapter = ? AND translation_id IN ({placeholders}) "
+                        f"ORDER BY verse ASC, translation_id ASC;"
+                    )
+                    cur = self.conn.execute(sql, [norm_osis, chapter] + wanted)
+                    for r in cur.fetchall():
+                        v_num = r["verse"]
+                        if v_num not in result:
+                            result[v_num] = {}
+                        result[v_num][r["translation_id"]] = r["text"]
+            else:
+                sql = (
+                    "SELECT verse, translation_id, text FROM translation_verses "
+                    "WHERE osis = ? AND chapter = ? "
+                    "ORDER BY verse ASC, translation_id ASC;"
+                )
+                cur = self.conn.execute(sql, (norm_osis, chapter))
+                for r in cur.fetchall():
+                    v_num = r["verse"]
+                    if v_num not in result:
+                        result[v_num] = {}
+                    result[v_num][r["translation_id"]] = r["text"]
+        except sqlite3.OperationalError:
+            pass
+
+        return result
+
+    def ingest_translation(
+        self,
+        translation_id: str,
+        name: str,
+        year: int,
+        license: str,
+        json_path: str | Path,
+        is_default: bool = False,
+        batch_size: int = 2000,
+    ) -> int:
+        """Ingest a translation JSON into the database.
+
+        Returns total number of verses inserted.
+        """
+        src_path = Path(json_path)
+        if not src_path.is_file():
+            raise FileNotFoundError(f"Translation JSON not found at {src_path}")
+
+        t_id = translation_id.strip().lower()
+        self._ensure_translation_tables()
+
+        with self.conn:
+            self.conn.execute(
+                "INSERT OR REPLACE INTO translations (id, name, year, license, is_default) VALUES (?, ?, ?, ?, ?);",
+                (t_id, name, year, license, 1 if is_default else 0),
+            )
+
+        payload = json.loads(src_path.read_text(encoding="utf-8"))
+        rows: list[tuple[str, str, str, int, int, str]] = []
+        count = 0
+
+        def flush():
+            nonlocal count
+            if rows:
+                with self.conn:
+                    self.conn.executemany(
+                        "INSERT OR REPLACE INTO translation_verses (translation_id, verse_id, osis, chapter, verse, text) "
+                        "VALUES (?, ?, ?, ?, ?, ?);",
+                        rows,
+                    )
+                count += len(rows)
+                rows.clear()
+
+        for book in payload.get("books", []):
+            raw_name = book.get("name", "")
+            try:
+                osis = resolve_book_code(raw_name)
+            except ValueError:
+                continue
+            for ch in book.get("chapters", []):
+                ch_num = int(ch.get("chapter", 1))
+                for v in ch.get("verses", []):
+                    v_num = int(v.get("verse", 1))
+                    raw_text = v.get("text", "")
+                    clean_text = html.unescape(raw_text).strip()
+                    clean_text = _WS_RE.sub(" ", clean_text)
+                    v_id = f"{osis}.{ch_num}.{v_num}"
+                    rows.append((t_id, v_id, osis, ch_num, v_num, clean_text))
+                    if len(rows) >= batch_size:
+                        flush()
+
+        flush()
+        return count
 
     @staticmethod
     def _format_verse_row(row: sqlite3.Row) -> dict[str, Any]:
