@@ -536,6 +536,35 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             self.assertIn("doctrine to holy living", syntax_text)
             self.assertIn("Passage Context:", syntax_text)
 
+    async def test_reader_ot_citation_badge_and_syntax_card(self):
+        """Verify Reader pane shows OT citation badge and Syntax tab renders citation anchor card."""
+        app = BibleStudyApp(initial_ref="Rom 1:17")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            # Reader pane badge
+            w = app.verse_widgets[0]
+            w_text = _extract_text(w)
+            self.assertIn("OT Anchor: Habakkuk 2:4", w_text)
+
+            # Syntax tab citation card
+            syntax_scroll = app.query_one("#syntax-content", VerticalScroll)
+            syntax_text = _extract_text(syntax_scroll)
+            self.assertIn("SCRIPTURE INTERPRETING SCRIPTURE: OT CITATION ANCHOR", syntax_text)
+            self.assertIn("Habakkuk 2:4", syntax_text)
+            self.assertIn("וְצַדִּיק בֶּאֱמוּנָתוֹ יִחְיֶה", syntax_text)
+            self.assertIn("καθὼς γέγραπται", syntax_text)
+            self.assertIn("Righteousness by Faith", syntax_text)
+
+    async def test_jump_citation_action(self):
+        """Verify pressing 'o' jumps to the linked OT citation source passage."""
+        app = BibleStudyApp(initial_ref="Rom 1:17")
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            app.action_jump_citation()
+            await pilot.pause(0.2)
+            self.assertIn("HAB", app.current_ref.upper())
+            self.assertEqual(app.current_passage.book_name, "Habakkuk")
+
 
 
 class StudyCLITextualIntegrationTests(unittest.TestCase):

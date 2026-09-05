@@ -305,6 +305,31 @@ class StudyServiceTests(unittest.TestCase):
         self.assertTrue(len(v.discourse_markers) > 0)
         self.assertEqual(v.discourse_markers[0].category.value, "CONCLUSION")
 
+    def test_passage_study_prepopulates_ot_citations(self):
+        """Verify get_passage_study pre-populates OT citations for Romans 1:17."""
+        ps = self.service.get_passage_study("Rom 1:17")
+        self.assertEqual(len(ps.verses), 1)
+        v = ps.verses[0]
+        self.assertTrue(len(v.ot_citations) > 0)
+        self.assertEqual(v.ot_citations[0].ot_osis, "Hab.2.4")
+        self.assertIn("Habakkuk 2:4", v.ot_citations[0].ot_ref_display)
+
+    def test_ensure_verse_frames_populates_ot_citations_if_missing(self):
+        """Verify ensure_verse_frames populates OT citations if empty."""
+        ps = self.service.get_passage_study("Rom 4:3")
+        v = ps.verses[0]
+        v.ot_citations = []
+        self.service.ensure_verse_frames(v)
+        self.assertTrue(len(v.ot_citations) > 0)
+        self.assertEqual(v.ot_citations[0].ot_osis, "Gen.15.6")
+
+    def test_get_citation_ot_verse_text(self):
+        """Verify fetching OT source verse text for citation."""
+        ps = self.service.get_passage_study("Rom 4:3")
+        cit = ps.verses[0].ot_citations[0]
+        txt = self.service.get_citation_ot_verse_text(cit)
+        self.assertIn("righteousness", txt.lower())
+
 
 
 

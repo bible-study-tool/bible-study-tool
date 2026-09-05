@@ -33,6 +33,10 @@ from search.corpus.discourse_flow import (
     DiscourseCategory,
     format_discourse_badge,
 )
+from search.corpus.ot_citations import (
+    format_citation_badge,
+    render_citation_card,
+)
 from search.ui.study_service import PassageStudy, StudyService, VerseStudy
 from search.ui.themes import (
     DEFAULT_THEME,
@@ -84,6 +88,12 @@ class VerseWidget(Static):
         badge = format_discourse_badge(self.verse.discourse_markers)
         badge_str = f"{badge} " if badge else ""
 
+        # OT citation cue badge (e.g. ⟨OT Anchor: Hab 2:4⟩ or ⟨Cited in NT: Rom 1:17⟩)
+        citation_badge = ""
+        if self.verse.ot_citations:
+            badges = [format_citation_badge(c, self.verse.osis) for c in self.verse.ot_citations]
+            citation_badge = f"{' '.join(badges)} "
+
         if self.show_strongs and self.verse.tokens:
             token_parts = []
             for tok in self.verse.tokens:
@@ -97,7 +107,7 @@ class VerseWidget(Static):
         else:
             text = escape(self.verse.text)
 
-        lines = [f"{num_str}{badge_str}{text}"]
+        lines = [f"{num_str}{badge_str}{citation_badge}{text}"]
 
         if self.show_parallel and self.verse.translations:
             # Render BSB, ASV, and YLT stacked under the primary KJV verse
@@ -204,6 +214,7 @@ class HelpModal(ModalScreen[None]):
 | **`/`** | Search Bible & Spirit of Prophecy writings |
 | **`s`** | Toggle inline Strong's concordance numbers |
 | **`v`** | Toggle stacked parallel translations (BSB, ASV, YLT) in Reader |
+| **`o`** | Jump to Scripture Citation Anchor (OT source or NT quote) |
 | **`t`** | Cycle color themes (Transparent, Dracula, Catppuccin, etc.) |
 | **`f`** | Toggle Focus Mode (full-width Scripture reader) |
 | **`1 - 5`** | Jump directly to Inspector tabs (Syntax, Lexicon, EGW, Parallel, Search) |
@@ -241,6 +252,7 @@ class BibleStudyApp(App):
         Binding("slash", "search_dialog", "Find", show=True),
         Binding("s", "toggle_strongs", "Strong's", show=True),
         Binding("v", "toggle_parallel", "Parallel", show=True),
+        Binding("o", "jump_citation", "Anchor", show=True),
         Binding("t", "cycle_theme", "Theme", show=True),
         Binding("f", "toggle_focus", "Focus", show=True),
         Binding("1", "tab_syntax", "1:Syntax", show=False),
@@ -521,6 +533,11 @@ class BibleStudyApp(App):
 
         if v.original_text:
             lines.append(f"[bold green]Original Text:[/bold green] {escape(v.original_text)}\n")
+
+        # Scripture Interpreting Scripture: OT Citation Anchors
+        if v.ot_citations:
+            for cit in v.ot_citations:
+                lines.append(render_citation_card(cit, for_verse_osis=v.osis))
 
         # Argument Flow & Discourse Connectors
         lines.append("[bold cyan]ARGUMENT FLOW & LOGICAL CONNECTORS:[/bold cyan]")
@@ -878,6 +895,29 @@ class BibleStudyApp(App):
         state_str = "ENABLED" if self.show_parallel else "DISABLED"
         self.notify(f"Stacked parallel translations: {state_str}", timeout=2)
         self._update_selection_visuals()
+
+    def action_jump_citation(self) -> None:
+        """Jump to the linked Old Testament source verse (or NT apostolic citation)."""
+        v = self._get_inspected_verse()
+        if not v or not v.ot_citations:
+            self.notify("No Scripture citation anchor on active verse", severity="information", markup=False)
+            return
+
+        cit = v.ot_citations[0]
+        # Determine direction: if currently viewing NT, jump to OT; if in OT, jump to NT
+        parts = v.osis.split(".")
+        v_book = parts[0] if parts else ""
+        nt_book = cit.nt_osis.split(".")[0]
+
+        if v_book == nt_book:
+            target = cit.ot_osis
+            target_display = cit.ot_ref_display
+        else:
+            target = cit.nt_osis
+            target_display = cit.nt_ref_display
+
+        self.notify(f"Navigating to Scripture anchor: {target_display}", markup=False)
+        self.load_passage_async(target)
 
     def action_toggle_focus(self) -> None:
         self.focus_mode = not self.focus_mode

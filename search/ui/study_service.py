@@ -34,6 +34,11 @@ from search.corpus.discourse_flow import (
     extract_verse_discourse_markers,
     analyze_passage_argument_flow,
 )
+from search.corpus.ot_citations import (
+    OTCitation,
+    lookup_citations_for_verse,
+    get_passage_ot_citations_batch,
+)
 from search.linking.egw import EgwDB, DEFAULT_EGW_DB, is_egw_token, normalize_token
 
 DEFAULT_STRONGS_LEXICON = Path("lexicons/strongs-lexicon.json")
@@ -60,6 +65,7 @@ class VerseStudy:
     verbal_nuances: list[GrammarNuance] = field(default_factory=list)
     translations: dict[str, str] = field(default_factory=dict)
     discourse_markers: list[DiscourseMarker] = field(default_factory=list)
+    ot_citations: list[OTCitation] = field(default_factory=list)
 
 
 
@@ -198,6 +204,9 @@ class StudyService:
             batch_discourse = extract_passage_discourse_batch(verses_raw)
             argument_flow = analyze_passage_argument_flow(verses_raw, markers_by_verse=batch_discourse)
 
+            # Pre-fetch OT citations and NT covenant anchors (<0.1ms)
+            batch_citations = get_passage_ot_citations_batch(book_code, ch)
+
             for vr in verses_raw:
                 verse_id = f"{vr['osis']}.{vr['chapter']}.{vr['verse']}"
                 tokens = vr.get("tokens", [])
@@ -232,6 +241,7 @@ class StudyService:
                 if not v_trans.get("kjv"):
                     v_trans["kjv"] = vr.get("clean_text") or vr["text"]
                 v_discourse = batch_discourse.get(verse_id, [])
+                v_citations = batch_citations.get(verse_id, []) or lookup_citations_for_verse(verse_id)
 
                 verse_studies.append(
                     VerseStudy(
@@ -247,6 +257,7 @@ class StudyService:
                         verbal_nuances=v_nuances,
                         translations=v_trans,
                         discourse_markers=v_discourse,
+                        ot_citations=v_citations,
                     )
                 )
 
@@ -371,6 +382,10 @@ class StudyService:
                 verse.discourse_markers = extract_verse_discourse_markers(
                     verse.tokens, text=verse.text, verse_osis=verse.osis
                 )
+
+            # 4. OT Citations (if not already extracted)
+            if not verse.ot_citations:
+                verse.ot_citations = lookup_citations_for_verse(verse.osis)
 
     def get_verse_nuance_for_strongs(self, verse: VerseStudy, strongs_code: str) -> list[GrammarNuance]:
         """Return verbal nuances for a specific Strong's number in a verse."""
@@ -612,6 +627,24 @@ class StudyService:
             ws = self.lookup_word(canonical_id, sample_limit=0)
             return ws.gloss if ws else ""
 
+    def get_citation_ot_verse_text(self, citation: OTCitation) -> str:
+        """Fetch the text of an Old Testament citation's source verse."""
+        if not citation:
+            return ""
+        if citation.ot_text_kjv:
+            return citation.ot_text_kjv
+        with self._lock:
+            if self.bible_db:
+                try:
+                    parts = citation.ot_osis.split(".")
+                    if len(parts) >= 3:
+                        b_code, ch_str, v_str = parts[0], parts[1], parts[2]
+                        verses = self.bible_db.get_passage(f"{b_code} {ch_str}:{v_str}")
+                        if verses:
+                            return verses[0].get("clean_text") or verses[0]["text"]
+                except Exception:
+                    pass
+        return citation.ot_text_kjv
 
     def close(self) -> None:
         """Close database connections."""
