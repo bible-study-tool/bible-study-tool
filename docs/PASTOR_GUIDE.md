@@ -36,16 +36,16 @@ If you already know what passage you want to preach or teach on, you can jump st
 
 ```bash
 # Study the Prologue of John
-python scripts/study.py "John 1:1-18"
+python scripts/study.py tui "John 1:1-18"
 
 # Study Creation and the Sabbath
-python scripts/study.py "Genesis 1:1-2:3"
+python scripts/study.py tui "Genesis 1:1-2:3"
 
 # Study Christ's High Priestly Prayer
-python scripts/study.py "John 17:1-26"
+python scripts/study.py tui "John 17:1-26"
 
 # Study Paul's Gospel thesis
-python scripts/study.py "Romans 1:16-17"
+python scripts/study.py tui "Romans 1:16-17"
 ```
 
 ---
@@ -148,7 +148,7 @@ In Adventist pastoral ministry, the writings of the Spirit of Prophecy provide i
 
 1. **Launch the passage**:
    ```bash
-   python scripts/study.py "John 1:1-18"
+   python scripts/study.py tui "John 1:1-18"
    ```
 2. **Navigate to verse 14**: Press `j` until verse 14 is highlighted.
 3. **Inspect the Greek Verbs (Tab 1)**:
@@ -171,7 +171,7 @@ In Adventist pastoral ministry, the writings of the Spirit of Prophecy provide i
 
 1. **Launch Romans 1**:
    ```bash
-   python scripts/study.py "Romans 1:1-18"
+   python scripts/study.py tui "Romans 1:1-18"
    ```
 2. **Trace the Argument Flow (Tab 1)**:
    - Step from verse 15 to verse 16 to verse 17.
@@ -192,7 +192,7 @@ In Adventist pastoral ministry, the writings of the Spirit of Prophecy provide i
 
 1. **Launch John 17**:
    ```bash
-   python scripts/study.py "John 17:1-26"
+   python scripts/study.py tui "John 17:1-26"
    ```
 2. **Examine the High Priestly Prayer**:
    - Verse 1: "Father, the hour is come; glorify thy Son..."
@@ -214,17 +214,20 @@ Keep this quick-reference guide handy beside your computer:
 | `j` or `↓` | Next Verse | Advance down one verse in the chapter |
 | `k` or `↑` | Previous Verse | Move up one verse in the chapter |
 | `PgDn` / `PgUp` | Page Down / Up | Scroll quickly through the chapter text |
+| `n` / `p` | Next / Prev Chapter | Jump forward or backward by full chapter |
+| `Space` or `Enter` | Pin Verse | Locks the inspector to current verse while scrolling |
 | `1` | Tab 1: Syntax & Frames | Original languages, verbal stems, argument flow |
 | `2` | Tab 2: Lexicon & Strong's | Unabridged BDB / Abbott-Smith dictionaries |
 | `3` | Tab 3: Commentary | Spirit of Prophecy paragraphs & page reader |
 | `4` | Tab 4: Parallel | Compare KJV, BSB, ASV, and YLT side-by-side |
 | `5` | Tab 5: Search Findings | View active search and concordance results |
 | `v` | Toggle Parallel View | Stacks 4 translations under each verse in the reader |
+| `s` | Toggle Strong's | Displays inline Strong's concordance tags in Reader |
+| `f` | Focus Mode | Toggles full-width reader (hides Study Inspector) |
 | `o` | Jump OT Anchor | Jumps to quoting NT or source OT passage |
 | `g` | Goto Passage / EGW | Dialog to jump to any Bible verse or EGW token (`PP 44.1`) |
 | `c` | Toggle Commentary View | Toggles continuous EGW page reader vs chapter correlations |
-| `p` | Pin Verse | Locks the inspector to current verse while scrolling |
-| `t` | Cycle Theme | Switches between 7 color schemes (Nord, Solarized, etc.) |
+| `t` | Cycle Theme | Switches between 7 color schemes |
 | `/` | Quick Search | Search Bible text or Strong's numbers |
 | `?` | Help Modal | Displays full interactive help screen |
 | `q` | Quit | Safely exit the study workstation |
@@ -237,13 +240,13 @@ Keep this quick-reference guide handy beside your computer:
 
 Everyone's eyes are different. Whether you are studying late at night in your study or on a bright morning by the window, the tool provides 7 themes. Press `t` to cycle through them:
 
-1. **Nord** (Default): Cool Arctic blues and slate grays; calm and focused for long reading sessions.
-2. **Solarized Light**: High-readability warm cream background; perfect for well-lit rooms and daytime study.
-3. **Solarized Dark**: Classic deep teal and amber palette; gentle on tired eyes.
-4. **Monokai**: High contrast with vibrant greens, yellows, and magentas.
-5. **Gruvbox**: Warm retro sepia tones with earthy leather aesthetics.
-6. **Tokyo Night**: Deep neon midnight tones for late-night sermon writing.
-7. **High Contrast**: Pure black and white with vivid highlights; ideal for low-vision readers or outdoor laptop use.
+1. **Transparent** (Default): Preserves your native terminal background and transparency.
+2. **Dracula**: Dark palette with vibrant purple, pink, and cyan highlights.
+3. **Catppuccin Mocha**: Soothing, warm pastel palette for eye comfort.
+4. **Tokyo Night**: Clean dark theme inspired by Tokyo neon lights.
+5. **Nord**: Cool Arctic blues and slate grays for focused reading.
+6. **Gruvbox Dark**: Warm retro earthy tones.
+7. **Solarized Dark**: Precision-engineered palette reducing eye strain.
 
 ---
 

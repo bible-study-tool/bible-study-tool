@@ -9,7 +9,7 @@
 ## Where We Are
 
 The project has achieved several major architectural and pastoral milestones:
-1. **Interactive Textual Study Workstation (`scripts/study.py`)**: A fluid, sub-millisecond terminal interface powered by a persistent viewport engine, Rich typography, and 7 switchable themes (Nord, Solarized Light/Dark, Monokai, Gruvbox, Tokyo Night, High Contrast).
+1. **Interactive Textual Study Workstation (`scripts/study.py`)**: A fluid, sub-millisecond terminal interface powered by a persistent viewport engine, Rich typography, and 7 switchable themes (Transparent, Dracula, Catppuccin Mocha, Tokyo Night, Nord, Gruvbox Dark, Solarized Dark).
 2. **The 5 Core Biblical Comprehension Tools**:
    - **Plain-English Hebrew & Greek Verbal Stems**: Qal, Niphal, Piel, Hiphil, Hitpael, Aorist, Middle Voice, and Perfect Passive translated into accessible ministerial meaning with theological significance.
    - **Pauline Argument Flow & Discourse Markers**: Koine Greek particles (`⟨Premise: γάρ⟩`, `⟨Therefore: οὖν⟩`, `⟨Purpose: ἵνα⟩`) visualized in the reader and mapped as an argumentative chain.

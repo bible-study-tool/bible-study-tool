@@ -103,9 +103,9 @@ The primary way to study Scripture with this tool is through the modern terminal
 python scripts/study.py
 
 # Or launch directly into any chapter:
-python scripts/study.py "John 1"
-python scripts/study.py "John 17"
-python scripts/study.py "Romans 1"
+python scripts/study.py tui "John 1"
+python scripts/study.py tui "John 17"
+python scripts/study.py tui "Romans 1"
 ```
 
 Use `j` / `k` to move between verses, `1`–`5` to switch study inspector tabs, `v` to toggle parallel translations, `o` to jump between New Testament verses and their Old Testament quotation roots, `g` to jump to any passage or Spirit of Prophecy reference (e.g. `PP 44.1`), `t` to cycle themes, and `?` for interactive help.
@@ -116,14 +116,14 @@ If you prefer studying or searching directly in your terminal shell:
 
 ```bash
 # Study a passage and print structured linguistic cards:
-python scripts/study.py "John 1:1-5"
+python scripts/study.py study "John 1:1-5"
 
 # Look up an original language word (Strong's Hebrew or Greek):
-python scripts/study.py --word H7225
-python scripts/study.py --word G3056
+python scripts/study.py word H7225
+python scripts/study.py word G3056
 
 # Launch the interactive terminal study shell:
-python scripts/study.py --cli
+python scripts/study.py shell
 ```
 
 ### 4. Fetch Pinned Lexical Sources (Optional, for Generators)
