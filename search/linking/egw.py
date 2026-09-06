@@ -218,7 +218,7 @@ def normalize_token(token: str) -> tuple[str, str, int, int]:
     Raises:
         ValueError: if the token cannot be parsed.
     """
-    s = (token or "").strip()
+    s = (token or "").strip().strip("[]").strip()
     m = _TOKEN_RE.match(s)
     if not m:
         raise ValueError(

@@ -44,12 +44,125 @@ class OTCitation:
     covenant_theme: str             # e.g. "Righteousness by Faith / Covenant Trust"
     theological_significance: str   # Deep exposition of apostolic theological grounding
 
+    def target_for_verse(self, verse_osis: str) -> tuple[str, str]:
+        """Return (target_osis, target_display) from the perspective of verse_osis."""
+        v_book = verse_osis.split(".")[0] if "." in verse_osis else verse_osis
+        if v_book == self.nt_osis.split(".")[0]:
+            return self.ot_osis, self.ot_ref_display
+        return self.nt_osis, self.nt_ref_display
+
 
 # ---------------------------------------------------------------------------
 # Canonical Dataset of Old Testament Citations in the New Testament
 # ---------------------------------------------------------------------------
 
 _CANONICAL_CITATIONS: list[OTCitation] = [
+    # ── GENESIS (FOUNDATIONAL CREATION COVENANT) ───────────────────────────
+    OTCitation(
+        nt_osis="Heb.1.2",
+        ot_osis="Gen.1.1",
+        ot_book="Genesis",
+        ot_ref_display="Genesis 1:1",
+        nt_ref_display="Hebrews 1:2",
+        citation_type=CitationType.ALLUSION,
+        introductory_formula="δι’ οὗ καὶ ἐποίησεν τοὺς αἰῶνας (By whom also he made the worlds)",
+        nt_text_snippet="Hath in these last days spoken unto us by his Son, whom he hath appointed heir of all things, by whom also he made the worlds.",
+        ot_text_kjv="In the beginning God created the heaven and the earth.",
+        ot_hebrew="בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ",
+        lxx_reading="ἐν ἀρχῇ ἐποίησεν ὁ θεὸς τὸν οὐρανὸν καὶ τὴν γῆν",
+        covenant_theme="Christ the Sovereign Agent of Creation",
+        theological_significance=(
+            "Identifies the Son as the divine Agent through whom Elohim brought the cosmos into existence in Genesis 1:1, "
+            "demonstrating His eternal deity and pre-eminence above all created orders."
+        ),
+    ),
+    OTCitation(
+        nt_osis="Heb.11.3",
+        ot_osis="Gen.1.1",
+        ot_book="Genesis",
+        ot_ref_display="Genesis 1:1, 3",
+        nt_ref_display="Hebrews 11:3",
+        citation_type=CitationType.ALLUSION,
+        introductory_formula="πίστει νοοῦμεν (Through faith we understand)",
+        nt_text_snippet="Through faith we understand that the worlds were framed by the word of God, so that things which are seen were not made of things which do appear.",
+        ot_text_kjv="In the beginning God created the heaven and the earth... And God said, Let there be light: and there was light.",
+        ot_hebrew="בְּרֵאשִׁית בָּרָא אֱלֹהִים... וַיֹּאמֶר אֱלֹהִים יְהִי אוֹר וַיְהִי־אוֹר",
+        lxx_reading="ἐν ἀρχῇ ἐποίησεν ὁ θεὸς... καὶ εἶπεν ὁ θεός γενηθήτω φῶς",
+        covenant_theme="Creation Ex Nihilo by Divine Fiat",
+        theological_significance=(
+            "The foundation of biblical ontology: the universe was called into reality from nothing by the creative fiat of God's Word, "
+            "establishing divine sovereignty and the Sabbath memorial of literal creation."
+        ),
+    ),
+    OTCitation(
+        nt_osis="Jas.3.9",
+        ot_osis="Gen.1.26",
+        ot_book="Genesis",
+        ot_ref_display="Genesis 1:26",
+        nt_ref_display="James 3:9",
+        citation_type=CitationType.ALLUSION,
+        introductory_formula="τοὺς καθ’ ὁμοίωσιν θεοῦ γεγονότας (Which are made after the similitude of God)",
+        nt_text_snippet="Therewith bless we God, even the Father; and therewith curse we men, which are made after the similitude of God.",
+        ot_text_kjv="And God said, Let us make man in our image, after our likeness: and let them have dominion...",
+        ot_hebrew="וַיֹּאמֶר אֱלֹהִים נַעֲשֶׂה אָדָם בְּצַלְמֵנוּ כִּדְמוּתֵנוּ",
+        lxx_reading="ποιήσωμεν ἄνθρωπον κατ’ εἰκόνα ἡμετέραν καὶ καθ’ ὁμοίωσιν",
+        covenant_theme="The Divine Image & Inherent Sanctity of Human Life",
+        theological_significance=(
+            "James derives the ethics of Christian speech directly from the Creation ordinance: to curse a human being is to "
+            "desecrate a bearer of the divine likeness. The Imago Dei grounds universal human dignity and moral accountability."
+        ),
+    ),
+    OTCitation(
+        nt_osis="Matt.19.4",
+        ot_osis="Gen.1.27",
+        ot_book="Genesis",
+        ot_ref_display="Genesis 1:27 / Gen 5:2",
+        nt_ref_display="Matthew 19:4–5 / Mark 10:6",
+        citation_type=CitationType.DIRECT_QUOTE,
+        introductory_formula="οὐκ ἀνέγνωτε ὅτι ὁ ποιήσας ἀπ’ ἀρχῆς (Have ye not read, that he which made them at the beginning)",
+        nt_text_snippet="Have ye not read, that he which made them at the beginning made them male and female, and said, For this cause shall a man leave father and mother...",
+        ot_text_kjv="So God created man in his own image, in the image of God created he him; male and female created he them.",
+        ot_hebrew="וַיִּבְרָא אֱלֹהִים אֶת־הָאָדָם בְּצַלְמוֹ בְּצֶלֶם אֱלֹהִים בָּרָא אֹתוֹ זָכָר וּנְקֵבָה בָּרָא אֹתָם",
+        lxx_reading="καὶ ἐποίησεν ὁ θεὸς τὸν ἄνθρωπον, κατ’ εἰκόνα θεοῦ ἐποίησεν αὐτόν· ἄρσεν καὶ θῆλυ ἐποίησεν αὐτούς",
+        covenant_theme="Creation Ordinance of Marriage & Biological Humanity",
+        theological_significance=(
+            "Jesus appeals beyond subsequent human concessions back to the original Edenic design ('from the beginning it was not so'). "
+            "Creation establishes the permanent covenant architecture of marriage as monogamous, heterosexual, and indissoluble."
+        ),
+    ),
+    OTCitation(
+        nt_osis="1Cor.11.7",
+        ot_osis="Gen.1.27",
+        ot_book="Genesis",
+        ot_ref_display="Genesis 1:26–27",
+        nt_ref_display="1 Corinthians 11:7",
+        citation_type=CitationType.ALLUSION,
+        introductory_formula="εἰκὼν καὶ δόξα θεοῦ ὑπάρχων (Forasmuch as he is the image and glory of God)",
+        nt_text_snippet="For a man indeed ought not to cover his head, forasmuch as he is the image and glory of God: but the woman is the glory of the man.",
+        ot_text_kjv="So God created man in his own image, in the image of God created he him...",
+        ot_hebrew="בְּצֶלֶם אֱלֹהִים בָּרָא אֹתוֹ",
+        lxx_reading="κατ’ εἰκόνα θεοῦ ἐποίησεν αὐτόν",
+        covenant_theme="Cosmic Order & Creation Reflection",
+        theological_significance="Paul roots apostolic worship and relational order in the original Genesis creation account.",
+    ),
+    OTCitation(
+        nt_osis="Col.3.10",
+        ot_osis="Gen.1.27",
+        ot_book="Genesis",
+        ot_ref_display="Genesis 1:26–27",
+        nt_ref_display="Colossians 3:10",
+        citation_type=CitationType.ALLUSION,
+        introductory_formula="κατ’ εἰκόνα τοῦ κτίσαντος αὐτόν (After the image of him that created him)",
+        nt_text_snippet="And have put on the new man, which is renewed in knowledge after the image of him that created him.",
+        ot_text_kjv="So God created man in his own image, in the image of God created he him...",
+        ot_hebrew="וַיִּבְרָא אֱלֹהִים אֶת־הָאָדָם בְּצַלְמוֹ",
+        lxx_reading="κατ’ εἰκόνα θεοῦ ἐποίησεν αὐτόν",
+        covenant_theme="Re-Creation & Sanctification into the Divine Image",
+        theological_significance=(
+            "Redemption is the restoration of creation: the moral image of God marred by the Fall is restored through Christ, "
+            "the true and undefiled Image of God."
+        ),
+    ),
     # ── ROMANS ─────────────────────────────────────────────────────────────
     OTCitation(
         nt_osis="Rom.1.17",
@@ -1252,12 +1365,14 @@ def lookup_citations_for_verse(osis_ref: str) -> list[OTCitation]:
     """Bidirectional lookup: returns citations whether the verse is New Testament or Old Testament."""
     if not osis_ref:
         return []
-    # Check NT first
-    nt_hits = _NT_INDEX.get(osis_ref)
-    if nt_hits:
-        return nt_hits
-    # Check OT
-    return _OT_INDEX.get(osis_ref, [])
+    hits: list[OTCitation] = []
+    if osis_ref in _NT_INDEX:
+        hits.extend(_NT_INDEX[osis_ref])
+    if osis_ref in _OT_INDEX:
+        for c in _OT_INDEX[osis_ref]:
+            if c not in hits:
+                hits.append(c)
+    return hits
 
 
 def get_passage_ot_citations_batch(book: str, chapter: int) -> dict[str, list[OTCitation]]:
@@ -1272,7 +1387,9 @@ def get_passage_ot_citations_batch(book: str, chapter: int) -> dict[str, list[OT
     for osis, cits in _OT_INDEX.items():
         if osis.startswith(prefix):
             if osis in batch:
-                batch[osis].extend(cits)
+                for c in cits:
+                    if c not in batch[osis]:
+                        batch[osis].append(c)
             else:
                 batch[osis] = list(cits)
 

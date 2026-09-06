@@ -545,6 +545,32 @@ class StudyCLITests(unittest.TestCase):
         self.assertEqual(data["ref"], "John 1:1")
         self.assertTrue(len(data["verses"][0]["semantic_frames"]) >= 1)
 
+    def test_cli_study_ot_citations(self):
+        res = self._run_cli(["study", "Rom 1:17", "--json"])
+        data = json.loads(res.stdout)
+        self.assertEqual(data["ref"], "Rom 1:17")
+        v = data["verses"][0]
+        self.assertTrue(len(v["ot_citations"]) >= 1)
+        cit = v["ot_citations"][0]
+        self.assertEqual(cit["ot_osis"], "Hab.2.4")
+        self.assertEqual(cit["ot_book"], "Habakkuk")
+        self.assertIn("Habakkuk 2:4", cit["ot_ref_display"])
+
+    def test_bracketed_egw_citation_lookup(self):
+        from search.linking.egw import is_egw_token, normalize_token
+        self.assertTrue(is_egw_token("[PP.44.1]"))
+        self.assertTrue(is_egw_token("[6BC.1117.3]"))
+        canon_id, b_code, page, para = normalize_token("[PP.44.1]")
+        self.assertEqual(canon_id, "PP.44.1")
+        self.assertEqual(b_code, "PP")
+        self.assertEqual(page, 44)
+        self.assertEqual(para, 1)
+
+        res = StudyService().lookup_egw_citation("[PP.44.1]")
+        self.assertIsNotNone(res)
+        self.assertEqual(res["id"], "PP.44.1")
+        self.assertIn("Genesis", res["text"])
+
 
 if __name__ == "__main__":
     unittest.main()

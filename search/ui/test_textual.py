@@ -14,7 +14,7 @@ from search.ui.themes import (
     get_theme_css,
 )
 from textual.containers import VerticalScroll
-from textual.widgets import TabbedContent
+from textual.widgets import Static, TabbedContent
 
 
 def _extract_text(widget) -> str:
@@ -596,6 +596,73 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
                 await pilot.pause(0.05)
             self.assertIn("HAB", app.current_ref.upper())
             self.assertEqual(app.current_passage.book_name, "Habakkuk")
+            # Verify target verse is selected (verse 4), NOT verse 1!
+            inspected = app._get_inspected_verse()
+            self.assertEqual(inspected.verse, 4)
+
+    async def test_jump_citation_discovery_in_chapter(self):
+        """Verify pressing 'o' on verse with no citation discovers next cited verse in chapter."""
+        app = BibleStudyApp(initial_ref="Rom 1:1-25")
+        async with app.run_test() as pilot:
+            await _wait_until_ready(app, pilot)
+            self.assertEqual(app.selected_verse_idx, 0)
+            self.assertEqual(app._get_inspected_verse().verse, 1)
+
+            # Rom 1:1 has no citation; pressing 'o' should discover Rom 1:17
+            app.action_jump_citation()
+            await pilot.pause(0.1)
+            self.assertEqual(app._get_inspected_verse().verse, 17)
+            self.assertTrue(len(app._get_inspected_verse().ot_citations) >= 1)
+
+    async def test_genesis_1_ot_citation_badges(self):
+        """Verify Genesis 1 creation citations render in reader and syntax inspector."""
+        app = BibleStudyApp(initial_ref="Gen 1:1-3")
+        async with app.run_test() as pilot:
+            await _wait_until_ready(app, pilot)
+            w0 = app.verse_widgets[0]
+            w0_text = _extract_text(w0)
+            self.assertIn("Cited in NT: Hebrews", w0_text)
+
+    async def test_bracketed_egw_goto_navigation(self):
+        """Verify bracketed citation tokens like [PP.44.1] can be loaded directly."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await _wait_until_ready(app, pilot)
+            app.load_egw_citation_async("[PP.44.1]")
+            for _ in range(30):
+                if app._active_egw_citation:
+                    break
+                await pilot.pause(0.05)
+            self.assertIsNotNone(app._active_egw_citation)
+            self.assertEqual(app._active_egw_citation["id"], "PP.44.1")
+
+            # Check commentary body text
+            commentary_body = app.query_one("#commentary-body", Static)
+            text = _extract_text(commentary_body)
+            self.assertIn("SPIRIT OF PROPHECY READER", text)
+            self.assertIn("PP.44.1", text)
+
+    async def test_toggle_commentary_view(self):
+        """Verify 'c' toggles between loaded EGW reader and chapter correlations."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await _wait_until_ready(app, pilot)
+            # Switch to Commentary tab
+            app.action_tab_commentary()
+            await pilot.pause()
+
+            # Press 'c' to open top correlation into full page reader
+            app.action_toggle_commentary_view()
+            for _ in range(30):
+                if app._active_egw_citation:
+                    break
+                await pilot.pause(0.05)
+            self.assertIsNotNone(app._active_egw_citation)
+
+            # Press 'c' again to return to chapter correlations
+            app.action_toggle_commentary_view()
+            await pilot.pause()
+            self.assertIsNone(app._active_egw_citation)
 
 
 

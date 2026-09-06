@@ -113,6 +113,42 @@ class OTCitationsTests(unittest.TestCase):
         self.assertIn("Septuagint (LXX):", card)
         self.assertIn("Apostolic Hermeneutic", card)
 
+    def test_genesis_1_creation_citations(self):
+        # Gen 1:1 cited in Heb 1:2 and Heb 11:3
+        gen1_cits = lookup_nt_citations_for_ot_verse("Gen.1.1")
+        self.assertTrue(len(gen1_cits) >= 2)
+        gen1_nt_osises = {c.nt_osis for c in gen1_cits}
+        self.assertIn("Heb.1.2", gen1_nt_osises)
+        self.assertIn("Heb.11.3", gen1_nt_osises)
+
+        # Gen 1:26 cited in Jas 3:9
+        gen26_cits = lookup_nt_citations_for_ot_verse("Gen.1.26")
+        self.assertTrue(len(gen26_cits) >= 1)
+        self.assertEqual(gen26_cits[0].nt_osis, "Jas.3.9")
+
+        # Gen 1:27 cited in Matt 19:4, 1 Cor 11:7, Col 3:10
+        gen27_cits = lookup_nt_citations_for_ot_verse("Gen.1.27")
+        self.assertTrue(len(gen27_cits) >= 3)
+        gen27_nt_osises = {c.nt_osis for c in gen27_cits}
+        self.assertIn("Matt.19.4", gen27_nt_osises)
+        self.assertIn("1Cor.11.7", gen27_nt_osises)
+        self.assertIn("Col.3.10", gen27_nt_osises)
+
+        # Verify bidirectional lookup
+        hits_from_ot = lookup_citations_for_verse("Gen.1.1")
+        self.assertTrue(len(hits_from_ot) >= 2)
+        hits_from_nt = lookup_citations_for_verse("Heb.1.2")
+        self.assertTrue(len(hits_from_nt) >= 1)
+        self.assertEqual(hits_from_nt[0].ot_osis, "Gen.1.1")
+
+        # Test target_for_verse helper
+        target_from_nt, disp_from_nt = hits_from_nt[0].target_for_verse("Heb.1.2")
+        self.assertEqual(target_from_nt, "Gen.1.1")
+        self.assertEqual(disp_from_nt, "Genesis 1:1")
+        target_from_ot, disp_from_ot = hits_from_nt[0].target_for_verse("Gen.1.1")
+        self.assertEqual(target_from_ot, "Heb.1.2")
+        self.assertEqual(disp_from_ot, "Hebrews 1:2")
+
 
 if __name__ == "__main__":
     unittest.main()

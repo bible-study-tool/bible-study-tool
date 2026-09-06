@@ -132,8 +132,8 @@ class GotoModal(ModalScreen[Optional[str]]):
     def compose(self) -> ComposeResult:
         with Vertical(classes="modal-dialog"):
             yield Label("GOTO PASSAGE OR SPIRIT OF PROPHECY", classes="modal-title")
-            yield Label("Enter Scripture (e.g. 'John 3:16', 'Rom 8') or EGW citation (e.g. 'PP 44.1', 'DA 25.3'):")
-            yield Input(id="goto-input", placeholder="e.g. 'John 3:16' or 'PP 44.1'")
+            yield Label("Enter Scripture (e.g. 'John 3:16', 'Rom 8') or EGW citation (e.g. 'PP 44.1', '[PP.44.1]', 'DA 25.3'):")
+            yield Input(id="goto-input", placeholder="e.g. 'John 3:16', 'PP 44.1', or '[PP.44.1]'")
             with Horizontal():
                 yield Button("Go", variant="primary", id="btn-go")
                 yield Button("Cancel", variant="default", id="btn-cancel")
@@ -210,11 +210,12 @@ class HelpModal(ModalScreen[None]):
 | **`k` / `Up`** | Move to previous verse |
 | **`n` / `p`** | Next / Previous chapter |
 | **`Space` / `Enter`** | Pin / unpin selected verse for side panel study |
-| **`g` / `Ctrl+P`** | Jump to passage (e.g. *John 3:16*) or EGW citation (e.g. *PP 44.1*) |
+| **`g` / `Ctrl+P`** | Jump to passage (e.g. *John 3:16*) or EGW citation (e.g. *PP 44.1*, *[PP.44.1]*) |
 | **`/`** | Search Bible & Spirit of Prophecy writings |
 | **`s`** | Toggle inline Strong's concordance numbers |
 | **`v`** | Toggle stacked parallel translations (BSB, ASV, YLT) in Reader |
-| **`o`** | Jump to Scripture Citation Anchor (OT source or NT quote) |
+| **`o`** | Jump to Scripture Citation Anchor (OT source or NT quote; finds citations in chapter) |
+| **`c`** | Toggle EGW Commentary (Chapter correlations <-> Full page reader) |
 | **`t`** | Cycle color themes (Transparent, Dracula, Catppuccin, etc.) |
 | **`f`** | Toggle Focus Mode (full-width Scripture reader) |
 | **`1 - 5`** | Jump directly to Inspector tabs (Syntax, Lexicon, EGW, Parallel, Search) |
@@ -253,6 +254,7 @@ class BibleStudyApp(App):
         Binding("s", "toggle_strongs", "Strong's", show=True),
         Binding("v", "toggle_parallel", "Parallel", show=True),
         Binding("o", "jump_citation", "Anchor", show=True),
+        Binding("c", "toggle_commentary_view", "Commentary", show=True),
         Binding("t", "cycle_theme", "Theme", show=True),
         Binding("f", "toggle_focus", "Focus", show=True),
         Binding("1", "tab_syntax", "1:Syntax", show=False),
@@ -281,6 +283,7 @@ class BibleStudyApp(App):
         self.focus_mode: bool = False
         self.verse_widgets: List[VerseWidget] = []
         self._dirty_tabs: set[str] = {"tab-syntax", "tab-lexicon", "tab-commentary", "tab-parallel"}
+        self._active_egw_citation: Optional[dict[str, Any]] = None
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -340,7 +343,15 @@ class BibleStudyApp(App):
 
     def _apply_loaded_passage(self, study: PassageStudy) -> None:
         self.current_passage = study
-        self.selected_verse_idx = 0
+        self._active_egw_citation = None
+
+        # Position selection at target verse (e.g. Rom 1:17 or Hab 2:4)
+        target_idx = (
+            next((i for i, v in enumerate(study.verses) if v.verse == study.start_verse), 0)
+            if study.start_verse
+            else 0
+        )
+        self.selected_verse_idx = target_idx
         self.pinned_verse_idx = None
         self.current_ref = study.ref
 
@@ -364,6 +375,7 @@ class BibleStudyApp(App):
         reader_pane.mount_all(widgets_to_mount)
 
         self._update_selection_visuals()
+        self._scroll_to_selected()
         self._dirty_tabs = {"tab-syntax", "tab-lexicon", "tab-commentary", "tab-parallel"}
         self._render_active_tab()
 
@@ -432,10 +444,44 @@ class BibleStudyApp(App):
         self._render_active_tab()
 
     def _update_commentary_viewport(self) -> None:
-        """Update Commentary Tab (chapter-level correlations)."""
+        """Update Commentary Tab (chapter-level correlations or active EGW page reader)."""
         commentary_body = self.query_one("#commentary-body", Static)
+
+        if self._active_egw_citation:
+            p = self._active_egw_citation
+            cid = p.get("id") or p.get("token", "")
+            btitle = p.get("book_title") or p.get("book_code", "")
+            chtitle = p.get("chapter_title", "")
+            page = p.get("page", 0)
+            ref_code = p.get("ref_code") or f"{btitle} {page}"
+
+            lines: list[str] = []
+            lines.append(f"[bold cyan]SPIRIT OF PROPHECY READER: {escape(ref_code)}[/bold cyan] [dim](Press \\[c\\] for chapter correlations)[/dim]\n")
+            lines.append(f"[bold]{escape(btitle)}[/bold]\n[bold green]{escape(chtitle)}[/bold green]\n[dim]Page {page}[/dim]\n[dim]────────────────────────────────────────[/dim]\n")
+
+            page_paras = p.get("page_paragraphs")
+            if page_paras:
+                for item in page_paras:
+                    item_id = item.get("id", "")
+                    is_target = item_id == cid
+                    item_para = item.get("paragraph", 1)
+                    item_text = escape(item.get("text", ""))
+                    prefix = f"[bold yellow]\\[{escape(item_id)}\\] (Paragraph {item_para})[/bold yellow]\n"
+                    if is_target:
+                        lines.append(f"{prefix}[bold white]{item_text}[/bold white]\n\n[dim]────────────────────────────────────────[/dim]\n")
+                    else:
+                        lines.append(f"{prefix}{item_text}\n\n[dim]────────────────────────────────────────[/dim]\n")
+            else:
+                p_text = escape(p.get("text", ""))
+                lines.append(f"[bold yellow]\\[{escape(cid)}\\][/bold yellow]\n{p_text}\n\n[dim]────────────────────────────────────────[/dim]\n")
+
+            commentary_body.update("\n".join(lines))
+            self.query_one("#commentary-content", VerticalScroll).scroll_home(animate=False)
+            return
+
         lines: list[str] = []
         lines.append("[bold cyan]SPIRIT OF PROPHECY CORRELATIONS[/bold cyan]\n")
+        lines.append("[dim]Press \\[c\\] to read full page context, or \\[g\\] to jump to any citation (e.g. PP 44.1, \\[PP.44.1\\])[/dim]\n")
 
         if self.current_passage and self.current_passage.egw_correlations:
             for egw in self.current_passage.egw_correlations:
@@ -777,35 +823,37 @@ class BibleStudyApp(App):
     def action_goto_passage(self) -> None:
         def on_goto_done(ref: Optional[str]) -> None:
             if ref:
+                clean_ref = ref.strip().strip("[]").strip()
                 # Check if reference is a valid Bible passage within canon bounds
                 try:
                     from search.corpus.bible_books import parse_passage_ref, BIBLE_BOOKS
-                    osis, ch, _, _ = parse_passage_ref(ref)
+                    osis, ch, _, _ = parse_passage_ref(clean_ref)
                     if osis in BIBLE_BOOKS and 1 <= ch <= BIBLE_BOOKS[osis].chapters:
-                        self.load_passage_async(ref)
+                        self.load_passage_async(clean_ref)
                         return
                 except Exception:
                     pass
 
                 from search.linking.egw import is_egw_token
-                if is_egw_token(ref):
-                    self.load_egw_citation_async(ref)
+                if is_egw_token(clean_ref):
+                    self.load_egw_citation_async(clean_ref)
                 else:
-                    self.load_passage_async(ref)
+                    self.load_passage_async(clean_ref)
 
         self.push_screen(GotoModal(), on_goto_done)
 
     @work(exclusive=True, thread=True)
     def load_egw_citation_async(self, citation_or_token: str) -> None:
         """Asynchronously load and display a specific Spirit of Prophecy citation."""
+        clean_tok = citation_or_token.strip().strip("[]").strip()
         try:
-            res = self.service.lookup_egw_citation(citation_or_token)
+            res = self.service.lookup_egw_citation(clean_tok)
             if res:
                 self.call_from_thread(self._apply_loaded_egw_citation, res)
             else:
                 self.call_from_thread(
                     self.notify,
-                    f"Citation '{citation_or_token}' not found in Spirit of Prophecy corpus.",
+                    f"Citation '{clean_tok}' not found in Spirit of Prophecy corpus.",
                     severity="warning",
                     markup=False,
                 )
@@ -814,42 +862,17 @@ class BibleStudyApp(App):
 
     def _apply_loaded_egw_citation(self, p: dict[str, Any]) -> None:
         """Render a fetched EGW citation and surrounding page context into the Commentary tab."""
-        commentary_body = self.query_one("#commentary-body", Static)
-
-        cid = p.get("id") or p.get("token", "")
-        btitle = p.get("book_title") or p.get("book_code", "")
-        chtitle = p.get("chapter_title", "")
-        page = p.get("page", 0)
-        ref_code = p.get("ref_code") or f"{btitle} {page}"
-
-        lines: list[str] = []
-        lines.append(f"[bold cyan]SPIRIT OF PROPHECY READER: {escape(ref_code)}[/bold cyan]\n")
-        lines.append(f"[bold]{escape(btitle)}[/bold]\n[bold green]{escape(chtitle)}[/bold green]\n[dim]Page {page}[/dim]\n[dim]────────────────────────────────────────[/dim]\n")
-
-        # If page paragraphs are included, render all paragraphs on that page
-        page_paras = p.get("page_paragraphs")
-        if page_paras:
-            for item in page_paras:
-                item_id = item.get("id", "")
-                is_target = item_id == cid
-                item_para = item.get("paragraph", 1)
-                item_text = escape(item.get("text", ""))
-                prefix = f"[bold yellow]\\[{escape(item_id)}\\] (Paragraph {item_para})[/bold yellow]\n"
-                if is_target:
-                    lines.append(f"{prefix}[bold white]{item_text}[/bold white]\n\n[dim]────────────────────────────────────────[/dim]\n")
-                else:
-                    lines.append(f"{prefix}{item_text}\n\n[dim]────────────────────────────────────────[/dim]\n")
-        else:
-            p_text = escape(p.get("text", ""))
-            lines.append(f"[bold yellow]\\[{escape(cid)}\\][/bold yellow]\n{p_text}\n\n[dim]────────────────────────────────────────[/dim]\n")
-
-        commentary_body.update("\n".join(lines))
+        self._active_egw_citation = p
+        self._update_commentary_viewport()
         self._dirty_tabs.discard("tab-commentary")
-        self.query_one("#commentary-content", VerticalScroll).scroll_home(animate=False)
 
         # Switch to Commentary tab
         tabs = self.query_one("#inspector-tabs", TabbedContent)
         tabs.active = "tab-commentary"
+
+        btitle = p.get("book_title") or p.get("book_code", "")
+        page = p.get("page", 0)
+        ref_code = p.get("ref_code") or f"{btitle} {page}"
         self.notify(f"Loaded: {ref_code} ({btitle})", timeout=3, markup=False)
 
     def action_search_dialog(self) -> None:
@@ -919,25 +942,55 @@ class BibleStudyApp(App):
     def action_jump_citation(self) -> None:
         """Jump to the linked Old Testament source verse (or NT apostolic citation)."""
         v = self._get_inspected_verse()
-        if not v or not v.ot_citations:
-            self.notify("No Scripture citation anchor on active verse", severity="information", markup=False)
+        if not v:
             return
 
-        cit = v.ot_citations[0]
-        # Determine direction: if currently viewing NT, jump to OT; if in OT, jump to NT
-        parts = v.osis.split(".")
-        v_book = parts[0] if parts else ""
-        nt_book = cit.nt_osis.split(".")[0]
+        # 1. If active verse has an anchor, jump across testaments immediately
+        if v.ot_citations:
+            cit = v.ot_citations[0]
+            target, target_display = cit.target_for_verse(v.osis)
+            self.notify(f"Navigating to Scripture anchor: {target_display}", markup=False)
+            self.load_passage_async(target)
+            return
 
-        if v_book == nt_book:
-            target = cit.ot_osis
-            target_display = cit.ot_ref_display
+        # 2. Smart Anchor Discovery: find next verse in current chapter with a citation
+        if self.current_passage and self.current_passage.verses:
+            num_verses = len(self.current_passage.verses)
+            for offset in range(1, num_verses):
+                cand_idx = (self.selected_verse_idx + offset) % num_verses
+                cand_v = self.current_passage.verses[cand_idx]
+                if cand_v.ot_citations:
+                    prev = self.selected_verse_idx
+                    self.pinned_verse_idx = None
+                    self.selected_verse_idx = cand_idx
+                    self._update_selection_visuals(previous_idx=prev)
+                    self._update_inspector()
+                    self._scroll_to_selected()
+                    cand_cit = cand_v.ot_citations[0]
+                    _, target_disp = cand_cit.target_for_verse(cand_v.osis)
+                    self.notify(f"Moved to {cand_v.osis} with anchor: {target_disp} (press [o] to jump)", markup=False)
+                    return
+
+        ch_name = f"{self.current_passage.book_name} {self.current_passage.start_chapter}" if self.current_passage else "current chapter"
+        self.notify(f"No Scripture citation anchors in {ch_name}", severity="information", markup=False)
+
+    def action_toggle_commentary_view(self) -> None:
+        """Toggle between loaded EGW continuous page reader and chapter correlation overview."""
+        tabs = self.query_one("#inspector-tabs", TabbedContent)
+        if tabs.active != "tab-commentary":
+            self.action_tab_commentary()
+            return
+        if self._active_egw_citation:
+            self._active_egw_citation = None
+            self.notify("Showing chapter commentary correlations", timeout=2)
+            self._update_commentary_viewport()
         else:
-            target = cit.nt_osis
-            target_display = cit.nt_ref_display
-
-        self.notify(f"Navigating to Scripture anchor: {target_display}", markup=False)
-        self.load_passage_async(target)
+            if self.current_passage and self.current_passage.egw_correlations:
+                first_tok = self.current_passage.egw_correlations[0].get("token")
+                if first_tok:
+                    self.load_egw_citation_async(first_tok)
+            else:
+                self.notify("No Spirit of Prophecy correlations for this chapter", severity="information", markup=False)
 
     def action_toggle_focus(self) -> None:
         self.focus_mode = not self.focus_mode

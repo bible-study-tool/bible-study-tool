@@ -178,6 +178,29 @@ def main() -> None:
                             "original_text": v.original_text,
                             "semantic_frames": v.semantic_frames,
                             "strongs": v.strongs_list,
+                            "ot_citations": [
+                                {
+                                    "nt_osis": c.nt_osis,
+                                    "ot_osis": c.ot_osis,
+                                    "ot_book": c.ot_book,
+                                    "ot_ref_display": c.ot_ref_display,
+                                    "nt_ref_display": c.nt_ref_display,
+                                    "citation_type": c.citation_type.value,
+                                    "introductory_formula": c.introductory_formula,
+                                    "covenant_theme": c.covenant_theme,
+                                    "theological_significance": c.theological_significance,
+                                }
+                                for c in v.ot_citations
+                            ],
+                            "discourse_markers": [
+                                {
+                                    "category": m.category.value,
+                                    "original_word": m.original_word,
+                                    "role_label": m.role_label,
+                                    "function_summary": m.function_summary,
+                                }
+                                for m in v.discourse_markers
+                            ],
                         }
                         for v in ps.verses
                     ],

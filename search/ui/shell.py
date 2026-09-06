@@ -316,8 +316,28 @@ class StudyShell:
                         print(style(f"          {def_lines[0]}", DIM))
         print()
 
-        # 4. Spirit of Prophecy Cross-References
-        print(section_header("4. SPIRIT OF PROPHECY & COMMENTARY CORRELATIONS", width=w))
+        # 4. Scripture Interpreting Scripture: OT Citation Anchors
+        cits_in_passage = [(v, c) for v in study.verses for c in v.ot_citations]
+        if cits_in_passage:
+            print(section_header("4. SCRIPTURE INTERPRETING SCRIPTURE: OT CITATION ANCHORS", width=w))
+            for v, c in cits_in_passage:
+                _, target_disp = c.target_for_verse(v.osis)
+                is_nt = v.osis.split(".")[0] == c.nt_osis.split(".")[0]
+                label = "OT Source" if is_nt else "NT Anchor"
+                target_str = f"{label}: {target_disp}"
+                print(
+                    style(f"  [{v.osis}] ", BOLD, GREEN)
+                    + style(f"⟨{target_str}⟩ ", BOLD, CYAN)
+                    + style(f"({c.citation_type.value})", DIM)
+                )
+                print(style(f"    Theme: {c.covenant_theme}", BOLD, YELLOW))
+                print(style(f"    Apostolic Formula: {c.introductory_formula}", DIM))
+                print(style(f"    Significance: {c.theological_significance}\n", DIM))
+            print()
+
+        # 5. Spirit of Prophecy Cross-References
+        sec_num = "5" if cits_in_passage else "4"
+        print(section_header(f"{sec_num}. SPIRIT OF PROPHECY & COMMENTARY CORRELATIONS", width=w))
         if study.egw_correlations:
             for egw in study.egw_correlations[:3]:
                 tok_str = style(f"  [{egw['token']}]", BOLD, BLUE)
