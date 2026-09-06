@@ -1,36 +1,42 @@
 # Adventist Bible Study Tool
 
-An AI-assisted, deterministic knowledge base for in-depth Bible study and theological research, centered on Seventh-day Adventist beliefs and materials.
+An AI-assisted, deterministic knowledge base and interactive terminal workstation for in-depth Bible study and theological research, centered on Seventh-day Adventist beliefs and materials.
 
-## Vision
+> 📖 **New to the tool or preparing a sermon?** Read the [Pastor & Bible Student Guide](docs/PASTOR_GUIDE.md) for a friendly, step-by-step tutorial on navigating the workstation, studying original languages in plain English, and finding Spirit of Prophecy insights.
+
+## Vision & Guiding North Star
 
 A **NotebookLM-like** system built on Adventist theological texts — a structured, searchable library where the AI reads into everything related to your topic through referencing the knowledge base. The core is deterministic and works offline; AI is an optional, on-demand assistant for deeper study.
 
+> *"Everything this tool is is in the search and benefit of understanding the word of God better, and at a deeper level. To be able to truly understand what the Holy Spirit is trying to tell us."* (1 Cor 2:10–13)
+
 ## What Makes This Different
 
-1.  **Offline-first** — Core database works without AI or internet
-    
-2.  **Deterministic core** — Tags, cross-references, and correlations are rule-based and reliable
-    
-3.  **Cross-language semantic linking** — Hebrew → Greek → English concept mapping is the killer feature
-    
-4.  **AI transparency** — AI-generated content is explicitly marked and requires human review
-    
-5.  **Git-based collaboration** — Full version control with review workflow
-    
-6.  **Adventist-focused** — Built around Adventist theology and the Spirit of Prophecy
-    
+1.  **Offline-first** — Core database and interactive workstation work 100% without AI or internet.
+2.  **Deterministic core** — Tags, cross-references, original-language concordances, and correlations are rule-based and reliable.
+3.  **Cross-language semantic linking** — Hebrew → Greek → English concept mapping backed by empirical Septuagint (LXX) translation equivalences.
+4.  **The 5 Biblical Comprehension Tools**:
+    *   **Plain-English Verbal Stems & Nuances**: Translates Hebrew stems (Qal, Niphal, Piel, Hiphil, Hitpael) and Greek verb aspects (Aorist, Middle Voice, Perfect Passive) into clear ministerial meaning.
+    *   **Pauline Argument Flow & Discourse Markers**: Visualizes the Holy Spirit's inspired logic (`⟨Premise: γάρ⟩`, `⟨Therefore: οὖν⟩`, `⟨Purpose: ἵνα⟩`).
+    *   **Scripture Interpreting Scripture (OT Citation Anchors)**: One-key jump (`o`) linking New Testament apostolic quotations to Old Testament Hebrew and Septuagint roots.
+    *   **Multi-Translation Parallel View**: Instant, zero-latency comparison of KJV, ASV, BSB, and YLT (press `v`).
+    *   **Spirit of Prophecy Integration & Continuous Page Reader**: Direct citation jumps (`g` ➔ `PP 44.1`, `DA 19.1`) and full chapter correlations.
+5.  **Unabridged Scholarly Lexicons** — Integrated Brown-Driver-Briggs (BDB) for Hebrew and Abbott-Smith for Greek, with Strong's senses and KJV translation renderings.
+6.  **AI transparency** — AI-generated content is explicitly marked `<!-- AI-GENERATED -->` and gated behind human review.
+7.  **Git-based collaboration** — Full version control with automated CI verification gates (F1–F4 validators).
+8.  **Adventist-focused** — Grounded in the sanctuary message, the Great Controversy theme, the seventh-day Sabbath, conditional immortality, and the Spirit of Prophecy.
 
 ## Project Structure
 
 ```
 bible-study-tool/
-├── materials/           # Source documents
-│   └── bible/           # Bible texts and commentaries (present: ot/ only)
-│       └── ot/          # Old Testament
-│           └── genesis/ # Whole-book Genesis corpus (all 1,533 verses, chapters 1–50; 1–3 curated, 4–50 draft skeletons)
-│   # Planned: spirit-of-prophecy/, commentaries/, translations/, nt/
-├── tags/                # Tag taxonomy and indexes
+├── materials/           # Curated markdown entries & draft skeletons
+│   └── bible/
+│       ├── ot/          # Old Testament
+│       │   └── genesis/ # Whole-book Genesis (chapters 01–50, 1,533 verses)
+│       └── nt/          # New Testament
+│           └── john/    # Curated John 1 (51 verses) & John 17 (26 verses)
+├── tags/                # Tag taxonomy (66 Bible books, themes, cross-reference types)
 ├── index/               # Generated indexes (tag → entry, passage → entry)
 ├── correlations/        # Cross-references, apparatus, and semantic links
 │   ├── agreement-ledger.json      # Cross-source agreement ledger (generated)
@@ -39,25 +45,34 @@ bible-study-tool/
 │   ├── semantic-links-index.json  # Quick lookup index
 │   ├── ai-discovered-links.json   # AI-suggested links awaiting review
 │   ├── DETERMINISTIC_VS_AI.md     # Core vs AI layer boundary
-│   ├── MACULA_INTEGRATION.md      # Macula dataset integration plan
+│   ├── MACULA_INTEGRATION.md      # Macula dataset integration overview
 │   └── SEMANTIC_LINKING_GUIDE.md  # Code-level implementation guide
-├── lexicons/            # Generated lexical artifacts (Strong's, STEPBible glosses, morphology, WordGraph)
+├── lexicons/            # Generated lexical artifacts (Strong's, STEPBible, WordGraph)
 │   ├── strongs-list.json          # Canonical enumeration (8,674 H + 5,624 G)
 │   ├── strongs-lexicon.json       # Definitions, transliterations, KJV usage
 │   ├── tbesh-glosses.json         # STEPBible brief Hebrew glosses
+│   ├── tbesg-glosses.json         # STEPBible brief Greek glosses
 │   ├── morphology-genesis*.json   # OSHB morphology layers (chapters 1–50)
 │   └── wordgraph-genesis.json     # WordGraph lexical knowledge graph (1,783 lexemes)
-├── data/                # Raw upstream sources (gitignored) + local JIT databases
-│   ├── PROVENANCE.md              # Checksums, pins, and reproduction instructions
-│   └── egw.db                     # Local SQLite FTS5 database for Spirit of Prophecy (gitignored)
-├── scripts/             # bootstrap.sh, fetch_sources.sh, verify_all.sh, egw_lookup.py, status.py
-├── ai-prompts/          # Templates for AI-assisted tasks
-├── search/              # Search, linking, corpus + agreement layers (Python)
+├── data/                # Local SQLite databases (gitignored) & provenance
+│   ├── bible.db                   # Whole-Bible 66 books (31,102 verses) in KJV, ASV, BSB, YLT
+│   ├── macula.db                  # Macula Hebrew MT & Greek NT Lowfat syntax trees
+│   ├── egw.db                     # Local SQLite FTS5 database for Spirit of Prophecy
+│   └── PROVENANCE.md              # Checksums, pins, and reproduction instructions
+├── scripts/             # study.py, bootstrap.sh, fetch_sources.sh, verify_all.sh, status.py
+├── docs/                # Decisions (ADRs), work packages (WPs), PASTOR_GUIDE.md
+│   ├── PASTOR_GUIDE.md            # Friendly tutorial & sermon prep walkthrough for pastors
+│   ├── WORKFLOW.md                # Engineering workflow and session practices
+│   ├── decisions/                 # Architecture Decision Records (ADR-0001..0021)
+│   └── wp/                        # Work package specifications (WP-001..027)
+├── search/              # Python search, linking, corpus, UI & agreement layers
+│   ├── ui/              # Modern Textual study workstation, themes, and study shell
+│   ├── corpus/          # Genesis & NT builders, grammar nuances, discourse flow, citations
+│   ├── macula/          # Linguistic enrichment, syntax trees, LXX crosswalk
 │   ├── linking/         # Semantic linking pipeline (layers b & c) + JIT EGW engine
 │   ├── validation/      # F1-F4 data-integrity validators + lexicon builders
-│   ├── corpus/          # Deterministic corpus/morphology generators + WordGraph draft engine
 │   └── agreement/       # Source Agreement Layer (facts, comparison, ledger, apparatus)
-├── .gitlab/             # Merge request template
+├── .gitlab/             # Merge request template & CI configuration
 ├── CONTRIBUTION_STANDARDS.md
 ├── kc-schema.md
 ├── LICENSE              # Code license (MIT)
@@ -75,19 +90,51 @@ bible-study-tool/
 git clone <repo-url>
 cd bible-study-tool
 
-# Automated environment setup (creates .venv, installs editable package and test dependencies):
+# Automated environment setup (creates .venv, installs dependencies):
 ./scripts/bootstrap.sh
 ```
 
-### 2. Fetch Pinned Lexical Sources
+### 2. Launch the Interactive Study Workstation
 
-The repository does not commit raw upstream archives to Git. Download the pinned raw sources (scrollmapper KJV OSIS, OSHB XML, gmlewis Strong's, STEPBible brief lexicons):
+The primary way to study Scripture with this tool is through the modern terminal workstation:
+
+```bash
+# Open the interactive visual study workstation (default: Genesis 1)
+python scripts/study.py
+
+# Or launch directly into any chapter:
+python scripts/study.py "John 1"
+python scripts/study.py "John 17"
+python scripts/study.py "Romans 1"
+```
+
+Use `j` / `k` to move between verses, `1`–`5` to switch study inspector tabs, `v` to toggle parallel translations, `o` to jump between New Testament verses and their Old Testament quotation roots, `g` to jump to any passage or Spirit of Prophecy reference (e.g. `PP 44.1`), `t` to cycle themes, and `?` for interactive help.
+
+### 3. Study via the Command-Line Interface (CLI)
+
+If you prefer studying or searching directly in your terminal shell:
+
+```bash
+# Study a passage and print structured linguistic cards:
+python scripts/study.py "John 1:1-5"
+
+# Look up an original language word (Strong's Hebrew or Greek):
+python scripts/study.py --word H7225
+python scripts/study.py --word G3056
+
+# Launch the interactive terminal study shell:
+python scripts/study.py --cli
+```
+
+### 4. Fetch Pinned Lexical Sources (Optional, for Generators)
+
+Download the pinned raw upstream sources (scrollmapper KJV OSIS, OSHB XML, gmlewis Strong's, STEPBible brief lexicons) for building lexical artifacts:
 
 ```bash
 bash scripts/fetch_sources.sh
 ```
 
-### 3. Initialize Spirit of Prophecy (EGW) JIT Database
+### 5. Initialize Spirit of Prophecy (EGW) Local Database
 
 Spirit of Prophecy writings are referenced via canonical pagination tokens (e.g. `egw:PP.57.1`) and stored in a local SQLite database (`data/egw.db`). Initialize the database and load seed passages:
 
@@ -95,7 +142,7 @@ Spirit of Prophecy writings are referenced via canonical pagination tokens (e.g.
 python scripts/egw_lookup.py --init --seed-genesis
 ```
 
-### 4. Run Full Local Verification
+### 6. Run Full Local Verification
 
 Run the exact test suite and data-integrity validators that CI executes:
 
@@ -103,30 +150,18 @@ Run the exact test suite and data-integrity validators that CI executes:
 bash scripts/verify_all.sh
 ```
 
-### 5. Study & Query
-
-Search the knowledge base deterministically and query Spirit of Prophecy citations:
-
-```bash
-# Query the lexical/passage SQLite index:
-python -m search.linking.dbindex query --free-text "creation light"
-
-# Lookup Spirit of Prophecy citation tokens:
-python scripts/egw_lookup.py --token egw:PP.57.1
-
-# Full-text search across local Spirit of Prophecy writings:
-python scripts/egw_lookup.py --search "tree of life"
-```
-
 ## Sourcing External Materials (What We Provide & What You Supply)
 
 A foundational architectural principle of this project is: **"Link out, don't redistribute"** ([NOTICE.md](NOTICE.md), [ADR-0002](docs/decisions/ADR-0002-licensing-and-content-sourcing.md), [ADR-0011](docs/decisions/ADR-0011-whole-book-scaffolding-and-jit-egw.md)). This keeps the Git repository 100% license-clean under MIT and CC BY 4.0 while enabling powerful, offline, full-text research.
 
 ### What is bundled in the repository:
-* **The Bible Text**: Pinned public-domain King James Version (KJV 1769 / OSIS) with Strong's numbering.
-* **Corpus Entries**: All 1,533 verses of Genesis (`materials/bible/ot/genesis/`). Chapters 1–3 are human-curated (`status: review`); chapters 4–50 are generated as draft skeletons (`status: draft`) carrying deterministic WordGraph word-study blocks.
-* **Lexical Artifacts**: Full Strong's Hebrew & Greek lexicons (`lexicons/strongs-*.json`), STEPBible brief glosses, whole-book Hebrew morphology (`lexicons/morphology-genesis{1..50}.json`), and the Genesis WordGraph (`lexicons/wordgraph-genesis.json`).
-* **Source Agreement Layer**: The apparatus alignment (`correlations/apparatus-genesis{1..50}.json`) and agreement ledger.
+* **The Bible Text**: Whole-Bible 66 books (31,102 verses) stored in normalized local SQLite (`data/bible.db`) containing the King James Version (KJV 1769 with Strong's tags), Berean Standard Bible (BSB 2020), American Standard Version (ASV 1901), and Young's Literal Translation (YLT 1898).
+* **Curated Corpus Entries**:
+  * **Old Testament**: All 1,533 verses of Genesis (`materials/bible/ot/genesis/{01..50}/`). Chapters 1–3 are fully human-curated (`status: review`); chapters 4–50 are generated as draft skeletons (`status: draft`) carrying deterministic WordGraph word-study blocks.
+  * **New Testament**: Curated Gospel of John chapters 1 & 17 (77 verses, `status: review`) in `materials/bible/nt/john/{01,17}/` detailing Logos Christology, the incarnation tabernacle (*skēnoō*), the Lamb of God, Trinitarian oneness, and Christ's High Priestly prayer. All 27 New Testament books are supported by the deterministic NT generator (`search/corpus/build_nt.py`).
+* **Lexical Artifacts**: Full Strong's Hebrew & Greek lexicons (`lexicons/strongs-*.json`), unabridged Brown-Driver-Briggs (BDB) and Abbott-Smith definitions, STEPBible brief glosses (TBESH / TBESG), whole-book Hebrew morphology (`lexicons/morphology-genesis{1..50}.json`), and the Genesis WordGraph (`lexicons/wordgraph-genesis.json`).
+* **Linguistic Datasets (Macula)**: Integrated Clear-Bible Macula Hebrew (WLC) and Greek (Nestle 1904) Lowfat syntax trees, clause roles, and Louw-Nida semantic domains (`data/macula.db`).
+* **Source Agreement Layer**: The apparatus alignment (`correlations/apparatus-genesis{1..50}.json`) and agreement ledger (`correlations/agreement-ledger.json`).
 
 ### What is NOT bundled (and how to supply it):
 
@@ -167,11 +202,20 @@ A foundational architectural principle of this project is: **"Link out, don't re
 
 ---
 
-## Corpus Scope: Whole-Book Genesis (Chapters 1–50)
+## Corpus Scope: Old & New Testaments
 
-The Genesis corpus encompasses **all 50 chapters (1,533 verses)**:
-* **Genesis 1–3 (curated, `status: review`)**: Fully annotated with Hebrew word studies, Greek LXX cross-references, theological themes, and cross-language correlations.
-* **Genesis 4–50 (draft skeletons, `status: draft`)**: Assembled by the deterministic draft engine (`search/corpus/draft_engine.py`) consuming the WordGraph (`lexicons/wordgraph-genesis.json`). Each entry contains verified KJV text, Strong's tags, and complete Hebrew word studies, ready for human/AI thematic curation in dedicated work packages (see `docs/wp/`).
+The knowledge base combines broad whole-Bible textual integration with deeply curated theological entries:
+
+* **Curated Theological Chapters (`status: review`)**:
+  * **Genesis 1–3 (80 verses)**: Creation ex nihilo, the seventh-day Sabbath holy crown, Edenic covenant, the Fall, Protevangelium (Gen 3:15), substitutionary atonement, and sanctuary gates.
+  * **John 1 (51 verses)**: Pre-existent deity of the Word (`En archē ēn ho Logos`), creation agency, incarnation tabernacle (`skēnoō`, echoing Ex 34:6), and the Lamb of God.
+  * **John 17 (26 verses)**: Christ's High Priestly prayer, Day of Atonement sanctuary typology, covenant Trinitarian oneness (`hina ōsin hen`), and sanctification in the truth.
+* **Old Testament Genesis Draft Skeletons (Chapters 4–50, 1,453 verses, `status: draft`)**:
+  * Assembled by the deterministic draft engine (`search/corpus/draft_engine.py`) consuming the WordGraph (`lexicons/wordgraph-genesis.json`). Each entry contains verified KJV text, Strong's tags, and complete Hebrew word studies, organized per-chapter (`materials/bible/ot/genesis/{01..50}/`).
+* **New Testament Infrastructure (All 27 Books)**:
+  * Deterministic generator (`search/corpus/build_nt.py`) capable of generating draft skeletons across all 27 New Testament books with Greek Strong's crosswalks and word-study blocks into `materials/bible/nt/{book}/{ch:02d}/`.
+* **Whole-Bible Scripture Database (`data/bible.db`)**:
+  * All 66 books (31,102 verses) fully indexed in KJV, ASV, BSB, and YLT with sub-millisecond retrieval.
 
 ## Lexical / Keyword Search
 
@@ -263,42 +307,31 @@ python -m search.linking.cli --repo . --deterministic   # or any validator/dbind
 
 Packaging metadata lives in `pyproject.toml`.
 
-## Macula Dataset Integration
+## Macula Linguistic Dataset Integration
 
-The project plans to integrate the [Macula](https://tools.bible/tools/macula-greek-and-hebrew-linguistic-datasets) datasets (open-licensed Hebrew and Greek linguistic annotation) to enrich original-language data. See Macula Integration Guide for details.
+Macula Hebrew and Greek linguistic annotations are integrated directly into `data/macula.db` (ADR-0012, ADR-0014, ADR-0015, ADR-0020). This provides sub-millisecond offline access to syntax clause trees, participant semantic roles (Agent, Action, Patient, Context), empirical Septuagint (LXX) translation equivalences, and Louw-Nida semantic domains across both Testaments.
 
-## Key Design Documents
+## Key Design & Study Documents
 
-*   Tag Taxonomy — Complete tag vocabulary and relationship types
-    
-*   [Knowledge Base Schema](kc-schema.md) — Entry format and metadata rules
-    
-*   Semantic Linking Implementation Guide — How cross-language relationships work
-    
+*   [Pastor & Bible Student Guide](docs/PASTOR_GUIDE.md) — Non-technical tutorial, sermon prep walkthroughs, and keyboard cheat sheet
+*   [Architecture Decision Records (ADRs)](docs/decisions/INDEX.md) — 21 formal architectural decisions documenting all design milestones
+*   [Work Packages (WPs)](docs/wp/INDEX.md) — Completed and open engineering packages (WP-001 through WP-027)
+*   [Workflow Guide](docs/WORKFLOW.md) — Explicit guide to the project's working method and verification cycle
+*   [Tag Taxonomy](tags/taxonomy.json) — Complete tag vocabulary and relationship types (66 books, themes, xrefs)
+*   [Knowledge Base Schema](kc-schema.md) — Entry format, YAML frontmatter, and metadata validation rules
 *   [Contribution Standards](CONTRIBUTION_STANDARDS.md) — Submission rules and review workflow
-    
-*   Deterministic vs AI Boundary — Core vs AI layer distinction
-    
+*   [Deterministic vs AI Boundary](correlations/DETERMINISTIC_VS_AI.md) — Core vs AI layer distinction
 *   [AI Prompt Templates](ai-prompts/) — Templates for AI-assisted study tasks
-
-*   [Roadmap](ROADMAP.md) — Goal inventory and sequenced plan
-    
+*   [Roadmap](ROADMAP.md) — Goal inventory, progress tracking, and sequenced plan
 
 ## Technology Stack
 
-*   **Core**: Markdown files with YAML frontmatter (human-readable, Git-friendly)
-    
-*   **Version Control**: Git (GitLab/GitHub)
-    
-*   **Search**: SQLite FTS5 (BM25) free-text + metadata queries, via the
-`search/linking/` pipeline (offline, no API). Cross-language semantic
-embeddings are the planned upgrade via a pluggable embedder.
-    
-*   **AI Integration**: LLM API (optional, for on-demand assistance)
-    
-*   **Original Languages**: Strong's Concordance data, Macula datasets
-    
-*   **Translations**: Multiple Bible translations (KJV, NKJV, ESV, NIV, etc.)
+*   **Interactive Workstation**: [Textual](https://textual.textualize.io/) (modern terminal application framework), Rich typography, persistent viewport engine, and 7 built-in themes (`search/ui/`)
+*   **Core Knowledge Base**: Markdown files with standard YAML frontmatter (human-readable, Git-friendly)
+*   **Local Databases**: SQLite FTS5 (BM25) on-device engines (`data/bible.db`, `data/macula.db`, `data/egw.db`, `index/semantic.db`)
+*   **Linguistic & Lexical Data**: Clear-Bible Macula Hebrew MT & Greek NT (Nestle 1904), Open Scriptures Hebrew Bible (OSHB), Strong's Exhaustive Concordance, STEPBible TBESH/TBESG glosses, Brown-Driver-Briggs (BDB), Abbott-Smith Greek Lexicon
+*   **Translations**: Pinned KJV (1769), BSB (2020), ASV (1901), and YLT (1898)
+*   **Verification & CI**: Python `pytest`, 4 automated data-integrity gates (F1 Schema, F2 Strong's, F3 Cross-refs, F4 Audit), and GitLab CI / GitHub Actions
     
 
 ## License
