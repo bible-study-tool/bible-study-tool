@@ -4,6 +4,9 @@ type: material/bible
 book: book/john
 passage: "John 17:15"
 tags:
+  - theme/prayer
+  - theme/sanctification
+  - theme/satan
   - material/bible
   - book/john
   - theme/christ
@@ -24,9 +27,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "matthew-6-13"
+    note: "Deliver us from evil: For thine is the kingdom, and the power, and the glory, for ever"
+  - type: xref/parallel
+    target: "2-thessalonians-3-3"
+    note: "The Lord is faithful, who shall stablish you, and keep you from evil"
+  - type: xref/parallel
+    target: "1-john-5-18-19"
+    note: "He that is begotten of God keepeth himself, and that wicked one toucheth him not"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:15 - KJV
@@ -123,6 +139,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: Mission in the world combined with preservation from the evil one
+*   OT Background: Psalm 91:1-12; 121:7 — The LORD shall preserve thee from all evil
+*   NT Parallels: Luke 10:19; Romans 16:20; Ephesians 6:10-18; Revelation 3:10
+*   Spirit of Prophecy: Testimonies for the Church, vol. 5, p. 573 — Sent into the world to be light and salt
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Rejection of Isolationism (*Ouk erōtō hina arēs autous ek tou kosmou*):** Christ never calls His followers to monastic retreat or ascetic isolation. The world is the harvest field where God's truth must shine.
+*   **Deliverance from the Evil One (*Ek tou ponērou*, G4190):** The Greek masculine/neuter indicates protection from Satan, the ruler of this world, and all his corrupting snares.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -130,5 +160,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

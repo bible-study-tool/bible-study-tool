@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:8"
 tags:
+  - theme/faith
+  - theme/covenant
   - material/bible
   - book/john
   - theme/christ
@@ -29,9 +31,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "deuteronomy-18-18"
+    note: "And he shall speak unto them all that I shall command him"
+  - type: xref/parallel
+    target: "john-6-68-69"
+    note: "Lord, to whom shall we go? thou hast the words of eternal life"
+  - type: xref/parallel
+    target: "john-16-27-30"
+    note: "For the Father himself loveth you, because ye have loved me, and have believed that I came out from God"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:8 - KJV
@@ -168,6 +183,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: Receiving the apostolic revelation and believing the divine sending
+*   OT Background: Isaiah 50:4 — The Lord GOD hath given me the tongue of the learned
+*   NT Parallels: 1 Thessalonians 2:13; 1 John 4:14
+*   Spirit of Prophecy: The Desire of Ages, p. 676
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Threefold Epistemology of Faith:** (1) Receiving the words (*elabon*); (2) Truly knowing Christ's eternal procession from God (*alēthōs egnōsan*); and (3) Believing the Father sent Him (*episteusan*). Christian faith rests upon objective historical revelation received into humble hearts.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -175,5 +203,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

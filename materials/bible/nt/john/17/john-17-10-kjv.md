@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:10"
 tags:
+  - theme/covenant
+  - theme/sanctification
   - material/bible
   - book/john
   - theme/christ
@@ -22,9 +24,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-10-30"
+    note: "I and my Father are one"
+  - type: xref/parallel
+    target: "john-16-15"
+    note: "All things that the Father hath are mine"
+  - type: xref/parallel
+    target: "2-thessalonians-1-10-12"
+    note: "When he shall come to be glorified in his saints, and to be admired in all them that believe"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:10 - KJV
@@ -105,6 +120,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Mutual divine ownership and Christ glorified in His redeemed saints
+*   OT Background: 1 Chronicles 29:11-12; Ezekiel 18:4
+*   NT Parallels: 1 Corinthians 3:21-23; Galatians 2:20
+*   Spirit of Prophecy: The Desire of Ages, p. 676 — The fruit of grace reflecting the Master's image
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Reciprocal Divine Co-Possession (*Ta ema panta sa estin kai ta sa ema*):** No mere creature could utter these words without blasphemy. The Son claims complete, joint ownership with the Father of all creation and redemption.
+*   **Glorified in Them (*Dedoxasmai en autois*, G1392 G1722 G846):** The perfect passive indicates an enduring reality: Christ is reflected, honored, and glorified as His character is reproduced in transformed disciples.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -112,5 +141,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

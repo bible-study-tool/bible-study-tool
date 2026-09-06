@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:12"
 tags:
+  - theme/prophecy
+  - theme/covenant
   - material/bible
   - book/john
   - theme/christ
@@ -38,9 +40,25 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "psalm-41-9"
+    note: "Yea, mine own familiar friend, in whom I trusted... hath lifted up his heel against me"
+  - type: xref/parallel
+    target: "john-6-70-71"
+    note: "Have not I chosen you twelve, and one of you is a devil? He spake of Judas Iscariot"
+  - type: xref/parallel
+    target: "john-13-18"
+    note: "That the scripture may be fulfilled, He that eateth bread with me hath lifted up his heel against me"
+  - type: xref/parallel
+    target: "2-thessalonians-2-3"
+    note: "That man of sin be revealed, the son of perdition"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:12 - KJV
@@ -249,6 +267,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 3
 
+## Correlations
+
+*   Theme: Pastoral guardianship and the tragedy of the son of perdition
+*   OT Background: Psalm 41:9; 109:8 — Prophetic foreknowledge of treachery
+*   NT Parallels: Matthew 26:24; Acts 1:16-20
+*   Spirit of Prophecy: The Desire of Ages, pp. 716-722 — The fall and fate of Judas
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Vigilant Guardianship (*Ephylaxa*, G5442):** Jesus guarded the disciples like a faithful shepherd watching over his sheep, preserving all who yielded their wills to Him.
+*   **The Son of Perdition (*Ho huios tēs apōleias*, G5207 G684):** Judas was not predestined to be lost by arbitrary decree; Christ labored tirelessly to save him. By persistent covert self-seeking and resistance to the Holy Spirit, Judas became the embodiment of willful ruin (*apoleia*).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -256,5 +288,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

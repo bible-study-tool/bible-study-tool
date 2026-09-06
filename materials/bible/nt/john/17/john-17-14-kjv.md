@@ -4,6 +4,9 @@ type: material/bible
 book: book/john
 passage: "John 17:14"
 tags:
+  - theme/sanctification
+  - theme/faith
+  - theme/satan
   - material/bible
   - book/john
   - theme/christ
@@ -27,9 +30,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-15-18-19"
+    note: "If the world hate you, ye know that it hated me before it hated you"
+  - type: xref/parallel
+    target: "1-john-3-13"
+    note: "Marvel not, my brethren, if the world hate you"
+  - type: xref/parallel
+    target: "james-4-4"
+    note: "The friendship of the world is enmity with God"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:14 - KJV
@@ -150,6 +166,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: The inevitable conflict between the kingdom of God and the spirit of the world
+*   OT Background: Genesis 3:15 — Enmity between the seed of the woman and the seed of the serpent
+*   NT Parallels: Matthew 10:22; Romans 8:7; 2 Timothy 3:12
+*   Spirit of Prophecy: The Great Controversy, pp. 505-510 — The antagonism between truth and error
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The World's Enmity (*Ho kosmos emisēsen autous*, G2889 G3404):** When believers receive God's Word, their values, priorities, and character contrast so sharply with fallen human culture that worldly opposition is inevitable.
+*   **Not of the World (*Ouk eisin ek tou kosmou*):** The disciples' origin, allegiance, and destination are heavenly, mirroring Christ's own divine nature.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -157,5 +187,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

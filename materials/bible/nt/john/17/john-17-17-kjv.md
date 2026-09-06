@@ -4,6 +4,9 @@ type: material/bible
 book: book/john
 passage: "John 17:17"
 tags:
+  - theme/sanctification
+  - theme/law
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -22,9 +25,25 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "psalm-119-142"
+    note: "Thy righteousness is an everlasting righteousness, and thy law is the truth"
+  - type: xref/parallel
+    target: "psalm-119-151"
+    note: "Thou art near, O LORD; and all thy commandments are truth"
+  - type: xref/parallel
+    target: "john-8-31-32"
+    note: "If ye continue in my word... ye shall know the truth, and the truth shall make you free"
+  - type: xref/parallel
+    target: "ephesians-5-26"
+    note: "That he might sanctify and cleanse it with the washing of water by the word"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:17 - KJV
@@ -105,6 +124,21 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Sanctification through the objective Word of truth
+*   OT Background: Exodus 19:6; Leviticus 11:44-45; Psalm 19:7-11; 119:9, 142, 151
+*   NT Parallels: 2 Thessalonians 2:13; 1 Peter 1:22; 2 Peter 1:3-4
+*   Spirit of Prophecy: The Great Controversy, p. 593 — God's Word the only safeguard; DA 677
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Sanctification Defined (*Hagiason autous*, G37):** *Hagiazo* signifies consecration, purification, and dedicated setting apart for sacred ministry. In biblical theology, sanctification is the work of a lifetime, aligning the human mind and character with divine holiness.
+*   **The Instrument of Sanctification (*En tē alētheia*, G225):** Holiness is not achieved by emotional ecstasy or human effort, but by the transforming power of truth received and obeyed through the Holy Spirit.
+*   **Thy Word Is Truth (*Ho logos ho sos alētheia estin*, G3056 G225 G1510):** God's self-revelation in Scripture is the ultimate, objective benchmark of reality, righteousness, and truth, against which every human philosophy must be tested.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -112,5 +146,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

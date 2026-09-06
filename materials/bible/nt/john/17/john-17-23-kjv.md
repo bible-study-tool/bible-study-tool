@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:23"
 tags:
+  - theme/covenant
+  - theme/grace
   - material/bible
   - book/john
   - theme/christ
@@ -30,9 +32,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-14-23"
+    note: "If a man love me, he will keep my words: and my Father will love him, and we will come unto him"
+  - type: xref/parallel
+    target: "ephesians-3-17-19"
+    note: "That Christ may dwell in your hearts by faith; that ye, being rooted and grounded in love"
+  - type: xref/parallel
+    target: "colossians-3-14"
+    note: "And above all these things put on charity, which is the bond of perfectness"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:23 - KJV
@@ -177,6 +192,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: Perfection in oneness and the staggering measure of the Father's love
+*   OT Background: Zephaniah 3:17 — The LORD thy God in the midst of thee is mighty... he will rejoice over thee with joy
+*   NT Parallels: Romans 8:38-39; 1 John 4:12-16
+*   Spirit of Prophecy: Steps to Christ, pp. 9-15 — God's love for man; DA 679
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Perfected into One (*Teteleiōmenoi eis hen*, G5048 G1519 G1520):** Believers achieve ultimate spiritual maturity as they dwell in reciprocal love with God and one another.
+*   **Loved with the Same Love (*Ēgapēsas autous kathōs eme ēgapēsas*, G25 G846 G2531 G1691):** One of the most breathtaking assurances in Scripture: the Father loves redeemed human beings with the very same tender, everlasting love wherewith He loves His only begotten Son.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -184,5 +213,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

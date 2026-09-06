@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:5"
 tags:
+  - theme/origins
+  - theme/covenant
   - material/bible
   - book/john
   - theme/christ
@@ -28,9 +30,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/theme
+    target: "john-1-1-kjv"
+    note: "In the beginning was the Word, and the Word was with God, and the Word was God"
+  - type: xref/parallel
+    target: "philippians-2-6"
+    note: "Who, being in the form of God, thought it not robbery to be equal with God"
+  - type: xref/parallel
+    target: "colossians-1-17"
+    note: "And he is before all things, and by him all things consist"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:5 - KJV
@@ -159,6 +174,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P-2
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: Restoration of pre-existent, unoriginated glory beside the Father
+*   OT Background: Proverbs 8:22-30; Micah 5:2 — Whose goings forth have been from of old, from everlasting
+*   NT Parallels: John 1:1-3; Philippians 2:5-11; Hebrews 1:3
+*   Spirit of Prophecy: The Desire of Ages, p. 23 — From the days of eternity the Lord Jesus Christ was one with the Father
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Pre-Existent Fellowship (*Para seautō... para soi*, G3844 G4572 G4771):** Christ prays to resume the visible divine glory He shared alongside the Father before the foundation of spacetime (*pro tou ton kosmon einai*). He laid this glory aside in the Incarnation, veiled in human flesh, but never forfeited His uncreated deity.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -166,5 +194,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

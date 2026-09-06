@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:4"
 tags:
+  - theme/redemption
+  - theme/sanctification
   - material/bible
   - book/john
   - theme/christ
@@ -25,9 +27,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-4-34"
+    note: "My meat is to do the will of him that sent me, and to finish his work"
+  - type: xref/parallel
+    target: "john-5-36"
+    note: "The works which the Father hath given me to finish... bear witness of me"
+  - type: xref/parallel
+    target: "john-19-30"
+    note: "When Jesus therefore had received the vinegar, he said, It is finished"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:4 - KJV
@@ -132,6 +147,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The finished earthly mission and the vindication of divine love
+*   OT Background: Isaiah 42:1-4; 53:10-11 — The servant prospering in the Lord's pleasure
+*   NT Parallels: Acts 20:24; 2 Timothy 4:7; Hebrews 12:2
+*   Spirit of Prophecy: The Desire of Ages, p. 675 — Christ had completed the revelation of God's character
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Finished Work (*To ergon teleiōsas*, G2041 G5048):** In anticipatory triumph, Jesus speaks of His earthly work as an accomplished totality. By a life of sinless obedience, tender compassion, and unspotted holiness, He has fully unveiled the Father and unmasked the deceptions of the adversary.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -139,5 +167,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

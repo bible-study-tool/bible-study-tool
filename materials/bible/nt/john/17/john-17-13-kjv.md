@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:13"
 tags:
+  - theme/faith
+  - theme/hope
   - material/bible
   - book/john
   - theme/christ
@@ -30,9 +32,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-15-11"
+    note: "These things have I spoken unto you, that my joy might remain in you, and that your joy might be full"
+  - type: xref/parallel
+    target: "john-16-22-24"
+    note: "Your heart shall rejoice, and your joy no man taketh from you"
+  - type: xref/parallel
+    target: "1-john-1-4"
+    note: "And these things write we unto you, that your joy may be full"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:13 - KJV
@@ -177,6 +192,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Fullness of divine joy in the midst of a hostile world
+*   OT Background: Nehemiah 8:10 — The joy of the LORD is your strength; Isaiah 61:10
+*   NT Parallels: Galatians 5:22; Philippians 4:4; 1 Peter 1:8
+*   Spirit of Prophecy: The Desire of Ages, p. 677 — Joy springing from surrender to divine love
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Christ's Imparted Joy (*Ten charan tēn emēn peplērōmenēn*, G5479 G4137):** Not superficial worldly happiness, but the deep, unshakable joy of complete alignment with the Father's will, even in the shadow of the cross.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -184,5 +212,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

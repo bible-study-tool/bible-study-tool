@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:9"
 tags:
+  - theme/prayer
+  - theme/covenant
   - material/bible
   - book/john
   - theme/christ
@@ -26,9 +28,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "luke-22-32"
+    note: "But I have prayed for thee, that thy faith fail not"
+  - type: xref/parallel
+    target: "romans-8-34"
+    note: "It is Christ that died, yea rather, that is risen again, who is even at the right hand of God, who also maketh intercession for us"
+  - type: xref/parallel
+    target: "hebrews-7-25"
+    note: "Wherefore he is able also to save them to the uttermost... seeing he ever liveth to make intercession for them"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:9 - KJV
@@ -141,6 +156,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The particularity and power of Christ's High Priestly intercession
+*   OT Background: Exodus 28:29 — Aaron bearing the names of the children of Israel in the breastplate of judgment
+*   NT Parallels: Hebrews 9:24; 1 John 2:1-2
+*   Spirit of Prophecy: The Desire of Ages, p. 676 — The intercession of Christ is the anchor of the church
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Priestly Intercession (*Egō peri autōn erōtō*, G1473 G4012 G846 G2065):** Christ clarifies that at this solemn juncture He prays specifically for His disciples, not for the unregenerate world. While He died for the whole world (John 3:16), His priestly mediation is dedicated to preserving and empowering the covenant flock through whom the gospel will be proclaimed to that world.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -148,5 +176,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

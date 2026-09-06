@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:21"
 tags:
+  - theme/covenant
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -30,9 +32,28 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-10-38"
+    note: "That ye may know, and believe, that the Father is in me, and I in him"
+  - type: xref/parallel
+    target: "john-14-10-11"
+    note: "Believest thou not that I am in the Father, and the Father in me?"
+  - type: xref/parallel
+    target: "romans-12-5"
+    note: "So we, being many, are one body in Christ, and every one members one of another"
+  - type: xref/parallel
+    target: "galatians-3-28"
+    note: "There is neither Jew nor Greek... for ye are all one in Christ Jesus"
+  - type: xref/parallel
+    target: "ephesians-4-3-6"
+    note: "Endeavouring to keep the unity of the Spirit in the bond of peace. There is one body, and one Spirit"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:21 - KJV
@@ -177,6 +198,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The organic unity of believers as the supreme witness to Christ's messiahship
+*   OT Background: Psalm 133:1 — Behold, how good and how pleasant it is for brethren to dwell together in unity!
+*   NT Parallels: 1 Corinthians 12:12-27; Philippians 1:27; Colossians 3:12-15
+*   Spirit of Prophecy: Testimonies for the Church, vol. 9, pp. 179-189 — Christian unity the strongest credential
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Organic Spiritual Unity (*Hina pantes hen ōsin*, G3956 G1520):** Christ prays for a deep, living union among His followers rooted in shared divine life, truth, and agape love. This is the antithesis of worldly sectarian rivalry.
+*   **The Supreme Apologetic (*Hina ho kosmos pisteuē*, G2443 G2889 G4100):** Unselfish unity among diverse believers constitutes the most convincing proof to an unbelieving world that Jesus was truly sent by the Father.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -184,5 +219,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

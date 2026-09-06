@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 17:7"
 tags:
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -23,9 +24,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-7-16-17"
+    note: "My doctrine is not mine, but his that sent me"
+  - type: xref/parallel
+    target: "john-8-28"
+    note: "As my Father hath taught me, I speak these things"
+  - type: xref/parallel
+    target: "john-12-49"
+    note: "For I have not spoken of myself; but the Father which sent me, he gave me a commandment"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:7 - KJV
@@ -114,6 +128,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P-2
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The disciples' spiritual comprehension of Christ's divine mission
+*   OT Background: Deuteronomy 18:18 — I will put my words in his mouth
+*   NT Parallels: Matthew 16:16-17; John 16:30
+*   Spirit of Prophecy: The Desire of Ages, p. 676
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Divine Origin Acknowledged (*Para sou estin*, G3844 G4771 G1510):** The disciples grasped the fundamental reality that everything Christ possesses—His words, powers, authority, and love—originates in unbroken communion with the Father.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -121,5 +148,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

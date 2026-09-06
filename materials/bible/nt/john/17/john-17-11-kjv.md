@@ -4,6 +4,9 @@ type: material/bible
 book: book/john
 passage: "John 17:11"
 tags:
+  - theme/prayer
+  - theme/covenant
+  - theme/sanctification
   - material/bible
   - book/john
   - theme/christ
@@ -35,9 +38,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-10-28-30"
+    note: "Neither shall any man pluck them out of my hand. My Father, which gave them me, is greater than all"
+  - type: xref/parallel
+    target: "john-17-21-23"
+    note: "That they all may be one; as thou, Father, art in me, and I in thee"
+  - type: xref/parallel
+    target: "1-peter-1-5"
+    note: "Who are kept by the power of God through faith unto salvation"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:11 - KJV
@@ -222,6 +238,21 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The Holy Father's keeping power and organic covenant oneness
+*   OT Background: Numbers 6:24-26 — The LORD bless thee, and keep thee
+*   NT Parallels: Ephesians 4:3-6; Philippians 2:1-2; Jude 1:24
+*   Spirit of Prophecy: Testimonies for the Church, vol. 8, pp. 239-243 — The unity of the Spirit
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Invocation 'Holy Father' (*Pater Hagie*, G3962 G40):** A uniquely reverent address emphasizing the absolute purity and moral perfection of the Godhead.
+*   **Preservation in the Name (*Tērēson autous en tō onomati sou*, G5083 G3686):** The disciples are shielded from apostasy by being enveloped in the covenant character, truth, and authority of God.
+*   **Trinitarian Blueprint for Unity (*Hina ōsin hen kathōs hēmeis*):** Church unity is not political consensus or organizational uniformity, but spiritual oneness modeled after the harmonious love, purpose, and essence of the Father and Son.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -229,5 +260,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

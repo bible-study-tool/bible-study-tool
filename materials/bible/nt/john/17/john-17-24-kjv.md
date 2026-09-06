@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:24"
 tags:
+  - theme/hope
+  - theme/second-coming
   - material/bible
   - book/john
   - theme/christ
@@ -32,9 +34,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-14-3"
+    note: "And if I go and prepare a place for you, I will come again, and receive you unto myself; that where I am, there ye may be also"
+  - type: xref/parallel
+    target: "1-thessalonians-4-17"
+    note: "Then we which are alive and remain shall be caught up together with them... so shall we ever be with the Lord"
+  - type: xref/parallel
+    target: "revelation-21-3"
+    note: "Behold, the tabernacle of God is with men, and he will dwell with them"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:24 - KJV
@@ -195,6 +210,21 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:PREP
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Eternal communion in the presence of unveiled divine glory
+*   OT Background: Isaiah 33:17 — Thine eyes shall see the king in his beauty; Psalm 16:11
+*   NT Parallels: 2 Corinthians 5:8; Philippians 1:23; Revelation 22:3-5
+*   Spirit of Prophecy: The Great Controversy, pp. 675-678 — The eternal reward of the redeemed
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Sovereign Will of the Intercessor (*Thelō*, G2309):** Here Jesus shifts from petition (*erōtō*) to sovereign desire (*thelō* = 'I will'). As the covenant Redeemer, He claims the final fruit of His sacrifice: the eternal companionship of His purchased people.
+*   **Beholding Unveiled Glory (*Theōrōsin tēn doxan tēn emēn*, G2334 G1391):** The ultimate beatitude for the redeemed is to behold and partake of Christ's unveiled glory throughout eternal ages.
+*   **Pre-Temporal Love (*Pro katabolēs kosmou*, G4253 G2602 G2889):** Confirms the eternal, unoriginated love between Father and Son, antedating all created things.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -202,5 +232,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

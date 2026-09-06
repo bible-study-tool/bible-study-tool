@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:3"
 tags:
+  - theme/faith
+  - theme/redemption
   - material/bible
   - book/john
   - theme/christ
@@ -30,9 +32,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "jeremiah-9-23-24"
+    note: "Let him that glorieth glory in this, that he understandeth and knoweth me"
+  - type: xref/parallel
+    target: "john-1-18-kjv"
+    note: "No man hath seen God at any time; the only begotten Son... he hath declared him"
+  - type: xref/parallel
+    target: "1-john-5-20"
+    note: "And we know that the Son of God is come, and hath given us an understanding, that we may know him that is true"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:3 - KJV
@@ -177,6 +192,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Experiential knowledge of the true God and Jesus Christ as eternal life
+*   OT Background: Exodus 34:6-7; Jeremiah 9:23-24; Hosea 6:3, 6
+*   NT Parallels: Philippians 3:8-10; 2 Peter 1:2-3; 1 John 5:20
+*   Spirit of Prophecy: The Desire of Ages, p. 762 — To know God is to love Him
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Experiential Knowledge (*Ginōskōsin*, G1097):** *Ginosko* mirrors the Hebrew *yada*, signifying intimate, transformational communion rather than mere theoretical comprehension. True knowledge of God involves walking in harmony with His character of self-sacrificing love.
+*   **The Only True God and the Sent Messiah (*Ton monon alēthinon Theon kai... Iēsoun Christon*, G3441 G228 G2316 G2424 G5547):** The Father is the fountainhead of divinity (*alethinos* = genuine, ultimate reality), and Jesus Christ is His definitive, equal apostle and mediator (*hon apesteilas*). Eternal life is inseparable from fellowship with both.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -184,5 +213,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:19"
 tags:
+  - theme/sanctuary
+  - theme/redemption
   - material/bible
   - book/john
   - theme/christ
@@ -23,9 +25,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "hebrews-2-11"
+    note: "For both he that sanctifieth and they who are sanctified are all of one"
+  - type: xref/parallel
+    target: "hebrews-10-10"
+    note: "By the which will we are sanctified through the offering of the body of Jesus Christ once for all"
+  - type: xref/parallel
+    target: "hebrews-10-14"
+    note: "For by one offering he hath perfected for ever them that are sanctified"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:19 - KJV
@@ -114,6 +129,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: Priestly self-consecration and the sacrificial basis of sanctification
+*   OT Background: Exodus 29:1-37 — Consecration of the priesthood and altar; Leviticus 1:3-4
+*   NT Parallels: 1 Corinthians 1:30; Ephesians 5:25-26; Titus 2:14
+*   Spirit of Prophecy: The Desire of Ages, p. 678 — Christ the priest and the sacrifice
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Self-Sanctification for Others (*Hyper autōn egō hagiazō emauton*):** Christ had no sin from which to be cleansed. His 'sanctifying Himself' denotes His voluntary dedication as the unblemished sacrificial victim upon the altar of the cross, consecrating Himself to death that His followers might be truly set apart to God.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -121,5 +149,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

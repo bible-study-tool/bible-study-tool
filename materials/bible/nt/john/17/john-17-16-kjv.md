@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 17:16"
 tags:
+  - theme/sanctification
   - material/bible
   - book/john
   - theme/christ
@@ -20,9 +21,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-15-19"
+    note: "Because ye are not of the world, but I have chosen you out of the world, therefore the world hateth you"
+  - type: xref/parallel
+    target: "john-17-14-kjv"
+    note: "They are not of the world, even as I am not of the world"
+  - type: xref/parallel
+    target: "romans-12-2"
+    note: "And be not conformed to this world: but be ye transformed by the renewing of your mind"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:16 - KJV
@@ -87,6 +101,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:PRT-N
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: Uncompromising spiritual identity and distinctiveness
+*   OT Background: Leviticus 20:26 — Ye shall be holy unto me: for I the LORD am holy, and have severed you
+*   NT Parallels: 2 Corinthians 6:14-18; Colossians 3:1-3
+*   Spirit of Prophecy: Patriarchs and Prophets, p. 607 — God's people called to be a distinct and holy standard
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Double Affirmation of Non-Worldliness:** By repeating verbatim the statement from verse 14, Jesus underscores that spiritual distinctiveness is not optional or peripheral; it is the essential precondition for effective witness.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -94,5 +121,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

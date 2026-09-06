@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:26"
 tags:
+  - theme/covenant
+  - theme/grace
   - material/bible
   - book/john
   - theme/christ
@@ -27,9 +29,25 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "psalm-22-22"
+    note: "I will declare thy name unto my brethren"
+  - type: xref/parallel
+    target: "john-15-9"
+    note: "As the Father hath loved me, so have I loved you: continue ye in my love"
+  - type: xref/parallel
+    target: "romans-5-5"
+    note: "The love of God is shed abroad in our hearts by the Holy Ghost which is given unto us"
+  - type: xref/parallel
+    target: "ephesians-3-19"
+    note: "And to know the love of Christ, which passeth knowledge, that ye might be filled with all the fulness of God"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:26 - KJV
@@ -150,6 +168,21 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 3
 
+## Correlations
+
+*   Theme: The ongoing disclosure of the divine Name and the indwelling love of Christ
+*   OT Background: Exodus 34:5-7; Psalm 103:1-13 — The tender mercies of the Lord
+*   NT Parallels: Galatians 2:20; Colossians 1:27; 1 John 4:16
+*   Spirit of Prophecy: The Desire of Ages, pp. 679-680 — The culmination of the High Priestly Prayer
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Continuous Disclosure (*Egnōrisa kai gnōrisō*, G1107):** Christ declared the Father's character in His earthly walk, and He will continue to declare it through the Holy Spirit and throughout the ceaseless ages of eternity.
+*   **Indwelling Agape (*He agapē hēn ēgapēsas me en autois ē*, G26 G1722 G846):** The ultimate purpose of redemption is that the very love wherewith the Father loves the Son shall dwell within the hearts of believers.
+*   **Christ in Them (*Kagō en autois*):** The triumphant final words of the prayer: Christ indwelling His people, the everlasting pledge of their victory, peace, and eternal glory.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -157,5 +190,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

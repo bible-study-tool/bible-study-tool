@@ -4,6 +4,9 @@ type: material/bible
 book: book/john
 passage: "John 17:20"
 tags:
+  - theme/prayer
+  - theme/faith
+  - theme/prophecy
   - material/bible
   - book/john
   - theme/christ
@@ -28,9 +31,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "acts-2-39"
+    note: "For the promise is unto you, and to your children, and to all that are afar off"
+  - type: xref/parallel
+    target: "romans-10-14-17"
+    note: "So then faith cometh by hearing, and hearing by the word of God"
+  - type: xref/parallel
+    target: "1-peter-1-23"
+    note: "Being born again, not of corruptible seed, but of incorruptible, by the word of God"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:20 - KJV
@@ -159,6 +175,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Everlasting intercession extending to all future generations of believers
+*   OT Background: Isaiah 53:10-11 — He shall see his seed, he shall prolong his days
+*   NT Parallels: John 10:16; 2 Corinthians 5:19-20; Ephesians 2:13-17
+*   Spirit of Prophecy: The Desire of Ages, p. 678 — Reaching down the ages to every humble believer
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Church Through All Ages:** In a breathtaking expansion of perspective, Christ gathers every future believer under His intercessory wings. From the twelve in the upper room to the final remnant generation at the close of time, every soul who believes through the apostolic word is encompassed in this prayer.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -166,5 +195,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

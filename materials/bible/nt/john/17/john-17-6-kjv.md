@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:6"
 tags:
+  - theme/faith
+  - theme/covenant
   - material/bible
   - book/john
   - theme/christ
@@ -29,9 +31,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "psalm-22-22"
+    note: "I will declare thy name unto my brethren: in the midst of the congregation will I praise thee"
+  - type: xref/parallel
+    target: "john-1-18-kjv"
+    note: "The only begotten Son... he hath declared him"
+  - type: xref/parallel
+    target: "john-17-26-kjv"
+    note: "And I have declared unto them thy name, and will declare it"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:6 - KJV
@@ -168,6 +183,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Manifestation of the divine character and the obedience of faith
+*   OT Background: Exodus 3:13-15; 34:5-7 — Proclaiming the Name of YHWH
+*   NT Parallels: Hebrews 2:12; 1 John 2:3-5; Revelation 3:8
+*   Spirit of Prophecy: The Desire of Ages, p. 676 — The Name represents the merciful character of God
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Manifesting the Name (*Ephanerōsa sou to onoma*, G5319 G3686):** In biblical thought, the 'name' denotes the moral essence, character, and covenant authority of the person. Christ did not merely pronounce the letters of God's name; He visibly lived out the holiness, love, and justice of the Father before His disciples.
+*   **Keeping the Word (*Ton logon sou tetērēkasin*, G3056 G5083):** Despite their weaknesses and perplexities, the disciples held fast to the divine revelation, recognizing Christ's words as eternal truth.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -175,5 +204,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

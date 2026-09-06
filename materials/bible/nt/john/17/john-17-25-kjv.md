@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:25"
 tags:
+  - theme/faith
+  - theme/judgment
   - material/bible
   - book/john
   - theme/christ
@@ -26,9 +28,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "psalm-145-17"
+    note: "The LORD is righteous in all his ways, and holy in all his works"
+  - type: xref/parallel
+    target: "matthew-11-27"
+    note: "No man knoweth the Son, but the Father; neither knoweth any man the Father, save the Son"
+  - type: xref/parallel
+    target: "john-8-19"
+    note: "Ye neither know me, nor my Father: if ye had known me, ye should have known my Father also"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:25 - KJV
@@ -141,6 +156,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The Righteous Father vindicated against a world in darkness
+*   OT Background: Genesis 18:25 — Shall not the Judge of all the earth do right?
+*   NT Parallels: Romans 3:25-26; Revelation 15:3; 16:5
+*   Spirit of Prophecy: The Desire of Ages, p. 679 — Righteousness and mercy harmonized at the cross
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Invocation 'Righteous Father' (*Pater Dikaie*, G3962 G1342):** At the climax of the prayer, Christ appeals to God's inherent justice and righteousness (*dikaios*). God's righteousness guarantees that His promises to the Son and the covenant flock will be unfailingly honored.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -148,5 +176,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:1"
 tags:
+  - theme/prayer
+  - theme/sanctuary
   - material/bible
   - book/john
   - theme/christ
@@ -31,9 +33,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-12-23"
+    note: "Jesus answered them, saying, The hour is come, that the Son of man should be glorified"
+  - type: xref/parallel
+    target: "john-13-31-32"
+    note: "Now is the Son of man glorified, and God is glorified in him"
+  - type: xref/parallel
+    target: "philippians-2-9-11"
+    note: "Wherefore God also hath highly exalted him, and given him a name which is above every name"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:1 - KJV
@@ -186,6 +201,21 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The High Priestly invocation and the hour of ultimate glorification
+*   OT Background: Leviticus 16:11-17 — The high priest making atonement before the Lord
+*   NT Parallels: Matthew 26:39; John 7:30; 8:20; 12:23, 27; Hebrews 5:7
+*   Spirit of Prophecy: The Desire of Ages, pp. 675-680 — Christ entering upon His priestly intercession
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Appointed Hour (*Elēlythen he hōra*, G2064 G5610):** Throughout John's Gospel, Jesus repeatedly noted that 'mine hour is not yet come' (John 2:4; 7:30; 8:20). Here, at the threshold of Gethsemane and Calvary, the prophetic countdown culminates. The hour of redemption has arrived.
+*   **Mutual Glorification (*Doxason sou ton Huion*, G1392 G5207):** In Johannine theology, glory (*doxa*) is supremely manifested in self-sacrificing love upon the cross. The Son asks to be sustained through His passion so that His self-giving sacrifice might vindicate the character of the Father before the watching universe.
+*   **Sanctuary High Priestly Posture:** Having concluded His farewell discourse in the upper room, Jesus lifts His eyes to heaven as the great High Priest. Before shedding His own blood, He offers solemn intercession for His house and covenant people, fulfilling the typological pattern of the Day of Atonement.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -193,5 +223,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

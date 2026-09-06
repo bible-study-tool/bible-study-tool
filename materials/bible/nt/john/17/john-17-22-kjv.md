@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:22"
 tags:
+  - theme/sanctification
+  - theme/covenant
   - material/bible
   - book/john
   - theme/christ
@@ -24,9 +26,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "2-corinthians-3-18"
+    note: "Changed into the same image from glory to glory, even as by the Spirit of the Lord"
+  - type: xref/parallel
+    target: "colossians-1-27"
+    note: "Christ in you, the hope of glory"
+  - type: xref/parallel
+    target: "1-john-3-2"
+    note: "When he shall appear, we shall be like him; for we shall see him as he is"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:22 - KJV
@@ -123,6 +138,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Divine glory bestowed upon the church for holy unity
+*   OT Background: Exodus 34:29-35 — Moses' face shining with reflected divine glory
+*   NT Parallels: Ephesians 1:17-18; 1 Peter 4:14
+*   Spirit of Prophecy: The Desire of Ages, p. 678 — The glory of Christ is His character
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Imparted Glory (*Ten doxan... dedōka autois*, G1391 G1325):** The glory of Christ is not outward pomp, but His character of unselfish love and divine holiness. By imparting His Spirit to dwell in believers, He reproduces His loving character within them, binding them together in unbreakable union.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -130,5 +158,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

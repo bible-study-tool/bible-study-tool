@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 17:18"
 tags:
+  - theme/prophecy
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -21,9 +23,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-20-21"
+    note: "As my Father hath sent me, even so send I you"
+  - type: xref/parallel
+    target: "matthew-28-19-20"
+    note: "Go ye therefore, and teach all nations, baptizing them in the name of the Father, and of the Son, and of the Holy Ghost"
+  - type: xref/parallel
+    target: "2-corinthians-5-20"
+    note: "Now then we are ambassadors for Christ, as though God did beseech you by us"
+  - type: xref/spirit-prophecy
+    target: "des-73-1"
+    note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
 ---
 
 # John 17:18 - KJV
@@ -96,6 +111,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Apostolic commission modeled upon the incarnation of the Son
+*   OT Background: Isaiah 6:8 — Here am I; send me
+*   NT Parallels: Mark 16:15; Acts 1:8; Romans 10:15
+*   Spirit of Prophecy: The Acts of the Apostles, pp. 9-16 — The high purpose of the church
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Incarnational Model of Mission (*Kathōs eme apesteilas... kagō apesteila autous*):** Just as the Father sent the Son to live among human beings, heal broken hearts, and manifest self-renouncing love, so Christ sends His church into the world as living embodiments of His grace.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -103,5 +131,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.
