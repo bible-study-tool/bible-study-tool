@@ -59,4 +59,4 @@ before your first task).
 | Work packages | `docs/wp/` (INDEX.md) |
 | Doctrinal basis | `NOTICE.md` |
 | Full workflow + examples | `docs/WORKFLOW.md` |
-| Pastor & student study guide | `docs/PASTOR_GUIDE.md` |
+| User & study guide | `docs/USER_GUIDE.md` |

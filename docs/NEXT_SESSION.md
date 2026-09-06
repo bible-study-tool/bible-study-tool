@@ -17,9 +17,9 @@ The project has achieved several major architectural and pastoral milestones:
    - **Multi-Translation Parallel View**: Zero-latency comparison of KJV, ASV, BSB, and YLT stacked (`v` key) or side-by-side in Tab 4.
    - **Spirit of Prophecy Integration**: Continuous page reader (`g` ➔ `PP 44.1`, `DA 19.1`), page context attachment, and chapter-level correlations (`c` toggle).
 3. **Pillar A3 Closed**: Full New Testament generator (`search/corpus/build_nt.py`), 27 NT books integrated into `tags/taxonomy.json`, per-chapter directory structure across Old and New Testaments (`materials/bible/{ot,nt}/{book}/{ch:02d}/`), and deep theological curation of **John 1** (51 verses) and **John 17** (26 verses).
-4. **Documentation & Pastoral Tutorial Overhaul**:
+4. **Documentation & User Guide Overhaul**:
    - Modernized `README.md` reflecting whole-Bible databases, interactive workstation, and comprehension tools.
-   - Created `docs/PASTOR_GUIDE.md`: A warm, non-technical, step-by-step guide for pastors, elders, and Bible students focusing on sermon preparation, biblical exegesis, and keyboard shortcuts.
+   - Created `docs/USER_GUIDE.md`: A warm, friendly, step-by-step guide for anyone without computer or terminal background, focusing on personal study, small groups, and teaching walkthroughs.
 
 ---
 
@@ -47,4 +47,4 @@ The project has achieved several major architectural and pastoral milestones:
    - **Option A (OT Genesis Curation)**: Curate Genesis 4 (Cain & Abel, the offerings, first murder, lineage of Seth) per WP-012.
    - **Option B (NT Pauline Epistle Curation)**: Curate Romans 1 or Romans 3 (righteousness by faith, Habakkuk 2:4 quotation anchor, discourse argumentation).
    - **Option C (NT Sanctuary Curation)**: Curate Hebrews 8–9 (the heavenly sanctuary, shadows and realities, High Priest intercession).
-   - **Option D (Static Site / Wiki Generation)**: Set up MkDocs or static documentation generator to publish `docs/`, `materials/`, and `docs/PASTOR_GUIDE.md` as a browsable online wiki.
+   - **Option D (Static Site / Wiki Generation)**: Set up MkDocs or static documentation generator to publish `docs/`, `materials/`, and `docs/USER_GUIDE.md` as a browsable online wiki.

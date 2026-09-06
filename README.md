@@ -2,7 +2,7 @@
 
 An AI-assisted, deterministic knowledge base and interactive terminal workstation for in-depth Bible study and theological research, centered on Seventh-day Adventist beliefs and materials.
 
-> 📖 **New to the tool or preparing a sermon?** Read the [Pastor & Bible Student Guide](docs/PASTOR_GUIDE.md) for a friendly, step-by-step tutorial on navigating the workstation, studying original languages in plain English, and finding Spirit of Prophecy insights.
+> 📖 **New to the tool or exploring Scripture?** Read the [User & Study Guide](docs/USER_GUIDE.md) for a friendly, step-by-step tutorial on navigating the workstation, studying original languages in plain English, and discovering Spirit of Prophecy insights — no technical background needed.
 
 ## Vision & Guiding North Star
 
@@ -60,8 +60,8 @@ bible-study-tool/
 │   ├── egw.db                     # Local SQLite FTS5 database for Spirit of Prophecy
 │   └── PROVENANCE.md              # Checksums, pins, and reproduction instructions
 ├── scripts/             # study.py, bootstrap.sh, fetch_sources.sh, verify_all.sh, status.py
-├── docs/                # Decisions (ADRs), work packages (WPs), PASTOR_GUIDE.md
-│   ├── PASTOR_GUIDE.md            # Friendly tutorial & sermon prep walkthrough for pastors
+├── docs/                # Decisions (ADRs), work packages (WPs), USER_GUIDE.md
+│   ├── USER_GUIDE.md              # Friendly tutorial & study walkthrough for anyone
 │   ├── WORKFLOW.md                # Engineering workflow and session practices
 │   ├── decisions/                 # Architecture Decision Records (ADR-0001..0021)
 │   └── wp/                        # Work package specifications (WP-001..027)
@@ -313,7 +313,7 @@ Macula Hebrew and Greek linguistic annotations are integrated directly into `dat
 
 ## Key Design & Study Documents
 
-*   [Pastor & Bible Student Guide](docs/PASTOR_GUIDE.md) — Non-technical tutorial, sermon prep walkthroughs, and keyboard cheat sheet
+*   [User & Study Guide](docs/USER_GUIDE.md) — Non-technical tutorial, study walkthroughs, and keyboard cheat sheet
 *   [Architecture Decision Records (ADRs)](docs/decisions/INDEX.md) — 21 formal architectural decisions documenting all design milestones
 *   [Work Packages (WPs)](docs/wp/INDEX.md) — Completed and open engineering packages (WP-001 through WP-027)
 *   [Workflow Guide](docs/WORKFLOW.md) — Explicit guide to the project's working method and verification cycle
