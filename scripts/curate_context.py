@@ -166,7 +166,9 @@ def build_briefing(
             lines.append("")
 
     for v in verses:
-        entry_path = repo_root / f"materials/bible/ot/genesis/gen-{chapter}-{v}-kjv.md"
+        entry_path = repo_root / f"materials/bible/ot/genesis/{chapter:02d}/gen-{chapter}-{v}-kjv.md"
+        if not entry_path.exists():
+            entry_path = repo_root / f"materials/bible/ot/genesis/gen-{chapter}-{v}-kjv.md"
         app_key = f"Gen.{chapter}.{v}"
         app_entry = apparatus_by_key.get(app_key, {})
 

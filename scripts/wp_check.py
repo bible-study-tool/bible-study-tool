@@ -10,7 +10,7 @@ Validates a work package's scoped entries before commit / subagent review:
 Usage:
     python scripts/wp_check.py --wp WP-002
     python scripts/wp_check.py --wp WP-003
-    python scripts/wp_check.py --files materials/bible/ot/genesis/gen-1-6-kjv.md
+    python scripts/wp_check.py --files materials/bible/ot/genesis/01/gen-1-6-kjv.md
 """
 
 from __future__ import annotations
@@ -88,18 +88,24 @@ def resolve_wp_files(repo_root: Path, wp_name: str) -> tuple[Path | None, list[P
             r"gen-(\d+)-(\d+)-kjv(?:\.md)?\s*\.\.\s*gen-\d+-(\d+)-kjv(?:\.md)?",
             scope_str,
         )
+        def _resolve_entry(ch: int, fname: str) -> Path:
+            modern = repo_root / f"materials/bible/ot/genesis/{ch:02d}" / fname
+            legacy = repo_root / "materials/bible/ot/genesis" / fname
+            return legacy if not modern.exists() and legacy.exists() else modern
+
         if range_match:
             ch = int(range_match.group(1))
             start = int(range_match.group(2))
             end = int(range_match.group(3))
             for v in range(start, end + 1):
-                files.append(repo_root / f"materials/bible/ot/genesis/gen-{ch}-{v}-kjv.md")
+                files.append(_resolve_entry(ch, f"gen-{ch}-{v}-kjv.md"))
         else:
-            for m in re.finditer(r"(gen-\d+-\d+-kjv(?:\.md)?)", scope_str):
+            for m in re.finditer(r"(gen-(\d+)-\d+-kjv(?:\.md)?)", scope_str):
                 fname = m.group(1)
+                ch_num = int(m.group(2))
                 if not fname.endswith(".md"):
                     fname += ".md"
-                p = repo_root / "materials/bible/ot/genesis" / fname
+                p = _resolve_entry(ch_num, fname)
                 if p not in files:
                     files.append(p)
 

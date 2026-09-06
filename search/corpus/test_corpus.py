@@ -16,6 +16,20 @@ from search.testutil import require_raw_sources
 GENESIS_DIR = Path("materials/bible/ot/genesis")
 
 
+def _verse_path(ch: int, v: int) -> Path:
+    p = GENESIS_DIR / f"{ch:02d}" / f"gen-{ch}-{v}-kjv.md"
+    if p.exists():
+        return p
+    return GENESIS_DIR / f"gen-{ch}-{v}-kjv.md"
+
+
+def _chapter_files(ch: int) -> list[Path]:
+    ch_dir = GENESIS_DIR / f"{ch:02d}"
+    if ch_dir.is_dir():
+        return sorted(ch_dir.glob(f"gen-{ch}-*-kjv.md"))
+    return sorted(GENESIS_DIR.glob(f"gen-{ch}-*-kjv.md"))
+
+
 class CleanTextTests(unittest.TestCase):
     def test_strips_notes_but_keeps_supplied_words(self):
         raw = (
@@ -32,7 +46,7 @@ class CleanTextTests(unittest.TestCase):
         )
 
     def test_no_note_leakage_in_generated_entries(self):
-        for p in GENESIS_DIR.glob("gen-1-*-kjv.md"):
+        for p in _chapter_files(1):
             quote = next(
                 (l for l in p.read_text(encoding="utf-8").splitlines() if l.startswith("> ")),
                 "",
@@ -57,7 +71,7 @@ class PipelineFidelityTests(unittest.TestCase):
         cls.verses = {v["verse"]: v for v in ch1["verses"]}
 
     def _curated_quote(self, v: int) -> str:
-        path = GENESIS_DIR / f"gen-1-{v}-kjv.md"
+        path = _verse_path(1, v)
         for line in path.read_text(encoding="utf-8").splitlines():
             if line.startswith("> "):
                 return line[2:].strip()
@@ -92,7 +106,7 @@ class PipelineFidelityTests(unittest.TestCase):
 
     def test_generated_verse_text_matches_pinned_source(self):
         for v in range(4, 32):
-            path = GENESIS_DIR / f"gen-1-{v}-kjv.md"
+            path = _verse_path(1, v)
             quote = next(
                 (l for l in path.read_text(encoding="utf-8").splitlines() if l.startswith("> ")),
                 "",
@@ -123,7 +137,7 @@ class RegenerationTripwireTests(unittest.TestCase):
         produces from the pinned sources — byte for byte. This catches hand-edits
         and partial regeneration on draft skeletons."""
         for v in range(1, 32):
-            path = GENESIS_DIR / f"gen-1-{v}-kjv.md"
+            path = _verse_path(1, v)
             if not path.exists():
                 continue
             text = path.read_text(encoding="utf-8")
@@ -146,7 +160,7 @@ class RegenerationTripwireTests(unittest.TestCase):
         import re
         block_header = re.compile(r"^### .+ - Strong's ([HG]\d+)$", re.MULTILINE)
         for v in range(4, 32):
-            path = GENESIS_DIR / f"gen-1-{v}-kjv.md"
+            path = _verse_path(1, v)
             text = path.read_text(encoding="utf-8")
             for m in block_header.finditer(text):
                 code = m.group(1)
@@ -173,7 +187,7 @@ class Genesis2SkeletonTests(unittest.TestCase):
         cls.verses = {v["verse"]: v for v in ch2["verses"]}
 
     def test_genesis_2_is_complete(self):
-        files = sorted(GENESIS_DIR.glob("gen-2-*-kjv.md"))
+        files = _chapter_files(2)
         self.assertEqual(len(files), 25, "Genesis 2 must have exactly 25 entries")
 
     def test_corpus_entry_lifecycle_and_invariants(self):
@@ -182,7 +196,7 @@ class Genesis2SkeletonTests(unittest.TestCase):
         cross_references + updated date)."""
         from search.corpus.build_genesis1 import GENERATION_DATE
         for v in range(1, 26):
-            path = GENESIS_DIR / f"gen-2-{v}-kjv.md"
+            path = _verse_path(2, v)
             text = path.read_text(encoding="utf-8")
             if "status: draft" in text:
                 self.assertIn(f"created: {GENERATION_DATE}", text, f"{path.name}: draft creation date")
@@ -217,7 +231,7 @@ class Genesis2SkeletonTests(unittest.TestCase):
         import re
         block_header = re.compile(r"^### .+ - Strong's ([HG]\d+)$", re.MULTILINE)
         for v in range(1, 26):
-            path = GENESIS_DIR / f"gen-2-{v}-kjv.md"
+            path = _verse_path(2, v)
             text = path.read_text(encoding="utf-8")
             for m in block_header.finditer(text):
                 code = m.group(1)
@@ -227,7 +241,7 @@ class Genesis2SkeletonTests(unittest.TestCase):
 
     def test_genesis_2_verses_match_pinned_source(self):
         for v in range(1, 26):
-            path = GENESIS_DIR / f"gen-2-{v}-kjv.md"
+            path = _verse_path(2, v)
             quote = next(
                 (l for l in path.read_text(encoding="utf-8").splitlines() if l.startswith("> ")),
                 "",
@@ -240,9 +254,9 @@ class Genesis2SkeletonTests(unittest.TestCase):
     def test_unpadded_code_normalization(self):
         """The pinned source writes unpadded codes (H068, H01); the generator
         must normalize to canonical unpadded form (H68, H1)."""
-        v12 = GENESIS_DIR.joinpath("gen-2-12-kjv.md").read_text(encoding="utf-8")
+        v12 = _verse_path(2, 12).read_text(encoding="utf-8")
         self.assertIn("strongs-H68", v12)
-        v24 = GENESIS_DIR.joinpath("gen-2-24-kjv.md").read_text(encoding="utf-8")
+        v24 = _verse_path(2, 24).read_text(encoding="utf-8")
         self.assertIn("strongs-H1", v24)
 
 
@@ -264,7 +278,7 @@ class Genesis3SkeletonTests(unittest.TestCase):
         cls.verses = {v["verse"]: v for v in ch3["verses"]}
 
     def test_genesis_3_is_complete(self):
-        files = sorted(GENESIS_DIR.glob("gen-3-*-kjv.md"))
+        files = _chapter_files(3)
         self.assertEqual(len(files), 24, "Genesis 3 must have exactly 24 entries")
 
     def test_all_draft_or_curated(self):
@@ -273,7 +287,7 @@ class Genesis3SkeletonTests(unittest.TestCase):
         with cross_references + updated date)."""
         from search.corpus.build_genesis1 import GENERATION_DATE
         for v in range(1, 25):
-            path = GENESIS_DIR / f"gen-3-{v}-kjv.md"
+            path = _verse_path(3, v)
             text = path.read_text(encoding="utf-8")
             if "status: draft" in text:
                 self.assertIn(f"created: {GENERATION_DATE}", text, f"{path.name}: draft creation date")
@@ -306,7 +320,7 @@ class Genesis3SkeletonTests(unittest.TestCase):
 
     def test_provenance_marker_present(self):
         for v in range(1, 25):
-            text = (GENESIS_DIR / f"gen-3-{v}-kjv.md").read_text(encoding="utf-8")
+            text = _verse_path(3, v).read_text(encoding="utf-8")
             self.assertIn("WordGraph", text, f"gen-3-{v}: missing provenance")
             self.assertIn("wordgraph-genesis/v1", text, f"gen-3-{v}: missing version")
 
@@ -317,7 +331,7 @@ class Genesis3SkeletonTests(unittest.TestCase):
         block_header = re.compile(r"^### .+ - Strong's ([HG]\d+)$", re.MULTILINE)
         from search.corpus.build_genesis1 import verse_codes
         for v in range(1, 25):
-            path = GENESIS_DIR / f"gen-3-{v}-kjv.md"
+            path = _verse_path(3, v)
             text = path.read_text(encoding="utf-8")
             codes_found = {m.group(1) for m in block_header.finditer(text)}
             _, occ_map, _ = verse_codes(self.verses[v]["text"])
@@ -330,7 +344,7 @@ class Genesis3SkeletonTests(unittest.TestCase):
         import re
         block_header = re.compile(r"^### .+ - Strong's ([HG]\d+)$", re.MULTILINE)
         for v in range(1, 25):
-            path = GENESIS_DIR / f"gen-3-{v}-kjv.md"
+            path = _verse_path(3, v)
             text = path.read_text(encoding="utf-8")
             for m in block_header.finditer(text):
                 code = m.group(1)
@@ -340,7 +354,7 @@ class Genesis3SkeletonTests(unittest.TestCase):
 
     def test_genesis_3_verses_match_pinned_source(self):
         for v in range(1, 25):
-            path = GENESIS_DIR / f"gen-3-{v}-kjv.md"
+            path = _verse_path(3, v)
             quote = next(
                 (l for l in path.read_text(encoding="utf-8").splitlines() if l.startswith("> ")),
                 "",
@@ -362,13 +376,13 @@ class CorpusIntegrityTests(unittest.TestCase):
         cls.canon_all = set(cls.canonical["hebrew"]) | set(cls.canonical["greek"])
 
     def test_genesis_1_is_complete(self):
-        files = sorted(GENESIS_DIR.glob("gen-1-*-kjv.md"))
+        files = _chapter_files(1)
         self.assertEqual(len(files), 31, "Genesis 1 must have exactly 31 entries")
 
     def test_corpus_entry_lifecycle_and_invariants(self):
         """Every Genesis 1 entry is either status: draft (unmodified skeleton)
         or status: review/final (curated with cross-references and valid update)."""
-        files = sorted(GENESIS_DIR.glob("gen-1-*-kjv.md"))
+        files = _chapter_files(1)
         self.assertEqual(len(files), 31, "Genesis 1 must have exactly 31 entries")
         for p in files:
             text = p.read_text(encoding="utf-8")
@@ -383,7 +397,7 @@ class CorpusIntegrityTests(unittest.TestCase):
                 self.fail(f"{p.name}: unrecognized entry status")
 
     def test_all_tags_in_canonical_list(self):
-        for p in GENESIS_DIR.glob("gen-1-*-kjv.md"):
+        for p in _chapter_files(1):
             text = p.read_text(encoding="utf-8")
             for tag in (l.strip("- ").strip() for l in text.splitlines()
                         if l.lstrip().startswith("- strongs-")):

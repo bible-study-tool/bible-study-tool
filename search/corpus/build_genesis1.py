@@ -326,6 +326,8 @@ def generate(
     out_dir = Path(repo) / out_subdir
     out_dir.mkdir(parents=True, exist_ok=True)
     start, end = verses
+    ch_dir = out_dir / f"{chapter:02d}"
+    ch_dir.mkdir(parents=True, exist_ok=True)
     for v in range(start, end + 1):
         verse = verses_map.get(v)
         if verse is None:
@@ -338,7 +340,7 @@ def generate(
         bad = [c for c in codes if c not in canon_h and c not in canon_g]
         if bad:
             raise ValueError(f"Genesis {chapter}:{v}: tags outside canonical list: {bad}")
-        path = out_dir / f"{book_code}-{chapter}-{v}-kjv.md"
+        path = ch_dir / f"{book_code}-{chapter}-{v}-kjv.md"
         path.write_text(md, encoding="utf-8")
         written.append(str(path))
     return written

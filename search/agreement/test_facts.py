@@ -46,8 +46,10 @@ class KjvOsisAdapterTests(unittest.TestCase):
         form, and void'; pinned source reads 'And the earth was without form
         and void'; see search/corpus/test_corpus.py and data/PROVENANCE.md).
         The variant stays visible; any OTHER divergence fails."""
+        ch1_dir = Path("materials/bible/ot/genesis/01")
+        base_dir = ch1_dir if ch1_dir.is_dir() else Path("materials/bible/ot/genesis")
         for v in range(1, 32):
-            path = Path("materials/bible/ot/genesis") / f"gen-1-{v}-kjv.md"
+            path = base_dir / f"gen-1-{v}-kjv.md"
             quote = next(
                 (l[2:].strip() for l in path.read_text(encoding="utf-8").splitlines()
                  if l.startswith("> ")),
