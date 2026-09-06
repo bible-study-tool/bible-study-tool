@@ -27,6 +27,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-0019](ADR-0019-accessible-original-languages-and-commentary-integration.md) | Human-Accessible Original Language Framing and Direct Commentary Navigation | Accepted |
 | [ADR-0020](ADR-0020-persistent-viewport-workstation-and-comprehension-engine.md) | Persistent Viewport Workstation Architecture & Biblical Comprehension Engine | Accepted |
 | [ADR-0021](ADR-0021-new-testament-corpus-and-curation.md) | New Testament Corpus Generation and Per-Chapter Curation Model | Accepted |
+| [ADR-0022](ADR-0022-historical-grammatical-context-layer.md) | Historical-Grammatical Context Layer — historical/cultural/geographical data in the workstation | Proposed |
 
 
 ## When to write one

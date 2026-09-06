@@ -18,6 +18,8 @@ This guide is for you — whether you have been reading the Bible for forty year
 
 Think of it this way: a craftsman needs both the right material *and* the right tools. The Bible is the material. Principled study methods are the tools. This guide teaches you the tools.
 
+> **Doctrinal Basis:** The study methods described here follow the **Historical-Grammatical Method** as codified in the Seventh-day Adventist Church's official statement *"Methods of Bible Study"*, approved by the General Conference Annual Council in 1986 (available at adventist.org/methodsofbiblestudy and through the Biblical Research Institute, adventistbiblicalresearch.org). This method is also developed at length in *Biblical Hermeneutics: An Adventist Approach* (BRI, 2021). It stands in contrast to the historical-critical method, which is formally rejected by the church because it subordinates Scripture to human reason and secular presuppositions.
+
 ---
 
 ## Part 1 — The Starting Posture
@@ -72,9 +74,22 @@ A text without a context is a pretext. Every verse lives inside:
 | **Chapter context** | What is the argument or narrative of the whole chapter? |
 | **Book context** | What is the purpose and theme of this whole book? |
 | **Biblical context** | How does this verse fit the larger sweep of Scripture? |
-| **Historical context** | Who wrote this? To whom? When? In what circumstances? |
+| **Historical context** | Who wrote this? To whom? When? What was their political, cultural, and geographical situation? |
+
+The SDA *"Methods of Bible Study"* (1986) makes historical context a **required** element of the historical-grammatical method. Understanding the author's world — the ruling empire, the cultural practices, the geography of the land, the religious customs of the day — does not diminish Scripture. It is the lens the author assumed when writing. Ignoring it is like reading a letter without knowing who sent it or why.
+
+A few practical questions to ask for every passage:
+- **Era:** Is this during the patriarchal period, the monarchy, the Exile, the Second Temple period, the Roman occupation?
+- **Author:** What was Moses's position? What was Paul's situation when he wrote this letter (he was often in chains)?
+- **Audience:** Who were they? Israelites fresh from Egypt? Diaspora Jews? Gentile converts in Corinth?
+- **Geography:** Where is this happening? The wilderness of Sinai, the Jordan River, Jerusalem under siege, Rome?
+- **Cultural practice:** What did a "covenant" mean in Abraham's culture? What did "eating with someone" mean in first-century Jewish life?
+
+> *Example:* Nicodemus coming to Jesus "by night" (John 3:2) is not just a time notation — it was culturally significant. Night visits by Pharisees avoided public scrutiny and social shame. Knowing this makes the narrative richer and Jesus's patient reception of him more striking.
 
 > *Example:* Jeremiah 29:11 ("For I know the plans I have for you...") is one of the most quoted verses in popular Christianity. But it was written to Israel being carried into Babylonian captivity — a specific promise to a specific nation at a specific crisis point. Understanding the context does not diminish the verse; it deepens it and prevents misapplication.
+
+> **Note on tool support:** Historical-geographical context is the one layer of the historical-grammatical method not yet fully integrated into this workstation. It is being planned (see [ADR-0022](decisions/ADR-0022-historical-grammatical-context-layer.md)). Until then, the best free resources are the [OpenBible.info Geography tool](https://www.openbible.info/geo/) and the [Biblical Research Institute](https://www.adventistbiblicalresearch.org) for cultural and theological background.
 
 ### Principle 3: The Christ-Centered Thread
 
