@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:30"
 tags:
+  - theme/prophecy
   - material/bible
   - book/john
   - theme/christ
@@ -26,9 +27,16 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-1-15"
+    note: "He that cometh after me is preferred before me: for he was before me"
+  - type: xref/parallel
+    target: "john-1-27"
+    note: "He it is, who coming after me is preferred before me"
 ---
 
 # John 1:30 - KJV
@@ -141,6 +149,17 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:A
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The Baptist's public testimony pointing his hearers to Jesus
+*   Spirit of Prophecy: The Desire of Ages, p. 137
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Public Pointing:** John reiterates his testimony in the immediate physical presence of Jesus, directing the eyes of all Israel to their Messiah.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -148,5 +167,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

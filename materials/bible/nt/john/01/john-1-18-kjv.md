@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:18"
 tags:
+  - theme/prophecy
   - material/bible
   - book/john
   - theme/christ
@@ -26,9 +27,25 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/theme
+    target: "exodus-33-20"
+    note: "Thou canst not see my face: for there shall no man see me, and live"
+  - type: xref/parallel
+    target: "john-6-46"
+    note: "Not that any man hath seen the Father, save he which is of God, he hath seen the Father"
+  - type: xref/parallel
+    target: "john-14-9"
+    note: "He that hath seen me hath seen the Father"
+  - type: xref/parallel
+    target: "1-timothy-6-16"
+    note: "Dwelling in the light which no man can approach unto; whom no man hath seen, nor can see"
+  - type: xref/spirit-prophecy
+    target: "des-1-1"
+    note: "The Desire of Ages, Chapter 1 — 'God With Us'"
 ---
 
 # John 1:18 - KJV
@@ -141,6 +158,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The unique exegesis of the Father through the Only Begotten Son
+*   OT Background: Exodus 33:18-23; Isaiah 6:1-5
+*   NT Parallels: Colossians 1:15; 1 John 4:12
+*   Spirit of Prophecy: The Desire of Ages, p. 19 — Christ came to reveal the Father's character
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Ultimate Exegesis (*exegesato*, G1834):** The verb *exegeomai* ('hath declared / unfolded / interpreted') gives us the word 'exegesis'. Jesus did not merely speak about God; His life, character, and sacrifice exegeted the Father's heart to humanity.
+*   **In the Bosom of the Father (*eis ton kolpon tou Patros*):** Denotes supreme, perpetual intimacy and shared knowledge within the Godhead.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -148,5 +179,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

@@ -4,6 +4,9 @@ type: material/bible
 book: book/john
 passage: "John 1:17"
 tags:
+  - theme/law
+  - theme/grace
+  - theme/covenant
   - material/bible
   - book/john
   - theme/christ
@@ -25,9 +28,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "romans-3-21-24"
+    note: "Being justified freely by his grace through the redemption that is in Christ Jesus"
+  - type: xref/parallel
+    target: "galatians-3-24"
+    note: "Wherefore the law was our schoolmaster to bring us unto Christ"
+  - type: xref/parallel
+    target: "hebrews-3-5-6"
+    note: "Moses verily was faithful in all his house, as a servant... But Christ as a son over his own house"
+  - type: xref/spirit-prophecy
+    target: "des-3-1"
+    note: "The Desire of Ages, Chapter 3 — 'The Fullness of the Time'"
 ---
 
 # John 1:17 - KJV
@@ -132,6 +148,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): N:N--T
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The relationship between the Law given through Moses and Grace/Truth in Christ
+*   OT Background: Exodus 20:1-17; Deuteronomy 33:4; Exodus 34:6
+*   NT Parallels: Romans 6:14; 10:4; 2 Corinthians 3:6-18
+*   Spirit of Prophecy: Mount of Blessing, p. 45 — The law reveals sin, Christ reveals the cure
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Law and Grace Harmonized:** The contrast is not between a bad law and good grace, but between preparatory revelation and consummation. The law revealed the righteous standard and exposed transgression; in Jesus Christ, the grace to forgive and the truth to transform were realized in living fullness.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -139,5 +168,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

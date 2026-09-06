@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:9"
 tags:
+  - theme/redemption
   - material/bible
   - book/john
   - theme/christ
@@ -24,9 +25,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "isaiah-49-6"
+    note: "I will also give thee for a light to the Gentiles, that thou mayest be my salvation unto the end of the earth"
+  - type: xref/parallel
+    target: "john-8-12"
+    note: "I am the light of the world"
+  - type: xref/parallel
+    target: "1-john-2-8"
+    note: "The darkness is past, and the true light now shineth"
 ---
 
 # John 1:9 - KJV
@@ -123,6 +134,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Universal illumination of the True Light
+*   OT Background: Isaiah 42:6; 60:1-3
+*   NT Parallels: Luke 2:32; Titus 2:11
+*   Spirit of Prophecy: The Desire of Ages, p. 464 — Christ's light illuminates every human conscience
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The True Light (*to phos to alethinon*, G228):** *Alethinos* signifies the genuine, original, ultimate reality as opposed to shadow, copy, or precursor. Christ is the archetypal Light from whom every moral and spiritual illumination derives.
+*   **Illuminating Every Person:** Through the conscience, the Holy Spirit, and the works of creation, the divine Light shines upon every human being born into the world (Rom 1:19-20; 2:14-15), leaving none without witness.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -130,5 +155,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

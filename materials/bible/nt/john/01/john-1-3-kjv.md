@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:3"
 tags:
+  - theme/creation
   - material/bible
   - book/john
   - theme/christ
@@ -22,9 +23,25 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/theme
+    target: "gen-1-1-kjv"
+    note: "God created the heaven and the earth — the Word is the active agent of creation"
+  - type: xref/parallel
+    target: "psalms-33-6"
+    note: "By the word of the LORD were the heavens made; and all the host of them by the breath of his mouth"
+  - type: xref/parallel
+    target: "colossians-1-16"
+    note: "For by him were all things created, that are in heaven, and that are in earth"
+  - type: xref/parallel
+    target: "hebrews-1-2"
+    note: "By whom also he made the worlds"
+  - type: xref/spirit-prophecy
+    target: "des-1-1"
+    note: "The Desire of Ages, Chapter 1 — 'God With Us'"
 ---
 
 # John 1:3 - KJV
@@ -105,6 +122,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: Christ the divine Creator of all things
+*   OT Background: Genesis 1:1; Psalm 33:6, 9; Isaiah 44:24
+*   NT Parallels: 1 Corinthians 8:6; Colossians 1:16; Hebrews 1:2, 10-12
+*   Spirit of Prophecy: Patriarchs and Prophets, p. 34 — His hands had laid the foundations of the earth and encircled the heavens
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Exhaustive Agency (*Panta di' autou egeneto*, G3956 G1223 G846 G1096):** 'All things were made through Him.' The comprehensive *panta* leaves no exception. The Father created all things through the Son as the active divine executive.
+*   **Antithetical Negation:** John pairs the positive statement with an exhaustive negative: 'and without him was not any thing made that was made.' If anything was created, Christ created it. Therefore, Christ Himself cannot be a created being.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -112,5 +143,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

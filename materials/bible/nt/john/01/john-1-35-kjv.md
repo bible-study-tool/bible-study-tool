@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:35"
 tags:
+  - theme/prophecy
   - material/bible
   - book/john
   - theme/christ
@@ -23,9 +24,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-1-29"
+    note: "The next day John seeth Jesus coming unto him"
+  - type: xref/parallel
+    target: "john-1-37"
+    note: "And the two disciples heard him speak, and they followed Jesus"
+  - type: xref/spirit-prophecy
+    target: "des-14-1"
+    note: "The Desire of Ages, Chapter 14 — 'We Have Found the Messias'"
 ---
 
 # John 1:35 - KJV
@@ -114,6 +125,17 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The transition of disciples from the forerunner to the Master
+*   Spirit of Prophecy: The Desire of Ages, p. 138
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Faithful Mentor:** John stands with two of his disciples (Andrew and likely John the Evangelist himself), preparing to transfer their allegiance to Christ.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -121,5 +143,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

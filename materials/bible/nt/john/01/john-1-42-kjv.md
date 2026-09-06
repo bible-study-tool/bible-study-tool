@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:42"
 tags:
+  - theme/prophecy
+  - theme/sanctification
   - material/bible
   - book/john
   - theme/christ
@@ -32,9 +34,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "matthew-16-18"
+    note: "Thou art Peter, and upon this rock I will build my church"
+  - type: xref/parallel
+    target: "1-peter-2-4-5"
+    note: "Ye also, as lively stones, are built up a spiritual house"
+  - type: xref/spirit-prophecy
+    target: "des-14-1"
+    note: "The Desire of Ages, Chapter 14 — 'We Have Found the Messias'"
 ---
 
 # John 1:42 - KJV
@@ -195,6 +207,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: Christ's prophetic renaming of Simon to Cephas (Peter)
+*   OT Background: Genesis 17:5 (Abram to Abraham); Genesis 32:28 (Jacob to Israel)
+*   NT Parallels: Mark 3:16; Luke 6:14
+*   Spirit of Prophecy: The Desire of Ages, p. 139 — Christ read Peter's character and future transformation
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Thou Shalt Be Called Cephas (*sy klethese Kephas*):** Aramaic *Kepha* / Greek *Petros* ('a stone / rolling rock'). Jesus looked into Simon's impulsive, unsteady nature and saw the transformed, steadfast witness he would become through divine grace.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -202,5 +227,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

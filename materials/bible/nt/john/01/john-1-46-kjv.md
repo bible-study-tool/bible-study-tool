@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:46"
 tags:
+  - theme/faith
+  - theme/prophecy
   - material/bible
   - book/john
   - theme/christ
@@ -26,9 +28,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-7-41-42"
+    note: "Shall Christ come out of Galilee? Hath not the scripture said, That Christ cometh of the seed of David, and out of the town of Bethlehem?"
+  - type: xref/parallel
+    target: "john-7-52"
+    note: "Search, and look: for out of Galilee ariseth no prophet"
+  - type: xref/spirit-prophecy
+    target: "des-14-1"
+    note: "The Desire of Ages, Chapter 14 — 'We Have Found the Messias'"
 ---
 
 # John 1:46 - KJV
@@ -141,6 +153,17 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: Overcoming regional prejudice through personal inspection ('Come and see')
+*   Spirit of Prophecy: The Desire of Ages, pp. 140-141 — Philip did not argue; he said, 'Come and see'
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Prejudice Overcome by Experience:** Nathanael voiced the popular disdain toward the obscure village of Nazareth. Philip did not engage in theological debate, but gave the simplest, most powerful invitation: 'Come and see.'
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -148,5 +171,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

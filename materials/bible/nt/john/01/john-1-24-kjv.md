@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:24"
 tags:
+  - theme/prophecy
   - material/bible
   - book/john
   - theme/christ
@@ -19,9 +20,13 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "matthew-3-7"
+    note: "When he saw many of the Pharisees and Sadducees come to his baptism"
 ---
 
 # John 1:24 - KJV
@@ -78,6 +83,17 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The Pharisaic background of the questioning embassy
+*   Spirit of Prophecy: The Desire of Ages, p. 134
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Pharisaic Scrutiny:** The Pharisees were intensely concerned with ritual washings and ceremonial authority, viewing John's baptism as an unauthorized ritual innovation.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -85,5 +101,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

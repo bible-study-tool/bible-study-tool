@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:32"
 tags:
+  - theme/holy-spirit
+  - theme/sanctuary
   - material/bible
   - book/john
   - theme/christ
@@ -29,9 +31,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "matthew-3-16"
+    note: "And Jesus, when he was baptized, went up straightway out of the water: and, lo, the heavens were opened unto him, and he saw the Spirit of God descending like a dove"
+  - type: xref/parallel
+    target: "mark-1-10"
+    note: "And straightway coming up out of the water, he saw the heavens opened, and the Spirit like a dove descending upon him"
+  - type: xref/parallel
+    target: "luke-3-22"
+    note: "And the Holy Ghost descended in a bodily shape like a dove upon him"
+  - type: xref/spirit-prophecy
+    target: "des-11-1"
+    note: "The Desire of Ages, Chapter 11 — 'The Baptism'"
 ---
 
 # John 1:32 - KJV
@@ -168,6 +183,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The descent of the Holy Spirit at Jesus' baptism and the anointing of the Messiah
+*   OT Background: Genesis 1:2; 8:8-12; Isaiah 11:2; 61:1
+*   NT Parallels: Acts 10:38
+*   Spirit of Prophecy: The Desire of Ages, pp. 111-113 — The dove as an emblem of purity and peace
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Heavenly Sign (*etheasamēn to Pneuma*, G2300 G4151):** John bore solemn record that he saw the Holy Spirit descend from heaven like a dove and remain (*emeinen*, G3306) upon Him. Unlike temporary prophetic anointings in the OT, the Spirit permanently abides upon Christ without measure (John 3:34).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -175,5 +203,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

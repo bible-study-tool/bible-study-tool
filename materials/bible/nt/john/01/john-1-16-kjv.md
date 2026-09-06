@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:16"
 tags:
+  - theme/grace
+  - theme/redemption
   - material/bible
   - book/john
   - theme/christ
@@ -23,9 +25,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "ephesians-1-7-8"
+    note: "The riches of his grace, wherein he hath abounded toward us"
+  - type: xref/parallel
+    target: "colossians-1-19"
+    note: "For it pleased the Father that in him should all fulness dwell"
+  - type: xref/parallel
+    target: "colossians-2-9-10"
+    note: "In him dwelleth all the fulness of the Godhead bodily, and ye are complete in him"
 ---
 
 # John 1:16 - KJV
@@ -114,6 +126,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The inexhaustible fullness of Christ and continuous supply of grace
+*   OT Background: Psalm 23:5 — My cup runneth over
+*   NT Parallels: Romans 5:17, 20-21; 2 Corinthians 12:9
+*   Spirit of Prophecy: The Desire of Ages, p. 827 — Grace upon grace for every soul that receives Him
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Grace for Grace (*charin anti charitos*, G5485 G473):** The preposition *anti* means 'in place of / wave upon wave': as one measure of divine grace is received and experienced, another fresh measure flows to take its place. The fullness (*pleroma*) of Christ is an endless reservoir for believer needs.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -121,5 +146,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

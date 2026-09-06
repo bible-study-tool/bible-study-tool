@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:4"
 tags:
+  - theme/redemption
   - material/bible
   - book/john
   - theme/christ
@@ -21,9 +22,25 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "psalms-36-9"
+    note: "For with thee is the fountain of life: in thy light shall we see light"
+  - type: xref/parallel
+    target: "john-5-26"
+    note: "As the Father hath life in himself; so hath he given to the Son to have life in himself"
+  - type: xref/parallel
+    target: "john-8-12"
+    note: "I am the light of the world: he that followeth me shall not walk in darkness"
+  - type: xref/theme
+    target: "1-john-1-1-2"
+    note: "That which was from the beginning... the Word of life"
+  - type: xref/spirit-prophecy
+    target: "des-1-1"
+    note: "The Desire of Ages, Chapter 1 — 'God With Us'"
 ---
 
 # John 1:4 - KJV
@@ -96,6 +113,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Inherent divine life (*zoe*) and illumination (*phos*)
+*   OT Background: Genesis 1:3; Psalm 27:1; Psalm 36:9; Proverbs 4:18
+*   NT Parallels: John 11:25; 14:6; 1 John 5:11-12
+*   Spirit of Prophecy: The Desire of Ages, p. 530 — In Him was life, original, unborrowed, underived
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Self-Existent Life (*Zoe*, G2222):** Unlike created beings whose life is contingent and derived, life in the Logos is inherent and autonomous (*zoe en auto*). He is the biological, moral, and eternal source of all living existence.
+*   **Life as the Light of Humanity:** Life and light are organically linked in Johannine theology: divine life manifests as divine truth, exposing moral darkness and guiding mankind back to God.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -103,5 +134,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

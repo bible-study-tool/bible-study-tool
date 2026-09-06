@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:8"
 tags:
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -22,9 +23,16 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-3-28"
+    note: "Ye yourselves bear me witness, that I said, I am not the Christ"
+  - type: xref/parallel
+    target: "matthew-11-11"
+    note: "Among them that are born of women there hath not risen a greater than John the Baptist"
 ---
 
 # John 1:8 - KJV
@@ -105,6 +113,18 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:N-N
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: Humility and clear distinction between the messenger and the Messiah
+*   NT Parallels: Acts 13:25; John 3:30
+*   Spirit of Prophecy: The Desire of Ages, p. 102 — John disclaimed the honor of being the Messiah
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Not the Light (*ouk en ekeinos to phos*):** The Gospel author firmly guards against sectarian exaltation of the Baptist. John was a burning and shining lamp (John 5:35), but not the uncreated Light of the World.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -112,5 +132,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

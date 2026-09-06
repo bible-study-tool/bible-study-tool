@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:40"
 tags:
+  - theme/prophecy
+  - theme/sanctification
   - material/bible
   - book/john
   - theme/christ
@@ -28,9 +30,16 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "matthew-4-18"
+    note: "And Jesus, walking by the sea of Galilee, saw two brethren, Simon called Peter, and Andrew his brother"
+  - type: xref/parallel
+    target: "john-6-8"
+    note: "One of his disciples, Andrew, Simon Peter's brother"
 ---
 
 # John 1:40 - KJV
@@ -159,6 +168,17 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Andrew identified as one of the two foundational seekers
+*   Spirit of Prophecy: The Desire of Ages, p. 139
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Andrew's Ministry:** Andrew is consistently portrayed in John's Gospel as the disciple who brings individuals to Jesus (Simon Peter in 1:41, the boy with loaves in 6:8, and the Greeks in 12:22).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -166,5 +186,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

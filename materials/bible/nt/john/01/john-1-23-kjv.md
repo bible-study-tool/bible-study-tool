@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:23"
 tags:
+  - theme/prophecy
   - material/bible
   - book/john
   - theme/christ
@@ -27,9 +28,25 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/theme
+    target: "isaiah-40-3"
+    note: "The voice of him that crieth in the wilderness, Prepare ye the way of the LORD"
+  - type: xref/parallel
+    target: "matthew-3-3"
+    note: "For this is he that was spoken of by the prophet Esaias"
+  - type: xref/parallel
+    target: "mark-1-3"
+    note: "The voice of one crying in the wilderness"
+  - type: xref/parallel
+    target: "luke-3-4"
+    note: "As it is written in the book of the words of Esaias the prophet"
+  - type: xref/spirit-prophecy
+    target: "des-10-1"
+    note: "The Desire of Ages, Chapter 10 — 'The Voice in the Wilderness'"
 ---
 
 # John 1:23 - KJV
@@ -150,6 +167,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The Voice in the Wilderness preparing the way for YHWH
+*   OT Background: Isaiah 40:3-5
+*   NT Parallels: Matthew 3:3; Mark 1:3; Luke 3:4-6
+*   Spirit of Prophecy: The Desire of Ages, pp. 134-135
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Voice, Not the Word:** Christ is the eternal Word (*ho Logos*); John is merely the voice (*phone*) crying in the wilderness. The voice exists only to proclaim the Word.
+*   **Preparing the Way of the Lord:** In Isaiah 40:3, the way is prepared for YHWH. In applying this to Jesus, John and the Gospel writers identify Jesus as YHWH manifested in the flesh.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -157,5 +188,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

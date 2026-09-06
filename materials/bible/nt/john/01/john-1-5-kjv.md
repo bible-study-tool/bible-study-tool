@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:5"
 tags:
+  - theme/redemption
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -22,9 +24,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/theme
+    target: "gen-1-4-kjv"
+    note: "God divided the light from the darkness"
+  - type: xref/parallel
+    target: "john-3-19"
+    note: "Light is come into the world, and men loved darkness rather than light"
+  - type: xref/parallel
+    target: "2-corinthians-4-6"
+    note: "God, who commanded the light to shine out of darkness, hath shined in our hearts"
+  - type: xref/theme
+    target: "1-john-1-5"
+    note: "God is light, and in him is no darkness at all"
 ---
 
 # John 1:5 - KJV
@@ -105,6 +120,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The cosmic struggle between divine illumination and spiritual darkness
+*   OT Background: Genesis 1:4; Isaiah 9:2; 60:1-2
+*   NT Parallels: Ephesians 5:8; 1 Thessalonians 5:5; 1 John 2:8
+*   Spirit of Prophecy: The Great Controversy, Introduction — The illumination of the Spirit amidst worldly darkness
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Inconquerable Light (*phainei*, G5316):** The present tense *phainei* ('shineth') denotes continuous, unceasing radiance. Even in a fallen world shrouded in moral darkness, the divine Light shines without diminution.
+*   **Darkness Could Not Overcome (*ou katelaben*, G3756 G2638):** The verb *katalambano* carries a rich double meaning: 'did not comprehend/understand' and 'did not overcome/extinguish.' Satan's realm of darkness has neither understood the revelation of God nor been able to extinguish it.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -112,5 +141,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

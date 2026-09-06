@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:10"
 tags:
+  - theme/redemption
   - material/bible
   - book/john
   - theme/christ
@@ -23,9 +24,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "1-corinthians-1-21"
+    note: "The world by wisdom knew not God"
+  - type: xref/parallel
+    target: "john-17-25"
+    note: "O righteous Father, the world hath not known thee"
+  - type: xref/theme
+    target: "gen-1-1-kjv"
+    note: "The world made by Him did not recognize its Maker"
 ---
 
 # John 1:10 - KJV
@@ -114,6 +125,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: The tragedy of the world's spiritual blindness to its Creator
+*   OT Background: Isaiah 1:3 — The ox knoweth his owner, but Israel doth not know
+*   NT Parallels: 1 Corinthians 2:8; 1 John 3:1
+*   Spirit of Prophecy: The Desire of Ages, p. 27 — The Creator was in the world, yet unacknowledged
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Threefold Kosmos Clause:** 'He was in the world (*kosmos*), and the world was made through Him, and the world knew Him not.' The tragic climax of human rebellion: creation failed to recognize the presence of its own Architect.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -121,5 +145,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

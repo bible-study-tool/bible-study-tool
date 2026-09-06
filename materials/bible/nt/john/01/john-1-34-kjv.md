@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:34"
 tags:
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -23,9 +24,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "matthew-3-17"
+    note: "And lo a voice from heaven, saying, This is my beloved Son, in whom I am well pleased"
+  - type: xref/parallel
+    target: "john-1-49"
+    note: "Nathanael answered and saith unto him, Rabbi, thou art the Son of God"
+  - type: xref/parallel
+    target: "john-20-31"
+    note: "These are written, that ye might believe that Jesus is the Christ, the Son of God"
 ---
 
 # John 1:34 - KJV
@@ -114,6 +125,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The apostolic and prophetic confession: Jesus is the Son of God
+*   OT Background: Psalm 2:7; 2 Samuel 7:14
+*   NT Parallels: Matthew 16:16; Acts 9:20; 1 John 4:15
+*   Spirit of Prophecy: The Desire of Ages, p. 113
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Definitive Verdict (*houtos estin ho Huios tou Theou*):** John concludes his testimony with the supreme Christological confession: 'This is the Son of God.' This forms the thematic arch connecting the prologue (1:14, 18) to the conclusion of the Gospel (20:31).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -121,5 +145,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

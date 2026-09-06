@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:11"
 tags:
+  - theme/covenant
+  - theme/remnant
   - material/bible
   - book/john
   - theme/christ
@@ -21,9 +23,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "luke-19-41-44"
+    note: "He beheld the city, and wept over it... because thou knewest not the time of thy visitation"
+  - type: xref/parallel
+    target: "matthew-23-37"
+    note: "How often would I have gathered thy children together... and ye would not!"
+  - type: xref/parallel
+    target: "romans-9-1-5"
+    note: "To whom pertaineth the adoption, and the glory, and the covenants"
+  - type: xref/spirit-prophecy
+    target: "des-3-1"
+    note: "The Desire of Ages, Chapter 3 — 'The Fullness of the Time'"
 ---
 
 # John 1:11 - KJV
@@ -96,6 +111,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The rejection of the Messiah by His covenant people
+*   OT Background: Isaiah 53:3; Jeremiah 2:13
+*   NT Parallels: Acts 13:46; Romans 11:1-7
+*   Spirit of Prophecy: The Desire of Ages, pp. 31-38
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **His Own Domain and People (*ta idia ... hoi idioi*):** Greek shifts gender: *ta idia* (neuter: His own inheritance/homeland) versus *hoi idioi* (masculine: His own people, the covenant nation). Christ arrived at His own temple and estate, yet His chosen family shut the door against Him.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -103,5 +131,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

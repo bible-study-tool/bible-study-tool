@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:45"
 tags:
+  - theme/prophecy
   - material/bible
   - book/john
   - theme/christ
@@ -31,9 +32,25 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "genesis-3-15"
+    note: "The seed of the woman that shall bruise the serpent's head"
+  - type: xref/parallel
+    target: "genesis-49-10"
+    note: "The sceptre shall not depart from Judah... until Shiloh come"
+  - type: xref/parallel
+    target: "deuteronomy-18-18"
+    note: "I will raise them up a Prophet from among their brethren"
+  - type: xref/parallel
+    target: "luke-24-27"
+    note: "And beginning at Moses and all the prophets, he expounded unto them in all the scriptures the things concerning himself"
+  - type: xref/spirit-prophecy
+    target: "des-14-1"
+    note: "The Desire of Ages, Chapter 14 — 'We Have Found the Messias'"
 ---
 
 # John 1:45 - KJV
@@ -186,6 +203,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Jesus as the fulfillment of the Law of Moses and the Prophets
+*   OT Background: Genesis 3:15; 22:18; 49:10; Deuteronomy 18:15; Isaiah 7:14; 9:6; 53
+*   NT Parallels: Acts 26:22; 28:23; Romans 1:2-3
+*   Spirit of Prophecy: The Desire of Ages, p. 140
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Of Whom Moses and the Prophets Did Write:** Philip recognizes that Jesus fulfills the entire Old Testament canonical canon — the Pentateuch (*nomos*) and the prophetic books (*prophetai*).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -193,5 +223,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

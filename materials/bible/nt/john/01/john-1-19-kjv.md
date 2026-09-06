@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:19"
 tags:
+  - theme/prophecy
   - material/bible
   - book/john
   - theme/christ
@@ -31,9 +32,16 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "luke-3-15"
+    note: "And as the people were in expectation, and all men mused in their hearts of John, whether he were the Christ"
+  - type: xref/parallel
+    target: "john-5-33"
+    note: "Ye sent unto John, and he bare witness unto the truth"
 ---
 
 # John 1:19 - KJV
@@ -186,6 +194,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Official Sanhedrin investigation into the ministry of John the Baptist
+*   OT Background: Deuteronomy 13:1-5; 18:15-22
+*   NT Parallels: Matthew 21:23-27; Mark 11:27-33
+*   Spirit of Prophecy: The Desire of Ages, p. 132 — The Sanhedrin's embassy to John
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Religious Deputation:** Priests and Levites sent from Jerusalem represented the formal ecclesiastical authority of the nation, investigating whether John claimed messianic or prophetic authority.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -193,5 +214,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

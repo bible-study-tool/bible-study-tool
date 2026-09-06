@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:38"
 tags:
+  - theme/faith
+  - theme/sanctification
   - material/bible
   - book/john
   - theme/christ
@@ -30,9 +32,16 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "matthew-7-7"
+    note: "Ask, and it shall be given you; seek, and ye shall find"
+  - type: xref/parallel
+    target: "john-20-15"
+    note: "Jesus saith unto her, Woman, why weepest thou? whom seekest thou?"
 ---
 
 # John 1:38 - KJV
@@ -177,6 +186,17 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 3
 
+## Correlations
+
+*   Theme: Christ's penetrating question to seekers: 'What seek ye?'
+*   Spirit of Prophecy: The Desire of Ages, p. 139
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The First Words of Jesus in John's Gospel:** 'What seek ye?' (*Ti zeteite;*) Christ probes their motives, inviting them to examine the deepest desires of their hearts. They respond by seeking communion with Him: 'Master, where dwellest thou?'
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -184,5 +204,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

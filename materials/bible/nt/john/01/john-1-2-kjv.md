@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:2"
 tags:
+  - theme/covenant
   - material/bible
   - book/john
   - theme/christ
@@ -20,9 +21,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/theme
+    target: "proverbs-8-23"
+    note: "I was set up from everlasting, from the beginning, or ever the earth was"
+  - type: xref/parallel
+    target: "john-17-5"
+    note: "Glorify thou me with thine own self with the glory which I had with thee before the world was"
+  - type: xref/spirit-prophecy
+    target: "des-1-1"
+    note: "The Desire of Ages, Chapter 1 — 'God With Us'"
 ---
 
 # John 1:2 - KJV
@@ -87,6 +98,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Co-eternal communion of Father and Son in the eternal covenant
+*   OT Background: Proverbs 8:22-31 — Wisdom rejoicing always before Him
+*   NT Parallel: John 17:5, 24 — The Father loved the Son before the foundation of the world
+*   Spirit of Prophecy: Patriarchs and Prophets, p. 34 — Christ the Word, the only begotten of God, was one with the eternal Father
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Reiteration of Eternal Unity:** Verse 2 summarizes the foundational truths of verse 1: the same Word was in the beginning with God. The redemptive mission of Christ was not an afterthought but rooted in eternal co-equality.
+*   **Adventist Christological Basis:** Ellen White affirms that 'In Christ is life, original, unborrowed, underived' (DA 530). The Son has existed from eternity with the Father as an active participant in divine counsel.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -94,5 +119,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

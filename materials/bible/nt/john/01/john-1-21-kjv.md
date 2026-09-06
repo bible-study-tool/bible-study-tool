@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:21"
 tags:
+  - theme/prophecy
+  - theme/typology
   - material/bible
   - book/john
   - theme/christ
@@ -26,9 +28,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "malachi-4-5"
+    note: "Behold, I will send you Elijah the prophet before the coming of the great and dreadful day of the LORD"
+  - type: xref/parallel
+    target: "deuteronomy-18-15-18"
+    note: "The LORD thy God will raise up unto thee a Prophet from the midst of thee... like unto me"
+  - type: xref/parallel
+    target: "matthew-11-14"
+    note: "And if ye will receive it, this is Elias, which was for to come"
+  - type: xref/parallel
+    target: "luke-1-17"
+    note: "In the spirit and power of Elias"
 ---
 
 # John 1:21 - KJV
@@ -141,6 +156,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Elijah typology and the promised Prophet of Deuteronomy
+*   OT Background: Deuteronomy 18:15; 2 Kings 2:11; Malachi 4:5
+*   NT Parallels: Matthew 17:10-13; Mark 9:11-13
+*   Spirit of Prophecy: The Desire of Ages, pp. 134-135
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Identity Questions:** The delegation asked if John was Elijah (whom Jews expected to return bodily) or 'that Prophet' (Moses' successor in Deut 18:15). John answered 'I am not' to their literalistic misconception, though he came in the 'spirit and power of Elijah' (Luke 1:17).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -148,5 +176,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

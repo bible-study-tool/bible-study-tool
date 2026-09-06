@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:49"
 tags:
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -26,9 +27,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "psalms-2-7"
+    note: "The LORD hath said unto me, Thou art my Son; this day have I begotten thee"
+  - type: xref/parallel
+    target: "matthew-14-33"
+    note: "Of a truth thou art the Son of God"
+  - type: xref/parallel
+    target: "john-1-34"
+    note: "And I saw, and bare record that this is the Son of God"
 ---
 
 # John 1:49 - KJV
@@ -141,6 +152,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:N-M
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Nathanael's triumphant confession: Son of God and King of Israel
+*   OT Background: Psalm 2:6-7; Zephaniah 3:15
+*   NT Parallels: Matthew 16:16; John 12:13
+*   Spirit of Prophecy: The Desire of Ages, p. 141
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Royal and Divine Confession:** Nathanael combines the divine title (*Son of God*, expressing deity) with the messianic royal title (*King of Israel*, expressing covenant sovereignty over the redeemed).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -148,5 +172,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

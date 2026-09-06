@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:13"
 tags:
+  - theme/redemption
+  - theme/holy-spirit
   - material/bible
   - book/john
   - theme/christ
@@ -24,9 +26,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-3-3-6"
+    note: "Except a man be born again, he cannot see the kingdom of God... born of the Spirit"
+  - type: xref/parallel
+    target: "james-1-18"
+    note: "Of his own will begat he us with the word of truth"
+  - type: xref/parallel
+    target: "1-peter-1-23"
+    note: "Being born again, not of corruptible seed, but of incorruptible"
 ---
 
 # John 1:13 - KJV
@@ -123,6 +135,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Supernatural regeneration versus human pedigree
+*   OT Background: Ezekiel 36:26-27 — A new heart also will I give you
+*   NT Parallels: Titus 3:5; 1 John 5:1
+*   Spirit of Prophecy: The Desire of Ages, p. 172 — The new birth is a supernatural work of the Holy Spirit
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Threefold Negative of Human Origin:** Spiritual sonship is not of blood (*haimatoon* — natural descent or pedigree), nor of the will of the flesh (*thelematos sarkos* — physical impulse), nor of the will of man (*thelematos andros* — human resolution or adoption), but directly 'of God' (*ek Theou egennethesan*).
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -130,5 +155,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

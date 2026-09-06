@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:33"
 tags:
+  - theme/holy-spirit
+  - theme/redemption
   - material/bible
   - book/john
   - theme/christ
@@ -37,9 +39,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "matthew-3-11"
+    note: "He shall baptize you with the Holy Ghost, and with fire"
+  - type: xref/parallel
+    target: "acts-1-5"
+    note: "Ye shall be baptized with the Holy Ghost not many days hence"
+  - type: xref/parallel
+    target: "acts-2-1-4"
+    note: "And they were all filled with the Holy Ghost"
 ---
 
 # John 1:33 - KJV
@@ -240,6 +252,19 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:V
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: The Baptism of the Holy Spirit
+*   OT Background: Joel 2:28-29; Isaiah 44:3
+*   NT Parallels: 1 Corinthians 12:13; Titus 3:5-6
+*   Spirit of Prophecy: The Desire of Ages, p. 143
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Baptizer in the Holy Spirit (*ho baptizoon en Pneumati Hagio*):** Water baptism symbolized outward repentance; Christ's baptism in the Holy Spirit imparts internal regeneration, divine power, and eternal life.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -247,5 +272,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

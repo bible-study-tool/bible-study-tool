@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:50"
 tags:
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -27,9 +28,16 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-11-40"
+    note: "Said I not unto thee, that, if thou wouldest believe, thou shouldest see the glory of God?"
+  - type: xref/parallel
+    target: "john-14-12"
+    note: "He that believeth on me, the works that I do shall he do also; and greater works than these shall he do"
 ---
 
 # John 1:50 - KJV
@@ -150,6 +158,17 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Faith rewarded with expanding revelations of divine glory
+*   Spirit of Prophecy: The Desire of Ages, p. 142
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Greater Things Shalt Thou See (*meizo touton opsei*):** Sincere initial faith is the doorway to progressive spiritual sight. Christ promises that Nathanael's quick surrender to truth will be rewarded with majestic cosmic visions.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -157,5 +176,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

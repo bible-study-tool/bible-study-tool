@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:44"
 tags:
+  - theme/prophecy
   - material/bible
   - book/john
   - theme/christ
@@ -24,9 +25,16 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "matthew-11-21"
+    note: "Woe unto thee, Chorazin! woe unto thee, Bethsaida!"
+  - type: xref/parallel
+    target: "john-12-21"
+    note: "The same came therefore to Philip, which was of Bethsaida of Galilee"
 ---
 
 # John 1:44 - KJV
@@ -123,6 +131,17 @@ updated: 2026-09-06
 *   Morphology (STEPBible): N:N--L
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The Galilean hometown connection between Philip, Andrew, and Peter
+*   Spirit of Prophecy: The Desire of Ages, p. 140
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Bethsaida of Galilee:** The shared hometown created natural community bonds which the Holy Spirit leveraged for the expansion of the kingdom.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -130,5 +149,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

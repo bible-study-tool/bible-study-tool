@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:48"
 tags:
+  - theme/prayer
   - material/bible
   - book/john
   - theme/christ
@@ -31,9 +32,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "psalms-139-1-4"
+    note: "O LORD, thou hast searched me, and known me. Thou knowest my downsitting and mine uprising"
+  - type: xref/parallel
+    target: "john-2-24-25"
+    note: "He knew all men, and needed not that any should testify of man: for he knew what was in man"
+  - type: xref/spirit-prophecy
+    target: "des-14-1"
+    note: "The Desire of Ages, Chapter 14 — 'We Have Found the Messias'"
 ---
 
 # John 1:48 - KJV
@@ -186,6 +197,18 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 2
 
+## Correlations
+
+*   Theme: Divine omniscience and secret prayer under the fig tree
+*   OT Background: 1 Kings 4:25; Micah 4:4; Psalm 139:1-12
+*   Spirit of Prophecy: The Desire of Ages, p. 141 — Under the fig tree Nathanael had prayed to know whether Jesus was the Messiah
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Under the Fig Tree (*hypo ten syken*):** In Jewish tradition, the shade of the fig tree was a favored place for prayer, meditation, and Torah study. Nathanael had poured out his heart in secret, asking for divine light regarding the Messiah. Jesus' disclosure proved His divine omniscience.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -193,5 +216,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:14"
 tags:
+  - theme/sanctuary
+  - theme/grace
   - material/bible
   - book/john
   - theme/christ
@@ -31,9 +33,28 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/theme
+    target: "exodus-25-8"
+    note: "And let them make me a sanctuary; that I may dwell among them — the tabernacle typology"
+  - type: xref/theme
+    target: "exodus-33-18-19"
+    note: "I beseech thee, shew me thy glory... I will make all my goodness pass before thee"
+  - type: xref/theme
+    target: "exodus-34-6"
+    note: "Abundant in goodness and truth — translated in the LXX as chesed ve-emet, grace and truth"
+  - type: xref/parallel
+    target: "hebrews-2-14"
+    note: "Forasmuch then as the children are partakers of flesh and blood, he also himself likewise took part of the same"
+  - type: xref/parallel
+    target: "1-timothy-3-16"
+    note: "God was manifest in the flesh, justified in the Spirit, seen of angels"
+  - type: xref/spirit-prophecy
+    target: "des-1-1"
+    note: "The Desire of Ages, Chapter 1 — 'God With Us'"
 ---
 
 # John 1:14 - KJV
@@ -186,6 +207,23 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The Incarnation, Sanctuary Tabernacling, Divine Glory, Grace and Truth
+*   OT Sanctuary Anchor: Exodus 25:8; 40:34-35; Leviticus 26:11-12; 1 Kings 8:10-11
+*   OT Covenant Anchor: Exodus 34:6 (*rav chesed ve-emet* ➔ *pleres charitos kai aletheias*)
+*   NT Parallels: Colossians 2:9; Philippians 2:6-8; Revelation 21:3
+*   Spirit of Prophecy: The Desire of Ages, pp. 19-26 — The tabernacle pitched among men
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Word Became Flesh (*ho Logos sarx egeneto*):** The climax of the prologue. The eternal, self-existent Logos did not merely appear in human likeness (opposing Docetism); He *became* real, tangible human flesh (*sarx*), uniting humanity with unfallen deity forever.
+*   **The True Tabernacle (*eskenosen en hemin*, G4637):** The verb *skenoo* means literally 'to pitch a tent / tabernacle.' It anchors directly to the Old Testament sanctuary (*mishkan*, Exodus 25:8). Christ's body was the true sanctuary where the divine presence dwelt among men.
+*   **Beholding His Glory (*etheasametha ten doxan autou*):** In the wilderness tabernacle, the *Shekinah* glory filled the Holy of Holies. In Jesus, the eyewitnesses beheld that same glory — not in terrifying unapproachable splendor, but cloaked in self-sacrificing love.
+*   **Full of Grace and Truth (*pleres charitos kai aletheias*):** The exact Greek equivalent of the covenant name revealed to Moses on Mount Sinai (Exodus 34:6: *rav chesed ve-emet* — 'abundant in lovingkindness and truth'). The incarnate Christ is the personal embodiment of God's covenant character.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -193,5 +231,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

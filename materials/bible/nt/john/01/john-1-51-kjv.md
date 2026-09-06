@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:51"
 tags:
+  - theme/typology
+  - theme/sanctuary
   - material/bible
   - book/john
   - theme/christ
@@ -31,9 +33,25 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/theme
+    target: "genesis-28-12"
+    note: "And he dreamed, and behold a ladder set up on the earth, and the top of it reached to heaven: and behold the angels of God ascending and descending on it — Jacob's ladder typology"
+  - type: xref/parallel
+    target: "daniel-7-13"
+    note: "Behold, one like the Son of man came with the clouds of heaven"
+  - type: xref/parallel
+    target: "matthew-26-64"
+    note: "Hereafter shall ye see the Son of man sitting on the right hand of power"
+  - type: xref/parallel
+    target: "hebrews-1-14"
+    note: "Are they not all ministering spirits, sent forth to minister for them who shall be heirs of salvation?"
+  - type: xref/spirit-prophecy
+    target: "des-14-1"
+    note: "The Desire of Ages, Chapter 14 — 'We Have Found the Messias'"
 ---
 
 # John 1:51 - KJV
@@ -186,6 +204,21 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Jesus the True Jacob's Ladder linking Heaven and Earth
+*   OT Typology Anchor: Genesis 28:12 (Jacob's Ladder at Bethel); Daniel 7:13 (*Bar Enash* / Son of Man)
+*   NT Parallels: 1 Timothy 2:5 (One Mediator); Hebrews 10:19-20
+*   Spirit of Prophecy: Patriarchs and Prophets, p. 184; The Desire of Ages, pp. 142-143 — Christ the bridge spanning the gulf made by sin
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The True Jacob's Ladder (*Gen 28:12* Typology):** In Genesis 28, the fugitive Jacob saw a mystic ladder resting on the earth while its top touched heaven, with angels ascending and descending upon it. Jesus declares Himself to be that living ladder: His humanity rests on the earth, while His divinity reaches the throne of God.
+*   **The Son of Man (*ho Huios tou anthropou*, G5207 G444):** First appearance of Jesus' favorite self-designation in John's Gospel. Rooted in Daniel 7:13, it highlights both His solidarity with suffering humanity and His ultimate heavenly sovereignty.
+*   **Spanning the Abyss of Sin:** Sin severed communion between earth and heaven. In Christ, open heaven (*ouranon aneogota*) is restored, and angelic ministry flows unhindered between God and humanity.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -193,5 +226,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

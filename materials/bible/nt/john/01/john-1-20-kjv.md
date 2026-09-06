@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:20"
 tags:
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -22,9 +23,16 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-3-28"
+    note: "Ye yourselves bear me witness, that I said, I am not the Christ, but that I am sent before him"
+  - type: xref/parallel
+    target: "acts-13-25"
+    note: "And as John fulfilled his course, he said, Whom think ye that I am? I am not he"
 ---
 
 # John 1:20 - KJV
@@ -105,6 +113,18 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: John's emphatic denial of messianic identity
+*   NT Parallels: Luke 3:15-16; John 1:8
+*   Spirit of Prophecy: The Desire of Ages, p. 133 — John confessed and denied not
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Emphatic Confession (*homologesen kai ouk ernesato*):** John firmly refused all messianic honors. His loyalty to Christ precluded accepting any inflated human adulation.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -112,5 +132,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

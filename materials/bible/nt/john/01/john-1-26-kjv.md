@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:26"
 tags:
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -29,9 +30,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "matthew-3-11"
+    note: "I indeed baptize you with water unto repentance"
+  - type: xref/parallel
+    target: "luke-3-16"
+    note: "John answered, saying unto them all, I indeed baptize you with water"
+  - type: xref/parallel
+    target: "acts-1-5"
+    note: "For John truly baptized with water; but ye shall be baptized with the Holy Ghost"
 ---
 
 # John 1:26 - KJV
@@ -168,6 +179,18 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Water baptism versus the unseen presence of the Messiah
+*   NT Parallels: Acts 11:16; 19:4
+*   Spirit of Prophecy: The Desire of Ages, p. 135 — There standeth one among you, whom ye know not
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Unrecognized Majesty (*meson hymon hesteken*, G3319 G2476):** Christ was already present in the crowd, mingling unrecognized among the common people — an enduring symbol of His condescension.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -175,5 +198,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

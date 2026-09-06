@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:31"
 tags:
+  - theme/prophecy
+  - theme/covenant
   - material/bible
   - book/john
   - theme/christ
@@ -29,9 +31,16 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "luke-1-80"
+    note: "And the child grew... and was in the deserts till the day of his shewing unto Israel"
+  - type: xref/parallel
+    target: "john-1-33"
+    note: "And I knew him not: but he that sent me to baptize with water, the same said unto me"
 ---
 
 # John 1:31 - KJV
@@ -168,6 +177,17 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The manifestation of the Messiah to Israel as the primary purpose of John's baptism
+*   Spirit of Prophecy: The Desire of Ages, p. 137
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Manifested to Israel (*phanerothei to Israeli*, G5319):** John did not know Jesus as the verified Messiah through personal acquaintance or kinship, but waited for the divine sign promised by God.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -175,5 +195,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

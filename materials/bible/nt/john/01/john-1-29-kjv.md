@@ -4,6 +4,9 @@ type: material/bible
 book: book/john
 passage: "John 1:29"
 tags:
+  - theme/sanctuary
+  - theme/typology
+  - theme/redemption
   - material/bible
   - book/john
   - theme/christ
@@ -29,9 +32,28 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/theme
+    target: "exodus-12-3-13"
+    note: "Your lamb shall be without blemish — the Passover lamb typology"
+  - type: xref/theme
+    target: "isaiah-53-7"
+    note: "He is brought as a lamb to the slaughter, and as a sheep before her shearers is dumb"
+  - type: xref/parallel
+    target: "1-corinthians-5-7"
+    note: "For even Christ our passover is sacrificed for us"
+  - type: xref/parallel
+    target: "1-peter-1-18-19"
+    note: "Redeemed with the precious blood of Christ, as of a lamb without blemish"
+  - type: xref/theme
+    target: "revelation-5-6-12"
+    note: "A Lamb as it had been slain... Worthy is the Lamb that was slain"
+  - type: xref/spirit-prophecy
+    target: "des-11-1"
+    note: "The Desire of Ages, Chapter 11 — 'The Baptism'"
 ---
 
 # John 1:29 - KJV
@@ -168,6 +190,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:V
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The Lamb of God (*Amnos tou Theou*) and Universal Atonement
+*   OT Sanctuary Anchor: Exodus 12:3-13 (Passover Lamb); Exodus 29:38-42 (Daily Tamid); Leviticus 4 (Sin Offering); Isaiah 53:7
+*   NT Parallels: Acts 8:32; Hebrews 9:26; 1 John 2:2; Revelation 13:8
+*   Spirit of Prophecy: The Desire of Ages, pp. 136-137 — The sanctuary service pointed to the Lamb of God
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Behold the Lamb of God (*Ide ho amnos tou Theou*, G2396 G286 G3588 G2316):** The culmination of the entire Levitical sacrificial economy. The daily morning and evening sacrifices, the Passover lamb, and the suffering servant of Isaiah 53:7 coalesce in Jesus of Nazareth.
+*   **Taking Away the Sin of the World (*ho airoon ten hamartian tou kosmou*, G142 G266):** The present participle *airoon* indicates continuous, comprehensive expiation: Christ lifts up and bears away the sin of the entire world, making atonement available to all humanity.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -175,5 +211,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

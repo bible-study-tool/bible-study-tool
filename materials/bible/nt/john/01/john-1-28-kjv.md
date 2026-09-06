@@ -4,6 +4,7 @@ type: material/bible
 book: book/john
 passage: "John 1:28"
 tags:
+  - theme/prophecy
   - material/bible
   - book/john
   - theme/christ
@@ -24,9 +25,16 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-3-26"
+    note: "He that was with thee beyond Jordan, to whom thou barest witness"
+  - type: xref/parallel
+    target: "john-10-40"
+    note: "And went away again beyond Jordan into the place where John at first baptized"
 ---
 
 # John 1:28 - KJV
@@ -123,6 +131,17 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:N-F
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: Historical and geographical setting of John's ministry
+*   Spirit of Prophecy: The Desire of Ages, p. 132
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **Bethabara / Bethany Beyond Jordan:** The geographical marker confirms the eyewitness historical foundation of John's Gospel, situated on the eastern side of the Jordan river.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -130,5 +149,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

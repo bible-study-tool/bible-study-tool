@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:12"
 tags:
+  - theme/redemption
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -26,9 +28,22 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "romans-8-14-17"
+    note: "As many as are led by the Spirit of God, they are the sons of God"
+  - type: xref/parallel
+    target: "galatians-3-26"
+    note: "For ye are all the children of God by faith in Christ Jesus"
+  - type: xref/parallel
+    target: "1-john-3-1-2"
+    note: "Behold, what manner of love the Father hath bestowed upon us, that we should be called the sons of God"
+  - type: xref/spirit-prophecy
+    target: "des-1-1"
+    note: "The Desire of Ages, Chapter 1 — 'God With Us'"
 ---
 
 # John 1:12 - KJV
@@ -141,6 +156,20 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 3
 
+## Correlations
+
+*   Theme: Divine adoption and the authority to become children of God
+*   OT Background: Hosea 1:10; Isaiah 56:5
+*   NT Parallels: Galatians 4:5-7; 2 Peter 1:4
+*   Spirit of Prophecy: Steps to Christ, Chapter 5 — Consecration and divine adoption
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Authority of Adoption (*exousia*, G1849):** *Exousia* denotes legal right, moral authority, and supernatural empowerment. Those who receive Christ (*elabon*) and believe in His name (*pisteuousin*) receive the status of *tekna Theou* ('children of God by new birth').
+*   **Believing in His Name (*eis to onoma autou*):** In Hebrew and Hellenistic thought, the 'name' represents the totality of the person, character, and authority. Faith is personal allegiance and trust in the character of the Incarnate Son.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -148,5 +177,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.

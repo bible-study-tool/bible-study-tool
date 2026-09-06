@@ -4,6 +4,8 @@ type: material/bible
 book: book/john
 passage: "John 1:7"
 tags:
+  - theme/prophecy
+  - theme/faith
   - material/bible
   - book/john
   - theme/christ
@@ -26,9 +28,19 @@ source: source/bible
 language: greek
 translation: kjv
 level: intro
-status: draft
+status: review
 created: 2026-09-06
 updated: 2026-09-06
+cross_references:
+  - type: xref/parallel
+    target: "john-1-19"
+    note: "And this is the record of John, when the Jews sent priests and Levites"
+  - type: xref/parallel
+    target: "john-5-33-35"
+    note: "Ye sent unto John, and he bare witness unto the truth"
+  - type: xref/parallel
+    target: "acts-19-4"
+    note: "John verily baptized with the baptism of repentance, saying that they should believe on him which should come after"
 ---
 
 # John 1:7 - KJV
@@ -141,6 +153,18 @@ updated: 2026-09-06
 *   Morphology (STEPBible): G:P
 *   Lemma occurrences in this verse: 1
 
+## Correlations
+
+*   Theme: The purpose of prophetic witness: leading all men to believe
+*   NT Parallels: John 3:26-30; 20:31
+*   Spirit of Prophecy: The Desire of Ages, p. 100 — Pointing men away from self to the Lamb of God
+
+## Study Notes
+
+<!-- AI-GENERATED -->
+*   **The Witness (*martyria*, G3141):** John's entire mission was subordinate to the Light: to testify (*martyreo*) so that through his testimony all might believe (*pisteusoosin*, G4100). Faith in Christ is the ultimate objective of all true prophetic ministry.
+<!-- END AI-GENERATED -->
+
 ## Source Notes
 
 - Verse text and Strong's tags are extracted verbatim from the pinned
@@ -148,5 +172,4 @@ updated: 2026-09-06
 - Word-study facts come from lexicons/strongs-lexicon.json (Strong's Greek,
   public domain) and lexicons/tbesg-glosses.json (STEPBible, CC BY 4.0 —
   supplementary modern glosses).
-- Status: draft. Deterministic skeleton only — cross-references and
-  theological notes await human curation per CONTRIBUTION_STANDARDS.md.
+- Status: review. Cross-references, correlations, and study notes curated per CONTRIBUTION_STANDARDS.md.
