@@ -271,10 +271,14 @@ def generate(
         raise ValueError(f"{canonical_name} chapter {chapter} not found in KJV-osis source")
 
     verses_map = {v["verse"]: v for v in ch_entry.get("verses", [])}
+    if not verses_map:
+        raise ValueError(f"{canonical_name} chapter {chapter} contains no verses in KJV-osis source")
     if verses is None:
         start, end = 1, max(verses_map.keys())
     else:
         start, end = verses
+        if start > end or start < 1:
+            raise ValueError(f"Invalid verse range {start}-{end} for {canonical_name} {chapter}")
 
     target_subdir = out_subdir or f"materials/bible/nt/{book_code}"
     out_dir = Path(repo) / target_subdir / f"{chapter:02d}"

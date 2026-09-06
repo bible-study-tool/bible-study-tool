@@ -302,6 +302,7 @@ def get_versification_map(versemap_path: Path | str | None = None) -> tuple[dict
                     ps_1title = set(raw["ps_1title"])
                 if "ps_2title" in raw:
                     ps_2title = set(raw["ps_2title"])
+                ps_1title -= ps_2title
             except (gzip.BadGzipFile, json.JSONDecodeError, OSError, KeyError) as e:
                 logging.getLogger(__name__).warning("Failed to load bundled versemap fixture from %s: %s", bundled, e)
 

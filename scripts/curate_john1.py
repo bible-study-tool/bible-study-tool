@@ -13,7 +13,8 @@ from pathlib import Path
 # Curation date
 CURATION_DATE = "2026-09-06"
 
-JOHN1_DIR = Path("materials/bible/nt/john/01")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+JOHN1_DIR = REPO_ROOT / "materials/bible/nt/john/01"
 
 # Theological curation data for John 1 (51 verses)
 JOHN1_CURATION: dict[int, dict] = {
@@ -917,7 +918,7 @@ def curate_verse(v_num: int) -> bool:
             note_escaped = x['note'].replace('"', '\\"')
             xref_lines.append(f"    note: \"{note_escaped}\"")
         xref_block = "\n".join(xref_lines) + "\n"
-        content = re.sub(r"\n---\n", f"\n{xref_block}---\n", content, count=1)
+        content = content.replace("\n---\n", f"\n{xref_block}---\n", 1)
 
     # 2. Add Correlations and Study Notes before ## Source Notes
     correlations = curation.get("correlations", [])
@@ -937,12 +938,15 @@ def curate_verse(v_num: int) -> bool:
     return True
 
 
-def main() -> int:
-    curated_count = 0
-    for v in range(1, 52):
-        if curate_verse(v):
-            curated_count += 1
-    print(f"Successfully curated {curated_count}/51 verses in John 1")
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+    parser = argparse.ArgumentParser(description="Curate John 1 entries")
+    parser.add_argument("--verse", type=int, choices=range(1, 52), help="Curate a single verse")
+    args = parser.parse_args(argv)
+
+    verses = [args.verse] if args.verse else range(1, 52)
+    curated_count = sum(1 for v in verses if curate_verse(v))
+    print(f"Successfully curated {curated_count}/{len(verses)} verses in John 1")
     return 0
 
 
