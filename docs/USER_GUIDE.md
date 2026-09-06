@@ -197,7 +197,10 @@ The writings of Ellen G. White provide inspiring theological commentary and prac
 3. **Inspect Verse 3 in the Lexicon (Tab 2)**:
    - "And this is life eternal, that they might know thee..."
    - Select `ginōskō` (G1097): Notice that this knowledge is not mere intellectual information, but intimate, experiential, covenant communion.
-4. **Consult EGW Commentary (Tab 3)**:
+4. **Trace the Unity Theme (Verses 21–23)**:
+   - Press `j` down to verse 21: Observe Jesus praying "that they all may be one; as thou, Father, art in me, and I in thee."
+   - Tab 1 highlights the divine purpose clause `⟨Purpose: ἵνα⟩`: Believer unity is the crowning testimony that convinces the world of the Father's love.
+5. **Consult EGW Commentary (Tab 3)**:
    - Read from *The Desire of Ages*, Chapter 73 ("Let Not Your Heart Be Troubled").
 
 ---
