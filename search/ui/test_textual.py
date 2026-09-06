@@ -163,6 +163,18 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             await pilot.pause()
             self.assertEqual(app.current_passage.start_chapter, 1)
 
+            # Advance via key 'l' (vim right)
+            await pilot.press("l")
+            await _wait_for_workers(app)
+            await pilot.pause()
+            self.assertEqual(app.current_passage.start_chapter, 2)
+
+            # Return via key 'h' (vim left)
+            await pilot.press("h")
+            await _wait_for_workers(app)
+            await pilot.pause()
+            self.assertEqual(app.current_passage.start_chapter, 1)
+
     async def test_pin_and_unpin_inspection(self):
         app = BibleStudyApp(initial_ref="Gen 1:1-3")
         async with app.run_test() as pilot:

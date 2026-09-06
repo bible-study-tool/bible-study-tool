@@ -97,9 +97,9 @@ class BibleStudyTUI:
                 stdscr.clear()
             elif ch in (ord("\t"), 9):  # Tab
                 self.active_pane = "inspector" if self.active_pane == "reader" else "reader"
-            elif ch in (ord("n"), ord("N")):
+            elif ch in (ord("l"), ord("L"), ord("n"), ord("N"), curses.KEY_RIGHT):
                 self._next_chapter()
-            elif ch in (ord("p"), ord("P")):
+            elif ch in (ord("h"), ord("H"), ord("p"), ord("P"), curses.KEY_LEFT):
                 self._prev_chapter()
             elif ch in (ord("f"), ord("F")):
                 self.focus_mode = not self.focus_mode
@@ -279,7 +279,7 @@ class BibleStudyTUI:
 
         shortcuts = [
             ("g", "Goto passage (e.g. 'John 3:16', 'Ps 23', 'Rom 8')"),
-            ("n / p", "Next / Previous chapter"),
+            ("h / l", "Previous / Next chapter (also n / p)"),
             ("Space/Enter", "Pin / unpin selected verse for side panel study"),
             ("Tab", "Toggle focus between Scripture Reader and Inspector"),
             ("j / k", "Scroll down / up (or Up/Down arrow keys)"),

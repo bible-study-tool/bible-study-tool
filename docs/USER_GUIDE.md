@@ -214,7 +214,8 @@ Keep this quick-reference guide handy beside your computer:
 | `j` or `↓` | Next Verse | Advance down one verse in the chapter |
 | `k` or `↑` | Previous Verse | Move up one verse in the chapter |
 | `PgDn` / `PgUp` | Page Down / Up | Scroll quickly through the chapter text |
-| `n` / `p` | Next / Prev Chapter | Jump forward or backward by full chapter |
+| `h` or `←` | Previous Chapter | Jump backward by full chapter (also `p`) |
+| `l` or `→` | Next Chapter | Jump forward by full chapter (also `n`) |
 | `Space` or `Enter` | Pin Verse | Locks the inspector to current verse while scrolling |
 | `1` | Tab 1: Syntax & Frames | Original languages, verbal stems, argument flow |
 | `2` | Tab 2: Lexicon & Strong's | Unabridged BDB / Abbott-Smith dictionaries |

@@ -208,7 +208,7 @@ class HelpModal(ModalScreen[None]):
 | :--- | :--- |
 | **`j` / `Down`** | Move to next verse |
 | **`k` / `Up`** | Move to previous verse |
-| **`n` / `p`** | Next / Previous chapter |
+| **`h` / `l`** | Previous / Next chapter (also `Left` / `Right`, `p` / `n`) |
 | **`Space` / `Enter`** | Pin / unpin selected verse for side panel study |
 | **`g` / `Ctrl+P`** | Jump to passage (e.g. *John 3:16*) or EGW citation (e.g. *PP 44.1*, *[PP.44.1]*) |
 | **`/`** | Search Bible & Spirit of Prophecy writings |
@@ -244,8 +244,12 @@ class BibleStudyApp(App):
         Binding("k", "prev_verse", "Up", show=False),
         Binding("down", "next_verse", "Down", show=False),
         Binding("up", "prev_verse", "Up", show=False),
-        Binding("n", "next_chapter", "Next Ch", show=True),
-        Binding("p", "prev_chapter", "Prev Ch", show=True),
+        Binding("h", "prev_chapter", "Prev Ch", show=True),
+        Binding("l", "next_chapter", "Next Ch", show=True),
+        Binding("left", "prev_chapter", "Prev Ch", show=False),
+        Binding("right", "next_chapter", "Next Ch", show=False),
+        Binding("p", "prev_chapter", "Prev Ch", show=False),
+        Binding("n", "next_chapter", "Next Ch", show=False),
         Binding("space", "toggle_pin", "Pin Verse", show=True),
         Binding("enter", "toggle_pin", "Pin", show=False),
         Binding("g", "goto_passage", "Goto", show=True),

@@ -108,7 +108,7 @@ python scripts/study.py tui "John 17"
 python scripts/study.py tui "Romans 1"
 ```
 
-Use `j` / `k` to move between verses, `1`–`5` to switch study inspector tabs, `v` to toggle parallel translations, `o` to jump between New Testament verses and their Old Testament quotation roots, `g` to jump to any passage or Spirit of Prophecy reference (e.g. `PP 44.1`), `t` to cycle themes, and `?` for interactive help.
+Use `j` / `k` to move between verses, `h` / `l` to move between chapters, `1`–`5` to switch study inspector tabs, `v` to toggle parallel translations, `o` to jump between New Testament verses and their Old Testament quotation roots, `g` to jump to any passage or Spirit of Prophecy reference (e.g. `PP 44.1`), `t` to cycle themes, and `?` for interactive help.
 
 ### 3. Study via the Command-Line Interface (CLI)
 
