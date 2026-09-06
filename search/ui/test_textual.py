@@ -175,6 +175,23 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             await pilot.pause()
             self.assertEqual(app.current_passage.start_chapter, 1)
 
+            # Verify arrow key aliases
+            await pilot.press("right")
+            await _wait_for_workers(app)
+            await pilot.pause()
+            self.assertEqual(app.current_passage.start_chapter, 2)
+
+            await pilot.press("left")
+            await _wait_for_workers(app)
+            await pilot.pause()
+            self.assertEqual(app.current_passage.start_chapter, 1)
+
+            # Boundary check: 'h' on Genesis 1 remains at chapter 1
+            await pilot.press("h")
+            await _wait_for_workers(app)
+            await pilot.pause()
+            self.assertEqual(app.current_passage.start_chapter, 1)
+
     async def test_pin_and_unpin_inspection(self):
         app = BibleStudyApp(initial_ref="Gen 1:1-3")
         async with app.run_test() as pilot:
@@ -379,7 +396,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify that tabs are only rendered when active and dirty flags are tracked."""
         app = BibleStudyApp(initial_ref="Gen 1:1-3")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             tabs = app.query_one("#inspector-tabs", TabbedContent)
             self.assertEqual(tabs.active, "tab-syntax")
 
@@ -411,7 +428,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify rapid verse stepping incurs zero DOM allocations and completes instantly."""
         app = BibleStudyApp(initial_ref="Gen 1:1-10")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             initial_widget_count = len(app.query("*"))
 
             # Rapidly step through verses 1 to 9

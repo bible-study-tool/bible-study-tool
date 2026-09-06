@@ -129,7 +129,7 @@ class BibleStudyTUI:
                 self.show_search = not self.show_search
                 self.inspector_scroll = 0
                 self.status_msg = f"Search section: {'ENABLED' if self.show_search else 'DISABLED'}"
-            elif ch in (ord("?"), ord("h"), ord("H")):
+            elif ch == ord("?"):
                 self._show_help()
             elif ch == curses.KEY_DOWN or ch == ord("j"):
                 self._scroll_down()
@@ -588,7 +588,7 @@ class BibleStudyTUI:
         self.stdscr.addstr(max_y - 2, 0, msg[:max_x - 1], curses.color_pair(2) | curses.A_BOLD if curses.has_colors() else curses.A_BOLD)
 
         # Line max_y - 1: Hotkeys Overview
-        hotkeys = " [g]oto  [n/p] Nav  [Space] Pin  [1-4] Sections  [f]ocus  [s]trongs  [/] Find  [?] Help  [q]uit"
+        hotkeys = " [g]oto  [h/l] Nav  [Space] Pin  [1-4] Sections  [f]ocus  [s]trongs  [/] Find  [?] Help  [q]uit"
         self.stdscr.attron(curses.color_pair(6) if curses.has_colors() else curses.A_REVERSE)
         self.stdscr.addstr(max_y - 1, 0, " " * (max_x - 1))
         self.stdscr.addstr(max_y - 1, 0, hotkeys[:max_x - 1])

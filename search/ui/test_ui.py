@@ -489,6 +489,21 @@ class BibleStudyTUITests(unittest.TestCase):
         tui._load_passage("NoSuchBook 99:99")
         self.assertIn("Error", tui.status_msg)
 
+    def test_tui_chapter_navigation(self):
+        tui = BibleStudyTUI(initial_ref="Gen 1:1")
+        tui._load_passage("Gen 1:1")
+        self.assertEqual(tui.current_passage.start_chapter, 1)
+
+        tui._next_chapter()
+        self.assertEqual(tui.current_passage.start_chapter, 2)
+
+        tui._prev_chapter()
+        self.assertEqual(tui.current_passage.start_chapter, 1)
+
+        tui._prev_chapter()
+        self.assertEqual(tui.current_passage.start_chapter, 1)
+        self.assertIn("beginning of Genesis", tui.status_msg)
+
 
 class StudyCLITests(unittest.TestCase):
     """Test scripts/study.py CLI commands end-to-end."""
