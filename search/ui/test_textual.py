@@ -103,6 +103,11 @@ class ThemeSystemTests(unittest.TestCase):
 class TextualAppTests(unittest.IsolatedAsyncioTestCase):
     """Async headless tests for BibleStudyApp using Textual test pilot."""
 
+    @classmethod
+    def setUpClass(cls):
+        from search.testutil import ensure_test_databases
+        ensure_test_databases()
+
     async def test_app_initial_mount_and_verses(self):
         app = BibleStudyApp(initial_ref="Gen 1:1-3", initial_theme="transparent")
         async with app.run_test() as pilot:

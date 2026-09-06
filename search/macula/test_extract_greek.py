@@ -226,6 +226,9 @@ class GreekMaculaIntegrationTests(unittest.TestCase):
         if not cls.db_path.is_file():
             raise unittest.SkipTest("data/macula.db not on disk")
         cls.db = MaculaDB(cls.db_path)
+        if cls.db.counts["verses"] < 20000:
+            cls.db.close()
+            raise unittest.SkipTest("Full NT Macula DB required (data/macula.db contains subset)")
 
     @classmethod
     def tearDownClass(cls):

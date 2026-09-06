@@ -44,7 +44,11 @@ packages = [
     "search.agreement",
     "search.macula",
     "search.ui",
+    "search.fixtures",
 ]
+
+[tool.setuptools.package-data]
+"*" = ["*.json", "*.json.gz", "*.txt"]
 
 [tool.pytest.ini_options]
 testpaths = ["search"]

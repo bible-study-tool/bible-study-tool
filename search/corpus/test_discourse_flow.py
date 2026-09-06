@@ -126,6 +126,8 @@ class DiscourseFlowIntegrationTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        from search.testutil import ensure_test_databases
+        ensure_test_databases()
         cls.db = BibleDB()
 
     @classmethod

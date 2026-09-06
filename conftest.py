@@ -13,3 +13,14 @@ import sys
 _ROOT = os.path.dirname(os.path.abspath(__file__))
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
+
+
+def pytest_sessionstart(session):
+    """Ensure minimal test databases are hydrated if data/ databases are absent."""
+    try:
+        from search.testutil import ensure_test_databases
+        ensure_test_databases(_ROOT)
+    except Exception as e:
+        # Never block test collection if fixture hydration fails
+        sys.stderr.write(f"[conftest] Note: ensure_test_databases skipped/failed: {e}\n")
+

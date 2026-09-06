@@ -390,6 +390,9 @@ class TestWholeBibleMaculaDB(unittest.TestCase):
         if not SQLITE_DB_PATH.is_file():
             raise unittest.SkipTest("data/macula.db not present on disk")
         cls.db = MaculaSqliteDB(SQLITE_DB_PATH)
+        if cls.db.counts["chapters"] < 929:
+            cls.db.close()
+            raise unittest.SkipTest("Whole-Bible Macula DB required (data/macula.db contains subset)")
 
     @classmethod
     def tearDownClass(cls):

@@ -60,17 +60,24 @@ class TestBibleDB(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # Ensure database is compiled
+        # Ensure database is compiled or hydrated
         cls.db_path = Path(DEFAULT_BIBLE_DB)
         if not cls.db_path.is_file():
-            compile_bible_db(json_path=DEFAULT_KJV_JSON, db_path=cls.db_path)
+            if Path(DEFAULT_KJV_JSON).is_file():
+                compile_bible_db(json_path=DEFAULT_KJV_JSON, db_path=cls.db_path)
+            else:
+                from search.testutil import ensure_test_databases
+                ensure_test_databases()
         cls.db = BibleDB(db_path=cls.db_path)
+        cls.verse_count = cls.db.count()["verses"]
 
     @classmethod
     def tearDownClass(cls):
         cls.db.close()
 
     def test_whole_bible_counts(self):
+        if self.verse_count < 31102:
+            self.skipTest("Full 31,102-verse Bible database not present (run scripts/fetch_sources.sh)")
         counts = self.db.count()
         self.assertEqual(counts["books"], 66)
         self.assertEqual(counts["verses"], 31102)
@@ -103,6 +110,8 @@ class TestBibleDB(unittest.TestCase):
         self.assertEqual(len(ps23), 6)
 
     def test_fts5_search(self):
+        if self.verse_count < 31102:
+            self.skipTest("Whole-Bible KJV database required for full FTS5 search suite")
         # Exact phrase search
         res = self.db.search("sanctuary cleansed")
         self.assertGreaterEqual(len(res), 1)
@@ -116,6 +125,8 @@ class TestBibleDB(unittest.TestCase):
             self.assertEqual(r["testament"], "NT")
 
     def test_find_by_strongs(self):
+        if self.verse_count < 31102:
+            self.skipTest("Whole-Bible KJV database required for Strong's reverse index suite")
         # Greek Strong's G2316 (Theos)
         theos_verses = self.db.find_by_strongs("G2316", limit=5)
         self.assertEqual(len(theos_verses), 5)

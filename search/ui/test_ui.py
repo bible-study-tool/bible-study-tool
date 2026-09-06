@@ -23,6 +23,11 @@ from search.ui.study_service import StudyService
 from search.ui.tui import BibleStudyTUI
 
 
+def setUpModule():
+    from search.testutil import ensure_test_databases
+    ensure_test_databases()
+
+
 class FormattingTests(unittest.TestCase):
     """Test terminal formatting, ANSI styling, and text wrapping."""
 
