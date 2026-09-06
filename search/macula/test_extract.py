@@ -198,6 +198,14 @@ class MaculaMultiBookExtractTests(unittest.TestCase):
             ("Ps.51.1", "PSA 51:3"),
         )
 
+    def test_versification_map_bundled_fixture_fallback(self):
+        from search.macula.extract import get_versification_map
+        vmap, ps_1title, ps_2title = get_versification_map(versemap_path=Path("nonexistent_path/VerseMap.xml"))
+        self.assertGreater(len(vmap), 1000)
+        self.assertEqual(vmap.get("Ps.3.2"), "Ps.3.1")
+        self.assertIn(3, ps_1title)
+        self.assertIn(51, ps_2title)
+
     def test_parse_real_files_isaiah_daniel_malachi(self):
         isa_path = Path("data/macula-hebrew/23-Isa-053-lowfat.xml")
         dan_path = Path("data/macula-hebrew/27-Dan-008-lowfat.xml")

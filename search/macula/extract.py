@@ -9,6 +9,9 @@ Prepositional Phrase, Adjunct) using Python standard library ElementTree.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import gzip
+import json
+import logging
 from pathlib import Path
 import re
 from typing import Any, Iterable, Iterator
@@ -240,11 +243,19 @@ def resolve_osis_book(book_str: str) -> str:
         return book_str.strip().capitalize()
 
 
+_PS_2TITLE_DEFAULT: frozenset[int] = frozenset({51, 52, 54, 60})
+_PS_1TITLE_DEFAULT: frozenset[int] = frozenset({
+    3, 4, 5, 6, 7, 8, 9, 12, 13, 18, 19, 20, 21, 22, 30, 31, 34, 36, 38, 39,
+    40, 41, 42, 44, 45, 46, 47, 48, 49, 53, 55, 56, 57, 58, 59, 61, 62, 63,
+    64, 65, 67, 68, 69, 70, 75, 76, 77, 80, 81, 83, 84, 85, 88, 89, 92, 102,
+    108, 140, 142,
+})
+
 _VERSIFICATION_CACHE: tuple[dict[str, str], set[int], set[int]] | None = None
 
 
 def get_versification_map(versemap_path: Path | str | None = None) -> tuple[dict[str, str], set[int], set[int]]:
-    """Return cached (vmap, ps_1title_chapters, ps_2title_chapters) from OSHB VerseMap.xml."""
+    """Return cached (vmap, ps_1title_chapters, ps_2title_chapters) from OSHB VerseMap.xml or bundled fixture."""
     global _VERSIFICATION_CACHE
     if _VERSIFICATION_CACHE is not None and versemap_path is None:
         return _VERSIFICATION_CACHE
@@ -257,8 +268,8 @@ def get_versification_map(versemap_path: Path | str | None = None) -> tuple[dict
     for idx, v in enumerate(range(19, 25), 1):
         vmap[f"Mal.3.{v}"] = f"Mal.4.{idx}"
 
-    ps_2title = {51, 52, 54, 60}
-    ps_1title: set[int] = set()
+    ps_2title = set(_PS_2TITLE_DEFAULT)
+    ps_1title = set(_PS_1TITLE_DEFAULT)
 
     p = Path(versemap_path or "data/oshb/VerseMap.xml")
     if p.is_file():
@@ -276,6 +287,23 @@ def get_versification_map(versemap_path: Path | str | None = None) -> tuple[dict
             ps_1title -= ps_2title
         except ET.ParseError as e:
             raise ValueError(f"Corrupt or invalid VerseMap.xml at {p}: {e}") from e
+    else:
+        # 3-tier precedence:
+        # 1. Primary: explicitly passed versemap_path or data/oshb/VerseMap.xml
+        # 2. Tier 2: search/fixtures/versemap.json.gz (headless CI / packaged release)
+        # 3. Tier 3: _PS_1TITLE_DEFAULT + Malachi/Genesis baseline (zero-fixture fallback)
+        bundled = Path(__file__).resolve().parent.parent / "fixtures" / "versemap.json.gz"
+        if bundled.is_file():
+            try:
+                with gzip.open(bundled, "rt", encoding="utf-8") as f:
+                    raw = json.load(f)
+                vmap.update(raw.get("vmap", {}))
+                if "ps_1title" in raw:
+                    ps_1title = set(raw["ps_1title"])
+                if "ps_2title" in raw:
+                    ps_2title = set(raw["ps_2title"])
+            except (gzip.BadGzipFile, json.JSONDecodeError, OSError, KeyError) as e:
+                logging.getLogger(__name__).warning("Failed to load bundled versemap fixture from %s: %s", bundled, e)
 
     res = (vmap, ps_1title, ps_2title)
     if versemap_path is None:
