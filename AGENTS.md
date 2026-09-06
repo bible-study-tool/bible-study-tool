@@ -60,3 +60,4 @@ before your first task).
 | Doctrinal basis | `NOTICE.md` |
 | Full workflow + examples | `docs/WORKFLOW.md` |
 | User & study guide | `docs/USER_GUIDE.md` |
+| How to study the Bible | `docs/HOW_TO_STUDY_THE_BIBLE.md` |

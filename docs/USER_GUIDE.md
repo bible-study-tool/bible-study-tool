@@ -258,3 +258,7 @@ Ellen G. White wrote in *Christ’s Object Lessons*:
 > *"The Bible is its own expositor. Scripture is to be compared with scripture. The student should learn to view the word as a whole, and to see the relation of its parts. He should gain a knowledge of its grand central theme, of God’s original purpose for the world, of the rise of the great controversy, and of the work of redemption."* (COL 128.1)
 
 May this tool be a joyful blessing to you as you explore the living, inspired Word of God!
+
+---
+
+*Ready to go deeper? See [How to Study the Bible Deeply](HOW_TO_STUDY_THE_BIBLE.md) for foundational biblical study methods — inductive reading, word studies, thematic chains, argument flow, and the sanctuary blueprint — for anyone beginning serious biblical exegesis.*

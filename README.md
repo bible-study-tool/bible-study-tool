@@ -314,6 +314,7 @@ Macula Hebrew and Greek linguistic annotations are integrated directly into `dat
 ## Key Design & Study Documents
 
 *   [User & Study Guide](docs/USER_GUIDE.md) — Non-technical tutorial, study walkthroughs, and keyboard cheat sheet
+*   [How to Study the Bible Deeply](docs/HOW_TO_STUDY_THE_BIBLE.md) — Foundational principles, four study methods, and sanctuary blueprint for anyone beginning serious biblical study
 *   [Architecture Decision Records (ADRs)](docs/decisions/INDEX.md) — 21 formal architectural decisions documenting all design milestones
 *   [Work Packages (WPs)](docs/wp/INDEX.md) — Completed and open engineering packages (WP-001 through WP-027)
 *   [Workflow Guide](docs/WORKFLOW.md) — Explicit guide to the project's working method and verification cycle
