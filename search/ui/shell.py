@@ -374,6 +374,10 @@ class StudyShell:
         print(style("Transliteration: ", BOLD) + res.translit)
         if res.gloss:
             print(style("TBES Gloss:      ", BOLD) + res.gloss)
+        if res.kjv_renderings:
+            print(style("KJV Renderings:  ", BOLD) + style(res.kjv_renderings, GREEN))
+        if res.etymology:
+            print(style("Etymology/Root:  ", BOLD) + style(res.etymology, DIM))
         print(style("KJV Occurrences: ", BOLD) + f"{res.occurrences_count} times in Old/New Testament")
 
         if res.lxx_equivalences:
@@ -385,6 +389,16 @@ class StudyShell:
         print("\n" + style("Strong's Lexicon Definition:", BOLD, BLUE))
         for line in res.definition.splitlines():
             print(f"  {line}")
+
+        if res.scholarly_definition:
+            from rich.text import Text
+            print("\n" + style(f"Scholarly Unabridged Lexicon ({res.source_lexicon}):", BOLD, GREEN))
+            try:
+                plain_text = Text.from_markup(res.scholarly_definition).plain
+            except Exception:
+                plain_text = res.scholarly_definition
+            for line in plain_text.splitlines():
+                print(f"  {line}")
 
         if res.sample_verses:
             print("\n" + style("Sample Biblical Occurrences:", BOLD, YELLOW))

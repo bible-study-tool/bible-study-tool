@@ -8,6 +8,7 @@ and Spirit of Prophecy commentary (EgwDB) into a cohesive study engine.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 import sqlite3
@@ -41,6 +42,8 @@ from search.corpus.ot_citations import (
 )
 from search.linking.egw import EgwDB, DEFAULT_EGW_DB, is_egw_token, normalize_token
 
+from rich.markup import escape
+
 DEFAULT_STRONGS_LEXICON = Path("lexicons/strongs-lexicon.json")
 DEFAULT_TBESH = Path("lexicons/tbesh-glosses.json")
 DEFAULT_TBESG = Path("lexicons/tbesg-glosses.json")
@@ -49,6 +52,143 @@ PRIORITY_EGW_ORDER = ("PP", "PK", "DA", "MB", "COL", "AA", "GC", "SC", "ED", "MH
 PRIORITY_EGW_RANK = {code: i for i, code in enumerate(PRIORITY_EGW_ORDER)}
 
 
+import html
+
+
+def clean_lexicon_definition(raw_html: str) -> str:
+    """Format and beautify raw lexicon HTML (TBESH/TBESG) into readable terminal text with Rich markup."""
+    if not raw_html:
+        return ""
+    # Decode HTML entities (e.g. &gt; -> >)
+    t = html.unescape(raw_html)
+    # Normalize HTML line breaks
+    t = re.sub(r"<br\s*/?>", "\n", t, flags=re.IGNORECASE)
+    # Strip <re> and </re>
+    t = re.sub(r"</?re>", "", t, flags=re.IGNORECASE)
+
+    # Stash structured elements into unique placeholders, defensively stripping inner HTML tags
+    refs: list[str] = []
+    def _save_ref(m: re.Match) -> str:
+        clean_inner = re.sub(r"<[^>]+>", "", m.group(1))
+        refs.append(clean_inner)
+        return f"__LEX_REF_{len(refs)-1}__"
+    t = re.sub(r"<ref=[\x27\"][^\x27\"]*[\x27\"]>(.*?)</ref>", _save_ref, t, flags=re.IGNORECASE)
+
+    bolds: list[str] = []
+    def _save_bold(m: re.Match) -> str:
+        clean_inner = re.sub(r"<[^>]+>", "", m.group(1))
+        bolds.append(clean_inner)
+        return f"__LEX_BOLD_{len(bolds)-1}__"
+    t = re.sub(r"<b>(.*?)</b>", _save_bold, t, flags=re.IGNORECASE)
+
+    italics: list[str] = []
+    def _save_italic(m: re.Match) -> str:
+        clean_inner = re.sub(r"<[^>]+>", "", m.group(1))
+        italics.append(clean_inner)
+        return f"__LEX_ITALIC_{len(italics)-1}__"
+    t = re.sub(r"<i>(.*?)</i>", _save_italic, t, flags=re.IGNORECASE)
+
+    # Strip remaining arbitrary HTML tags
+    t = re.sub(r"<[^>]+>", "", t)
+
+    # Safely escape all literal markup characters (brackets, backslashes) in the outer text
+    t = escape(t)
+
+    # Re-inject sanitized markup tags
+    for idx, b in enumerate(bolds):
+        t = t.replace(f"__LEX_BOLD_{idx}__", f"[bold]{escape(b)}[/bold]")
+    for idx, it in enumerate(italics):
+        t = t.replace(f"__LEX_ITALIC_{idx}__", f"[italic]{escape(it)}[/italic]")
+    for idx, r in enumerate(refs):
+        t = t.replace(f"__LEX_REF_{idx}__", f"[dim]{escape(r)}[/dim]")
+
+    cleaned_lines = []
+    for raw_line in t.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        # Abbott-Smith Roman/Arabic outline markers (__I., __1., __(a))
+        m_as = re.match(r"^__([IVXLCDM]+\.|[0-9]+\.|\([a-z0-9]+\))\s*(.*)", line)
+        if m_as:
+            tag, rest = m_as.groups()
+            indent = "    " if len(tag) > 3 else "  "
+            cleaned_lines.append(f"{indent}[bold yellow]{tag}[/bold yellow] {rest}")
+            continue
+        # BDB outline sub-senses (1a), 1a1))
+        m_sub = re.match(r"^([0-9]+[a-z][0-9]*\))\s*(.*)", line)
+        if m_sub:
+            tag, rest = m_sub.groups()
+            indent = "    " if len(tag) > 3 else "  "
+            cleaned_lines.append(f"{indent}[bold yellow]{tag}[/bold yellow] {rest}")
+            continue
+        # BDB outline main senses (1), 2))
+        m_main = re.match(r"^([0-9]+\))\s*(.*)", line)
+        if m_main:
+            tag, rest = m_main.groups()
+            cleaned_lines.append(f"[bold cyan]{tag}[/bold cyan] {rest}")
+            continue
+        cleaned_lines.append(line)
+    return "\n".join(cleaned_lines)
+
+
+def format_scholarly_entries(items: list[dict[str, Any]], source_name: str = "") -> str:
+    """Format single or multi-sense lexicon entries into a cohesive readable card."""
+    if not items:
+        return ""
+    if len(items) == 1:
+        return clean_lexicon_definition(items[0].get("definition", ""))
+
+    sections = []
+    for idx, it in enumerate(items, 1):
+        estrong = it.get("estrong", "")
+        gloss = it.get("gloss", "")
+        raw_def = it.get("definition", "")
+        if not raw_def:
+            continue
+        defn = clean_lexicon_definition(raw_def)
+        sub_hdr = f"[bold cyan]Sense {idx}[/bold cyan]"
+        if estrong or gloss:
+            sub_hdr += f" [dim]({escape(estrong)} — \"{escape(gloss)}\")[/dim]"
+        sections.append(f"{sub_hdr}:\n{defn}")
+    return "\n\n".join(sections)
+
+
+def parse_strongs_desc(desc: str) -> dict[str, Any]:
+    """Parse raw Strong's lexicon desc field into numbered senses, KJV renderings, etymology, and roots."""
+    lines = [l.strip() for l in desc.splitlines() if l.strip()]
+    senses: list[str] = []
+    kjv_renderings = ""
+    etymology = ""
+    roots = ""
+
+    for l in lines:
+        if l.startswith("Strong's Number"):
+            continue
+        m_sense = re.match(r"^([0-9]+\.\s+.*)", l)
+        if m_sense:
+            senses.append(m_sense.group(1))
+            continue
+        m_kjv = re.match(r"^KJV:\s*(.*)", l, re.IGNORECASE)
+        if m_kjv:
+            kjv_renderings = m_kjv.group(1)
+            continue
+        m_root = re.match(r"^Root\(s\):\s*(.*)", l, re.IGNORECASE)
+        if m_root:
+            roots = m_root.group(1)
+            continue
+        m_etym = re.match(r"^\[(.*)\]", l)
+        if m_etym:
+            etymology = m_etym.group(1)
+            continue
+        if not (l.startswith("Compare:") or l.startswith("See also:")):
+            senses.append(l)
+
+    return {
+        "senses": senses,
+        "kjv": kjv_renderings,
+        "etymology": etymology,
+        "roots": roots,
+    }
 
 
 @dataclass
@@ -94,6 +234,11 @@ class WordStudyResult:
     lxx_equivalences: list[dict[str, Any]] = field(default_factory=list)
     occurrences_count: int = 0
     sample_verses: list[dict[str, Any]] = field(default_factory=list)
+    scholarly_definition: str = ""
+    source_lexicon: str = ""
+    strongs_senses: list[str] = field(default_factory=list)
+    kjv_renderings: str = ""
+    etymology: str = ""
 
 
 @dataclass
@@ -125,35 +270,44 @@ class StudyService:
         self._lexicon_cache: dict[str, Any] | None = None
         self._tbesh_cache: dict[str, str] | None = None
         self._tbesg_cache: dict[str, str] | None = None
+        self._tbesh_entries_cache: dict[str, list[dict[str, Any]]] | None = None
+        self._tbesg_entries_cache: dict[str, list[dict[str, Any]]] | None = None
         self._word_cache: dict[str, WordStudyResult] = {}
         self._verse_frame_cache: dict[str, dict[str, Any]] = {}
         self._verse_nuance_cache: dict[str, list[GrammarNuance]] = {}
         self._lock = threading.RLock()
 
+    def _load_tbes_file(self, path: Path) -> tuple[dict[str, str], dict[str, list[dict[str, Any]]]]:
+        if not path.exists():
+            return {}, {}
+        with open(path, encoding="utf-8") as f:
+            raw_data = json.load(f)
+            entries = raw_data.get("entries") or raw_data.get("glosses", {})
+            gloss_map: dict[str, str] = {}
+            entries_map: dict[str, list[dict[str, Any]]] = {}
+            for code, items in entries.items():
+                if isinstance(items, list):
+                    gloss_map[code] = items[0].get("gloss", "") if items else ""
+                    entries_map[code] = items
+                else:
+                    gloss_map[code] = str(items)
+                    entries_map[code] = [{"gloss": str(items), "definition": ""}]
+            return gloss_map, entries_map
+
     def _load_lexicons(self) -> None:
-        if self._lexicon_cache is None:
-            if self.strongs_path.exists():
-                with open(self.strongs_path, encoding="utf-8") as f:
-                    self._lexicon_cache = json.load(f)
-            else:
-                self._lexicon_cache = {}
+        with self._lock:
+            if self._lexicon_cache is None:
+                if self.strongs_path.exists():
+                    with open(self.strongs_path, encoding="utf-8") as f:
+                        self._lexicon_cache = json.load(f)
+                else:
+                    self._lexicon_cache = {}
 
-        def _load_gloss_file(path: Path) -> dict[str, str]:
-            if not path.exists():
-                return {}
-            with open(path, encoding="utf-8") as f:
-                raw_data = json.load(f)
-                entries = raw_data.get("entries") or raw_data.get("glosses", {})
-                return {
-                    code: (items[0].get("gloss", "") if isinstance(items, list) and items else str(items))
-                    for code, items in entries.items()
-                }
+            if self._tbesh_cache is None or self._tbesh_entries_cache is None:
+                self._tbesh_cache, self._tbesh_entries_cache = self._load_tbes_file(self.tbesh_path)
 
-        if self._tbesh_cache is None:
-            self._tbesh_cache = _load_gloss_file(self.tbesh_path)
-
-        if self._tbesg_cache is None:
-            self._tbesg_cache = _load_gloss_file(self.tbesg_path)
+            if self._tbesg_cache is None or self._tbesg_entries_cache is None:
+                self._tbesg_cache, self._tbesg_entries_cache = self._load_tbes_file(self.tbesg_path)
 
     def get_passage_study(self, passage_ref: str, eager_frames: bool = True) -> PassageStudy:
         """Fetch complete multi-dimensional study for a passage reference."""
@@ -490,6 +644,28 @@ class StudyService:
                 except sqlite3.Error:
                     occ_count = len(sample_verses)
 
+            # Scholarly Unabridged Lexicon & Strong's Senses
+            parsed_strongs = parse_strongs_desc(definition)
+            strongs_senses = parsed_strongs["senses"]
+            kjv_renderings = parsed_strongs["kjv"]
+            etymology = parsed_strongs["etymology"]
+            roots = parsed_strongs.get("roots", "")
+            if roots:
+                etymology = f"{etymology} (Root: {roots})" if etymology else f"Root: {roots}"
+
+            scholarly_def = ""
+            source_lexicon = ""
+            if is_hebrew and self._tbesh_entries_cache:
+                h_entries = self._tbesh_entries_cache.get(canonical_id, [])
+                if h_entries:
+                    scholarly_def = format_scholarly_entries(h_entries, "Brown-Driver-Briggs")
+                    source_lexicon = "Brown-Driver-Briggs (BDB) Hebrew Lexicon"
+            elif not is_hebrew and self._tbesg_entries_cache:
+                g_entries = self._tbesg_entries_cache.get(canonical_id, [])
+                if g_entries:
+                    scholarly_def = format_scholarly_entries(g_entries, "Abbott-Smith")
+                    source_lexicon = "Abbott-Smith Manual Greek Lexicon"
+
             res = WordStudyResult(
                 strongs_id=canonical_id,
                 language="Hebrew" if is_hebrew else "Greek",
@@ -500,6 +676,11 @@ class StudyService:
                 lxx_equivalences=lxx_equiv,
                 occurrences_count=occ_count,
                 sample_verses=sample_verses,
+                scholarly_definition=scholarly_def,
+                source_lexicon=source_lexicon,
+                strongs_senses=strongs_senses,
+                kjv_renderings=kjv_renderings,
+                etymology=etymology,
             )
             self._word_cache[cache_key] = res
             return res

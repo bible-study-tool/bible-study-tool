@@ -649,16 +649,27 @@ class BibleStudyApp(App):
                 kjv_prefix = f"[bold yellow]\"{', '.join(matching_words)}\"[/bold yellow] ➔ " if matching_words else ""
 
                 lines.append(
-                    f"{kjv_prefix}[bold cyan]{w_res.strongs_id}[/bold cyan] ({w_res.language}): [bold green]{w_res.word}[/bold green] [dim]({w_res.translit})[/dim]"
+                    f"{kjv_prefix}[bold cyan]{w_res.strongs_id}[/bold cyan] ({w_res.language}): [bold green]{escape(w_res.word)}[/bold green] [dim]({escape(w_res.translit)})[/dim]"
                 )
                 if w_res.gloss:
                     lines.append(f"  [bold]Translation Gloss:[/bold] [yellow]{escape(w_res.gloss)}[/yellow]")
                 lines.append(f"  [dim]KJV Occurrences: {w_res.occurrences_count}[/dim]")
 
-                # Definition clean up
-                def_lines = [l.strip() for l in w_res.definition.splitlines() if l.strip() and not l.startswith("Strong's Number")]
-                if def_lines:
-                    lines.append(f"  [bold]Definition:[/bold] {escape(def_lines[0])}")
+                # Strong's senses (multi-sense descriptions)
+                if w_res.strongs_senses:
+                    lines.append("  [bold]Strong's Senses:[/bold]")
+                    for s in w_res.strongs_senses:
+                        lines.append(f"    [bold yellow]•[/bold yellow] {escape(s)}")
+                else:
+                    def_lines = [l.strip() for l in w_res.definition.splitlines() if l.strip() and not l.startswith("Strong's Number")]
+                    if def_lines:
+                        lines.append(f"  [bold]Definition:[/bold] {escape(def_lines[0])}")
+
+                # KJV translation renderings and etymology
+                if w_res.kjv_renderings:
+                    lines.append(f"  [bold]KJV Translation Renderings:[/bold] [italic green]{escape(w_res.kjv_renderings)}[/italic green]")
+                if w_res.etymology:
+                    lines.append(f"  [bold]Etymology / Root:[/bold] [dim]{escape(w_res.etymology)}[/dim]")
 
                 # Verbal stem and theological nuances for verbs
                 v_nuances = self.service.get_verse_nuance_for_strongs(v, w_res.strongs_id) or self.service.get_verse_nuance_for_strongs(v, s_code)
@@ -673,7 +684,7 @@ class BibleStudyApp(App):
                     lxx_parts = []
                     for eq in lxx_top:
                         g_sc = eq.get("greek_strongs", "")
-                        g_forms = ",".join(eq.get("greek_forms", []))
+                        g_forms = escape(",".join(eq.get("greek_forms", [])))
                         g_count = eq.get("count", 0)
                         g_gloss = self.service.get_greek_gloss(g_sc) if g_sc else ""
                         if g_gloss:
@@ -681,6 +692,12 @@ class BibleStudyApp(App):
                         else:
                             lxx_parts.append(f"{g_sc} ({g_forms}): {g_count}x")
                     lines.append(f"  [dim]LXX Equivalences: {' | '.join(lxx_parts)}[/dim]")
+
+                # Unabridged Scholarly Lexicon (Brown-Driver-Briggs / Abbott-Smith)
+                if w_res.scholarly_definition:
+                    lines.append(f"\n  [bold green]═══ SCHOLARLY UNABRIDGED LEXICON ({escape(w_res.source_lexicon)}) ═══[/bold green]")
+                    for s_line in w_res.scholarly_definition.splitlines():
+                        lines.append(f"  {s_line}")
                 lines.append("")
 
         if words_found == 0:
@@ -698,7 +715,10 @@ class BibleStudyApp(App):
 
         self.service.ensure_verse_frames(v)
         rendered = self._render_lexicon_content(v)
-        lexicon_body.update(rendered)
+        try:
+            lexicon_body.update(rendered)
+        except Exception:
+            lexicon_body.update(escape(rendered))
         self.query_one("#lexicon-content", VerticalScroll).scroll_home(animate=False)
 
     def action_next_verse(self) -> None:

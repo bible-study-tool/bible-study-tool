@@ -186,6 +186,38 @@ class StudyServiceTests(unittest.TestCase):
         self.assertIsNotNone(w_grk)
         self.assertEqual(w_grk.gloss, "to do/make: do")
 
+    def test_unabridged_scholarly_lexicon_hebrew(self):
+        """Verify Hebrew word study returns Brown-Driver-Briggs unabridged definition and parsed senses."""
+        w = self.service.lookup_word("H1254", sample_limit=0)
+        self.assertIsNotNone(w)
+        self.assertEqual(w.strongs_id, "H1254")
+        self.assertIn("Brown-Driver-Briggs", w.source_lexicon)
+        self.assertIn("to create, shape, form", w.scholarly_definition)
+        self.assertIn("Sense 1", w.scholarly_definition)
+        self.assertIn("Sense 2", w.scholarly_definition)
+        self.assertTrue(len(w.strongs_senses) >= 2)
+        self.assertIn("choose, create", w.kjv_renderings)
+        self.assertEqual(w.etymology, "a primitive root")
+
+        # Verify cross-references like 'See also:' are not leaked into senses and roots are retained
+        w_root = self.service.lookup_word("H7225", sample_limit=0)
+        self.assertIsNotNone(w_root)
+        self.assertIn("Root: H7218", w_root.etymology)
+        for s in w_root.strongs_senses:
+            self.assertFalse(s.startswith("See also:"))
+            self.assertFalse(s.startswith("Compare:"))
+
+    def test_unabridged_scholarly_lexicon_greek(self):
+        """Verify Greek word study returns Abbott-Smith unabridged definition and parsed senses."""
+        w = self.service.lookup_word("G26", sample_limit=0)
+        self.assertIsNotNone(w)
+        self.assertEqual(w.strongs_id, "G26")
+        self.assertIn("Abbott-Smith", w.source_lexicon)
+        self.assertIn("love, goodwill, esteem", w.scholarly_definition)
+        self.assertTrue(len(w.strongs_senses) >= 1)
+        self.assertIn("love", w.kjv_renderings)
+        self.assertIn("from G25", w.etymology)
+
     def test_get_greek_gloss(self):
         """Verify helper retrieves Greek English gloss for LXX translation equivalences."""
         gloss1 = self.service.get_greek_gloss("G4160")
@@ -482,6 +514,10 @@ class StudyCLITests(unittest.TestCase):
         self.assertEqual(data["strongs_id"], "H1254")
         self.assertEqual(data["word"], "בָּרָא")
         self.assertGreater(data["occurrences_count"], 0)
+        self.assertIn("Brown-Driver-Briggs", data["source_lexicon"])
+        self.assertIn("to create, shape, form", data["scholarly_definition"])
+        self.assertIn("choose, create", data["kjv_renderings"])
+
 
     def test_cli_search(self):
         res = self._run_cli(["search", "sabbath", "--limit", "2", "--json"])
@@ -512,3 +548,4 @@ class StudyCLITests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

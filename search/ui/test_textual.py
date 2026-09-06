@@ -32,6 +32,24 @@ def _extract_text(widget) -> str:
     return " ".join(texts)
 
 
+async def _wait_until_ready(app, pilot, max_attempts: int = 25) -> None:
+    """Wait for background worker thread to load passage and mount verse widgets."""
+    for _ in range(max_attempts):
+        if app.verse_widgets and app.current_passage:
+            return
+        await pilot.pause(0.05)
+
+
+async def _wait_for_workers(app) -> None:
+    """Wait for all pending background workers to complete, ignoring cancellations."""
+    for w in list(app.workers):
+        if not w.is_finished:
+            try:
+                await w.wait()
+            except Exception:
+                pass
+
+
 class ThemeSystemTests(unittest.TestCase):
     """Test theme registry, color schemes, and dynamic TCSS generation."""
 
@@ -88,7 +106,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
     async def test_app_initial_mount_and_verses(self):
         app = BibleStudyApp(initial_ref="Gen 1:1-3", initial_theme="transparent")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             self.assertIsNotNone(app.current_passage)
             self.assertEqual(app.current_passage.ref, "Gen 1:1-3")
             self.assertEqual(len(app.current_passage.verses), 3)
@@ -99,7 +117,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
     async def test_verse_navigation(self):
         app = BibleStudyApp(initial_ref="Gen 1:1-3")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             # Move next
             app.action_next_verse()
             self.assertEqual(app.selected_verse_idx, 1)
@@ -125,29 +143,25 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
     async def test_chapter_navigation(self):
         app = BibleStudyApp(initial_ref="Gen 1:1-31")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             self.assertEqual(app.current_passage.start_chapter, 1)
 
             # Advance to next chapter (Gen 2)
             app.action_next_chapter()
-            for w in app.workers:
-                if not w.is_finished:
-                    await w.wait()
+            await _wait_for_workers(app)
             await pilot.pause()
             self.assertEqual(app.current_passage.start_chapter, 2)
 
             # Return to previous chapter (Gen 1)
             app.action_prev_chapter()
-            for w in app.workers:
-                if not w.is_finished:
-                    await w.wait()
+            await _wait_for_workers(app)
             await pilot.pause()
             self.assertEqual(app.current_passage.start_chapter, 1)
 
     async def test_pin_and_unpin_inspection(self):
         app = BibleStudyApp(initial_ref="Gen 1:1-3")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             self.assertIsNone(app.pinned_verse_idx)
 
             # Pin verse 1 (index 0)
@@ -169,7 +183,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
     async def test_strongs_and_focus_toggles(self):
         app = BibleStudyApp(initial_ref="Gen 1:1")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
 
             # Strongs toggle
             self.assertFalse(app.show_strongs)
@@ -455,7 +469,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify 'v' key toggles stacked parallel translations in Reader pane."""
         app = BibleStudyApp(initial_ref="Gen 1:1")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             w = app.verse_widgets[0]
             initial_text = _extract_text(w)
             self.assertNotIn("BSB:", initial_text)
@@ -475,6 +489,21 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             self.assertFalse(app.show_parallel)
             final_text = _extract_text(w)
             self.assertNotIn("BSB:", final_text)
+
+    async def test_lexicon_viewport_unabridged_scholarly_lexicon(self):
+        """Verify lexicon viewport displays unabridged BDB definitions, Strong's senses, and KJV renderings."""
+        app = BibleStudyApp(initial_ref="Gen 1:1")
+        async with app.run_test() as pilot:
+            await _wait_until_ready(app, pilot)
+            app.action_tab_lexicon()
+            await pilot.pause()
+            lexicon_scroll = app.query_one("#lexicon-content", VerticalScroll)
+            content_text = _extract_text(lexicon_scroll)
+
+            self.assertIn("SCHOLARLY UNABRIDGED LEXICON", content_text)
+            self.assertIn("Brown-Driver-Briggs", content_text)
+            self.assertIn("Strong's Senses:", content_text)
+            self.assertIn("KJV Translation Renderings:", content_text)
 
     async def test_tab_navigation_keys_and_dirty_tracking(self):
         """Verify tab switching for parallel tab and dirty tracking."""
@@ -513,7 +542,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify verse widget in reader pane displays discourse logic badges."""
         app = BibleStudyApp(initial_ref="Rom 1:16")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             w = app.verse_widgets[0]
             w_text = _extract_text(w)
             self.assertIn("Premise", w_text)
@@ -523,7 +552,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify syntax tab renders detailed argument flow and discourse connector breakdown."""
         app = BibleStudyApp(initial_ref="Rom 12:1")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             # Tab 1 (syntax) is active by default
             syntax_scroll = app.query_one("#syntax-content", VerticalScroll)
             syntax_text = _extract_text(syntax_scroll)
@@ -540,7 +569,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify Reader pane shows OT citation badge and Syntax tab renders citation anchor card."""
         app = BibleStudyApp(initial_ref="Rom 1:17")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             # Reader pane badge
             w = app.verse_widgets[0]
             w_text = _extract_text(w)
@@ -559,9 +588,12 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify pressing 'o' jumps to the linked OT citation source passage."""
         app = BibleStudyApp(initial_ref="Rom 1:17")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             app.action_jump_citation()
-            await pilot.pause(0.2)
+            for _ in range(30):
+                if "HAB" in app.current_ref.upper():
+                    break
+                await pilot.pause(0.05)
             self.assertIn("HAB", app.current_ref.upper())
             self.assertEqual(app.current_passage.book_name, "Habakkuk")
 
