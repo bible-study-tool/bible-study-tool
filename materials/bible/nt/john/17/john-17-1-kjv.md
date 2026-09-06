@@ -49,6 +49,21 @@ cross_references:
   - type: xref/spirit-prophecy
     target: "des-73-1"
     note: "The Desire of Ages, Chapter 73 — 'Let Not Your Heart Be Troubled'"
+historical_context:
+  era: "Passover, AD 31 (or 30/33 depending on chronology); final night before the crucifixion"
+  location: "Jerusalem, Upper Room (probably in the Essene Quarter of the Upper City); garden of Gethsemane follows immediately (John 18:1)"
+  cultural_note: >
+    John 17 is the only extended prayer of Jesus recorded in Scripture — his Gethsemane prayer
+    (Matthew 26:36–46) is briefer. It takes place at the conclusion of the Passover Seder, as
+    the Paschal lamb sacrifice had just been observed. The context is apocalyptic: Jesus prays
+    knowing that Judas has already left (John 13:30) and that arrest and crucifixion await within
+    hours. The lifting of eyes toward heaven (v. 1) was a common posture of high-priestly intercession
+    (cf. Psalm 123:1). First-century Jewish High Priestly prayer tradition (reflected in Yom Kippur
+    liturgy) involved intercession for Israel as a nation; Jesus here intercedes for his disciples
+    and all future believers — fulfilling and surpassing the Aaronic high priesthood (Hebrews 7:25).
+    The repetition of "glory" (δόξα) echoes the Shekinah glory that filled the Tabernacle (Exodus 40:34)
+    and the Temple (1 Kings 8:11) — now concentrated in the person of Jesus.
+  source: "DA 753–765; Keener, 'The Gospel of John' (2003), vol. 2, pp. 1048–1060; Hebrews 7:24–25"
 ---
 
 # John 17:1 - KJV

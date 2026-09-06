@@ -42,6 +42,20 @@ cross_references:
   - type: xref/spirit-prophecy
     target: "des-1-1"
     note: "The Desire of Ages, Chapter 1 — 'God With Us'"
+historical_context:
+  era: "Late Second Temple period / early post-Temple era (circa AD 85–95); written after Jerusalem's destruction (AD 70)"
+  location: "Ephesus, Asia Minor (author's location); prologue addresses a Hellenistic, cosmopolitan audience"
+  cultural_note: >
+    The term Λόγος (Logos) carried layered meaning for John's dual audience. For Greek-speaking
+    readers steeped in Stoic and Platonic philosophy, Logos meant the rational principle ordering
+    the cosmos — an impersonal divine reason (Heraclitus, Philo of Alexandria). For Jewish readers,
+    it evoked the dabar YHWH (Word of the LORD) by which creation occurred (Genesis 1; Psalm 33:6)
+    and the personified Wisdom of Proverbs 8:22–31. John's opening deliberately speaks both
+    languages simultaneously, then shatters both frameworks: this Logos became flesh (v. 14) —
+    something neither Greek philosophy nor Second Temple Judaism had conceived. The phrase
+    "In the beginning" (ἐν ἀρχῇ) directly echoes Genesis 1:1 (LXX: ἐν ἀρχῇ), establishing the
+    pre-existent Logos as the agent of the original creation.
+  source: "DA 19–26; Philo of Alexandria, 'On the Creation' (De Opificio Mundi); Brown, 'The Gospel of John' (Anchor Bible, 1966)"
 ---
 
 # John 1:1 - KJV

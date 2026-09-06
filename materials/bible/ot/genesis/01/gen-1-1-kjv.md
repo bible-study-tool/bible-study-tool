@@ -39,6 +39,18 @@ cross_references:
   - type: xref/spirit-prophecy
     target: "pat-1-1"
     note: "Patriarchs and Prophets, chapter 1 - the creation account"
+historical_context:
+  era: "Primeval history; Moses writes for Israel newly freed from Egypt (circa 1446–1406 BC)"
+  location: "Wilderness of Sinai (composition context); Eden — east of Canaan (narrative setting)"
+  cultural_note: >
+    Moses's audience had spent 430 years in Egypt, immersed in polytheistic cosmology (Atum, Ptah,
+    Ra as creator-deities). Contemporaneous Mesopotamian myths (Enuma Elish) depicted creation as
+    divine warfare, with humans made from slain-god blood as slave labor. Genesis 1:1 opens as a
+    systematic counter-declaration: one God (not a pantheon), creation by sovereign speech (not
+    violence), and humans made in the divine image (not as slaves). The Hebrew verb בָּרָא (bara')
+    is used exclusively of divine creative activity — it never has a human subject — marking this
+    as categorically different from any ANE parallel.
+  source: "PP 44–51; Walton, 'The Lost World of Genesis One' (2009); Kitchen, 'On the Reliability of the Old Testament' (2003)"
 ---
 
 # Genesis 1:1 - KJV
