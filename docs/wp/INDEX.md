@@ -37,6 +37,7 @@ entries `draft` -> `review`.
 | [WP-024](WP-024-workstation-performance-and-comprehension-tools.md) | Pillar D (D3, D4) | Textual Workstation Performance & Biblical Comprehension Tools | done |
 | [WP-025](WP-025-pauline-argument-flow-and-discourse-markers.md) | Pillar B (B4), Pillar D (D3) | Pauline Argument Flow & Discourse Markers (Comprehension Feature 3) | done |
 | [WP-026](WP-026-scripture-interpreting-scripture-ot-citation-anchors.md) | Pillar B (B5), Pillar D (D3) | Scripture Interpreting Scripture: OT Citation Anchors in NT (Feature 4) | done |
+| [WP-027](WP-027-nt-corpus-and-john-curation.md) | Pillar A (A3) | New Testament Corpus Generation & John 1 / 17 Curation | done |
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1
