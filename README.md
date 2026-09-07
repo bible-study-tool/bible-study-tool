@@ -139,7 +139,7 @@ bash scripts/fetch_sources.sh
 Spirit of Prophecy writings are referenced via canonical pagination tokens (e.g. `egw:PP.57.1`) and stored in a local SQLite database (`data/egw.db`). Initialize the database and load seed passages:
 
 ```bash
-python scripts/egw_lookup.py --init --seed-genesis
+python scripts/egw_lookup.py --init --seed-core
 ```
 
 ### 6. Run Full Local Verification
@@ -176,9 +176,14 @@ A foundational architectural principle of this project is: **"Link out, don't re
   3. Initialize your local database:
      ```bash
      python scripts/egw_lookup.py --init
-     python scripts/egw_lookup.py --seed-genesis   # Seeds foundational Genesis 1-3 passages
+     python scripts/egw_lookup.py --seed-core   # Seeds core reference passages
      ```
-  4. If you have exported EGW study text in JSON format (array of objects with `{"book_code": "PP", "page": 57, "paragraph": 1, "text": "...", "book_title": "Patriarchs and Prophets"}`), import it locally:
+  4. Look up a passage (citation is a positional argument, not a flag):
+     ```bash
+     python scripts/egw_lookup.py PP.57.1
+     python scripts/study.py egw "PP.57.1"
+     ```
+  5. If you have exported EGW study text in JSON format (array of objects with `{"book_code": "PP", "page": 57, "paragraph": 1, "text": "...", "book_title": "Patriarchs and Prophets"}`), import it locally:
      ```bash
      python scripts/egw_lookup.py --import-json /path/to/passages.json
      ```

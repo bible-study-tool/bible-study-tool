@@ -63,10 +63,6 @@ if [[ -n "$MODE" ]]; then
   exit 2
 fi
 
-command -v unzip >/dev/null || {
-  echo "ERROR: 'unzip' is required (apt install unzip / brew install unzip)." >&2
-  exit 1
-}
 command -v curl >/dev/null || {
   echo "ERROR: 'curl' is required." >&2
   exit 1
@@ -85,8 +81,9 @@ fetch() { # fetch <url> <dest>
 
 # --- 1. gmlewis/bible-codes (Strong's concordance .go files) -----------------
 # The archive extracts to bible-codes-<pin>/; we copy out the strongs package.
+# Uses Python stdlib zipfile (no system unzip required).
 NEED_GMLEWIS=0
-for f in strongs.go hebrew.go greek.go kjv.go; do
+for f in strongs.go hebrew.go greek.go; do
   [[ -f "$DATA/strongs/$f" ]] || NEED_GMLEWIS=1
 done
 if [[ "$NEED_GMLEWIS" == "1" ]]; then
@@ -94,7 +91,12 @@ if [[ "$NEED_GMLEWIS" == "1" ]]; then
   trap 'rm -rf "$TMP"' EXIT
   echo "[get ] $GMLEWIS_URL"
   curl -fsSL --retry 3 --connect-timeout 15 --max-time 600 -o "$TMP/bc.zip" "$GMLEWIS_URL"
-  unzip -q "$TMP/bc.zip" -d "$TMP"
+  python3 - "$TMP" "$GMLEWIS_PIN" <<'PYEOF'
+import sys, zipfile, pathlib
+tmp, pin = pathlib.Path(sys.argv[1]), sys.argv[2]
+with zipfile.ZipFile(tmp / "bc.zip") as zf:
+    zf.extractall(tmp)
+PYEOF
   SRC="$TMP/bible-codes-${GMLEWIS_PIN}/strongs"
   [[ -d "$SRC" ]] || { echo "ERROR: pinned archive layout changed — '$SRC' missing." >&2; exit 1; }
   mkdir -p "$DATA/strongs"

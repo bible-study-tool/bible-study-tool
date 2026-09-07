@@ -117,6 +117,19 @@ def main() -> None:
     try:
         shell = StudyShell(service)
 
+        # Guard: bible.db is required for all read/study/word/search subcommands.
+        # TUI and shell handle the missing DB gracefully on their own.
+        _DB_REQUIRED = {"read", "study", "word", "search"}
+        if args.subcommand in _DB_REQUIRED and service.bible_db is None:
+            print(
+                "ERROR: data/bible.db not found.\n"
+                "Build it first by running:\n\n"
+                "    python bible_lookup.py\n\n"
+                "This takes ~6 seconds and creates the whole-Bible database (31,102 verses).",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
         if not args.subcommand:
             # Default behavior: Launch TUI if TTY, otherwise interactive shell
             start_ref = args.passage or "Gen 1:1"
