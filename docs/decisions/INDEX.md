@@ -28,6 +28,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-0020](ADR-0020-persistent-viewport-workstation-and-comprehension-engine.md) | Persistent Viewport Workstation Architecture & Biblical Comprehension Engine | Accepted |
 | [ADR-0021](ADR-0021-new-testament-corpus-and-curation.md) | New Testament Corpus Generation and Per-Chapter Curation Model | Accepted |
 | [ADR-0022](ADR-0022-historical-grammatical-context-layer.md) | Historical-Grammatical Context Layer — historical/cultural/geographical data in the workstation | Proposed |
+| [ADR-0023](ADR-0023-zero-python-distribution-and-packaging.md) | Zero-Python Distribution & Standalone Desktop Packaging (Pillar P) | Proposed |
 
 
 ## When to write one

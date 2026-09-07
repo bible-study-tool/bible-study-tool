@@ -77,35 +77,33 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
   - Ubuntu 24.04 LTS (no Python installed)
 - [ ] Add a `.gitlab-ci.yml` `release` stage that builds binaries on tagged commits and uploads to GitLab Releases
 
-### Phase 4 — User-Facing Installer Experience
+### Phase 4 — User-Facing Installer Experience & Setup Wizard
 - [ ] `docs/INSTALL.md` — one-page illustrated guide: "Download → Open → Start studying"
-  - Windows: download `.exe`, double-click, allow Windows Defender (first run), terminal opens
-  - macOS: download `.app.zip`, unzip, right-click → Open (Gatekeeper), terminal opens
-  - Linux: download `.AppImage`, `chmod +x`, double-click
-- [ ] First-run wizard (in the workstation itself): if `data/bible.db` is not found, show a setup screen with one button: "Build my Bible database (takes ~10 seconds)"
-- [ ] Post-install EGW prompt: after first successful launch, offer one-click public-domain EGW download (10 works, ~28 seconds)
-- [ ] Update `docs/USER_GUIDE.md` with the installer path as the primary entry point (terminal method as "advanced")
+  - Windows: download `.exe`, double-click, allow Windows Defender (first run), opens modern terminal. (Note for Windows 10: install Windows Terminal from Microsoft Store for full color/unicode support; Windows 11 works out of the box).
+  - macOS: download `.app.zip`, unzip, right-click → Open (Gatekeeper), terminal opens.
+  - Linux: download `.AppImage`, `chmod +x`, double-click.
+- [ ] First-run welcome setup wizard (inside the workstation itself):
+  - Step 1: Pre-bundled database verification (`bible.db`, `macula.db`, `lexicons/`).
+  - Step 2: Auto-update preferences toggle (enabled by default with a clear checkbox: "Check for updates on launch"; can be toggled off immediately).
+  - Step 3: Spirit of Prophecy (EGW) public-domain content (10 historical works, ~28s). If online: "Download with one click". If offline: "Skip for now — you can download anytime later from Settings/Menu when connected."
+  - Step 4: External resources link card: prominent link out to [egwwritings.org](https://m.egwwritings.org/) for the complete, copyrighted Spirit of Prophecy research library.
+- [ ] Update `docs/USER_GUIDE.md` with the zero-Python installer path as the primary entry point (terminal / git clone method as "advanced developer setup").
 
 ### Phase 5 — ADR & Governance
-- [ ] Write ADR-0023 (Distribution & Packaging) documenting the frozen-binary decision, database bundling strategy, and the EGW copyright boundary in the distribution context
-- [ ] Update `ROADMAP.md` Pillar P entries as tasks complete
-- [ ] Tag the first public release `v0.1.0-alpha` with GitLab Releases + changelog
+- [ ] Write ADR-0023 (Distribution & Packaging) documenting the frozen-binary decision, database bundling strategy, and the EGW copyright boundary in the distribution context.
+- [ ] Update `ROADMAP.md` Pillar P entries as tasks complete.
+- [ ] Tag the first public release `v0.1.0-alpha` with GitLab Releases + changelog.
 
 ## Acceptance Criteria
-- A person with no Python or terminal experience can get the workstation running on Windows or macOS by following a 5-step illustrated guide
-- The frozen binary passes all 566 tests when run against itself (i.e., `AdventistBibleStudy --test` works)
-- `data/egw.db` is NOT bundled; public-domain download is offered post-install
-- Release binary size is < 150 MB compressed
-- GitLab CI builds binaries automatically on `v*` tags
+- A non-technical user (e.g. elementary school teacher or pastor) can get the workstation running on Windows or macOS by clicking a downloaded release binary.
+- Setup wizard works 100% offline without failing if no internet connection is present at first launch.
+- Auto-update is enabled by default but easily toggled off during initial setup.
+- The frozen binary passes test suite verification (`AdventistBibleStudy --test`).
+- `data/egw.db` is NOT pre-bundled in the binary (copyright clean); one-click download of public domain works is offered post-install alongside official egwwritings.org links.
+- Release binary size is < 150 MB compressed.
+- GitLab CI builds binaries automatically on `v*` tags.
 
-## Estimated Effort
-- Phase 1–2: 1–2 sessions (pure engineering, no new features)
-- Phase 3: 2–3 sessions (cross-platform testing is the hard part)
-- Phase 4: 1 session
-- Phase 5: 1 session (ADR + ROADMAP)
-
-## Open Questions for Discussion
-1. **Windows Terminal dependency**: Textual requires a modern terminal. On Windows 10 < 2019, the legacy `cmd.exe` doesn't support ANSI. Should we bundle Windows Terminal or require Windows 11?
-2. **Auto-update**: Should the frozen binary check for updates on launch? If so, what channel (GitLab Releases API)?
-3. **EGW public-domain scope**: The one-click download covers works published before 1929. Should we also offer a link to egwwritings.org for the full collection?
-4. **Mobile / tablet**: Out of scope for this WP, but worth a future ADR.
+## Confirmed Architecture Decisions
+1. **Windows 10 Support**: Supported with a clear setup note recommending Windows Terminal from Microsoft Store if running legacy Win10 console; native on Win11.
+2. **Auto-Update Behavior**: Enabled by default via GitLab Releases API check, but explicitly presented with a toggle in the initial welcome wizard so users have immediate control.
+3. **EGW Integration & Legality**: Offline-first design. Pre-1929 public-domain works available via one-click download when online. If offline during setup, setup finishes cleanly with a gentle reminder. Official link-out to egwwritings.org provided in the UI for complete research.
