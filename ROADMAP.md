@@ -81,7 +81,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
 ### G. Engineering Infrastructure
 - `[x]` **G1. CI pipeline** — `.gitlab-ci.yml` — runs tests + F1-F4 validators on every MR; blocks merge on errors
-- `[ ]` **G2. Test expansion** — property/consistency tests; golden tests over corpus
+- `[ ]` **G2. Test expansion** — validator self-tests (F1–F4 each ≥ 10 unit tests), passage-normalization regression suite (covers the `Ps.3.0` CI failure class), generator golden tests, Textual async flakiness elimination (`_wait_until_ready` pattern), CI health dashboard — WP-028
 - `[ ]` **G3. Index caching / incremental rebuilds** — avoid full rebuilds as corpus grows
 - `[ ]` **G4. Performance at scale** — benchmark FTS5 + embeddings on large corpus
 - `[x]` **G5. Packaging / install** + session-portability infra (AGENTS.md charter, .opencode/ reviewer agent + /verify command, scripts/status.py briefing, docs/decisions/ ADRs, docs/wp/ work packages, docs/WORKFLOW.md) — `pyproject.toml` (deps pinned, namespace packages, pytest config); editable install verified; documented run-from-repo-root workflow
@@ -98,6 +98,13 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **H3. Contributor docs** — onboarding guide, entry-authoring quickstart
 - `[ ]` **H4. Code of conduct** — community/curation emphasis
 - `[ ]` **H5. Release & versioning** — tagged releases, changelog
+
+### P. Public Distribution *(new — making the Word accessible to everyone)*
+> *"What's the point of having the word and not sharing it?"*
+- `[ ]` **P1. Frozen binary installer** — PyInstaller/Nuitka bundle for Windows, macOS, Linux; zero Python required; pre-built databases included; first-run setup wizard; public-domain EGW one-click download — WP-029, ADR-0023
+- `[ ]` **P2. Docker image** — container running workstation in web terminal (ttyd); accessible at `localhost:8080`; for servers, NAS, technically confident users
+- `[ ]` **P3. GitLab Releases CI** — automated binary builds on `v*` tags; release notes generated from ROADMAP + CHANGELOG
+- `[ ]` **P4. First public release `v0.1.0`** — binary + illustrated INSTALL.md + USER_GUIDE.md as primary entry point
 
 ---
 
