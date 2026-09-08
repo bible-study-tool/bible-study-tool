@@ -61,7 +61,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **C5. Validate & expand discovery layer** — more curated links → stronger candidate signal
 
 ### D. Application / UX
-- `[ ]` **D1. NotebookLM-like web UI** — long-term vision
+- `[ ]` **D1. NotebookLM-like web UI** — **primary face of the tool per ADR-0024 (GUI-first)**: local web app (engine serves static HTML/CSS/JS on localhost, opened in default browser); browser tab now, embedded Tauri window later; the TUI is retained as a mode/nightly channel. This is the main delivery surface — not a "long-term vision" footnote.
 - `[ ]` **D2. Local on-device app** — user-supplied-text model (NOTICE.md)
 - `[x]` **D3. Reading & study experience** — Modern Textual interactive workstation (`search/ui/app.py`, `search/ui/themes.py`, `scripts/study.py`) with persistent viewport architecture (<1ms navigation), plain-English verbal stems & theological nuances (`search/corpus/grammar_nuance.py`: Qal, Niphal, Piel, Hiphil, Hitpael, Aorist Middle, Perfect Passive), Pauline argument flow & discourse markers (`search/corpus/discourse_flow.py`), Scripture-interpreting-Scripture OT citation anchors (`search/corpus/ot_citations.py`), unabridged scholarly BDB/Abbott-Smith lexicons, dual-language syntax framing, KJV word-to-Strong's mapping, full-text EGW reader, direct citation navigation (`PP 44.1`, `[PP.44.1]`), 7 themes, and tabbed inspector — WP-021..WP-027, ADR-0017..ADR-0020
 - `[x]` **D4. CLI polish** — Unified human-friendly CLI surface (`scripts/study.py`) and interactive readline shell (`search/ui/shell.py`) with colored typography, boxed panels, and JSON support — WP-021, ADR-0017
@@ -101,7 +101,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
 ### P. Public Distribution *(new — making the Word accessible to everyone)*
 > *"What's the point of having the word and not sharing it?"*
-- `[ ]` **P1. Frozen binary installer** — PyInstaller/Nuitka bundle for Windows, macOS, Linux; zero Python required; pre-built databases included; first-run setup wizard; public-domain EGW one-click download — WP-029, ADR-0023
+- `[ ]` **P1. GUI-first zero-Python distribution** — frozen engine binary + sidecar `data/` folder + browser launcher (Phase 1), Tauri embedded window (Phase 2); zero Python or terminal required; pre-built databases included; first-run setup wizard; public-domain EGW one-click download — WP-029, ADR-0023, ADR-0024
 - `[ ]` **P2. Docker image** — container running workstation in web terminal (ttyd); accessible at `localhost:8080`; for servers, NAS, technically confident users
 - `[ ]` **P3. GitLab Releases CI** — automated binary builds on `v*` tags; release notes generated from ROADMAP + CHANGELOG
 - `[ ]` **P4. First public release `v0.1.0`** — binary + illustrated INSTALL.md + USER_GUIDE.md as primary entry point

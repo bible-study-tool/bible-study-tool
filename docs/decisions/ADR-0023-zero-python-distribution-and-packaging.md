@@ -1,5 +1,13 @@
 # ADR-0023: Zero-Python Distribution & Standalone Desktop Packaging (Pillar P)
 
+> **Partially superseded by [ADR-0024](ADR-0024-gui-first-architecture-tui-as-mode.md).**
+> ADR-0024 moves the primary user face from a frozen TUI binary to a local web
+> app (engine serving static HTML/CSS/JS on `localhost`; Tauri embedded window
+> later), with the TUI retained as a mode/nightly channel. The copyright
+> boundary, offline-first guarantees, and auto-update behavior in this ADR
+> remain in force; the binary-size claims (§below) and Windows Terminal note
+> are superseded — see WP-029 for the current plan.
+
 * **Status:** Proposed
 * **Date:** 2026-09-06
 * **Scope:** Pillar P (Public Distribution), WP-029

@@ -29,6 +29,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-0021](ADR-0021-new-testament-corpus-and-curation.md) | New Testament Corpus Generation and Per-Chapter Curation Model | Accepted |
 | [ADR-0022](ADR-0022-historical-grammatical-context-layer.md) | Historical-Grammatical Context Layer — historical/cultural/geographical data in the workstation | Proposed |
 | [ADR-0023](ADR-0023-zero-python-distribution-and-packaging.md) | Zero-Python Distribution & Standalone Desktop Packaging (Pillar P) | Proposed |
+| [ADR-0024](ADR-0024-gui-first-architecture-tui-as-mode.md) | GUI-First Architecture — Local Web UI as Primary Face, TUI as a Mode (Pillar D/P) | Accepted |
 
 
 ## When to write one

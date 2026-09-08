@@ -1,7 +1,7 @@
 # WP-029: Zero-Python Distribution — "Open the Book" Installer
 
 status: open
-scope: Pillar P (new — Public Distribution) — package the full workstation as a single downloadable application that requires no Python, no terminal fluency, and no configuration from the end user.
+scope: Pillar P (Public Distribution) — package the full study tool as a single downloadable application that requires no Python, no terminal fluency, and no configuration from the end user. GUI-first local web app (ADR-0024) with the TUI retained as a mode.
 priority: high
 
 ## Objective
@@ -10,32 +10,65 @@ priority: high
 
 The Adventist Bible Study Tool has reached a level of theological depth and usability that makes it genuinely valuable to anyone who wants to study Scripture seriously — pastors, Sabbath School teachers, academy students, interested seekers, anyone. But right now, the installation requirement is `git clone` + `python -m venv` + `pip install` + `bash scripts/...`. That gates the tool behind a Python/terminal literacy barrier that most of our intended audience will never cross.
 
-This work package designs and implements a distribution path that a pastor, a grandmother, or a teenager with no computer science background can follow to get the full workstation running in under five minutes.
+This work package designs and implements a distribution path that a pastor, a grandmother, or a teenager with no computer science background can follow to get the full workstation running in under five minutes — **without ever seeing a terminal**.
+
+Per **ADR-0024**, the primary face is a **local web application** (engine serves a static HTML/CSS/JS frontend on `localhost`, opened in the default browser). The Textual TUI / `textual-web` ships as a mode for users who enjoy the aesthetic and as the nightly/beta channel. Phase 2 of ADR-0024 (embedded native window via Tauri) is explicitly out of scope here — this package delivers Phase 1 (browser tab), keeping the same frontend assets so Phase 2 later becomes a packaging-only change.
 
 ## The Target User
 
 - Never opened a terminal
 - Does not know what Python is
 - Runs Windows, macOS, or a mainstream Linux desktop (Ubuntu, Fedora)
-- Has enough disk space for the databases (~500 MB total)
+- Has enough disk space for the app + databases (~550 MB total)
 - Can follow a "download this file, double-click it" instruction
 - Can read a one-page illustrated quick-start card
 
+## Architecture (per ADR-0024)
+
+```
+┌─────────────────────────────────────────────┐
+│  Frozen engine (PyInstaller/Nuitka binary)  │
+│  - starts hidden, no console                │
+│  - serves frontend + API on localhost       │
+│  - sidecar data/ folder (bible.db,          │
+│    macula.db, lexicons/)                    │
+└──────────────┬──────────────────────────────┘
+               │ localhost
+┌──────────────▼──────────────────────────────┐
+│  Default browser (Phase 1)                  │
+│  = same assets later in Tauri frame (P2)    │
+│  HTML/CSS/JS + design tokens (themes)       │
+└─────────────────────────────────────────────┘
+```
+
+Key properties:
+- **No terminal, ever.** Browser opens; engine stays in background; quit = clean shutdown.
+- **Binary and data are separate.** Small launcher binary + `data/` folder alongside. Binary and data update independently.
+- **One frontend, two hosts.** The exact same assets render in a browser (Phase 1) and in a Tauri native frame (Phase 2, later).
+- **Theme optionality** from the TUI (ADR-0018) is preserved as CSS design tokens; light + dark ship by default.
+
 ## Proposed Distribution Approach
 
-### Option A — PyInstaller / Nuitka Frozen Binary (Recommended for first release)
+### Option A — Frozen Engine + Sidecar Data + Browser Launcher (Recommended)
 
-Bundle the entire Python runtime, all dependencies (Textual, SQLite, Rich), and the pre-built databases into a single self-contained executable per platform.
+Bundle the Python runtime, all dependencies, and the engine into a small self-contained executable per platform. On first run it starts the hidden engine, waits for readiness, and opens the default browser to the study tool. Data lives in a `data/` folder alongside the binary (not inside it).
 
 | Platform | Output | Size estimate |
 |---|---|---|
-| Windows | `AdventistBibleStudy.exe` | ~80–120 MB |
-| macOS | `AdventistBibleStudy.app` (zipped) | ~90–130 MB |
-| Linux | `AdventistBibleStudy.AppImage` | ~80–110 MB |
+| Windows | `AdventistBibleStudy.exe` + `data/` | binary ~40–60 MB; data ~500 MB |
+| macOS | `AdventistBibleStudy.app` (zipped) + `data/` | binary ~50–70 MB; data ~500 MB |
+| Linux | `AdventistBibleStudy.AppImage` + `data/` | binary ~40–60 MB; data ~500 MB |
 
-**Why Textual works frozen:** Textual uses the system terminal — it does not embed a GUI framework. The frozen binary opens the user's existing terminal emulator (Windows Terminal, Terminal.app, GNOME Terminal). This is standard practice for TUI apps.
+**Why sidecar (not bundled):** bundling ~500 MB of SQLite inside the executable would (a) force a full re-extract to a temp dir on every launch in onefile mode, (b) re-download the whole binary on any data change, and (c) contradict the "~80–130 MB binary" claim the old ADR-0023 draft made. Sidecar keeps startup fast, updates small, and the numbers honest. A single combined installer (binary + data zipped together) is still offered for the grandmother path — it's the same artifact, just one download.
 
-**Database distribution:** Pre-built `data/bible.db` (KJV/ASV/BSB/YLT, 31,102 verses), `data/macula.db`, and `lexicons/` are bundled inside the binary or as a `data/` folder alongside it. `data/egw.db` is NOT bundled (copyright); the installer shows a one-click "Download Spirit of Prophecy public domain texts" button post-install.
+**Engine entrypoint:** add a public `def main()` (or equivalent) at the web-server entry — `search.ui.app` currently has no `main()`, only `run_textual_app()` under `if __name__ == "__main__":`. The `[project.scripts]` entry must point at a real callable. The TUI stays reachable via its own entry/mode flag (`--tui` or `textual-web`).
+
+**Database distribution:** pre-built `data/bible.db` (KJV/ASV/BSB/YLT, 31,102 verses), `data/macula.db`, and `lexicons/` ship in the sidecar `data/` folder. `data/egw.db` is NOT bundled (copyright); the installer shows a one-click "Download Spirit of Prophecy public domain texts" button post-install.
+
+**Signing (critical path, not a setup note):**
+- Windows: unsigned binaries trigger SmartScreen "Windows protected your PC" — the exact non-technical user we target abandons there. Use code signing (Azure Trusted Signing OSS-friendly options, or traditional certs ~$100–300/yr).
+- macOS: unsigned apps show "Apple cannot check it for malicious software." Proper fix = Apple Developer ID ($99/yr) + notarization.
+- This is a real cost/process decision and must be an explicit work-package item.
 
 ### Option B — Docker / Container Image
 
@@ -57,53 +90,70 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 
 ## Implementation Tasks
 
+### Phase 0 — Web Frontend Foundation
+- [ ] Stand up the static frontend skeleton (HTML/CSS/JS, no build step, per ADR-0024 §5) served by the engine on `localhost`
+- [ ] Define CSS design tokens (color, spacing, type) with light + dark theme variants (TUI theme parity: 7 TUI themes → token sets)
+- [ ] Port the TUI's proven layout concepts (dense multi-pane, focus mode, tabbed inspector) into the web layout — as a re-imagining, not a reskin (ADR-0024 §3)
+- [ ] Frontend ↔ engine channel: start with HTTP fetch (JSON) on `localhost`; evaluate WebSocket only if study interactions need it (ADR-0024 open sub-decision)
+
 ### Phase 1 — Audit & Freeze Preparation
 - [ ] Audit all `import` chains for dynamic imports, `__file__` path assumptions, and anything that breaks in a frozen context
-- [ ] Replace any `Path(__file__).parent` relative lookups with a `_resource_path()` helper that is PyInstaller-aware
-- [ ] Confirm Textual 1.x works correctly in a frozen binary (known to work; verify against our version)
-- [ ] Add `pyproject.toml` `[project.scripts]` entry: `bible-study = "search.ui.app:main"` as a clean entrypoint
+- [ ] Replace any `Path(__file__).parent` relative lookups with a `_resource_path()` helper that is PyInstaller-aware (confirmed live hazards: `_REPO_ROOT = Path(__file__).resolve().parents[2]` in backup.py, extract.py, macula, several tests; `Path(__file__).parent.parent / "fixtures"` in extract.py:295)
+- [ ] Add a real `main()` entrypoint for the web server (the code has no `def main()` today — only `run_textual_app()` under `if __name__ == "__main__":`)
+- [ ] Add `pyproject.toml` `[project.scripts]` entry: `bible-study = "search.ui.web:main"` (web entry) — keep TUI reachable via a `--tui` mode flag or separate script
+- [ ] Confirm Textual works frozen for the TUI *mode* (known to work; verify against our version)
+- [ ] Add a frozen `textual-web` / `textual serve` smoke test to Phase 3's platform matrix (verifies the TUI-as-nightly-channel claim end-to-end, not just in a dev venv)
 
-### Phase 2 — Database Bundling Strategy
-- [ ] Define a `data/` bundle layout: `bible.db`, `macula.db`, `lexicons/` (all pre-built and gitignored raw → committed derived)
+### Phase 2 — Data Bundling Strategy & Provenance
+- [ ] Define a `data/` sidecar bundle layout: `bible.db`, `macula.db`, `lexicons/` (all pre-built and gitignored raw → committed derived)
 - [ ] Write `scripts/build_release_data.sh` — builds all databases from pinned sources and packages them into `dist/data/`
-- [ ] Document SHA-256 of the release data bundle in `data/PROVENANCE.md`
+- [ ] **Define release-bundle provenance explicitly (ADR-0006):** each release publishes a `SHA256SUMS` file covering every file in the release artifact (binary + data); record the release data bundle's SHA-256 in `data/PROVENANCE.md`; the installer verifies the data bundle hash before first run and on updates
+- [ ] Resolve and record the bundled-vs-sidecar split as a decision (this WP chooses sidecar; document why in ADR-0024 consequences)
 
-### Phase 3 — PyInstaller Spec & Build Pipeline
-- [ ] Write `bible_study.spec` (PyInstaller spec file)
-- [ ] Add `scripts/build_release.sh` — cross-platform release build using PyInstaller (or Nuitka for better performance/size)
-- [ ] Test frozen binary on:
-  - Windows 11 (no Python installed)
+### Phase 3 — Launcher, Spec & Build Pipeline
+- [ ] Write the launcher: start hidden engine → wait for `localhost` readiness → open default browser → clean shutdown on app close
+- [ ] Write `bible_study.spec` (PyInstaller spec file) for the engine (or Nuitka for better performance/fewer AV false positives)
+- [ ] Add `scripts/build_release.sh` — cross-platform release build producing binary + `dist/data/` + `SHA256SUMS`
+- [ ] Test frozen artifact on:
+  - Windows 11 (no Python installed, no Windows Terminal dependency)
   - macOS 14 Sonoma (no Python installed)
   - Ubuntu 24.04 LTS (no Python installed)
-- [ ] Add a `.gitlab-ci.yml` `release` stage that builds binaries on tagged commits and uploads to GitLab Releases
+- [ ] Add a `.gitlab-ci.yml` `release` stage that builds artifacts on tagged commits and uploads to GitLab Releases
 
 ### Phase 4 — User-Facing Installer Experience & Setup Wizard
-- [ ] `docs/INSTALL.md` — one-page illustrated guide: "Download → Open → Start studying"
-  - Windows: download `.exe`, double-click, allow Windows Defender (first run), opens modern terminal. (Note for Windows 10: install Windows Terminal from Microsoft Store for full color/unicode support; Windows 11 works out of the box).
-  - macOS: download `.app.zip`, unzip, right-click → Open (Gatekeeper), terminal opens.
-  - Linux: download `.AppImage`, `chmod +x`, double-click.
-- [ ] First-run welcome setup wizard (inside the workstation itself):
-  - Step 1: Pre-bundled database verification (`bible.db`, `macula.db`, `lexicons/`).
-  - Step 2: Auto-update preferences toggle (enabled by default with a clear checkbox: "Check for updates on launch"; can be toggled off immediately).
-  - Step 3: Spirit of Prophecy (EGW) public-domain content (10 historical works, ~28s). If online: "Download with one click". If offline: "Skip for now — you can download anytime later from Settings/Menu when connected."
+- [ ] `docs/INSTALL.md` — one-page illustrated guide: "Download → Open → Start studying" (no terminal, no chmod, no Windows Terminal note needed — the browser is the surface)
+- [ ] First-run welcome setup wizard (inside the web app itself):
+  - Step 1: Data bundle verification (hash check against `SHA256SUMS`; `bible.db`, `macula.db`, `lexicons/`)
+  - Step 2: Auto-update preferences toggle (enabled by default; wording explicit that only a version check is sent — no telemetry, per ADR-0023)
+  - Step 3: Spirit of Prophecy (EGW) public-domain content (10 historical works). If online: "Download with one click". If offline: "Skip for now — you can download anytime later from Settings/Menu when connected."
   - Step 4: External resources link card: prominent link out to [egwwritings.org](https://m.egwwritings.org/) for the complete, copyrighted Spirit of Prophecy research library.
-- [ ] Update `docs/USER_GUIDE.md` with the zero-Python installer path as the primary entry point (terminal / git clone method as "advanced developer setup").
+- [ ] Update `docs/USER_GUIDE.md` with the zero-Python installer path as the primary entry point (terminal / git clone method as "advanced developer setup")
 
 ### Phase 5 — ADR & Governance
-- [ ] Write ADR-0023 (Distribution & Packaging) documenting the frozen-binary decision, database bundling strategy, and the EGW copyright boundary in the distribution context.
-- [ ] Update `ROADMAP.md` Pillar P entries as tasks complete.
-- [ ] Tag the first public release `v0.1.0-alpha` with GitLab Releases + changelog.
+- [ ] Update ADR-0023 to reference ADR-0024 (distribution mechanism changed from frozen-TUI-binary to local-web-app); fix its size claims (binary ~40–70 MB + ~500 MB sidecar data)
+- [ ] Update `ROADMAP.md` Pillar D (D1/D5) and Pillar P entries to reflect GUI-first architecture (ADR-0024)
+- [ ] Tag the first public release `v0.1.0-alpha` with GitLab Releases + changelog
 
 ## Acceptance Criteria
-- A non-technical user (e.g. elementary school teacher or pastor) can get the workstation running on Windows or macOS by clicking a downloaded release binary.
+- A non-technical user (e.g. elementary school teacher or pastor) can get the workstation running on Windows or macOS by double-clicking a downloaded release — with no terminal ever visible and no Windows Terminal dependency.
+- Default browser opens the study tool automatically; closing the app (or quitting from within it) shuts the engine down cleanly.
 - Setup wizard works 100% offline without failing if no internet connection is present at first launch.
-- Auto-update is enabled by default but easily toggled off during initial setup.
-- The frozen binary passes test suite verification (`AdventistBibleStudy --test`).
-- `data/egw.db` is NOT pre-bundled in the binary (copyright clean); one-click download of public domain works is offered post-install alongside official egwwritings.org links.
-- Release binary size is < 150 MB compressed.
-- GitLab CI builds binaries automatically on `v*` tags.
+- Auto-update is enabled by default but easily toggled off during initial setup; update check sends nothing but a version request (zero telemetry).
+- Release data bundle hash is verified before first run and on updates; bundle SHA-256 recorded in `data/PROVENANCE.md` (ADR-0006).
+- The frozen engine binary passes test suite verification (`AdventistBibleStudy --test`).
+- `data/egw.db` is NOT pre-bundled (copyright clean); one-click download of public domain works is offered post-install alongside official egwwritings.org links.
+- Release artifact = binary + sidecar `data/`: binary < 80 MB compressed; data bundle ~500 MB with documented `SHA256SUMS`.
+- TUI mode (`--tui` / `textual-web`) still launches and passes smoke tests from the same release.
+- GitLab CI builds artifacts automatically on `v*` tags.
+- **Signing decision made and recorded** (Windows SmartScreen + macOS Gatekeeper) — cost/process accepted or explicitly deferred with a documented risk note.
 
 ## Confirmed Architecture Decisions
-1. **Windows 10 Support**: Supported with a clear setup note recommending Windows Terminal from Microsoft Store if running legacy Win10 console; native on Win11.
-2. **Auto-Update Behavior**: Enabled by default via GitLab Releases API check, but explicitly presented with a toggle in the initial welcome wizard so users have immediate control.
-3. **EGW Integration & Legality**: Offline-first design. Pre-1929 public-domain works available via one-click download when online. If offline during setup, setup finishes cleanly with a gentle reminder. Official link-out to egwwritings.org provided in the UI for complete research.
+1. **GUI-first (ADR-0024):** local web app is the primary face; browser tab now (Phase 1), Tauri embedded window later (Phase 2). TUI retained as a mode/nightly channel.
+2. **Sidecar data, not bundled:** binary and `data/` folder are separate; they update independently; size claims are honest (~40–70 MB binary + ~500 MB data).
+3. **Signing is critical path:** Windows SmartScreen and macOS Gatekeeper are real abandonment points for non-technical users; a decision (accept cost or defer with risk note) is required, not a setup footnote.
+4. **Auto-Update Behavior:** Enabled by default via GitLab Releases API check, but explicitly presented with a toggle in the initial welcome wizard so users have immediate control. Wording is explicit that it sends only a version check (no telemetry).
+5. **EGW Integration & Legality:** Offline-first design. Pre-1929 public-domain works available via one-click download when online. If offline during setup, setup finishes cleanly with a gentle reminder. Official link-out to egwwritings.org provided in the UI for complete research.
+
+## Notes / findings
+- Review feedback (ADR-0023/WP-029 grounding pass) surfaced: missing `main()` entrypoint, size-estimate contradiction (80–130 MB binary vs ~500 MB data), undefined release-bundle provenance, and Windows Terminal dependency. All four are addressed above: real web entrypoint (Phase 1), sidecar split (Phase 2), explicit SHA256SUMS + PROVENANCE (Phase 2), browser-based surface removes terminal friction (Architecture).
+- Windows Defender / AV false positives on packed-Python executables remain a real risk; Nuitka (fewer false positives) preferred over PyInstaller if benchmarks confirm, and code signing (Phase 4/5) is the mitigation.
