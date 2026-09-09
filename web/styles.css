@@ -1,0 +1,402 @@
+/* Adventist Bible Study Tool — design tokens and theme system.
+ *
+ * The token vocabulary maps 1:1 onto the TUI theme model (search/ui/themes.py,
+ * ADR-018 / ADR-024): ink == text, ink-muted == text_muted, surface ==
+ * surface, primary/secondary/accent/border/highlight as named.
+ *
+ * A "theme" is just a set of token values selected via [data-theme] on <html>.
+ * Light and sepia (reading) are web-native; the dark palettes are ported from
+ * the 7 TUI themes so the theme gallery feels continuous between the two faces.
+ * localStorage remembers the choice (see app.js).
+ */
+
+/* ---- Non-colour tokens (theme-independent) ---- */
+:root {
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-reading: Charter, "Bitstream Charter", "Sitka Text", Georgia, "Iowan Old Style", serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Liberation Mono", monospace;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+
+  --radius-s: 4px;
+  --radius-m: 8px;
+
+  --type-xs: 0.75rem;
+  --type-sm: 0.875rem;
+  --type-md: 1rem;
+  --type-lg: 1.25rem;
+  --type-xl: 1.75rem;
+
+  --header-h: 3.5rem;
+  --footer-h: 1.75rem;
+  --side-w: min(21rem, 30vw);
+}
+
+/* ---- Colour tokens: LIGHT (default) ---- */
+[data-theme="light"],
+:root {
+  --bg: #f6f4ef;
+  --surface: #ffffff;
+  --surface-alt: #efece4;
+  --border: #ddd8cc;
+  --ink: #23201a;
+  --ink-muted: #6b6457;
+  --primary: #2f5d7a;   /* deep Scripture blue */
+  --secondary: #8a6d1f;  /* muted gold */
+  --accent: #3f7d5a;     /* quiet green */
+  --highlight: rgba(47, 93, 122, 0.14);
+  --focus-ring: 2px solid var(--primary);
+}
+
+/* ---- Colour tokens: SEPIA (warm reading) ---- */
+[data-theme="sepia"] {
+  --bg: #f2e8d4;
+  --surface: #faf3e3;
+  --surface-alt: #e9dcc0;
+  --border: #d4c4a4;
+  --ink: #3a2f1d;
+  --ink-muted: #7a6a4b;
+  --primary: #7a4a1f;
+  --secondary: #8a6d1f;
+  --accent: #4f6d3a;
+  --highlight: rgba(122, 74, 31, 0.14);
+}
+
+/* ---- Dark bridge for the TUI's "transparent" palette ---- */
+[data-theme="transparent"],
+[data-theme="dark"] {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface-alt: #21262d;
+  --border: #30363d;
+  --ink: #e6edf3;
+  --ink-muted: #8b949e;
+  --primary: #00d7ff;
+  --secondary: #ffd700;
+  --accent: #50fa7b;
+  --highlight: rgba(0, 215, 255, 0.20);
+}
+
+/* ---- Dracula ---- */
+[data-theme="dracula"] {
+  --bg: #282a36;
+  --surface: #21222c;
+  --surface-alt: #343746;
+  --border: #44475a;
+  --ink: #f8f8f2;
+  --ink-muted: #6272a4;
+  --primary: #bd93f9;
+  --secondary: #ff79c6;
+  --accent: #8be9fd;
+  --highlight: rgba(189, 147, 249, 0.25);
+}
+
+/* ---- Catppuccin Mocha ---- */
+[data-theme="catppuccin_mocha"] {
+  --bg: #1e1e2e;
+  --surface: #181825;
+  --surface-alt: #313244;
+  --border: #45475a;
+  --ink: #cdd6f4;
+  --ink-muted: #6c7086;
+  --primary: #cba6f7;
+  --secondary: #f5c2e7;
+  --accent: #74c7ec;
+  --highlight: rgba(203, 166, 247, 0.25);
+}
+
+/* ---- Tokyo Night ---- */
+[data-theme="tokyo_night"] {
+  --bg: #1a1b26;
+  --surface: #16161e;
+  --surface-alt: #24283b;
+  --border: #3b4261;
+  --ink: #a9b1d6;
+  --ink-muted: #565f89;
+  --primary: #7aa2f7;
+  --secondary: #bb9af7;
+  --accent: #7dcfff;
+  --highlight: rgba(122, 162, 247, 0.25);
+}
+
+/* ---- Nord ---- */
+[data-theme="nord"] {
+  --bg: #2e3440;
+  --surface: #242933;
+  --surface-alt: #3b4252;
+  --border: #434c5e;
+  --ink: #d8dee9;
+  --ink-muted: #4c566a;
+  --primary: #88c0d0;
+  --secondary: #81a1c1;
+  --accent: #a3be8c;
+  --highlight: rgba(136, 192, 208, 0.25);
+}
+
+/* ---- Gruvbox Dark ---- */
+[data-theme="gruvbox_dark"] {
+  --bg: #282828;
+  --surface: #1d2021;
+  --surface-alt: #3c3836;
+  --border: #504945;
+  --ink: #ebdbb2;
+  --ink-muted: #928374;
+  --primary: #fabd2f;
+  --secondary: #fe8019;
+  --accent: #b8bb26;
+  --highlight: rgba(250, 189, 47, 0.25);
+}
+
+/* ---- Solarized Dark ---- */
+[data-theme="solarized_dark"] {
+  --bg: #002b36;
+  --surface: #073642;
+  --surface-alt: #003847;
+  --border: #073642;   /* faithful to TUI palette (border == surface) */
+  --ink: #93a1a1;
+  --ink-muted: #586e75;
+  --primary: #268bd2;
+  --secondary: #2aa198;
+  --accent: #b58900;
+  --highlight: rgba(38, 139, 210, 0.25);
+}
+
+/* ---- Base ---- */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  display: grid;
+  grid-template-rows: var(--header-h) 1fr var(--footer-h);
+  font-family: var(--font-ui);
+  font-size: var(--type-md);
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+
+/* ---- Header ---- */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: 0 var(--space-4);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.brand-mark {
+  font-family: var(--font-mono);
+  font-size: var(--type-xs);
+  letter-spacing: 0.08em;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  color: var(--primary);
+  background: var(--surface-alt);
+}
+
+.brand-title {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---- Reference form ---- */
+.ref-form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+.ref-form input {
+  flex: 1;
+  min-width: 8rem;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--type-sm);
+  font-family: var(--font-mono);
+  color: var(--ink);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  outline: none;
+}
+
+.ref-form input:focus {
+  border-color: var(--primary);
+}
+
+.ref-actions { display: flex; gap: var(--space-1); }
+
+button {
+  font: inherit;
+  font-size: var(--type-sm);
+  color: var(--ink);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+button:disabled { opacity: 0.45; cursor: default; }
+
+#go-btn { background: var(--primary); color: var(--surface); border-color: var(--primary); }
+#go-btn:hover { filter: brightness(1.08); }
+
+.theme-control {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--type-sm);
+  color: var(--ink-muted);
+}
+
+.theme-control select {
+  font: inherit;
+  font-size: var(--type-sm);
+  color: var(--ink);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  padding: var(--space-1) var(--space-2);
+}
+
+/* ---- Main layout: reading pane + side pane ---- */
+.app-main {
+  display: grid;
+  grid-template-columns: 1fr var(--side-w);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.pane { min-height: 0; overflow-y: auto; }
+
+.pane-reading {
+  padding: var(--space-5) clamp(var(--space-5), 6vw, var(--space-6));
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.pane-side {
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+}
+
+/* ---- Reading pane ---- */
+.passage-heading {
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--space-3);
+}
+
+#passage-title {
+  margin: 0;
+  font-family: var(--font-reading);
+  font-size: var(--type-xl);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.passage-subtitle {
+  margin: var(--space-1) 0 0;
+  font-size: var(--type-sm);
+  color: var(--ink-muted);
+}
+
+.verses { font-family: var(--font-reading); font-size: var(--type-lg); }
+
+.verse-item {
+  margin: 0 0 var(--space-4);
+  line-height: 1.7;
+}
+
+.verse-item .verse-num {
+  font-family: var(--font-ui);
+  font-size: var(--type-sm);
+  font-weight: 600;
+  color: var(--secondary);
+  margin-right: var(--space-1);
+}
+
+.strongs {
+  cursor: help;
+  font-size: 0.55em;
+  vertical-align: super;
+  color: var(--primary);
+}
+
+.status-hint { color: var(--ink-muted); font-size: var(--type-sm); }
+
+/* ---- Side pane / tabs ---- */
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.tab {
+  flex: 1;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-muted);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--type-sm);
+}
+
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.tab-body { padding: var(--space-4); overflow-y: auto; font-size: var(--type-sm); }
+.tab-hint { color: var(--ink-muted); margin: 0; }
+
+/* ---- Footer / status bar ---- */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
+  font-size: var(--type-xs);
+  font-family: var(--font-mono);
+  color: var(--ink-muted);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.status-spacer { flex: 1; }
+
+/* ---- Small screens: drop the side pane ---- */
+@media (max-width: 720px) {
+  .app-main { grid-template-columns: 1fr; }
+  .pane-side { display: none; }
+  .brand-title { display: none; }
+}

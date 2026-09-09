@@ -1,0 +1,273 @@
+"""Local-first web server for the Adventist Bible Study Tool (ADR-024).
+
+Serves the static frontend (``web/``) and a minimal JSON API over localhost,
+backed by :class:`search.ui.study_service.StudyService`. Stdlib-only on
+purpose (ADR-013): no framework, no build step, no telemetry.
+
+Phase 1 of ADR-024 hosts this in the browser tab; Phase 2 (Tauri) will host
+the *same* assets. Nothing in this module is TUI-specific.
+
+Run from the repo root::
+
+    python -m search.ui.web_server            # http://127.0.0.1:8000
+    python -m search.ui.web_server --port 8123 --host 127.0.0.1
+"""
+
+from __future__ import annotations
+
+import argparse
+import dataclasses
+import enum
+import json
+from http import HTTPStatus
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from typing import Any, Callable, Iterable
+from urllib.parse import parse_qs, urlparse
+
+from search.ui.study_service import StudyService
+from search.ui.themes import DEFAULT_THEME, THEMES
+
+# Path(__file__) == search/ui/web_server.py -> parents[2] == repo root.
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+WEB_ROOT = _REPO_ROOT / "web"
+
+# Web-native themes beyond the TUI palettes: always present in the catalog so
+# the theme dropdown and persisted prefs can select them (light is the default
+# face; sepia is a warm reading theme). Defined here, not in themes.py, because
+# they are CSS-only token sets with no Textual counterpart.
+WEB_NATIVE_THEMES: dict[str, dict[str, str]] = {
+    "light": {
+        "id": "light",
+        "name": "Light (Default)",
+        "description": "Clean light theme for daytime reading.",
+    },
+    "sepia": {
+        "id": "sepia",
+        "name": "Sepia (Warm Reading)",
+        "description": "Warm, paper-toned reading theme.",
+    },
+}
+
+# Verbose per-verse enrichment is intentionally omitted from the wire until a
+# tab in the UI actually needs it (serialize on demand via ?eager=1, not by
+# default). EGW commentary is deliberately NOT serialized at all: the TUI/CLI
+# render it against the local egw.db, but the web API stays copyright-light
+# (ADR-002/023) and its frontend does not render EGW yet.
+_PASSAGE_FIELDS = ("ref", "book_code", "book_name", "start_chapter",
+                   "start_verse", "end_chapter", "end_verse", "verses")
+
+
+def _jsonable(value: Any) -> Any:
+    """Convert a nested dataclass/dict/list/Enum tree into JSON-safe primitives.
+
+    Fail-fast per AGENTS.md: an unrecognised type raises rather than silently
+    shipping as ``str(...)``, forcing the serializer to be extended when the
+    data model grows.
+    """
+    if dataclasses.is_dataclass(value):
+        return {
+            f.name: _jsonable(getattr(value, f.name))
+            for f in dataclasses.fields(value)
+            if not f.name.startswith("_")
+        }
+    if isinstance(value, dict):
+        return {str(k): _jsonable(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_jsonable(v) for v in value]
+    if isinstance(value, enum.Enum):
+        return _jsonable(value.value)
+    if isinstance(value, Path):
+        return str(value)
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    raise TypeError(f"cannot serialize {type(value).__name__} to JSON")
+
+
+def _verse_payload(study: StudyService, verse: Any) -> dict[str, Any]:
+    """Wire payload for a single verse: text, translations, Strong's list."""
+    return {
+        "osis": verse.osis,
+        "chapter": verse.chapter,
+        "verse": verse.verse,
+        "text": verse.text,
+        "translations": verse.translations,
+        "strongs_list": verse.strongs_list,
+    }
+
+
+# Per-verse fields included only under ?eager=1, attached to the verse (never
+# collapsed onto the passage object — each verse keeps its own enrichment).
+_EAGER_VERSE_FIELDS = ("semantic_frames", "verbal_nuances",
+                       "discourse_markers", "ot_citations")
+
+
+def _passage_payload(passage: Any, eager_frames: bool) -> dict[str, Any]:
+    """Serialize a PassageStudy to the wire shape (omits heavy per-verse data).
+
+    EGW correlations are deliberately excluded (copyright-light web API).
+    Argument flow is cheap and useful; include when present.
+    """
+    data = {name: getattr(passage, name) for name in _PASSAGE_FIELDS}
+    data["verses"] = [_verse_payload(passage, v) for v in passage.verses]
+    if getattr(passage, "argument_flow", None):
+        data["argument_flow"] = _jsonable(passage.argument_flow)
+    if eager_frames:
+        # data["verses"] and passage.verses are index-parallel (built in the
+        # same order from the same source), so per-verse enrichment attaches
+        # to the correct verse without a keyed lookup.
+        for i, verse in enumerate(data["verses"]):
+            for field in _EAGER_VERSE_FIELDS:
+                value = getattr(passage.verses[i], field, None)
+                if value:
+                    verse[field] = _jsonable(value)
+    return data
+
+
+def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
+    """Return an HTTP handler class bound to a StudyService and web root."""
+
+    class StudyHandler(BaseHTTPRequestHandler):
+        # Silence default stderr logging (a GUI binary should not log noise).
+        def log_message(self, _format: str, *args: Any) -> None:  # noqa: D102
+            pass
+
+        def _reply(self, code: int, body: bytes, content_type: str) -> None:
+            self.send_response(code)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(body)
+
+        def _reply_json(self, code: int, payload: dict[str, Any]) -> None:
+            text = json.dumps(payload, indent=2, ensure_ascii=False).encode("utf-8")
+            self._reply(code, text, "application/json; charset=utf-8")
+
+        def _reply_error(self, code: int, message: str) -> None:
+            self._reply_json(code, {"error": message, "code": code})
+
+        def _serve_static(self, rel_path: str) -> None:
+            # Normalize and prevent directory traversal.
+            root = self.server.web_root  # type: ignore[attr-defined]
+            target = (root / rel_path.lstrip("/")).resolve()
+            if root.resolve() not in target.parents and target != root.resolve():
+                self._reply_error(HTTPStatus.FORBIDDEN, "forbidden path")
+                return
+            if target.is_dir():
+                target = target / "index.html"
+            if not target.is_file():
+                self._reply_error(HTTPStatus.NOT_FOUND, "not found")
+                return
+            ctype = {
+                ".html": "text/html; charset=utf-8",
+                ".css": "text/css; charset=utf-8",
+                ".js": "application/javascript; charset=utf-8",
+            }.get(target.suffix, "application/octet-stream")
+            self._reply(HTTPStatus.OK, target.read_bytes(), ctype)
+
+        def do_GET(self) -> None:  # noqa: N802 (http.server naming)
+            parsed = urlparse(self.path)
+            path = parsed.path
+            query = parse_qs(parsed.query)
+            if path == "/api/health":
+                self._api_health()
+            elif path == "/api/passage":
+                self._api_passage(query)
+            elif path == "/api/translations":
+                self._api_translations()
+            elif path.startswith("/api/"):
+                self._reply_error(HTTPStatus.NOT_FOUND, "unknown endpoint")
+            else:
+                self._serve_static(path)
+
+        def _api_health(self) -> None:
+            themes = [
+                {"id": tid, "name": t.name, "description": t.description}
+                for tid, t in THEMES.items()
+            ]
+            # Web-native themes first so the default face ("light") is selectable.
+            themes = list(WEB_NATIVE_THEMES.values()) + themes
+            self._reply_json(HTTPStatus.OK, {
+                "status": "ok",
+                # The web face defaults to the light token set; the TUI keeps
+                # its own DEFAULT_THEME (transparent) internally.
+                "default_theme": "light",
+                "themes": themes,
+                "translations_url": "/api/translations",
+            })
+
+        def _api_passage(self, query: dict[str, list[str]]) -> None:
+            refs = query.get("ref")
+            if not refs or not refs[0].strip():
+                self._reply_error(HTTPStatus.BAD_REQUEST, "missing 'ref' parameter")
+                return
+            eager = query.get("eager", ["0"])[0] in ("1", "true", "yes")
+            try:
+                passage = study.get_passage_study(refs[0].strip(), eager_frames=eager)
+            except ValueError as exc:  # unknown book / malformed reference
+                self._reply_error(HTTPStatus.BAD_REQUEST,
+                                  f"cannot load passage {refs[0]!r}: {exc}")
+                return
+            except Exception as exc:  # unexpected engine failure -> 500, not 400
+                self._reply_error(HTTPStatus.INTERNAL_SERVER_ERROR,
+                                  f"engine error: {exc}")
+                return
+            try:
+                payload = _passage_payload(passage, eager)
+            except Exception as exc:  # e.g. _jsonable fail-fast (S1) -> clean 500
+                self._reply_error(HTTPStatus.INTERNAL_SERVER_ERROR,
+                                  f"serialization error: {exc}")
+                return
+            self._reply_json(HTTPStatus.OK, payload)
+
+        def _api_translations(self) -> None:
+            self._reply_json(HTTPStatus.OK, {
+                "translations": _jsonable(study.get_available_translations()),
+            })
+
+    return StudyHandler
+
+
+def create_server(
+    study: StudyService,
+    web_root: Path = WEB_ROOT,
+    host: str = "127.0.0.1",
+    port: int = 8000,
+) -> ThreadingHTTPServer:
+    """Create and bind a ThreadingHTTPServer without starting it."""
+    handler = build_handler(study, web_root)
+
+    class BoundServer(ThreadingHTTPServer):
+        # `web_root` is attached after definition (a class body cannot see
+        # enclosing function locals). Exposed so the handler can resolve static.
+        daemon_threads: bool = True
+
+    BoundServer.web_root = web_root
+    return BoundServer((host, port), handler)
+
+
+def main(argv: Iterable[str] | None = None) -> int:
+    """Console/launcher entrypoint for the local web server."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--host", default="127.0.0.1",
+                        help="bind address (default 127.0.0.1; keep localhost)")
+    parser.add_argument("--port", type=int, default=8000, help="TCP port (default 8000)")
+    args = parser.parse_args(argv)
+
+    study = StudyService()  # resolves data/ + lexicons/ under the repo root
+    server = create_server(study, host=args.host, port=args.port)
+    url = f"http://{args.host}:{args.port}"
+    print(f"Adventist Bible Study Tool — serving at {url}", flush=True)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.server_close()
+        study.close()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

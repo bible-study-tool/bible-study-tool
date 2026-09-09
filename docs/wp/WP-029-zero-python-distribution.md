@@ -91,15 +91,15 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 ## Implementation Tasks
 
 ### Phase 0 — Web Frontend Foundation
-- [ ] Stand up the static frontend skeleton (HTML/CSS/JS, no build step, per ADR-024 §5) served by the engine on `localhost`
-- [ ] Define CSS design tokens (color, spacing, type) with light + dark theme variants (TUI theme parity: 7 TUI themes → token sets)
-- [ ] Port the TUI's proven layout concepts (dense multi-pane, focus mode, tabbed inspector) into the web layout — as a re-imagining, not a reskin (ADR-024 §3)
-- [ ] Frontend ↔ engine channel: start with HTTP fetch (JSON) on `localhost`; evaluate WebSocket only if study interactions need it (ADR-024 open sub-decision)
+- [x] Stand up the static frontend skeleton (HTML/CSS/JS, no build step, per ADR-024 §5) served by the engine on `localhost` — `web/` (index.html, styles.css, app.js) + `search/ui/web_server.py` (stdlib ThreadingHTTPServer; `python -m search.ui.web_server`). Phase 0 cutoff: no terminal, browser-tab host. EGW commentary is deliberately **absent from the web API** (copyright-light per ADR-002/023; the TUI/CLI still render it against the local egw.db).
+- [x] Define CSS design tokens (color, spacing, type) with light + dark theme variants (TUI theme parity: all 7 TUI palettes ported as `[data-theme]` sets + web-native light/sepia) — `web/styles.css`
+- [ ] Port the TUI's proven layout concepts (dense multi-pane, focus mode, tabbed inspector) into the web layout — as a re-imagining, not a reskin (ADR-024 §3) — *partial: reading pane + tab-bar placeholders shipped; the full dense/focus-mode port is its own later step*
+- [x] Frontend ↔ engine channel: HTTP fetch (JSON) on `localhost` implemented (`/api/health|passage|translations`); WebSocket remains unevaluated (ADR-024 open sub-decision)
 
 ### Phase 1 — Audit & Freeze Preparation
 - [ ] Audit all `import` chains for dynamic imports, `__file__` path assumptions, and anything that breaks in a frozen context
 - [ ] Replace any `Path(__file__).parent` relative lookups with a `_resource_path()` helper that is PyInstaller-aware (confirmed live hazards: `_REPO_ROOT = Path(__file__).resolve().parents[2]` in backup.py, extract.py, macula, several tests; `Path(__file__).parent.parent / "fixtures"` in extract.py:295)
-- [ ] Add a real `main()` entrypoint for the web server (the code has no `def main()` today — only `run_textual_app()` under `if __name__ == "__main__":`)
+- [x] Add a real `main()` entrypoint for the web server (the code had no `def main()` — only `run_textual_app()` under `if __name__ == "__main__":`); `search.ui.web_server.main()` now exists and boots the server. Residual: wire `[project.scripts]` (next line).
 - [ ] Add `pyproject.toml` `[project.scripts]` entry: `bible-study = "search.ui.web:main"` (web entry) — keep TUI reachable via a `--tui` mode flag or separate script
 - [ ] Confirm Textual works frozen for the TUI *mode* (known to work; verify against our version)
 - [ ] Add a frozen `textual-web` / `textual serve` smoke test to Phase 3's platform matrix (verifies the TUI-as-nightly-channel claim end-to-end, not just in a dev venv)
@@ -157,3 +157,5 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 ## Notes / findings
 - Review feedback (ADR-023/WP-029 grounding pass) surfaced: missing `main()` entrypoint, size-estimate contradiction (80–130 MB binary vs ~500 MB data), undefined release-bundle provenance, and Windows Terminal dependency. All four are addressed above: real web entrypoint (Phase 1), sidecar split (Phase 2), explicit SHA256SUMS + PROVENANCE (Phase 2), browser-based surface removes terminal friction (Architecture).
 - Windows Defender / AV false positives on packed-Python executables remain a real risk; Nuitka (fewer false positives) preferred over PyInstaller if benchmarks confirm, and code signing (Phase 4/5) is the mitigation.
+- Phase 0 (frontend + server skeleton) landed via `search/ui/web_server.py` + `web/` (index.html/styles.css/app.js). 17 tests for the web surface (`search/ui/test_web.py`: 14 HTTP integration + 3 serializer unit tests), stdlib-only, no build step, no deps. The JSON serializer drops heavy per-verse enrichment by default (semantic frames, nuances, citations) and serializes per-verse on demand via `?eager=1` — matches the "no telemetry, no premature weight" principle. EGW commentary is excluded from the wire entirely (copyright-light web API; TUI/CLI parity unchanged). Genesis 1:1 smoke-tested: KJV + 4 translations served.
+- No `main()` existed for a web face before this phase; `web_server.main()` now boots the server (Phase 1 still wires `[project.scripts]`).

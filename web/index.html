@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adventist Bible Study Tool</title>
+  <meta name="color-scheme" content="light dark">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand" aria-label="Adventist Bible Study Tool">
+      <span class="brand-mark">ABST</span>
+      <span class="brand-title">Adventist Bible Study</span>
+    </div>
+
+    <form id="ref-form" class="ref-form" role="search" aria-label="Go to a scripture reference">
+      <input id="ref-input" type="text" value="Genesis 1:1-3"
+             placeholder="e.g. Genesis 1:1, John 17, Rom 8:28" spellcheck="false">
+      <div class="ref-actions">
+        <button id="prev-btn" type="button" aria-label="Previous passage" title="Previous passage" disabled>&#8592;</button>
+        <button id="go-btn" type="submit">Go</button>
+        <button id="next-btn" type="button" aria-label="Next passage" title="Next passage" disabled>&#8594;</button>
+      </div>
+    </form>
+
+    <label class="theme-control" for="theme-select">
+      Theme
+      <select id="theme-select" aria-label="Colour theme"></select>
+    </label>
+  </header>
+
+  <main class="app-main">
+    <section id="reading-pane" class="pane pane-reading" aria-live="polite">
+      <div class="passage-heading">
+        <h1 id="passage-title">—</h1>
+        <p id="passage-subtitle" class="passage-subtitle"></p>
+      </div>
+      <div id="verses" class="verses"></div>
+      <p id="status-hint" class="status-hint"></p>
+    </section>
+
+    <aside class="pane pane-side">
+      <div class="tab-bar" role="tablist" aria-label="Study panels">
+        <button class="tab" role="tab" aria-selected="true" data-tab="translations">Translations</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="languages">Languages</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="notes">Notes</button>
+      </div>
+
+      <section class="tab-body" id="panel-translations" role="tabpanel">
+        <p class="tab-hint">Alignments for the passage appear here.</p>
+      </section>
+      <section class="tab-body" id="panel-languages" role="tabpanel" hidden>
+        <p class="tab-hint">Original-language framing (Hebrew / Greek) lands here in a later phase.</p>
+      </section>
+      <section class="tab-body" id="panel-notes" role="tabpanel" hidden>
+        <p class="tab-hint">Your study notes will live here (coming soon).</p>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="status-bar">
+    <span id="status-left">Loading…</span>
+    <span class="status-spacer"></span>
+    <span id="status-right"></span>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
