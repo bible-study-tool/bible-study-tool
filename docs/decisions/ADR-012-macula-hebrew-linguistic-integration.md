@@ -1,10 +1,10 @@
-# ADR-0012: Macula Hebrew Linguistic Integration & Strong's-LXX Crosswalk
+# ADR-012: Macula Hebrew Linguistic Integration & Strong's-LXX Crosswalk
 
 **Status:** Accepted · **Date:** 2026-09-04
 
 ## Context
 
-1. **WordGraph Scope & Syntactic Gap:** ADR-0010 established the WordGraph as a
+1. **WordGraph Scope & Syntactic Gap:** ADR-010 established the WordGraph as a
    lemma-centric lexical graph across Genesis. While morphology files provide
    token prefixes and stems, they lack higher-level syntactic relations (clauses,
    phrases, participant roles like Subject, Verb, Object, Prepositional Phrase).
@@ -48,5 +48,5 @@
   roles without external heavy libraries (no `lxml`, `text-fabric`).
 * Strengthens the factual basis of cross-references and semantic link candidates.
 
-Related: ADR-0001 (deterministic core), ADR-0006 (provenance), ADR-0007 (source
-agreement), ADR-0010 (WordGraph).
+Related: ADR-001 (deterministic core), ADR-006 (provenance), ADR-007 (source
+agreement), ADR-010 (WordGraph).

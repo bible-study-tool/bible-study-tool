@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CLI utility for Portable Offline Backup and Restore (ADR-0016).
+"""CLI utility for Portable Offline Backup and Restore (ADR-016).
 
 Usage:
   # Export default study state (egw.db, corpus.db, macula.db):
@@ -248,7 +248,7 @@ def handle_restore(args: argparse.Namespace) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Portable Offline Backup and Restore utility for Adventist Bible Study Tool (ADR-0016)."
+        description="Portable Offline Backup and Restore utility for Adventist Bible Study Tool (ADR-016)."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 

@@ -34,7 +34,7 @@ The project has achieved several major architectural and pastoral milestones:
 | Spirit of Prophecy | `data/egw.db` local SQLite FTS5 database, continuous page reader, canonical token resolution (`PP 44.1`) |
 | Validators | F1 Schema, F2 Strong's, F3 Cross-refs, F4 Audit: **0 errors, 0 warnings** |
 | Test Suite | **565 tests passing** |
-| ADRs | ADR-0001 through ADR-0021 accepted |
+| ADRs | ADR-001 through ADR-021 accepted |
 | Work Packages | WP-001 through WP-027 completed |
 
 ---

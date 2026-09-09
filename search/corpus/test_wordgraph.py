@@ -1,4 +1,4 @@
-"""Tests for the WordGraph lexical knowledge graph (WP-009, ADR-0010).
+"""Tests for the WordGraph lexical knowledge graph (WP-009, ADR-010).
 
 The WordGraph is a DERIVED artifact consuming only committed artifacts (no
 raw data/ sources) — so these tests run in CI (fresh clone) as well.

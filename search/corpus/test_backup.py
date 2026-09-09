@@ -1,4 +1,4 @@
-"""Unit tests for the Portable Offline Backup and Restore engine (ADR-0016)."""
+"""Unit tests for the Portable Offline Backup and Restore engine (ADR-016)."""
 
 from __future__ import annotations
 

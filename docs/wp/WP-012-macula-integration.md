@@ -1,7 +1,7 @@
 # WP-012: Macula Hebrew Linguistic Integration & Strong's-LXX Crosswalk (Pillar B)
 
 status: completed
-scope: Integration of Clear-Bible Macula Hebrew linguistic data (lowfat XML), Strong's-LXX crosswalk, SDBH semantic domains, and sentence/clause syntax extraction (ADR-0012, Roadmap B1).
+scope: Integration of Clear-Bible Macula Hebrew linguistic data (lowfat XML), Strong's-LXX crosswalk, SDBH semantic domains, and sentence/clause syntax extraction (ADR-012, Roadmap B1).
 priority: high
 
 ## Objective
@@ -15,12 +15,12 @@ and CLI (`scripts/macula_lookup.py`), and pin upstream sources in `data/PROVENAN
 
 ## Inputs (read these first)
 - `ROADMAP.md` (Pillar B: B0, B1, B2, B3)
-- `docs/decisions/ADR-0012-macula-hebrew-linguistic-integration.md`
+- `docs/decisions/ADR-012-macula-hebrew-linguistic-integration.md`
 - `data/PROVENANCE.md` (integrity model and artifact inventory)
 - Upstream: `https://github.com/Clear-Bible/macula-hebrew` (pinned commit `47db250bd55d0d8577f2a94fba114ef16c35b23c`)
 
 ## Tasks
-- [x] Pin upstream `Clear-Bible/macula-hebrew` in `data/PROVENANCE.md` and draft ADR-0012.
+- [x] Pin upstream `Clear-Bible/macula-hebrew` in `data/PROVENANCE.md` and draft ADR-012.
 - [x] Update `scripts/fetch_sources.sh` to download and verify `data/macula-hebrew/01-Gen-*-lowfat.xml`.
 - [x] Implement zero-dependency Lowfat XML parser in `search/macula/extract.py`.
 - [x] Build crosswalk and syntax compiler in `search/macula/build_crosswalk.py`.

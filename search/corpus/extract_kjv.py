@@ -1,6 +1,6 @@
 """Whole-Bible KJV extraction, tokenization, and SQLite storage engine (WP-019).
 
-In accordance with ADR-0013 and ADR-0014, this module provides:
+In accordance with ADR-013 and ADR-014, this module provides:
   - Zero-dependency streaming extraction from pinned KJV-osis JSON (all 66 books, 1,189 chapters, 31,102 verses).
   - High-fidelity clean text extraction (un-escaping entities, stripping OSIS tags, preserving punctuation).
   - Word-level tokenization with Strong's numbers (both Hebrew H-codes and Greek G-codes),

@@ -82,13 +82,13 @@ Any decision that is hard to reverse, shapes future work, or was genuinely
 debated gets an ADR **at decision time**. If you're mid-conversation with an
 assistant, the flow is literally:
 
-> "That's a decision worth recording — draft ADR-0008 for it and add it to
+> "That's a decision worth recording — draft ADR-008 for it and add it to
 > the index."
 
-The assistant writes `docs/decisions/ADR-0008-<slug>.md` (Context → Decision
+The assistant writes `docs/decisions/ADR-008-<slug>.md` (Context → Decision
 → Consequences, under ~40 lines), adds it to `docs/decisions/INDEX.md`, and
 it ships in the same commit as whatever it decided. Seeded examples:
-ADR-0001 (deterministic-vs-AI), ADR-0007 (agreement-layer status policy).
+ADR-001 (deterministic-vs-AI), ADR-007 (agreement-layer status policy).
 
 ## Example 4 — Curating a work package (the common case)
 
@@ -106,11 +106,11 @@ The streamlined curation cycle:
    work package's `scope:` line. It outputs a concise brief with KJV verse quotes,
    apparatus omissions/alignments, and lexical definitions.
 
-2. **The WordGraph cost model (ADR-0010 / WP-010) & Broad Scaffolding (ADR-0011)**:
+2. **The WordGraph cost model (ADR-010 / WP-010) & Broad Scaffolding (ADR-011)**:
    Deterministic word-study blocks (`### <word> — Strong's <code>`) in entry
    skeletons are assembled directly from the WordGraph (`lexicons/wordgraph-genesis.json`)
    by the draft engine (`search/corpus/draft_engine.py`), NOT drafted by an LLM.
-   Per ADR-0011, draft skeletons for all 50 chapters of Genesis (all 1,533 verses)
+   Per ADR-011, draft skeletons for all 50 chapters of Genesis (all 1,533 verses)
    are already pre-generated in `materials/bible/ot/genesis/`. Curators never
    need to regenerate skeletons from scratch for Genesis; they simply open the
    existing draft files for the scoped verses. Skeletons carry WordGraph provenance
@@ -174,7 +174,7 @@ local run passed, check for: a stale local artifact, a hash-seed ordering
 difference (all generators are required to be byte-deterministic — that's a
 bug, report it), or an uncommitted file. `git status` first, always.
 
-## Example 7 — Portable Study Backup & Air-Gapped Migration (ADR-0016)
+## Example 7 — Portable Study Backup & Air-Gapped Migration (ADR-016)
 
 The project provides an offline-first backup and migration engine:
 

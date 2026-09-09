@@ -1,7 +1,7 @@
-# WP-014: Whole-Bible Macula SQLite Architecture (Pillar B, ADR-0014)
+# WP-014: Whole-Bible Macula SQLite Architecture (Pillar B, ADR-014)
 
 status: completed
-scope: Scalable, normalized SQLite database engine (`data/macula.db`) indexing tokens, syntactic clauses, constituent participant roles, Strong's alignments, and semantic domains across the biblical canon (ADR-0013, ADR-0014).
+scope: Scalable, normalized SQLite database engine (`data/macula.db`) indexing tokens, syntactic clauses, constituent participant roles, Strong's alignments, and semantic domains across the biblical canon (ADR-013, ADR-014).
 priority: high
 
 ## Objective
@@ -13,9 +13,9 @@ and provide transparent dual-mode fallback to `lexicons/macula-genesis.json` in 
 
 ## Inputs (read these first)
 - `ROADMAP.md` (Pillar B)
-- `docs/decisions/ADR-0012-macula-hebrew-linguistic-integration.md`
-- `docs/decisions/ADR-0013-design-principles-stewardship-and-scalability.md`
-- `docs/decisions/ADR-0014-whole-bible-macula-sqlite-architecture.md`
+- `docs/decisions/ADR-012-macula-hebrew-linguistic-integration.md`
+- `docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md`
+- `docs/decisions/ADR-014-whole-bible-macula-sqlite-architecture.md`
 - `search/macula/extract.py` & `search/macula/lookup.py`
 - `scripts/macula_lookup.py`
 

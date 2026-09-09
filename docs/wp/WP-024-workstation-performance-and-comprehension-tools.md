@@ -5,14 +5,14 @@ scope: Eliminate interaction-layer sluggishness via the persistent viewport patt
 priority: high
 
 ## Objective
-Deliver a fluid, instant, 60 FPS terminal study workstation (<1ms per verse step) and advance the project's North Star of deep biblical comprehension by providing plain-English theological verb nuances and translation comparisons (per ADR-0013 and ADR-0020).
+Deliver a fluid, instant, 60 FPS terminal study workstation (<1ms per verse step) and advance the project's North Star of deep biblical comprehension by providing plain-English theological verb nuances and translation comparisons (per ADR-013 and ADR-020).
 
 ## Inputs
 - `ROADMAP.md` (Pillars B, D)
-- `docs/decisions/ADR-0020-persistent-viewport-workstation-and-comprehension-engine.md`
-- `docs/decisions/ADR-0019-accessible-original-languages-and-commentary-integration.md`
-- `docs/decisions/ADR-0018-textual-study-workstation-and-themes.md`
-- `docs/decisions/ADR-0013-design-principles-stewardship-and-scalability.md`
+- `docs/decisions/ADR-020-persistent-viewport-workstation-and-comprehension-engine.md`
+- `docs/decisions/ADR-019-accessible-original-languages-and-commentary-integration.md`
+- `docs/decisions/ADR-018-textual-study-workstation-and-themes.md`
+- `docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md`
 - `search/ui/app.py`
 - `search/ui/study_service.py`
 - `search/ui/themes.py`

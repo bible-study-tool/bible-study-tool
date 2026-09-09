@@ -205,7 +205,7 @@ class ArtifactTests(unittest.TestCase):
 
 class Genesis2ArtifactTests(unittest.TestCase):
     """The committed Genesis-2 morphology artifact must match the pinned
-    sources (WP-007, ADR-0009 book-level expansion)."""
+    sources (WP-007, ADR-009 book-level expansion)."""
 
     @classmethod
     def setUpClass(cls):

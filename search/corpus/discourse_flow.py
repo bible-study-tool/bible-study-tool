@@ -1,4 +1,4 @@
-"""Pauline Argument Flow & Discourse Markers Engine (ADR-0020, WP-025).
+"""Pauline Argument Flow & Discourse Markers Engine (ADR-020, WP-025).
 
 Classifies Koine Greek and Biblical Hebrew logical connectors (premises,
 conclusions, divine purposes, adversative pivots, analogies, and conditions)

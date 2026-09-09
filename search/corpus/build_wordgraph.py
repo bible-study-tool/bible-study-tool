@@ -1,9 +1,9 @@
-"""Generate the WordGraph lexical knowledge graph for Genesis (ADR-0010).
+"""Generate the WordGraph lexical knowledge graph for Genesis (ADR-010).
 
 ``lexicons/wordgraph-genesis.json`` is the lemma-centric spine over the
 existing deterministic artifacts. It is a DERIVED, aggregate-first artifact:
 it consumes ONLY committed artifacts (no raw data/ sources), so it also runs
-in CI. Per ADR-0010:
+in CI. Per ADR-010:
 
   * three-layer identifier stack: token layer (OSHB ids, in occurrences) /
     lexeme layer (canonical id = Strong's for the pilot, homograph-suffixed
@@ -305,7 +305,7 @@ def build(repo: str = ".") -> dict:
             _HOMOGRAPH_NOTES,
         ],
         "identity_model": (
-            "Three-layer stack per ADR-0010: token layer (OSHB ids in "
+            "Three-layer stack per ADR-010: token layer (OSHB ids in "
             "occurrences), lexeme layer (canonical id = Strong's for the "
             "pilot; homograph-suffixed only when split), legacy crosswalk "
             "(strongs). Full ETCBC-style homograph numbering arrives with "

@@ -1,4 +1,4 @@
-"""Comprehensive unit and async test suite for Textual Bible Study workstation (WP-022, ADR-0018)."""
+"""Comprehensive unit and async test suite for Textual Bible Study workstation (WP-022, ADR-018)."""
 
 from __future__ import annotations
 

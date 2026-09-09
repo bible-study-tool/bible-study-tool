@@ -29,7 +29,7 @@ all AI-generated content is marked and gated behind human approval.
 
 ## Core Design Principle: Stewardship and Excellence
 
-**"We are doing this for God. So we should do the best we can without being wasteful."** (ADR-0013)
+**"We are doing this for God. So we should do the best we can without being wasteful."** (ADR-013)
 
 This conviction governs our technical and architectural choices:
 1. **No Shortsighted 'Toy' Solutions**: Because our aim is the study of the
@@ -63,7 +63,7 @@ are **not owned by this project** and are **not redistributed here**:
   Linking is reference, not distribution. Entries use canonical citation
   tokens (`egw:BOOK.PAGE.PARA`), and paragraph text is stored only in the
   user's local SQLite database (`data/egw.db`), resolved just-in-time (JIT)
-  on the user's device (see ADR-0011).
+  on the user's device (see ADR-011).
 
 * **Bible translations**: public-domain translations (e.g., KJV, ASV, WEB) and
   the original Hebrew/Greek may be bundled. Copyrighted translations (e.g.,

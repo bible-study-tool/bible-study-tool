@@ -1,10 +1,10 @@
-# ADR-0024: GUI-First Architecture — Local Web UI as Primary Face, TUI as a Mode
+# ADR-024: GUI-First Architecture — Local Web UI as Primary Face, TUI as a Mode
 
 * **Status:** Accepted
 * **Date:** 2026-09-07
 * **Scope:** Pillar D (Application / UX), Pillar P (Public Distribution), WP-029
 * **Deciders:** Project Maintainer
-* **Consulted:** [ADR-0008](ADR-0008-future-architecture-and-packaging.md) (three-tier architecture), [ADR-0013](ADR-0013-design-principles-stewardship-and-scalability.md) (design principles), [ADR-0017](ADR-0017-terminal-user-interface-and-unified-study-cli.md) (TUI), [ADR-0018](ADR-0018-textual-study-workstation-and-themes.md) (themes), [ADR-0023](ADR-0023-zero-python-distribution-and-packaging.md) (distribution), AGENTS.md, ROADMAP.md
+* **Consulted:** [ADR-008](ADR-008-future-architecture-and-packaging.md) (three-tier architecture), [ADR-013](ADR-013-design-principles-stewardship-and-scalability.md) (design principles), [ADR-017](ADR-017-terminal-user-interface-and-unified-study-cli.md) (TUI), [ADR-018](ADR-018-textual-study-workstation-and-themes.md) (themes), [ADR-023](ADR-023-zero-python-distribution-and-packaging.md) (distribution), AGENTS.md, ROADMAP.md
 * **Informs:** Pillar D (UX), Pillar P (distribution), WP-029
 
 ---
@@ -13,7 +13,7 @@
 
 The tool's mission is to make serious Bible study accessible to the **largest
 possible audience** — pastors, Sabbath School teachers, grandmothers, students,
-seekers. The Textual TUI (ADR-0017, ADR-0018) was never the end goal: it was a
+seekers. The Textual TUI (ADR-017, ADR-018) was never the end goal: it was a
 **development vehicle** — faster and cheaper to build than a GUI, which let the
 platform be pressure-tested early. That bet paid off: using the TUI surfaced
 gaps that improved not just the interaction layer but the underlying database
@@ -23,8 +23,10 @@ But a text-based interface is not the face for the widest audience:
 
 * A terminal window signals "developer tool" to non-technical users, and the
   aesthetics — however polished — read as niche, even ugly, to many.
-* Existing GUI Bible tools (e-SWORD) show the opposite failure: dated,
-  cluttered interfaces where clutter itself is a barrier to study.
+* Existing tools such as e-SWORD — a great project that has faithfully served
+  Bible students for decades — illustrate the flip side: because it has been
+  around so long, its interface still carries the look of its early days, and
+  its density can itself become a barrier to study.
 * The platform's own tension is visible in WP-029: *"Target User: never opened
   a terminal"* next to a delivery mechanism that opens one.
 
@@ -69,14 +71,14 @@ experience, not a GUI copy of the TUI.
 
 ### 4. Theme optionality is preserved
 
-The TUI's theme system (ADR-0018) becomes CSS design tokens (custom
+The TUI's theme system (ADR-018) becomes CSS design tokens (custom
 properties). Themes are sets of token values; light and dark ship by default,
 with a theme gallery possible later. No single "white or grey" monoculture.
 
 ### 5. No-build frontend to start
 
 Hand-crafted HTML/CSS/JS with a design-token system; **no React-ecosystem
-build step** until a proven need (ADR-0013). A static frontend served by the
+build step** until a proven need (ADR-013). A static frontend served by the
 engine is the cheapest thing that scales.
 
 ### 6. Design references (what "pretty but not overkill" looks like)
@@ -94,7 +96,7 @@ engine is the cheapest thing that scales.
 ### Positive
 * Reaches the mission audience: no terminal, no Python, no technical literacy —
   a browser is the one "terminal" every user already knows.
-* **Packaging friction drops** (vs. ADR-0023's TUI-binary plan): no terminal
+* **Packaging friction drops** (vs. ADR-023's TUI-binary plan): no terminal
   dependency on any platform, no console/unicode quirks, and Linux
   double-click works because the browser opens — no terminal needs to attach.
 * **Size story resolves by fiat:** data ships sidecar (`data/` folder), the
@@ -102,7 +104,7 @@ engine is the cheapest thing that scales.
 * Cross-platform simplifies: the engine is already cross-platform, Tauri is
   cross-platform, and the frontend is just HTML/CSS/JS.
 * The TUI investment is preserved and stays valuable as the nightly channel.
-* Aligns with and partially activates ADR-0008's three-tier vision (engine →
+* Aligns with and partially activates ADR-008's three-tier vision (engine →
   local service layer → UI clients).
 
 ### Negative / Trade-offs

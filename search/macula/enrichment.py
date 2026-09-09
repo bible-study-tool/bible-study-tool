@@ -1,4 +1,4 @@
-"""Macula semantic enrichment engine (Pillar B, Goal B3, ADR-0015).
+"""Macula semantic enrichment engine (Pillar B, Goal B3, ADR-015).
 
 Provides:
   1. Empirical Septuagint (LXX) translation-equivalence lookups.

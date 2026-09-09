@@ -1,9 +1,9 @@
-# ADR-0022: Historical-Grammatical Context Layer
+# ADR-022: Historical-Grammatical Context Layer
 
 * Status: Proposed
 * Date: 2026-09-06
 * Deciders: Project Maintainers, Pair Programming Assistant
-* Consulted: [ADR-0001](ADR-0001-deterministic-core-vs-ai.md), [ADR-0010](ADR-0010-wordgraph.md), [ADR-0012](ADR-0012-macula-hebrew-linguistic-integration.md), [ADR-0013](ADR-0013-design-principles-stewardship-and-scalability.md), [ADR-0014](ADR-0014-whole-bible-macula-sqlite-architecture.md), [ADR-0020](ADR-0020-persistent-viewport-workstation-and-comprehension-engine.md)
+* Consulted: [ADR-001](ADR-001-deterministic-core-vs-ai.md), [ADR-010](ADR-010-wordgraph.md), [ADR-012](ADR-012-macula-hebrew-linguistic-integration.md), [ADR-013](ADR-013-design-principles-stewardship-and-scalability.md), [ADR-014](ADR-014-whole-bible-macula-sqlite-architecture.md), [ADR-020](ADR-020-persistent-viewport-workstation-and-comprehension-engine.md)
 * Informs: Future C-pillar (Search & Semantic Engine), D-pillar (UX)
 
 ## Context
@@ -22,8 +22,8 @@ and geographical data *as illumination*, not as authority above the text.
 
 Currently the workstation covers three of the four layers of the historical-grammatical method:
 - ✅ **Grammatical** — Hebrew verbal stems, Greek aspects, morphology (via Macula + WP-024)
-- ✅ **Lexical** — BDB/Abbott-Smith Strong's senses (via WordGraph, ADR-0010)
-- ✅ **Intertextual** — OT→NT citation anchors, LXX crosswalk (via ADR-0012/0015)
+- ✅ **Lexical** — BDB/Abbott-Smith Strong's senses (via WordGraph, ADR-010)
+- ✅ **Intertextual** — OT→NT citation anchors, LXX crosswalk (via ADR-012/0015)
 - ❌ **Historical-geographical** — Author's world, cultural practices, ANE background — **absent**
 
 This gap means a user reading, e.g., John 3 (Nicodemus at night) or Genesis 14 (Lot's rescue)
@@ -49,7 +49,7 @@ historical_context:
   source: "Josephus, Antiquities 18.1.3; cf. DA 167.1"
 ```
 
-- **Pros:** Fully deterministic, peer-reviewable, zero new dependencies, consistent with ADR-0001
+- **Pros:** Fully deterministic, peer-reviewable, zero new dependencies, consistent with ADR-001
   (AI content marked and gated), works today
 - **Cons:** Hand-curation does not scale to 31,102 verses; coverage will be uneven
 - **Verdict:** Best for high-value curated chapters (John 1, 17; Romans; Genesis 1–3)
@@ -64,7 +64,7 @@ sources (all with open or CC licenses):
 |---|---|---|
 | **OpenBible.info Geography** | Lat/lon + description for ~4,000 biblical places | CC BY |
 | **STEPBible TOTHT** (Tyndale OT Historical Text) | Cultural-era tagging per pericope | CC BY-SA 4.0 |
-| **Logos Factbook** | Not open — excluded per ADR-0002 |
+| **Logos Factbook** | Not open — excluded per ADR-002 |
 | **TIPNR** (STEPBible) | Proper Name Registry (people, places, nations) | CC BY 4.0 |
 | **Carta / BibleAtlas** | Map data — check license, some open |
 
@@ -73,7 +73,7 @@ A new inspector tab (e.g., Tab `6`, key `H`) would surface:
 - **Location panel**: Geographical context; place name in Hebrew/Greek; latitude/longitude
 - **Cultural note**: ANE practices, Jewish customs, Roman law relevant to the verse
 
-- **Pros:** Scalable to the whole Bible; consistent with how we integrated Macula (ADR-0012/14)
+- **Pros:** Scalable to the whole Bible; consistent with how we integrated Macula (ADR-012/14)
 - **Cons:** New dependency, new ingestion pipeline, new validator, significant scoping work
 - **Verdict:** The right long-term answer; appropriate for a future work package
 
@@ -101,16 +101,16 @@ Recommended sequencing:
    YAML frontmatter schema (`kc-schema.md`) and seed curated chapters.
 3. **Long-term (new pillar or C-series WP):** Evaluate Option B — `data/history.db` using
    STEPBible TIPNR + OpenBible.info geography, following the Macula ingestion pattern
-   (ADR-0014). Pin upstream commit + SHA-256, add F5 validator, expose in Tab 6.
+   (ADR-014). Pin upstream commit + SHA-256, add F5 validator, expose in Tab 6.
 
 ## Constraints
 
-- All data sources must be open-licensed and pinnable (ADR-0002, ADR-0006).
-- Historical content in verse annotations is subject to AI-content review gates (ADR-0001).
+- All data sources must be open-licensed and pinnable (ADR-002, ADR-006).
+- Historical content in verse annotations is subject to AI-content review gates (ADR-001).
 - No "historical-critical" interpretations may enter the knowledge base: historical data
   illuminates the text; it never overrides or subordinates Scripture. This boundary is explicit
-  in the 1986 "Methods of Bible Study" and in ADR-0001.
-- Scalability to 31,102 verses is non-negotiable (ADR-0013): any Option A annotations
+  in the 1986 "Methods of Bible Study" and in ADR-001.
+- Scalability to 31,102 verses is non-negotiable (ADR-013): any Option A annotations
   must be value-justified (high-traffic passages first).
 
 ## Consequences (if Accepted)

@@ -1,7 +1,7 @@
 """Spirit of Prophecy (EGW) bulk ingestion engine & multi-format parsers.
 
 Supports high-performance ingestion of Ellen G. White writings into the local
-SQLite FTS5 database (data/egw.db) per ADR-0011 and ADR-0013.
+SQLite FTS5 database (data/egw.db) per ADR-011 and ADR-013.
 
 Supported formats:
   1. Plain Text / Markdown (.txt, .md) with inline tokens ({PP 57.1}) or page breaks ([Page 57]).

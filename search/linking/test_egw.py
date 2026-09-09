@@ -1,4 +1,4 @@
-"""Tests for Spirit of Prophecy (EGW) JIT SQLite architecture and CLI (ADR-0011)."""
+"""Tests for Spirit of Prophecy (EGW) JIT SQLite architecture and CLI (ADR-011)."""
 
 from __future__ import annotations
 

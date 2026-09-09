@@ -12,8 +12,8 @@ interactive readline REPL.
 
 ## Inputs (read these first)
 - `ROADMAP.md` (Pillar D: Goals D3, D4)
-- `docs/decisions/ADR-0017-terminal-user-interface-and-unified-study-cli.md`
-- `docs/decisions/ADR-0013-design-principles-stewardship-and-scalability.md`
+- `docs/decisions/ADR-017-terminal-user-interface-and-unified-study-cli.md`
+- `docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md`
 - `search/corpus/extract_kjv.py` (`BibleDB`)
 - `search/macula/db.py` (`MaculaSqliteDB`)
 - `search/macula/enrichment.py` (`get_verse_semantic_frame`, `get_translation_equivalences`)

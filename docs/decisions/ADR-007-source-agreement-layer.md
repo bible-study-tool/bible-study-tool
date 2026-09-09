@@ -1,4 +1,4 @@
-# ADR-0007: Source Agreement Layer (facts -> ledger -> apparatus)
+# ADR-007: Source Agreement Layer (facts -> ledger -> apparatus)
 
 **Status:** Accepted · **Date:** 2026-09-01
 

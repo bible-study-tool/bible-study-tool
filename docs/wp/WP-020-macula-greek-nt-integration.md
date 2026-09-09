@@ -12,10 +12,10 @@ a single, zero-dependency, whole-Bible linguistic knowledge engine across all 66
 
 ## Inputs (read these first)
 - `ROADMAP.md` (Pillar B: Goals B1, B2, B3; Phase 4)
-- `docs/decisions/ADR-0012-macula-hebrew-linguistic-integration.md`
-- `docs/decisions/ADR-0013-design-principles-stewardship-and-scalability.md`
-- `docs/decisions/ADR-0014-whole-bible-macula-sqlite-architecture.md`
-- `docs/decisions/ADR-0015-macula-semantic-enrichment.md`
+- `docs/decisions/ADR-012-macula-hebrew-linguistic-integration.md`
+- `docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md`
+- `docs/decisions/ADR-014-whole-bible-macula-sqlite-architecture.md`
+- `docs/decisions/ADR-015-macula-semantic-enrichment.md`
 - `data/PROVENANCE.md` (upstream Clear-Bible pin)
 - `search/macula/extract.py`
 - `search/macula/extract_greek.py`

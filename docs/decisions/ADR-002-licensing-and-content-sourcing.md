@@ -1,4 +1,4 @@
-# ADR-0002: Dual licensing + link-out content sourcing
+# ADR-002: Dual licensing + link-out content sourcing
 
 **Status:** Accepted · **Date:** 2026-08-31; recorded 2026-09-01
 
@@ -7,7 +7,7 @@
 The project mixes code, original analytical content, public-domain sources,
 and copyrighted SDA materials (EGW writings, SDABC) that must not be
 redistributed. Licenses also cannot enforce doctrinal alignment — that is a
-curation concern (see ADR-0001).
+curation concern (see ADR-001).
 
 ## Decision
 

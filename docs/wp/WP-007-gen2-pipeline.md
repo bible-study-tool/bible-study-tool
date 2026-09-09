@@ -1,13 +1,13 @@
-# WP-007: Book-level pipeline generalization + Genesis 2 skeletons (ADR-0009, part 1)
+# WP-007: Book-level pipeline generalization + Genesis 2 skeletons (ADR-009, part 1)
 
 status: done
-scope: pipeline generalization (per ADR-0009) + Genesis 2 skeleton generation (gen-2-1..25)
+scope: pipeline generalization (per ADR-009) + Genesis 2 skeleton generation (gen-2-1..25)
 priority: high
 
 ## Objective
 
 Generalize the deterministic generation pipeline from the Genesis-1-only
-`build_genesis1.py` to a **book-level** generator (per ADR-0009), then produce
+`build_genesis1.py` to a **book-level** generator (per ADR-009), then produce
 the Genesis 2 skeletons (25 verses) as the pilot output. After this package:
 `gen-2-1-kjv.md` .. `gen-2-25-kjv.md` exist as committed skeletons
 (`status: draft`); `correlations/apparatus-genesis2.json` covers Gen 2:1-25;
@@ -18,7 +18,7 @@ new checksums; all regeneration tripwires + tests are green.
 
 ## Inputs (read these first)
 
-- ADR-0009 (`docs/decisions/ADR-0009-corpus-expansion-model.md`) — the
+- ADR-009 (`docs/decisions/ADR-009-corpus-expansion-model.md`) — the
   governing decision (whole-book generation; genesis1 artifacts stay
   byte-identical).
 - Generator: `search/corpus/build_genesis1.py` (hardcoded: `ch1 = ... chapter == 1`,
@@ -61,7 +61,7 @@ new checksums; all regeneration tripwires + tests are green.
 - AGENTS.md non-negotiables 4 (generated artifacts regenerated, never
   hand-edited; artifact + PROVENANCE checksum committed together) and 2 (one
   step at a time — do NOT begin WP-008 curation in this package).
-- ADR-0009 consequences: genesis1 artifacts stay byte-identical; artifact
+- ADR-009 consequences: genesis1 artifacts stay byte-identical; artifact
   naming goes per-book.
 - Determinism: byte-deterministic generators; no hash-seed ordering.
 

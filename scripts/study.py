@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unified human-friendly CLI and TUI for Adventist Bible Study Tool (WP-021, WP-022, ADR-0017, ADR-0018).
+"""Unified human-friendly CLI and TUI for Adventist Bible Study Tool (WP-021, WP-022, ADR-017, ADR-018).
 
 Provides an integrated, beautiful terminal interface for Scripture reading,
 original language syntactic exploration (Macula), Strong's concordances,

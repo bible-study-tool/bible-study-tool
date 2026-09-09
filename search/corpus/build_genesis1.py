@@ -11,7 +11,7 @@ Everything emitted here is derived from pinned sources (data/PROVENANCE.md):
                           lexicons/tbesh-glosses.json (STEPBible CC BY 4.0,
                           supplementary: modern brief gloss + morphology).
 
-Scope (per ADR-0009): any Genesis chapter, e.g. chapter 1 verses 4-31
+Scope (per ADR-009): any Genesis chapter, e.g. chapter 1 verses 4-31
 (generated; verses 1-3 are the hand-curated MVP entries, never touched) or
 chapter 2 verses 1-25 (whole chapter, all generated).
 

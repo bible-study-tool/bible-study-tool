@@ -1,4 +1,4 @@
-# ADR-0009: Corpus expansion model — whole-book pipeline, per-chapter work packages
+# ADR-009: Corpus expansion model — whole-book pipeline, per-chapter work packages
 
 **Status:** Accepted · **Date:** 2026-09-01
 
@@ -46,5 +46,5 @@ and (c) multiply package overhead as the corpus scales to 1,189 chapters.
 * WP overhead is bounded (~1 WP per chapter, not one per passage); Genesis 2
   (25 verses) is the first large-chapter test of package sizing.
 
-Related: ADR-0001 (deterministic core), ADR-0006 (generated-artifact
-discipline), ADR-0007 (agreement layer).
+Related: ADR-001 (deterministic core), ADR-006 (generated-artifact
+discipline), ADR-007 (agreement layer).

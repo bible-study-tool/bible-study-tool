@@ -10,7 +10,7 @@
 #   ./scripts/bootstrap.sh --ml     # include sentence-transformers (for ML embeddings)
 #   ./scripts/bootstrap.sh --verify # run verify_all.sh after bootstrapping
 #
-# Adheres to ADR-0011 (Automated Bootstrapping & Developer Experience).
+# Adheres to ADR-011 (Automated Bootstrapping & Developer Experience).
 
 set -euo pipefail
 

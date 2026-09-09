@@ -1,4 +1,4 @@
-# ADR-0001: Deterministic core vs AI layer boundary
+# ADR-001: Deterministic core vs AI layer boundary
 
 **Status:** Accepted · **Date:** 2026-08-23 (origin); recorded 2026-09-01
 

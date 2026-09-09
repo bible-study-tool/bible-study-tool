@@ -163,7 +163,7 @@
     "correlations/apparatus-genesis50.json",
     "lexicons/wordgraph-notes-genesis.json"
   ],
-  "identity_model": "Three-layer stack per ADR-0010: token layer (OSHB ids in occurrences), lexeme layer (canonical id = Strong's for the pilot; homograph-suffixed only when split), legacy crosswalk (strongs). Full ETCBC-style homograph numbering arrives with Macula/BHSA; schema is forward-compatible.",
+  "identity_model": "Three-layer stack per ADR-010: token layer (OSHB ids in occurrences), lexeme layer (canonical id = Strong's for the pilot; homograph-suffixed only when split), legacy crosswalk (strongs). Full ETCBC-style homograph numbering arrives with Macula/BHSA; schema is forward-compatible.",
   "honesty_rules": [
     "OSHB n-attribute stored verbatim as counts, never as identity (unreliable as homograph signal).",
     "TBESH variants verbatim; generator never decides sense — the review workflow does.",

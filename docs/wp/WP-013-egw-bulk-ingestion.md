@@ -1,7 +1,7 @@
 # WP-013: Spirit of Prophecy (EGW) Bulk Ingestion Engine & Importers (Pillar A, Goal A7)
 
 status: completed
-scope: Multi-format bulk ingestion (EPUB, TXT/Markdown, JSON, directory batching), high-performance SQLite FTS5 rebuild indexing, and public-domain edition harvester (ADR-0011, ADR-0013).
+scope: Multi-format bulk ingestion (EPUB, TXT/Markdown, JSON, directory batching), high-performance SQLite FTS5 rebuild indexing, and public-domain edition harvester (ADR-011, ADR-013).
 priority: high
 
 ## Objective
@@ -16,8 +16,8 @@ speedup across large books. Provide an automated harvester for verified public-d
 
 ## Inputs (read these first)
 - `ROADMAP.md` (Pillar A: A7)
-- `docs/decisions/ADR-0011-whole-book-scaffolding-and-jit-egw.md`
-- `docs/decisions/ADR-0013-design-principles-stewardship-and-scalability.md`
+- `docs/decisions/ADR-011-whole-book-scaffolding-and-jit-egw.md`
+- `docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md`
 - `NOTICE.md` & `README.md` (sourcing & copyright compliance)
 - `search/linking/egw.py` (core `EgwDB` and SQLite schema)
 - `scripts/egw_lookup.py` (CLI interface)

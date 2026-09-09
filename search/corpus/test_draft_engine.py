@@ -1,4 +1,4 @@
-"""Tests for the WordGraph draft engine (WP-010, ADR-0010).
+"""Tests for the WordGraph draft engine (WP-010, ADR-010).
 
 The engine assembles word-study blocks from the WordGraph — no LLM, no raw
 data/ sources, no direct lexicon/TBESH access. It must be a DROP-IN for

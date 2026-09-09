@@ -1,4 +1,4 @@
-"""Unit tests for search.corpus.grammar_nuance (ADR-0020, WP-024 Phase 2)."""
+"""Unit tests for search.corpus.grammar_nuance (ADR-020, WP-024 Phase 2)."""
 
 from __future__ import annotations
 

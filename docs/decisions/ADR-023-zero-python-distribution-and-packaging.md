@@ -1,7 +1,7 @@
-# ADR-0023: Zero-Python Distribution & Standalone Desktop Packaging (Pillar P)
+# ADR-023: Zero-Python Distribution & Standalone Desktop Packaging (Pillar P)
 
-> **Partially superseded by [ADR-0024](ADR-0024-gui-first-architecture-tui-as-mode.md).**
-> ADR-0024 moves the primary user face from a frozen TUI binary to a local web
+> **Partially superseded by [ADR-024](ADR-024-gui-first-architecture-tui-as-mode.md).**
+> ADR-024 moves the primary user face from a frozen TUI binary to a local web
 > app (engine serving static HTML/CSS/JS on `localhost`; Tauri embedded window
 > later), with the TUI retained as a mode/nightly channel. The copyright
 > boundary, offline-first guarantees, and auto-update behavior in this ADR
@@ -11,7 +11,7 @@
 * **Status:** Proposed
 * **Date:** 2026-09-06
 * **Scope:** Pillar P (Public Distribution), WP-029
-* **Consulted:** AGENTS.md, ROADMAP.md, NOTICE.md, ADR-0002, ADR-0011, ADR-0013, ADR-0017, ADR-0018
+* **Consulted:** AGENTS.md, ROADMAP.md, NOTICE.md, ADR-002, ADR-011, ADR-013, ADR-017, ADR-018
 
 ---
 
@@ -39,7 +39,7 @@ We will build standalone executables using PyInstaller / Nuitka:
   * Open linguistic datasets (`data/macula.db`: Clear-Bible Macula Hebrew WLC and Greek Nestle 1904 syntax trees and morphology).
   * Curated lexicons and concordances (`lexicons/`: BDB, Abbott-Smith, STEPBible TBESH/TBESG, WordGraph).
 * **Excluded from release binary (copyright clean):**
-  * `data/egw.db` is strictly excluded from binary distribution per [NOTICE.md](../../NOTICE.md) and [ADR-0002](ADR-0002-licensing-and-content-sourcing.md).
+  * `data/egw.db` is strictly excluded from binary distribution per [NOTICE.md](../../NOTICE.md) and [ADR-002](ADR-002-licensing-and-content-sourcing.md).
   * Post-install, the user is offered a one-click download of public domain historical editions (pre-1929: 10 works including *The Great Controversy*, *Patriarchs and Prophets*, *The Desire of Ages*).
   * The app includes an explicit, prominent link-out to [egwwritings.org](https://m.egwwritings.org/) for complete research across copyrighted writings.
 

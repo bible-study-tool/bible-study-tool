@@ -1,9 +1,9 @@
-# ADR-0021: New Testament Corpus Generation and Per-Chapter Curation Model
+# ADR-021: New Testament Corpus Generation and Per-Chapter Curation Model
 
 * Status: Accepted
 * Date: 2026-09-06
 * Deciders: Project Maintainers, Pair Programming Assistant
-* Consulted: [ADR-0001](ADR-0001-deterministic-core-vs-ai.md), [ADR-0003](ADR-0003-standard-yaml-frontmatter.md), [ADR-0005](ADR-0005-data-integrity-precedes-scale.md), [ADR-0009](ADR-0009-corpus-expansion-model.md), [ADR-0013](ADR-0013-design-principles-stewardship-and-scalability.md)
+* Consulted: [ADR-001](ADR-001-deterministic-core-vs-ai.md), [ADR-003](ADR-003-standard-yaml-frontmatter.md), [ADR-005](ADR-005-data-integrity-precedes-scale.md), [ADR-009](ADR-009-corpus-expansion-model.md), [ADR-013](ADR-013-design-principles-stewardship-and-scalability.md)
 * Informs: [WP-027](../wp/WP-027-nt-corpus-and-john-curation.md)
 
 ## Context
@@ -41,4 +41,4 @@ Prior to this decision:
 * **Operational**:
   - `search/linking/test_pipeline.py` and semantic indices recognize `book/john` and multi-testament corpus entries without assumption of a Genesis-only dataset.
 * **Trade-offs / Storage Stewardship**:
-  - In accordance with ADR-0013 and ADR-0016, markdown entries are generated per chapter as needed rather than dumping all 7,957 NT verse markdown files into git at once, keeping the repository footprint minimal while whole-Bible text remains available via `data/bible.db`.
+  - In accordance with ADR-013 and ADR-016, markdown entries are generated per chapter as needed rather than dumping all 7,957 NT verse markdown files into git at once, keeping the repository footprint minimal while whole-Bible text remains available via `data/bible.db`.

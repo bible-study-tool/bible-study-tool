@@ -1,4 +1,4 @@
-# ADR-0017: Interactive Terminal User Interface (TUI) and Unified Study CLI
+# ADR-017: Interactive Terminal User Interface (TUI) and Unified Study CLI
 
 **Status:** Accepted · **Date:** 2026-09-04
 
@@ -20,7 +20,7 @@
    `scripts/egw_lookup.py`, `scripts/backup.py`). While functionally sound, this does not
    provide an intuitive, cohesive study experience for a student or pastor sitting down
    to study Scripture.
-3. **Zero-Dependency Constraint (ADR-0013):** Heavy terminal frameworks (e.g. `textual`,
+3. **Zero-Dependency Constraint (ADR-013):** Heavy terminal frameworks (e.g. `textual`,
    `rich`, `prompt_toolkit`) introduce large dependency trees, build wheels, and breaking API
    changes. We require a rock-solid, zero-dependency TUI and CLI built purely on Python's
    standard library (`curses`, `readline`, `sqlite3`, `argparse`) that runs out of the box

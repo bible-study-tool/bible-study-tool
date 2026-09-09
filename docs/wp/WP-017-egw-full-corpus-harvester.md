@@ -1,7 +1,7 @@
 # WP-017: Full Official English EGW Corpus Harvester & Pagination Fidelity (Step 1b)
 
 status: completed
-scope: Automated harvester and high-fidelity pagination parser for the complete official English Ellen G. White corpus from media2.egwwritings.org across 414 publication codes (Pillar A, Goal A7, ADR-0011, ADR-0013).
+scope: Automated harvester and high-fidelity pagination parser for the complete official English Ellen G. White corpus from media2.egwwritings.org across 414 publication codes (Pillar A, Goal A7, ADR-011, ADR-013).
 priority: high
 
 ## Objective
@@ -22,8 +22,8 @@ Implement Step 1b of the complete corpus acquisition and offline-first knowledge
 ## Inputs
 - `ROADMAP.md` (Pillar A, Goal A7)
 - `NOTICE.md` (copyright and sourcing policy)
-- `docs/decisions/ADR-0011-whole-book-scaffolding-and-jit-egw.md`
-- `docs/decisions/ADR-0013-design-principles-stewardship-and-scalability.md`
+- `docs/decisions/ADR-011-whole-book-scaffolding-and-jit-egw.md`
+- `docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md`
 - `search/linking/egw.py`
 - `search/linking/egw_importer.py`
 - `scripts/egw_lookup.py`

@@ -1,4 +1,4 @@
-# WP-009: Build the WordGraph lexical knowledge graph for Genesis (ADR-0010)
+# WP-009: Build the WordGraph lexical knowledge graph for Genesis (ADR-010)
 
 status: done
 scope: wordgraph-genesis.json (Genesis 1-2) — the lemma-centric spine + aggregate-first dictionary
@@ -6,7 +6,7 @@ priority: high
 
 ## Objective
 
-Build the first WordGraph artifact per ADR-0010: a deterministic, lemma-centric
+Build the first WordGraph artifact per ADR-010: a deterministic, lemma-centric
 lexical knowledge graph over Genesis 1-2 that links every word token to a
 lexeme entry carrying morphology, glosses, occurrence index, and cross-source
 metadata — the substrate that (a) the WP-010 draft engine consumes to assemble
@@ -18,7 +18,7 @@ are unchanged.
 
 ## Inputs (read these first)
 
-- ADR-0010 (`docs/decisions/ADR-0010-wordgraph.md`) — the governing decision
+- ADR-010 (`docs/decisions/ADR-010-wordgraph.md`) — the governing decision
   (three-layer identifier stack: token id / lexeme + homograph index / Strong's
   legacy crosswalk; aggregate-first dictionary; Strong's demoted to crosswalk).
 - Existing artifacts (the graph CONSUMES these, never modifies):
@@ -66,7 +66,7 @@ are unchanged.
 
 ## Conventions that apply
 
-- AGENTS.md non-negotiables 4 + 5; ADR-0010 (three-layer stack; aggregate-first).
+- AGENTS.md non-negotiables 4 + 5; ADR-010 (three-layer stack; aggregate-first).
 - Determinism: byte-identical regeneration; no hash-seed ordering.
 - The WordGraph is GENERATED — never hand-edited; curated homograph notes live
   in a separate reviewed input (e.g. `lexicons/wordgraph-notes-genesis.json`,
@@ -92,7 +92,7 @@ are unchanged.
 - **Lexeme identity**: Strong's code for the pilot (Genesis 1-2, ~183 lexemes);
   homograph-suffixed (`H1254.1`/`H1254.2`) only when a split is actually
   needed. Full ETCBC-style numbering arrives with Macula/BHSA — the schema is
-  forward-compatible (per ADR-0010 three-layer stack).
+  forward-compatible (per ADR-010 three-layer stack).
 - **OSHB `n` attribute**: stored verbatim as counts per value, NEVER as
   identity — it proved unreliable as a homograph signal (H216 "light" gets
   n=0 AND n=1 in the same verse; H2896 flips with no sense pattern; H7307 has

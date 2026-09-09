@@ -1,10 +1,10 @@
-# ADR-0016: Two-Tier Storage Architecture and Portable Offline Backup
+# ADR-016: Two-Tier Storage Architecture and Portable Offline Backup
 
 **Status:** Accepted · **Date:** 2026-09-04
 
 ## Context
 
-1. **Bring-Your-Own-Data (BYOD) Legal Boundaries:** Per `NOTICE.md` and ADR-0002,
+1. **Bring-Your-Own-Data (BYOD) Legal Boundaries:** Per `NOTICE.md` and ADR-002,
    copyrighted materials and proprietary commentaries are never bundled in this
    git repository. Furthermore, automated scrapers with synthetic browser headers
    must not be shipped in the public repository to avoid DMCA/ToS exposure. The
@@ -20,7 +20,7 @@
    Hardcoding single-purpose schemas (e.g., `egw_paragraphs`) prevents modular
    expansion and risks schema fragmentation.
 3. **Deterministic Core vs. Local Overlay Separation:** Under `AGENTS.md` Non-negotiable 1
-   and ADR-0001, the deterministic biblical core (`materials/`, `correlations/semantic-links.json`,
+   and ADR-001, the deterministic biblical core (`materials/`, `correlations/semantic-links.json`,
    `lexicons/`) is cryptographically pinned, peer-reviewed, and gated by CI. User-uploaded
    or unvetted personal materials must never silently enter canonical cross-reference
    graphs without explicit human review and canonical vetting.
@@ -99,6 +99,6 @@
 * **Tier 1 Integrity Preserved:** Deterministic Bible core remains clean, vetted,
   and protected from unvetted user data leakage.
 
-Related: ADR-0001 (deterministic core vs AI), ADR-0002 (licensing & BYOD),
-ADR-0004 (SQLite FTS5), ADR-0011 (JIT EGW architecture), ADR-0013 (scalability),
-ADR-0014 (whole-Bible SQLite).
+Related: ADR-001 (deterministic core vs AI), ADR-002 (licensing & BYOD),
+ADR-004 (SQLite FTS5), ADR-011 (JIT EGW architecture), ADR-013 (scalability),
+ADR-014 (whole-Bible SQLite).

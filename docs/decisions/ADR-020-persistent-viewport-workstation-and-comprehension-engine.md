@@ -1,10 +1,10 @@
-# ADR-0020: Persistent Viewport Workstation Architecture & Biblical Comprehension Engine
+# ADR-020: Persistent Viewport Workstation Architecture & Biblical Comprehension Engine
 
 - **Status:** Accepted
 - **Date:** 2026-09-05
 - **Author:** Software Architect & Assistant Pair
 - **Deciders:** Assistant, Project Lead
-- **Consulted:** ADR-0013 (Stewardship, Scale, and Usefulness), ADR-0017 (TUI Architecture), ADR-0018 (Textual Workstation), ADR-0019 (Accessible Linguistics)
+- **Consulted:** ADR-013 (Stewardship, Scale, and Usefulness), ADR-017 (TUI Architecture), ADR-018 (Textual Workstation), ADR-019 (Accessible Linguistics)
 - **Informs:** WP-024
 
 ## Context
@@ -53,6 +53,6 @@ We adopt the **Persistent Viewport Pattern** and a phased **Biblical Comprehensi
   - Cursor stepping latency drops from ~180ms to <1ms (750x speedup), eliminating sticky cursor lag.
   - Zero DOM memory churn on the Python heap during reading.
   - Deep biblical and linguistic understanding is brought to everyday students without academic barriers.
-  - Faithful to ADR-0013: high efficiency, offline deterministic core, scalable to the whole Bible.
+  - Faithful to ADR-013: high efficiency, offline deterministic core, scalable to the whole Bible.
 - **Negative / Trade-offs:**
   - Textual viewports manage Rich renderables instead of native widget trees (simplifies styling and avoids DOM layout overhead).

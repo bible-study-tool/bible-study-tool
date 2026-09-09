@@ -1,4 +1,4 @@
-"""Build script for compiling Macula linguistic data into data/macula.db (ADR-0014).
+"""Build script for compiling Macula linguistic data into data/macula.db (ADR-014).
 
 Compiles whole-Old-Testament syntactic, lexical, and Strong's crosswalk data
 from Clear-Bible Macula Hebrew Lowfat XMLs (all 39 books, 929 chapters) or
@@ -274,7 +274,7 @@ def compile_macula_db(
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Compile Macula SQLite database (ADR-0014).")
+    parser = argparse.ArgumentParser(description="Compile Macula SQLite database (ADR-014).")
     parser.add_argument("--repo", default=".", help="Repository root path")
     parser.add_argument("--from-json", default=None, help="Path to macula JSON artifact to compile from")
     parser.add_argument("--xml-dir", default=None, help="Path to Macula Hebrew Lowfat XML directory (default: data/macula-hebrew)")

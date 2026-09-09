@@ -52,7 +52,7 @@ except ModuleNotFoundError as err:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Spirit of Prophecy (EGW) citation lookup and search CLI (ADR-0011)."
+        description="Spirit of Prophecy (EGW) citation lookup and search CLI (ADR-011)."
     )
     parser.add_argument(
         "token",

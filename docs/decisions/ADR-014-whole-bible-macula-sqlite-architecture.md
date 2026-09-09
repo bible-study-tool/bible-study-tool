@@ -1,17 +1,17 @@
-# ADR-0014: Whole-Bible Macula SQLite Architecture
+# ADR-014: Whole-Bible Macula SQLite Architecture
 
 **Status:** Accepted · **Date:** 2026-09-04
 
 ## Context
 
-1. **Proof-of-Concept vs. Full Canon:** WP-012 and ADR-0012 established our first
+1. **Proof-of-Concept vs. Full Canon:** WP-012 and ADR-012 established our first
    Macula Hebrew integration for Genesis 1–50, generating `lexicons/macula-genesis.json`
    (~2.86 MB). While fast for 50 chapters, scaling this in-memory JSON model across
    all 66 books of the Bible (39 OT Hebrew/Aramaic books + 27 NT Greek books,
    ~31,102 verses, ~550,000 words, ~180,000 syntactic clauses) would produce
    an 80–120 MB monolithic JSON file, consuming significant RAM and causing
    multi-second startup latencies.
-2. **Scalability Mandate (ADR-0013):** "We are doing this for God. So we must do
+2. **Scalability Mandate (ADR-013):** "We are doing this for God. So we must do
    the best we can without being wasteful." We reject shortsighted toy solutions
    that break under the weight of the full biblical canon.
 3. **Relational Syntactic Queries:** Biblical study within the Adventist framework
@@ -50,5 +50,5 @@
 * Preserves byte-for-byte provenance gates for Genesis while paving the highway
   for whole-Bible OT and NT linguistic expansion.
 
-Related: ADR-0001 (deterministic core), ADR-0004 (SQLite search), ADR-0012 (Macula Hebrew),
-ADR-0013 (stewardship and whole-Bible scalability).
+Related: ADR-001 (deterministic core), ADR-004 (SQLite search), ADR-012 (Macula Hebrew),
+ADR-013 (stewardship and whole-Bible scalability).

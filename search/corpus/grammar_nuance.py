@@ -1,4 +1,4 @@
-"""Grammar Nuance Engine (ADR-0020, WP-024 Phase 2).
+"""Grammar Nuance Engine (ADR-020, WP-024 Phase 2).
 
 Decomposes Hebrew (OSHB/ETCBC) and Greek (Macula Greek/Robinson) verbal
 morphology into plain-English theological and linguistic explanations.

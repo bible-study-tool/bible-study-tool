@@ -13,9 +13,9 @@ a zero-dependency whole-Bible text lookup API and CLI (`scripts/bible_lookup.py`
 
 ## Inputs (read these first)
 - `ROADMAP.md` (Pillar A: Goals A2, A3, A6, A9; Phase 3)
-- `docs/decisions/ADR-0009-book-level-pipeline.md`
-- `docs/decisions/ADR-0010-wordgraph-lexical-knowledge-graph.md`
-- `docs/decisions/ADR-0013-design-principles-stewardship-and-scalability.md`
+- `docs/decisions/ADR-009-book-level-pipeline.md`
+- `docs/decisions/ADR-010-wordgraph-lexical-knowledge-graph.md`
+- `docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md`
 - `data/scrollmapper/kjv-osis.xml` (pinned whole-Bible KJV with Strong's tags)
 - `data/PROVENANCE.md`
 - `search/corpus/`

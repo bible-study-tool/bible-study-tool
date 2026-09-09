@@ -1,4 +1,4 @@
-# WP-018: Whole-Bible Macula Linguistic Integration (Pillar B, ADR-0014, ADR-0015)
+# WP-018: Whole-Bible Macula Linguistic Integration (Pillar B, ADR-014, ADR-015)
 
 status: completed
 scope: Generalize Macula Hebrew parsing, versification mapping, and SQLite compilation across the entire Old Testament (all 39 books, 929 chapters, 23,206 verses, 102,124 clauses, 678,091 tokens).
@@ -12,10 +12,10 @@ with low memory footprint (<50 MB RAM), and expand canonical reference lookups a
 
 ## Inputs (read these first)
 - `ROADMAP.md` (Pillar B: Goals B1, B2, B3)
-- `docs/decisions/ADR-0012-macula-hebrew-linguistic-integration.md`
-- `docs/decisions/ADR-0013-design-principles-stewardship-and-scalability.md`
-- `docs/decisions/ADR-0014-whole-bible-macula-sqlite-architecture.md`
-- `docs/decisions/ADR-0015-macula-semantic-enrichment.md`
+- `docs/decisions/ADR-012-macula-hebrew-linguistic-integration.md`
+- `docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md`
+- `docs/decisions/ADR-014-whole-bible-macula-sqlite-architecture.md`
+- `docs/decisions/ADR-015-macula-semantic-enrichment.md`
 - `data/oshb/VerseMap.xml` (pinned OSHB WLC-to-KJV versification mapping)
 - `search/macula/extract.py`
 - `search/macula/db.py`

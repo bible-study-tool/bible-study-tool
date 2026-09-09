@@ -1,4 +1,4 @@
-"""Portable Offline Backup and Restore Engine (ADR-0016).
+"""Portable Offline Backup and Restore Engine (ADR-016).
 
 Provides deterministic, offline-first export and restore of on-device study state
 (Tier 2 SQLite databases, user annotations, and local manifests) into a single,
@@ -270,7 +270,7 @@ def export_backup(
             manifest_data: dict[str, Any] = {
                 "version": CURRENT_BACKUP_VERSION,
                 "mode": mode,
-                "generator": "adventist-bible-study-tool/backup-engine (ADR-0016)",
+                "generator": "adventist-bible-study-tool/backup-engine (ADR-016)",
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "note": note,
                 "file_count": len(files_manifest),

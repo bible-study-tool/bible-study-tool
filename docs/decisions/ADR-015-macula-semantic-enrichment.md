@@ -1,16 +1,16 @@
-# ADR-0015: Macula Semantic Role & Translation-Equivalence Enrichment
+# ADR-015: Macula Semantic Role & Translation-Equivalence Enrichment
 
 - **Status:** Accepted
 - **Date:** 2026-09-04
 - **Author:** Claude (Anthropic) + Antigravity / OpenCode Pair
 - **Pillar:** B (Macula / Linguistic Data Integration) — Goal B3 (Semantic Enrichment)
-- **Supersedes / Extends:** [ADR-0012](ADR-0012-macula-hebrew-linguistic-integration.md), [ADR-0014](ADR-0014-whole-bible-macula-sqlite-architecture.md)
+- **Supersedes / Extends:** [ADR-012](ADR-012-macula-hebrew-linguistic-integration.md), [ADR-014](ADR-014-whole-bible-macula-sqlite-architecture.md)
 
 ---
 
 ## Context
 
-With ADR-0012 and ADR-0014, we successfully ingested the Clear-Bible Macula Hebrew corpus across all 50 chapters of Genesis and implemented a whole-Bible SQLite architecture (`data/macula.db`, 1,533 verses, 7,007 clauses, 17,029 constituents, 43,063 tokens).
+With ADR-012 and ADR-014, we successfully ingested the Clear-Bible Macula Hebrew corpus across all 50 chapters of Genesis and implemented a whole-Bible SQLite architecture (`data/macula.db`, 1,533 verses, 7,007 clauses, 17,029 constituents, 43,063 tokens).
 
 However, until now, semantic linking in the project operated along two disparate tracks:
 1. **Curated Links (`correlations/semantic-links.json`)**: Human-curated conceptual relations (e.g., `sl-001` *rēʾšît* ↔ *archē*, `sl-002` *bārāʾ* ↔ *ktizō*) created manually from theological insights.

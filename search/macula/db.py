@@ -1,6 +1,6 @@
 """Macula SQLite database engine & schema for whole-Bible linguistic and syntactic data.
 
-In accordance with ADR-0013 and ADR-0014, this module implements a disk-backed,
+In accordance with ADR-013 and ADR-014, this module implements a disk-backed,
 zero-dependency SQLite database (data/macula.db) storing normalized verses,
 clauses, phrase constituents, tokens, Strong's-LXX alignments, and SDBH semantic
 domains.

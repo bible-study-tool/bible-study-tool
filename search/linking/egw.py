@@ -1,6 +1,6 @@
 """Spirit of Prophecy (EGW) JIT SQLite database & resolution engine.
 
-In accordance with ADR-0011, this module manages the local, offline SQLite
+In accordance with ADR-011, this module manages the local, offline SQLite
 database (data/egw.db) containing Spirit of Prophecy paragraph text, enabling
 on-demand Just-In-Time (JIT) resolution of canonical citation tokens
 (e.g., 'egw:PP.57.1' -> Patriarchs and Prophets, page 57, paragraph 1).
@@ -8,7 +8,7 @@ on-demand Just-In-Time (JIT) resolution of canonical citation tokens
 Key properties:
   * Canonical token syntax: `egw:BOOK.PAGE.PARAGRAPH` or `BOOK.PAGE.PARAGRAPH`
     (e.g. `egw:PP.57.1`, `DA.19.2`, `GC.582.1`).
-  * Offline-first and license-safe (ADR-0002, NOTICE.md): The repository stores
+  * Offline-first and license-safe (ADR-002, NOTICE.md): The repository stores
     only tokens and fair-use study summaries; full paragraph text lives in the
     local gitignored SQLite database with FTS5 full-text indexing.
   * Fast FTS5 search with BM25 ranking and snippet generation.
@@ -549,7 +549,7 @@ def seed_core_genesis_passages(db: EgwDB) -> int:
 
     Provides a clean, verified, minimal fair-use testing fixture dataset for
     offline development, cross-referencing, and automated verification without
-    distributing copyrighted full volumes (NOTICE.md, ADR-0011). Full study
+    distributing copyrighted full volumes (NOTICE.md, ADR-011). Full study
     materials are user-supplied via `--ingest-json`.
     """
     passages = [

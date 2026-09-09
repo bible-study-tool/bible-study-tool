@@ -1,4 +1,4 @@
-"""Unit tests for Spirit of Prophecy (EGW) bulk importer & parsers (ADR-0011, ADR-0013)."""
+"""Unit tests for Spirit of Prophecy (EGW) bulk importer & parsers (ADR-011, ADR-013)."""
 
 from __future__ import annotations
 

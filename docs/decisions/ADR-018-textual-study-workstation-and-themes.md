@@ -1,10 +1,10 @@
-# ADR-0018: Textual Study Workstation and Theme System
+# ADR-018: Textual Study Workstation and Theme System
 
 **Status:** Accepted · **Date:** 2026-09-04
 
 ## Context
 
-1. **Curses Ceiling (ADR-0017 review):** WP-021 delivered a standard-library curses TUI.
+1. **Curses Ceiling (ADR-017 review):** WP-021 delivered a standard-library curses TUI.
    While zero-dependency, curses reaches immediate structural limits for a serious study
    workstation:
    - Manual coordinate math and text-clipping arithmetic on every window resize.
@@ -17,7 +17,7 @@
    (preserving the user's desktop wallpaper and terminal palette) is highly valued,
    alongside standard beloved developer themes (Dracula, Catppuccin, Tokyo Night, Nord,
    Gruvbox, Solarized).
-3. **Open-Source Standard (ADR-0013):** Textual (built by Textualize / Will McGugan) is the
+3. **Open-Source Standard (ADR-013):** Textual (built by Textualize / Will McGugan) is the
    modern Python standard for terminal desktop applications. It provides full async workers,
    CSS styling (`TCSS`), rich widget hierarchies, and mouse events without requiring a C or
    Rust compilation toolchain.

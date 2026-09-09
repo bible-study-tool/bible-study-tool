@@ -14,13 +14,13 @@ To expand the deterministic offline knowledge base from Old Testament Hebrew Mas
 - `lexicons/tbesg-glosses.json`: STEPBible TBESG contextual Greek glosses.
 - `tags/taxonomy.json`: Project category taxonomy.
 - `ROADMAP.md`: Pillar A3 milestone definition.
-- `docs/decisions/ADR-0021-new-testament-corpus-and-curation.md`: Architecture record.
+- `docs/decisions/ADR-021-new-testament-corpus-and-curation.md`: Architecture record.
 
 ## Conventions that Apply
-- ADR-0001 (Deterministic core vs AI layer boundary).
-- ADR-0003 (Standard YAML frontmatter).
-- ADR-0005 (Data integrity precedes scale).
-- ADR-0009 & ADR-0021 (Per-chapter folder structure and whole-book generation).
+- ADR-001 (Deterministic core vs AI layer boundary).
+- ADR-003 (Standard YAML frontmatter).
+- ADR-005 (Data integrity precedes scale).
+- ADR-009 & ADR-021 (Per-chapter folder structure and whole-book generation).
 
 ## Implementation Tasks
 

@@ -1,4 +1,4 @@
-# ADR-0010: The WordGraph — a lemma-centric lexical knowledge graph
+# ADR-010: The WordGraph — a lemma-centric lexical knowledge graph
 
 **Status:** Accepted · **Date:** 2026-09-01
 
@@ -64,5 +64,5 @@ deterministic spine of word studies:
 * WordGraph is the substrate levers B/C/D/E operate off (claims-checker,
   pre-verified fact-sheets, templates, two-tier review).
 
-Related: ADR-0001 (deterministic core vs AI), ADR-0006 (generated-artifact
-discipline), ADR-0007 (agreement layer), ADR-0009 (book-level pipeline).
+Related: ADR-001 (deterministic core vs AI), ADR-006 (generated-artifact
+discipline), ADR-007 (agreement layer), ADR-009 (book-level pipeline).

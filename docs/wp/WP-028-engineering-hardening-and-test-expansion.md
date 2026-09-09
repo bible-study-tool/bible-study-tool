@@ -26,8 +26,8 @@ Three gaps identified:
 - `scripts/verify_all.sh` — the canonical CI gate
 
 ## Conventions that Apply
-- ADR-0005 (Data integrity precedes scale)
-- ADR-0013 (Stewardship: no bloated test infra; tests must be fast and deterministic)
+- ADR-005 (Data integrity precedes scale)
+- ADR-013 (Stewardship: no bloated test infra; tests must be fast and deterministic)
 - AGENTS.md Non-negotiable 6 (validators gate every change)
 
 ## Implementation Tasks
@@ -35,7 +35,7 @@ Three gaps identified:
 ### Phase 1 — Validator Self-Tests (F1–F4 unit tests)
 - [ ] `search/validation/test_schema.py` — add edge-case property tests:
   - Valid entry with every optional field present → 0 errors
-  - Entry with `historical_context:` block (new ADR-0022 field) → 0 errors (unknown keys ignored)
+  - Entry with `historical_context:` block (new ADR-022 field) → 0 errors (unknown keys ignored)
   - Entry missing `id` → exactly 1 `missing-field` error
   - Entry with `strongs/kjv.go` stale reference pattern → verify F2 catches it
   - Tag with unknown prefix → `unknown-tag` error

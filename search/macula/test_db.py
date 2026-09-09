@@ -1,4 +1,4 @@
-"""Unit and parity tests for Macula SQLite database engine (ADR-0014)."""
+"""Unit and parity tests for Macula SQLite database engine (ADR-014)."""
 
 from __future__ import annotations
 

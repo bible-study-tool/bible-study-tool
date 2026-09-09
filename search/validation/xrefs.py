@@ -114,7 +114,7 @@ def validate_cross_references(entry, entry_index: dict[str, str], egw_db=None) -
                     Issue(entry.id, "unresolved-egw-target", "warning",
                           f"cross_references[{i}] target '{target}' is not found in local data/egw.db")
                 )
-            # If egw_db is not present, token shape is valid per ADR-0011 (no warning/error).
+            # If egw_db is not present, token shape is valid per ADR-011 (no warning/error).
             continue
         # Resolvability for entry ids and passage references.
         if target.strip() in entry_index:

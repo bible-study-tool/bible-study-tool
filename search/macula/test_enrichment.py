@@ -1,4 +1,4 @@
-"""Unit tests for Macula semantic enrichment engine (Pillar B, Goal B3, ADR-0015)."""
+"""Unit tests for Macula semantic enrichment engine (Pillar B, Goal B3, ADR-015)."""
 
 from __future__ import annotations
 

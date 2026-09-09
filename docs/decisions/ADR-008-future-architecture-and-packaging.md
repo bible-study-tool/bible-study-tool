@@ -1,4 +1,4 @@
-# ADR-0008: Future architecture & packaging direction (proposed)
+# ADR-008: Future architecture & packaging direction (proposed)
 
 **Status:** Proposed · **Date:** 2026-09-01
 
@@ -46,5 +46,5 @@ future as the backend of an application; it is **not** an accepted decision.
 * Open sub-decisions (not yet made): UI framework, API framework, packaging
   tool, local-binary distribution channel.
 
-Related: ADR-0001 (deterministic/AI boundary), ADR-0005 (integrity before
-scale), ADR-0006 (provenance/generated artifacts).
+Related: ADR-001 (deterministic/AI boundary), ADR-005 (integrity before
+scale), ADR-006 (provenance/generated artifacts).

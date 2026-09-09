@@ -1,4 +1,4 @@
-# WP-010: Deterministic word-study draft engine (ADR-0010, part 2)
+# WP-010: Deterministic word-study draft engine (ADR-010, part 2)
 
 status: done
 scope: word-study block assembly from the WordGraph + integration into the skeleton generator
@@ -13,7 +13,7 @@ this package: `search/corpus/draft_engine.py` (or the equivalent module)
 consumes `lexicons/wordgraph-genesis.json` and emits the word-study blocks
 byte-identically; the skeleton generator can be pointed at the engine; and a
 new chapter's skeletons are generated with WordGraph-assembled word studies
-(per ADR-0010 consequence: word studies drop from O(verses) LLM cost to
+(per ADR-010 consequence: word studies drop from O(verses) LLM cost to
 O(lexemes) deterministic assembly). This is the production half of the
 "draft engine" idea: the LLM's role shrinks to the genuinely interpretive
 layer (theological connections, summary prose) or disappears for routine
@@ -21,7 +21,7 @@ verses.
 
 ## Inputs (read these first)
 
-- ADR-0010 (governing decision), WP-009 output (`lexicons/wordgraph-genesis.json`).
+- ADR-010 (governing decision), WP-009 output (`lexicons/wordgraph-genesis.json`).
 - Current skeleton generator `search/corpus/build_genesis1.py`
   (`word_study_block`, `build_entry_markdown`, `generate`) — the engine must
   slot in WITHOUT breaking Genesis 1 byte-identity.
@@ -54,7 +54,7 @@ verses.
 ## Conventions that apply
 
 - AGENTS.md non-negotiables 4 + 2 (one step at a time — WP-008 curation begins
-  only after this lands); ADR-0010.
+  only after this lands); ADR-010.
 - Determinism: byte-identical regeneration; no hash-seed ordering.
 - The engine is GENERATED-output code; the graph is its only data input.
 - Do NOT begin WP-008 curation in this package.

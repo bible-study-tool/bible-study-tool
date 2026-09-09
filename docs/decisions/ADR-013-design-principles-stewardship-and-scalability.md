@@ -1,4 +1,4 @@
-# ADR-0013: Design Principles — Stewardship, Excellence, and Scalable Simplicity
+# ADR-013: Design Principles — Stewardship, Excellence, and Scalable Simplicity
 
 **Status:** Accepted · **Date:** 2026-09-04
 
@@ -55,5 +55,5 @@ In engineering practice, this dictates:
   EPUB/text parser structures to ingest millions of words efficiently.
 * The codebase remains robust, fast, portable, and cleanly attributed.
 
-Related: ADR-0001 (deterministic core), ADR-0002 (licensing & sourcing),
-ADR-0004 (SQLite FTS5), ADR-0010 (WordGraph), ADR-0011 (JIT EGW), ADR-0012 (Macula).
+Related: ADR-001 (deterministic core), ADR-002 (licensing & sourcing),
+ADR-004 (SQLite FTS5), ADR-010 (WordGraph), ADR-011 (JIT EGW), ADR-012 (Macula).

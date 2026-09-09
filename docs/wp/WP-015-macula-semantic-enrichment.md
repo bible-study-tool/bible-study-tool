@@ -1,7 +1,7 @@
 # WP-015: Macula Semantic Enrichment (Pillar B, Goal B3)
 
 status: completed
-scope: Semantic enrichment engine (`search/macula/enrichment.py`) connecting Macula syntactic clause roles and empirical Septuagint (LXX) translation equivalences to the semantic linking and candidate discovery pipelines (ADR-0012, ADR-0014, ADR-0015).
+scope: Semantic enrichment engine (`search/macula/enrichment.py`) connecting Macula syntactic clause roles and empirical Septuagint (LXX) translation equivalences to the semantic linking and candidate discovery pipelines (ADR-012, ADR-014, ADR-015).
 priority: high
 
 ## Objective
@@ -15,9 +15,9 @@ Implement Phase 3 of Pillar B (Goal B3):
 - `ROADMAP.md` (Pillar B, Goal B3)
 - `correlations/MACULA_INTEGRATION.md`
 - `correlations/SEMANTIC_LINKING_GUIDE.md`
-- `docs/decisions/ADR-0012-macula-hebrew-linguistic-integration.md`
-- `docs/decisions/ADR-0014-whole-bible-macula-sqlite-architecture.md`
-- `docs/decisions/ADR-0015-macula-semantic-enrichment.md`
+- `docs/decisions/ADR-012-macula-hebrew-linguistic-integration.md`
+- `docs/decisions/ADR-014-whole-bible-macula-sqlite-architecture.md`
+- `docs/decisions/ADR-015-macula-semantic-enrichment.md`
 - `search/macula/lookup.py` & `search/macula/db.py`
 - `search/linking/candidates.py` & `search/linking/cli.py`
 

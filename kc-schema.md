@@ -35,7 +35,7 @@ cross_references:
 semantic_links:
   - sl-001
   - sf-power-strength
-historical_context:             # Optional (ADR-0022 Option A). For curated, high-value passages only.
+historical_context:             # Optional (ADR-022 Option A). For curated, high-value passages only.
   era: "Second Temple period (circa 516 BC – AD 70)"
   location: "Jerusalem, Judea — under Roman occupation"
   cultural_note: "Brief plain-English note on the cultural, political, or geographical circumstance directly relevant to this verse."
@@ -87,9 +87,9 @@ Optional study notes, observations, or questions.
     
 8.  All files are UTF-8 encoded Markdown with YAML frontmatter
 
-9.  `historical_context` is an **optional** block for curated, high-value passages (ADR-0022 Option A).
+9.  `historical_context` is an **optional** block for curated, high-value passages (ADR-022 Option A).
     Sub-fields: `era`, `location`, `cultural_note`, `source`. The `source` must be an
     attributable published source (Josephus, BRI, Patriarchs and Prophets, etc.) — not AI
     speculation. This field illuminates the text; it never overrides or subordinates Scripture.
     Historical-critical presuppositions (denial of miracles, secular source theories) are
-    prohibited per the 1986 SDA "Methods of Bible Study" and ADR-0001.
+    prohibited per the 1986 SDA "Methods of Bible Study" and ADR-001.

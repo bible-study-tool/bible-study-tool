@@ -1,4 +1,4 @@
-# ADR-0005: Data integrity precedes scale
+# ADR-005: Data integrity precedes scale
 
 **Status:** Accepted · **Date:** 2026-08-27; recorded 2026-09-01
 

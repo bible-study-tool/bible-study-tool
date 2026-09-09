@@ -53,4 +53,4 @@ John wrote during the **late Second Temple period's aftermath** — after the de
 
 ---
 
-*For study methods grounded in this historical context, see [How to Study the Bible Deeply](../../docs/HOW_TO_STUDY_THE_BIBLE.md). For planned tool integration of historical-geographical data, see [ADR-0022](../../docs/decisions/ADR-0022-historical-grammatical-context-layer.md).*
+*For study methods grounded in this historical context, see [How to Study the Bible Deeply](../../docs/HOW_TO_STUDY_THE_BIBLE.md). For planned tool integration of historical-geographical data, see [ADR-022](../../docs/decisions/ADR-022-historical-grammatical-context-layer.md).*

@@ -1,4 +1,4 @@
-# ADR-0003: Standard `---` YAML frontmatter as the entry format
+# ADR-003: Standard `---` YAML frontmatter as the entry format
 
 **Status:** Accepted · **Date:** 2026-08-27; recorded 2026-09-01
 

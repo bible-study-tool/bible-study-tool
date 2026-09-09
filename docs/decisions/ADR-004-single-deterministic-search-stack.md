@@ -1,4 +1,4 @@
-# ADR-0004: Single deterministic search stack (SQLite FTS5)
+# ADR-004: Single deterministic search stack (SQLite FTS5)
 
 **Status:** Accepted · **Date:** 2026-08-27; recorded 2026-09-01
 

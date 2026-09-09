@@ -9,9 +9,9 @@ Deliver a fast, fluid, modern terminal application for in-depth Scripture study,
 
 ## Inputs (read these first)
 - `ROADMAP.md` (Pillar D: Goals D3, D4)
-- `docs/decisions/ADR-0018-textual-study-workstation-and-themes.md`
-- `docs/decisions/ADR-0017-terminal-user-interface-and-unified-study-cli.md`
-- `docs/decisions/ADR-0013-design-principles-stewardship-and-scalability.md`
+- `docs/decisions/ADR-018-textual-study-workstation-and-themes.md`
+- `docs/decisions/ADR-017-terminal-user-interface-and-unified-study-cli.md`
+- `docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md`
 - `search/ui/study_service.py` (`StudyService`)
 - `search/corpus/extract_kjv.py` (`BibleDB`)
 - `search/macula/db.py` (`MaculaSqliteDB`)

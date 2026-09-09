@@ -1,4 +1,4 @@
-# ADR-0006: Source pinning + generated-artifact discipline
+# ADR-006: Source pinning + generated-artifact discipline
 
 **Status:** Accepted · **Date:** 2026-08-31; recorded 2026-09-01
 

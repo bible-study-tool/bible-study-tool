@@ -89,7 +89,7 @@ A few practical questions to ask for every passage:
 
 > *Example:* Jeremiah 29:11 ("For I know the plans I have for you...") is one of the most quoted verses in popular Christianity. But it was written to Israel being carried into Babylonian captivity — a specific promise to a specific nation at a specific crisis point. Understanding the context does not diminish the verse; it deepens it and prevents misapplication.
 
-> **Note on tool support:** Historical-geographical context is the one layer of the historical-grammatical method not yet fully integrated into this workstation. It is being planned (see [ADR-0022](decisions/ADR-0022-historical-grammatical-context-layer.md)). Until then, the best free resources are the [OpenBible.info Geography tool](https://www.openbible.info/geo/) and the [Biblical Research Institute](https://www.adventistbiblicalresearch.org) for cultural and theological background.
+> **Note on tool support:** Historical-geographical context is the one layer of the historical-grammatical method not yet fully integrated into this workstation. It is being planned (see [ADR-022](decisions/ADR-022-historical-grammatical-context-layer.md)). Until then, the best free resources are the [OpenBible.info Geography tool](https://www.openbible.info/geo/) and the [Biblical Research Institute](https://www.adventistbiblicalresearch.org) for cultural and theological background.
 
 ### Principle 3: The Christ-Centered Thread
 

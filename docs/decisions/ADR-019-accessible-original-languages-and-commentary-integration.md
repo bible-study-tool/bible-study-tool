@@ -1,15 +1,15 @@
-# ADR-0019: Human-Accessible Original Language Framing and Direct Commentary Navigation
+# ADR-019: Human-Accessible Original Language Framing and Direct Commentary Navigation
 
 - **Status:** Accepted
 - **Date:** 2026-09-04
 - **Author:** Assistant & User Pair
 - **Deciders:** Assistant, Project Lead
-- **Consulted:** ADR-0013 (Stewardship, Scale, and Usefulness), ADR-0017 (TUI Architecture), ADR-0018 (Textual Workstation)
+- **Consulted:** ADR-013 (Stewardship, Scale, and Usefulness), ADR-017 (TUI Architecture), ADR-018 (Textual Workstation)
 - **Informs:** WP-023
 
 ## Context
 
-Following the initial delivery of the Textual study workstation (ADR-0018, WP-022), user evaluation identified critical usability friction in how original language data and Spirit of Prophecy commentary are presented:
+Following the initial delivery of the Textual study workstation (ADR-018, WP-022), user evaluation identified critical usability friction in how original language data and Spirit of Prophecy commentary are presented:
 
 1. **Linguistic Inaccessibility:** The Macula Syntax & Participant Frames tab and Strong's Lexicon tab previously displayed content solely in raw Hebrew (square script) and Greek (polytonic). While linguistically precise, this created a barrier for students and readers who cannot read biblical Hebrew or Greek. The data was present in the underlying corpus, but opaque to the user.
 2. **Concordance Mapping Friction:** Users had to manually toggle Strong's concordance tags on the Scripture reader to identify which English words corresponded to which lexical cards in the inspector pane. Furthermore, Septuagint (LXX) translation equivalences listed only Greek lemmas without English definitions, obscuring theological cross-testament connections (e.g. Hebrew *bara* ➔ Greek *poieo* / *ktizo*).
@@ -39,6 +39,6 @@ We commit to the principle that **rigorous scholarly data must always be paired 
   - Non-Hebrew/Greek readers can immediately understand syntactic roles and cross-testament word usage.
   - Zero-friction alignment between English Scripture and Strong's lexicons.
   - Full-text reading of Ellen G. White commentary directly inside the workstation.
-  - Upholds ADR-0013 stewardship by making deep scholarship accessible to everyday Bible students.
+  - Upholds ADR-013 stewardship by making deep scholarship accessible to everyday Bible students.
 - **Negative / Trade-offs:**
   - Slightly more screen real estate required per clause in the inspector pane (handled via existing scrolling).

@@ -5,13 +5,13 @@ scope: Enhance Textual study workstation and core services with dual-layered ori
 priority: high
 
 ## Objective
-Remove linguistic barriers for Bible students who do not read Hebrew or Greek, eliminate concordance lookup friction, and enable full-text Spirit of Prophecy reading directly within the study workstation (per ADR-0013 and ADR-0019).
+Remove linguistic barriers for Bible students who do not read Hebrew or Greek, eliminate concordance lookup friction, and enable full-text Spirit of Prophecy reading directly within the study workstation (per ADR-013 and ADR-019).
 
 ## Inputs
 - `ROADMAP.md` (Pillars A, B, D)
-- `docs/decisions/ADR-0019-accessible-original-languages-and-commentary-integration.md`
-- `docs/decisions/ADR-0018-textual-study-workstation-and-themes.md`
-- `docs/decisions/ADR-0013-design-principles-stewardship-and-scalability.md`
+- `docs/decisions/ADR-019-accessible-original-languages-and-commentary-integration.md`
+- `docs/decisions/ADR-018-textual-study-workstation-and-themes.md`
+- `docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md`
 - `search/ui/study_service.py`
 - `search/ui/app.py`
 - `search/linking/egw.py`

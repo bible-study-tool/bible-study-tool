@@ -1,6 +1,6 @@
 # Work Packages — Index
 
-Curation of Genesis drafts per chapter (ADR-0009). Each package is
+Curation of Genesis drafts per chapter (ADR-009). Each package is
 self-contained: a session needs only `AGENTS.md` + the package file. Format:
 see `TEMPLATE.md`.
 
@@ -17,15 +17,15 @@ entries `draft` -> `review`.
 | [WP-004](WP-004-gen1-day4.md) | v14-19 | Day 4 (luminaries, appointed times) | done |
 | [WP-005](WP-005-gen1-day5.md) | v20-23 | Day 5 (sea creatures, birds) | done |
 | [WP-006](WP-006-gen1-day6.md) | v24-31 | Day 6 (land animals, humanity, dominion) | done |
-| [WP-007](WP-007-gen2-pipeline.md) | Gen 2 (25 verses) | Book-level pipeline generalization + Genesis 2 skeletons (ADR-0009) | done |
-| [WP-009](WP-009-wordgraph.md) | WordGraph | Build the WordGraph lexical knowledge graph for Genesis (ADR-0010) | done |
-| [WP-010](WP-010-draft-engine.md) | Draft engine | Deterministic word-study draft engine consuming the WordGraph (ADR-0010) | done |
-| [WP-008](WP-008-gen2-sabbath.md) | Gen 2:1-25 | Curate Genesis 2 — Eden, the man and woman, the seventh-day Sabbath (ADR-0009) | done |
-| [WP-011](WP-011-gen3-fall.md) | Gen 3:1-24 | Curate Genesis 3 — the Fall (ADR-0009) | done |
-| [WP-012](WP-012-macula-integration.md) | Pillar B (B1) | Macula Hebrew Linguistic Integration & Strong's-LXX Crosswalk (ADR-0012) | done |
-| [WP-013](WP-013-egw-bulk-ingestion.md) | Pillar A (A7) | Spirit of Prophecy (EGW) Bulk Ingestion Engine & Importers (ADR-0011, ADR-0013) | done |
-| [WP-014](WP-014-whole-bible-macula-sqlite.md) | Pillar B (B2) | Whole-Bible Macula SQLite Architecture (ADR-0013, ADR-0014) | done |
-| [WP-015](WP-015-macula-semantic-enrichment.md) | Pillar B (B3) | Macula Semantic Role & Translation-Equivalence Enrichment (ADR-0015) | done |
+| [WP-007](WP-007-gen2-pipeline.md) | Gen 2 (25 verses) | Book-level pipeline generalization + Genesis 2 skeletons (ADR-009) | done |
+| [WP-009](WP-009-wordgraph.md) | WordGraph | Build the WordGraph lexical knowledge graph for Genesis (ADR-010) | done |
+| [WP-010](WP-010-draft-engine.md) | Draft engine | Deterministic word-study draft engine consuming the WordGraph (ADR-010) | done |
+| [WP-008](WP-008-gen2-sabbath.md) | Gen 2:1-25 | Curate Genesis 2 — Eden, the man and woman, the seventh-day Sabbath (ADR-009) | done |
+| [WP-011](WP-011-gen3-fall.md) | Gen 3:1-24 | Curate Genesis 3 — the Fall (ADR-009) | done |
+| [WP-012](WP-012-macula-integration.md) | Pillar B (B1) | Macula Hebrew Linguistic Integration & Strong's-LXX Crosswalk (ADR-012) | done |
+| [WP-013](WP-013-egw-bulk-ingestion.md) | Pillar A (A7) | Spirit of Prophecy (EGW) Bulk Ingestion Engine & Importers (ADR-011, ADR-013) | done |
+| [WP-014](WP-014-whole-bible-macula-sqlite.md) | Pillar B (B2) | Whole-Bible Macula SQLite Architecture (ADR-013, ADR-014) | done |
+| [WP-015](WP-015-macula-semantic-enrichment.md) | Pillar B (B3) | Macula Semantic Role & Translation-Equivalence Enrichment (ADR-015) | done |
 | [WP-016](WP-016-egw-public-domain-corpus.md) | Pillar A (A7) | Spirit of Prophecy (EGW) Public Domain Corpus Expansion (Step 1a) | done |
 | [WP-017](WP-017-egw-full-corpus-harvester.md) | Pillar A (A7) | Full Official English EGW Corpus Harvester & Pagination Fidelity (Step 1b) | done |
 | [WP-018](WP-018-whole-bible-macula.md) | Pillar B (B1-B3) | Whole-Bible Macula Linguistic Integration (Step 2) | done |

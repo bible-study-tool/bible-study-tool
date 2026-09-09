@@ -150,7 +150,7 @@ SHA-256:
 | Pinned commit | `47db250bd55d0d8577f2a94fba114ef16c35b23c` (master, 2024-04-18) |
 | Path | `WLC/lowfat/` (929 chapters from `01-Gen-001-lowfat.xml` through `39-Mal-003-lowfat.xml`) |
 | License | **CC BY 4.0** (Creative Commons Attribution 4.0 International) — Clear-Bible project. Compatible with project CC BY 4.0 content license. |
-| Feeds | `data/macula.db` (ADR-0014 normalized whole-OT SQLite relational database, 23,206 verses, 102,118 clauses, 678,077 tokens, 8,193 crosswalk entries) via `python -m search.macula.build_db` and `lexicons/macula-genesis.json` (ADR-0012 offline gate artifact) via `python -m search.macula.build_crosswalk`. Extracted XML lives in `data/macula-hebrew/` (gitignored; reproduced by `scripts/fetch_sources.sh`). |
+| Feeds | `data/macula.db` (ADR-014 normalized whole-OT SQLite relational database, 23,206 verses, 102,118 clauses, 678,077 tokens, 8,193 crosswalk entries) via `python -m search.macula.build_db` and `lexicons/macula-genesis.json` (ADR-012 offline gate artifact) via `python -m search.macula.build_crosswalk`. Extracted XML lives in `data/macula-hebrew/` (gitignored; reproduced by `scripts/fetch_sources.sh`). |
 
 SHA-256:
 
@@ -386,14 +386,14 @@ ddf91bfb10097b9cf4c9e06c6224a8479f1c60d45fbd9d1eea25a63135f25b48  ../correlation
 30430b875edbba109af0d9aecfd9294733dcc9a384817ed9f901b822c74f0310  ../correlations/apparatus-genesis50.json
 ```
 
-The WordGraph lexical knowledge graph (ADR-0010) regenerates byte-identically
+The WordGraph lexical knowledge graph (ADR-010) regenerates byte-identically
 as well (consumes committed artifacts only — no raw sources):
 
 ```
-0d84ce85d40f2a731e473181b01d609c4d6f042bae36aacfad838147beccc01a  ../lexicons/wordgraph-genesis.json
+080efd7347446dc2d12b7eecb14c1146d57c2e5c794d897ad5babf6b9fa4c06a  ../lexicons/wordgraph-genesis.json
 ```
 
-The Macula Hebrew linguistic and syntactic artifact (ADR-0012) regenerates byte-identically:
+The Macula Hebrew linguistic and syntactic artifact (ADR-012) regenerates byte-identically:
 
 ```
 63ca95993aab448ea1f7f549d849da70040812069aca6bbd5dd4154f6984930f  ../lexicons/macula-genesis.json
@@ -457,10 +457,10 @@ python -c "from search.agreement.apparatus import write_apparatus; write_apparat
 python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.', out_path='correlations/apparatus-genesis2.json', chapters=(2,))"  # Genesis 2
 python -c "from search.agreement.apparatus import write_apparatus; write_apparatus('.', out_path='correlations/apparatus-genesis3.json', chapters=(3,))"  # Genesis 3
 
-# 9. Regenerate the WordGraph lexical knowledge graph (ADR-0010)
+# 9. Regenerate the WordGraph lexical knowledge graph (ADR-010)
 python -m search.corpus.build_wordgraph --repo .
 
-# 10. Regenerate the Macula Hebrew linguistic and syntactic artifact (ADR-0012)
+# 10. Regenerate the Macula Hebrew linguistic and syntactic artifact (ADR-012)
 python -m search.macula.build_crosswalk --repo .
 ```
 

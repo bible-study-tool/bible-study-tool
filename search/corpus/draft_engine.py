@@ -1,11 +1,11 @@
-"""Deterministic word-study draft engine (WP-010, ADR-0010).
+"""Deterministic word-study draft engine (WP-010, ADR-010).
 
 Consumes the WordGraph (``lexicons/wordgraph-genesis.json``) and renders the
 word-study block layer of a verse entry — the same ``### <word> - Strong's
 <code>`` format produced by ``build_genesis1.word_study_block``, assembled
 from the graph's per-lexeme ``word_study`` records instead of the raw
 lexicons. No LLM, no raw data/ sources, no direct lexicon/TBESH access: the
-graph is the engine's only data input (per ADR-0010 consequence: word studies
+graph is the engine's only data input (per ADR-010 consequence: word studies
 drop from O(verses) LLM cost to O(lexemes) deterministic assembly).
 
 The engine is a DROP-IN for ``word_study_block``: for the Genesis 1-2 verses

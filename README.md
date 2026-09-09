@@ -63,8 +63,8 @@ bible-study-tool/
 ├── docs/                # Decisions (ADRs), work packages (WPs), USER_GUIDE.md
 │   ├── USER_GUIDE.md              # Friendly tutorial & study walkthrough for anyone
 │   ├── WORKFLOW.md                # Engineering workflow and session practices
-│   ├── decisions/                 # Architecture Decision Records (ADR-0001..0021)
-│   └── wp/                        # Work package specifications (WP-001..027)
+│   ├── decisions/                 # Architecture Decision Records (ADR-001..024)
+│   └── wp/                        # Work package specifications (WP-001..029)
 ├── search/              # Python search, linking, corpus, UI & agreement layers
 │   ├── ui/              # Modern Textual study workstation, themes, and study shell
 │   ├── corpus/          # Genesis & NT builders, grammar nuances, discourse flow, citations
@@ -152,7 +152,7 @@ bash scripts/verify_all.sh
 
 ## Sourcing External Materials (What We Provide & What You Supply)
 
-A foundational architectural principle of this project is: **"Link out, don't redistribute"** ([NOTICE.md](NOTICE.md), [ADR-0002](docs/decisions/ADR-0002-licensing-and-content-sourcing.md), [ADR-0011](docs/decisions/ADR-0011-whole-book-scaffolding-and-jit-egw.md)). This keeps the Git repository 100% license-clean under MIT and CC BY 4.0 while enabling powerful, offline, full-text research.
+A foundational architectural principle of this project is: **"Link out, don't redistribute"** ([NOTICE.md](NOTICE.md), [ADR-002](docs/decisions/ADR-002-licensing-and-content-sourcing.md), [ADR-011](docs/decisions/ADR-011-whole-book-scaffolding-and-jit-egw.md)). This keeps the Git repository 100% license-clean under MIT and CC BY 4.0 while enabling powerful, offline, full-text research.
 
 ### What is bundled in the repository:
 * **The Bible Text**: Whole-Bible 66 books (31,102 verses) stored in normalized local SQLite (`data/bible.db`) containing the King James Version (KJV 1769 with Strong's tags), Berean Standard Bible (BSB 2020), American Standard Version (ASV 1901), and Young's Literal Translation (YLT 1898).
@@ -314,7 +314,7 @@ Packaging metadata lives in `pyproject.toml`.
 
 ## Macula Linguistic Dataset Integration
 
-Macula Hebrew and Greek linguistic annotations are integrated directly into `data/macula.db` (ADR-0012, ADR-0014, ADR-0015, ADR-0020). This provides sub-millisecond offline access to syntax clause trees, participant semantic roles (Agent, Action, Patient, Context), empirical Septuagint (LXX) translation equivalences, and Louw-Nida semantic domains across both Testaments.
+Macula Hebrew and Greek linguistic annotations are integrated directly into `data/macula.db` (ADR-012, ADR-014, ADR-015, ADR-020). This provides sub-millisecond offline access to syntax clause trees, participant semantic roles (Agent, Action, Patient, Context), empirical Septuagint (LXX) translation equivalences, and Louw-Nida semantic domains across both Testaments.
 
 ## Key Design & Study Documents
 
