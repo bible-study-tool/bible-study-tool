@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from pathlib import Path
 
 
 def _load(repo: str):
@@ -35,7 +36,7 @@ def _db(repo: str, db_path: str, force: bool):
     """Build the SQLite index from Markdown (authoritative), then return SemanticDB."""
     from .dbindex import SemanticDB, build_index
 
-    if force or not db_path or not __import__("pathlib").Path(db_path).exists():
+    if force or not db_path or not Path(db_path).exists():
         build_index(repo=repo, db_path=db_path)
     return SemanticDB(repo_root=repo, db_path=db_path)
 

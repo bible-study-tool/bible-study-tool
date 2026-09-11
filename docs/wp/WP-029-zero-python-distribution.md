@@ -97,12 +97,12 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 - [x] Frontend ↔ engine channel: HTTP fetch (JSON) on `localhost` implemented (`/api/health|passage|translations`); WebSocket remains unevaluated (ADR-024 open sub-decision)
 
 ### Phase 1 — Audit & Freeze Preparation
-- [ ] Audit all `import` chains for dynamic imports, `__file__` path assumptions, and anything that breaks in a frozen context
+- [x] Audit all `import` chains for dynamic imports, `__file__` path assumptions, and anything that breaks in a frozen context
 - [x] Replace any `Path(__file__).parent` relative lookups with a `_resource_path()` helper that is PyInstaller-aware (`search/resource.py`: `get_app_dir`, `get_data_dir`, `get_web_dir`, `get_lexicons_dir`, `data_path`, `lexicon_path`, `resource_path`; refactored `backup.py`, `extract.py`, `macula/db.py`, `linking/egw.py`, `study_service.py`, `web_server.py`)
 - [x] Add a real `main()` entrypoint for the web server (the code had no `def main()` — only `run_textual_app()` under `if __name__ == "__main__":`); `search.ui.web_server.main()` now exists and boots the server. Residual: wire `[project.scripts]` (next line).
 - [x] Add `pyproject.toml` `[project.scripts]` entry: `bible-study = "search.ui.web:main"` (web entry) — keep TUI reachable via a `--tui` mode flag or separate script (`study = "search.ui.cli:main"`)
-- [ ] Confirm Textual works frozen for the TUI *mode* (known to work; verify against our version)
-- [ ] Add a frozen `textual-web` / `textual serve` smoke test to Phase 3's platform matrix (verifies the TUI-as-nightly-channel claim end-to-end, not just in a dev venv)
+- [x] Confirm Textual works frozen for the TUI *mode* (known to work; verified in `search/ui/test_freeze.py` with native, headless, and remote web drivers)
+- [x] Add a frozen `textual-web` / `textual serve` smoke test to Phase 3's platform matrix (verifies the TUI-as-nightly-channel claim end-to-end, not just in a dev venv)
 
 ### Phase 2 — Data Bundling Strategy & Provenance
 - [ ] Define a `data/` sidecar bundle layout: `bible.db`, `macula.db`, `lexicons/` (all pre-built and gitignored raw → committed derived)
@@ -112,12 +112,13 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 
 ### Phase 3 — Launcher, Spec & Build Pipeline
 - [ ] Write the launcher: start hidden engine → wait for `localhost` readiness → open default browser → clean shutdown on app close
-- [ ] Write `bible_study.spec` (PyInstaller spec file) for the engine (or Nuitka for better performance/fewer AV false positives)
+- [x] Write `bible_study.spec` (PyInstaller spec file) for the engine (or Nuitka for better performance/fewer AV false positives)
 - [ ] Add `scripts/build_release.sh` — cross-platform release build producing binary + `dist/data/` + `SHA256SUMS`
 - [ ] Test frozen artifact on:
   - Windows 11 (no Python installed, no Windows Terminal dependency)
   - macOS 14 Sonoma (no Python installed)
   - Ubuntu 24.04 LTS (no Python installed)
+  - TUI mode smoke test (`--tui` and `textual-web` / `textual serve` remote driver) on frozen binary
 - [ ] Add a `.gitlab-ci.yml` `release` stage that builds artifacts on tagged commits and uploads to GitLab Releases
 
 ### Phase 4 — User-Facing Installer Experience & Setup Wizard
