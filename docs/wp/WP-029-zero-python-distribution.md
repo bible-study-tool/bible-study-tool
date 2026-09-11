@@ -100,7 +100,7 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 - [ ] Audit all `import` chains for dynamic imports, `__file__` path assumptions, and anything that breaks in a frozen context
 - [x] Replace any `Path(__file__).parent` relative lookups with a `_resource_path()` helper that is PyInstaller-aware (`search/resource.py`: `get_app_dir`, `get_data_dir`, `get_web_dir`, `get_lexicons_dir`, `data_path`, `lexicon_path`, `resource_path`; refactored `backup.py`, `extract.py`, `macula/db.py`, `linking/egw.py`, `study_service.py`, `web_server.py`)
 - [x] Add a real `main()` entrypoint for the web server (the code had no `def main()` — only `run_textual_app()` under `if __name__ == "__main__":`); `search.ui.web_server.main()` now exists and boots the server. Residual: wire `[project.scripts]` (next line).
-- [ ] Add `pyproject.toml` `[project.scripts]` entry: `bible-study = "search.ui.web:main"` (web entry) — keep TUI reachable via a `--tui` mode flag or separate script
+- [x] Add `pyproject.toml` `[project.scripts]` entry: `bible-study = "search.ui.web:main"` (web entry) — keep TUI reachable via a `--tui` mode flag or separate script (`study = "search.ui.cli:main"`)
 - [ ] Confirm Textual works frozen for the TUI *mode* (known to work; verify against our version)
 - [ ] Add a frozen `textual-web` / `textual serve` smoke test to Phase 3's platform matrix (verifies the TUI-as-nightly-channel claim end-to-end, not just in a dev venv)
 

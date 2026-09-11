@@ -99,6 +99,7 @@ function renderPassage(p) {
   renderTranslations(p);
   els.hint.textContent = "";
   els.statusLeft.textContent = p.ref;
+  els.input.value = p.ref;
 }
 
 function renderTranslations(pass) {
@@ -160,6 +161,8 @@ for (const tab of els.tabs) {
   });
 }
 
-loadThemes().then(() => navigate("Genesis 1:1-3")).catch((err) => {
+const urlParams = new URLSearchParams(window.location.search);
+const initialRef = urlParams.get("ref") || "Genesis 1:1-3";
+loadThemes().then(() => navigate(initialRef)).catch((err) => {
   showError("Engine not reachable — is the local server running? " + err.message);
 });
