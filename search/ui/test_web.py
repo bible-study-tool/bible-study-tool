@@ -58,6 +58,14 @@ class WebServerTests(unittest.TestCase):
         self.assertIn("text/html", ctype)
         self.assertIn(b"Adventist Bible Study Tool", body)
 
+    def test_head_request_supported(self) -> None:
+        req = urllib.request.Request(self.base + "/", method="HEAD")
+        with urllib.request.urlopen(req, timeout=15) as res:
+            self.assertEqual(res.status, 200)
+            self.assertIn("text/html", res.headers.get_content_type())
+            self.assertEqual(res.read(), b"")
+            self.assertGreater(int(res.headers.get("Content-Length", 0)), 0)
+
     def test_stylesheet_served(self) -> None:
         status, body, ctype = self._get("/styles.css")
         self.assertEqual(status, 200)

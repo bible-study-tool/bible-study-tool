@@ -19,7 +19,9 @@ import tarfile
 import tempfile
 from typing import Any
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+from search.resource import get_repo_root
+
+REPO_ROOT = get_repo_root()
 BACKUP_MANIFEST_NAME = "backup_manifest.json"
 CURRENT_BACKUP_VERSION = "1.0"
 

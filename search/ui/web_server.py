@@ -28,9 +28,9 @@ from urllib.parse import parse_qs, urlparse
 from search.ui.study_service import StudyService
 from search.ui.themes import DEFAULT_THEME, THEMES
 
-# Path(__file__) == search/ui/web_server.py -> parents[2] == repo root.
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-WEB_ROOT = _REPO_ROOT / "web"
+from search.resource import get_web_dir
+
+WEB_ROOT = get_web_dir()
 
 # Web-native themes beyond the TUI palettes: always present in the catalog so
 # the theme dropdown and persisted prefs can select them (light is the default
@@ -138,7 +138,8 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
             self.send_header("Content-Length", str(len(body)))
             self.send_header("Cache-Control", "no-store")
             self.end_headers()
-            self.wfile.write(body)
+            if self.command != "HEAD":
+                self.wfile.write(body)
 
         def _reply_json(self, code: int, payload: dict[str, Any]) -> None:
             text = json.dumps(payload, indent=2, ensure_ascii=False).encode("utf-8")
@@ -165,6 +166,9 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 ".js": "application/javascript; charset=utf-8",
             }.get(target.suffix, "application/octet-stream")
             self._reply(HTTPStatus.OK, target.read_bytes(), ctype)
+
+        def do_HEAD(self) -> None:  # noqa: N802 (http.server naming)
+            self.do_GET()
 
         def do_GET(self) -> None:  # noqa: N802 (http.server naming)
             parsed = urlparse(self.path)

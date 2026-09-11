@@ -18,6 +18,7 @@ from typing import Any, Iterable, Iterator
 import xml.etree.ElementTree as ET
 
 from search.corpus.bible_books import resolve_book_code
+from search.resource import resource_path
 
 _HEBREW_RE = re.compile(r"^[Hh]?0*(\d+)[a-zA-Z]?$")
 _GREEK_RE = re.compile(r"^[Gg]?0*(\d+)[a-zA-Z]?$")
@@ -292,7 +293,9 @@ def get_versification_map(versemap_path: Path | str | None = None) -> tuple[dict
         # 1. Primary: explicitly passed versemap_path or data/oshb/VerseMap.xml
         # 2. Tier 2: search/fixtures/versemap.json.gz (headless CI / packaged release)
         # 3. Tier 3: _PS_1TITLE_DEFAULT + Malachi/Genesis baseline (zero-fixture fallback)
-        bundled = Path(__file__).resolve().parent.parent / "fixtures" / "versemap.json.gz"
+        bundled = resource_path("search/fixtures/versemap.json.gz")
+        if not bundled.is_file():
+            bundled = Path(__file__).resolve().parent.parent / "fixtures" / "versemap.json.gz"
         if bundled.is_file():
             try:
                 with gzip.open(bundled, "rt", encoding="utf-8") as f:

@@ -47,7 +47,9 @@ def require_raw_sources() -> unittest.skipUnless:
     )
 
 
-_REPO_ROOT = Path(__file__).resolve().parent.parent
+from search.resource import get_repo_root, resource_path
+
+_REPO_ROOT = get_repo_root()
 
 
 def ensure_test_databases(repo: str | Path | None = None) -> None:
@@ -79,7 +81,9 @@ def ensure_test_databases(repo: str | Path | None = None) -> None:
     ):
         return
 
-    fixture_path = Path(__file__).resolve().parent / "fixtures" / "sample_test_data.json.gz"
+    fixture_path = resource_path("search/fixtures/sample_test_data.json.gz")
+    if not fixture_path.is_file():
+        fixture_path = Path(__file__).resolve().parent / "fixtures" / "sample_test_data.json.gz"
     if not fixture_path.is_file():
         return
 

@@ -46,6 +46,7 @@ packages = [
     "search.ui",
     "search.fixtures",
 ]
+py-modules = ["search.resource", "search.testutil"]
 
 [tool.setuptools.package-data]
 "*" = ["*.json", "*.json.gz", "*.txt"]

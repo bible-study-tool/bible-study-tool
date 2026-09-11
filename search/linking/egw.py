@@ -23,6 +23,8 @@ import textwrap
 from pathlib import Path
 from typing import Any, Iterable
 
+from search.resource import data_path, get_repo_root
+
 # Default database location inside gitignored data/ directory
 DEFAULT_EGW_DB = "data/egw.db"
 
@@ -251,13 +253,22 @@ def is_egw_token(token: str) -> bool:
 class EgwDB:
     """Local SQLite-backed database with FTS5 search for Spirit of Prophecy texts."""
 
-    def __init__(self, db_path: str | Path | None = None, repo_root: str | Path = "."):
-        self.repo_root = Path(repo_root)
+    def __init__(self, db_path: str | Path | None = None, repo_root: str | Path | None = None):
+        if repo_root is None:
+            self.repo_root = get_repo_root()
+        else:
+            self.repo_root = Path(repo_root)
+
         if db_path is None:
-            self.db_path = self.repo_root / DEFAULT_EGW_DB
+            self.db_path = data_path(DEFAULT_EGW_DB)
         else:
             p = Path(db_path)
-            self.db_path = p if p.is_absolute() else self.repo_root / p
+            if p.is_absolute():
+                self.db_path = p
+            elif (self.repo_root / p).exists():
+                self.db_path = self.repo_root / p
+            else:
+                self.db_path = data_path(p)
 
         self._conn: sqlite3.Connection | None = None
 

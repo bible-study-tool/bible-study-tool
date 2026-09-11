@@ -21,6 +21,8 @@ import re
 import sqlite3
 from typing import Any, Iterable
 
+from search.resource import data_path, get_repo_root
+
 DEFAULT_MACULA_DB = "data/macula.db"
 
 _TABLES_SCHEMA = """
@@ -100,13 +102,22 @@ _SCHEMA = _TABLES_SCHEMA + "\n" + _INDICES_SCHEMA
 class MaculaSqliteDB:
     """Disk-backed SQLite database engine for Macula linguistic and syntactic data."""
 
-    def __init__(self, db_path: str | Path | None = None, repo_root: str | Path = "."):
-        self.repo_root = Path(repo_root)
+    def __init__(self, db_path: str | Path | None = None, repo_root: str | Path | None = None):
+        if repo_root is None:
+            self.repo_root = get_repo_root()
+        else:
+            self.repo_root = Path(repo_root)
+
         if db_path is None:
-            self.db_path = self.repo_root / DEFAULT_MACULA_DB
+            self.db_path = data_path(DEFAULT_MACULA_DB)
         else:
             p = Path(db_path)
-            self.db_path = p if p.is_absolute() else self.repo_root / p
+            if p.is_absolute():
+                self.db_path = p
+            elif (self.repo_root / p).exists():
+                self.db_path = self.repo_root / p
+            else:
+                self.db_path = data_path(p)
 
         self._conn: sqlite3.Connection | None = None
         self._has_tables: bool | None = None

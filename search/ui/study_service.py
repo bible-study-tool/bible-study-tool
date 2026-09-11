@@ -41,6 +41,7 @@ from search.corpus.ot_citations import (
     get_passage_ot_citations_batch,
 )
 from search.linking.egw import EgwDB, DEFAULT_EGW_DB, is_egw_token, normalize_token
+from search.resource import data_path, get_lexicons_dir, lexicon_path
 
 from rich.markup import escape
 
@@ -260,13 +261,41 @@ class StudyService:
         tbesh_path: Path | str | None = None,
         tbesg_path: Path | str | None = None,
     ) -> None:
-        self.bible_db = BibleDB(bible_db_path) if Path(bible_db_path).exists() else None
-        self.macula_db = MaculaSqliteDB(macula_db_path) if Path(macula_db_path).exists() else None
-        self.egw_db = EgwDB(egw_db_path) if Path(egw_db_path).exists() else None
-        self.strongs_path = Path(strongs_path)
-        lex_dir = self.strongs_path.parent if self.strongs_path.parent.exists() else Path("lexicons")
-        self.tbesh_path = Path(tbesh_path) if tbesh_path else (lex_dir / "tbesh-glosses.json")
-        self.tbesg_path = Path(tbesg_path) if tbesg_path else (lex_dir / "tbesg-glosses.json")
+        b_path = Path(bible_db_path)
+        if not b_path.exists():
+            b_path = data_path(bible_db_path)
+        self.bible_db = BibleDB(b_path) if b_path.exists() else None
+
+        m_path = Path(macula_db_path)
+        if not m_path.exists():
+            m_path = data_path(macula_db_path)
+        self.macula_db = MaculaSqliteDB(m_path) if m_path.exists() else None
+
+        e_path = Path(egw_db_path)
+        if not e_path.exists():
+            e_path = data_path(egw_db_path)
+        self.egw_db = EgwDB(e_path) if e_path.exists() else None
+
+        s_path = Path(strongs_path)
+        if not s_path.exists():
+            s_path = lexicon_path(strongs_path)
+        self.strongs_path = s_path
+
+        lex_dir = self.strongs_path.parent if self.strongs_path.parent.exists() else get_lexicons_dir()
+
+        if tbesh_path and Path(tbesh_path).exists():
+            self.tbesh_path = Path(tbesh_path)
+        elif (lex_dir / "tbesh-glosses.json").exists():
+            self.tbesh_path = lex_dir / "tbesh-glosses.json"
+        else:
+            self.tbesh_path = lexicon_path("tbesh-glosses.json")
+
+        if tbesg_path and Path(tbesg_path).exists():
+            self.tbesg_path = Path(tbesg_path)
+        elif (lex_dir / "tbesg-glosses.json").exists():
+            self.tbesg_path = lex_dir / "tbesg-glosses.json"
+        else:
+            self.tbesg_path = lexicon_path("tbesg-glosses.json")
         self._lexicon_cache: dict[str, Any] | None = None
         self._tbesh_cache: dict[str, str] | None = None
         self._tbesg_cache: dict[str, str] | None = None

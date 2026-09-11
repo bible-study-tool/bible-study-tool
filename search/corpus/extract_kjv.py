@@ -28,6 +28,7 @@ from search.corpus.bible_books import (
     parse_passage_ref,
     resolve_book_code,
 )
+from search.resource import data_path, get_repo_root
 
 DEFAULT_KJV_JSON = "data/KJV-osis.json"
 DEFAULT_BIBLE_DB = "data/bible.db"
@@ -189,13 +190,22 @@ END;
 class BibleDB:
     """Disk-backed SQLite database engine for whole-Bible English text and Strong's tags."""
 
-    def __init__(self, db_path: str | Path | None = None, repo_root: str | Path = "."):
-        self.repo_root = Path(repo_root)
+    def __init__(self, db_path: str | Path | None = None, repo_root: str | Path | None = None):
+        if repo_root is None:
+            self.repo_root = get_repo_root()
+        else:
+            self.repo_root = Path(repo_root)
+
         if db_path is None:
-            self.db_path = self.repo_root / DEFAULT_BIBLE_DB
+            self.db_path = data_path(DEFAULT_BIBLE_DB)
         else:
             p = Path(db_path)
-            self.db_path = p if p.is_absolute() else self.repo_root / p
+            if p.is_absolute():
+                self.db_path = p
+            elif (self.repo_root / p).exists():
+                self.db_path = self.repo_root / p
+            else:
+                self.db_path = data_path(p)
 
         self._conn: Optional[sqlite3.Connection] = None
 
