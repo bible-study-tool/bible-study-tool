@@ -120,13 +120,13 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 - [x] Add a `.gitlab-ci.yml` `release` stage that builds artifacts on tagged commits and uploads to GitLab Releases
 
 ### Phase 4 — User-Facing Installer Experience & Setup Wizard
-- [ ] `docs/INSTALL.md` — one-page illustrated guide: "Download → Open → Start studying" (no terminal, no chmod, no Windows Terminal note needed — the browser is the surface)
-- [ ] First-run welcome setup wizard (inside the web app itself):
+- [x] `docs/INSTALL.md` — one-page illustrated guide: "Download → Open → Start studying" (no terminal, no chmod, no Windows Terminal note needed — the browser is the surface)
+- [x] First-run welcome setup wizard (inside the web app itself):
   - Step 1: Data bundle verification (hash check against `SHA256SUMS`; `bible.db`, `macula.db`, `lexicons/`)
   - Step 2: Auto-update preferences toggle (enabled by default; wording explicit that only a version check is sent — no telemetry, per ADR-023)
   - Step 3: Spirit of Prophecy (EGW) public-domain content (10 historical works). If online: "Download with one click". If offline: "Skip for now — you can download anytime later from Settings/Menu when connected."
   - Step 4: External resources link card: prominent link out to [egwwritings.org](https://m.egwwritings.org/) for the complete, copyrighted Spirit of Prophecy research library.
-- [ ] Update `docs/USER_GUIDE.md` with the zero-Python installer path as the primary entry point (terminal / git clone method as "advanced developer setup")
+- [x] Update `docs/USER_GUIDE.md` with the zero-Python installer path as the primary entry point (terminal / git clone method as "advanced developer setup")
 
 ### Phase 5 — ADR & Governance
 - [ ] Update ADR-023 to reference ADR-024 (distribution mechanism changed from frozen-TUI-binary to local-web-app); fix its size claims (binary ~40–70 MB + ~500 MB sidecar data)

@@ -24,28 +24,38 @@ You **do not need to be a programmer**, understand Python, or have any previous 
 
 ## 2. Opening Your Study Desk in 60 Seconds
 
-Opening the study workstation takes just one simple command. Open your terminal or command prompt and run:
+### The Primary Way: Standalone App (Zero Python Required)
+
+For most users, church members, and pastors, getting started takes less than a minute with no installation commands or programming needed:
+
+1. **Download** the release package for your operating system (Windows, macOS, or Linux) from the project releases.
+2. **Double-click** the application (`bible-study.exe` on Windows, `bible-study` on macOS/Linux).
+3. Your default web browser immediately opens to your local study desk at `http://localhost:8000`.
+
+On your very first launch, the built-in **Setup Wizard** will automatically verify the cryptographic integrity of your Scripture databases and lexicons, help you configure update preferences (with our zero-telemetry guarantee), and introduce key study tools.
+
+For detailed operating-system-specific instructions and troubleshooting, see [INSTALL.md](INSTALL.md).
+
+---
+
+### Advanced Developer & Power-User Setup (Command Line & TUI)
+
+If you are a developer running from source or prefer working directly inside a terminal emulator:
 
 ```bash
-# Launch the interactive study workstation
-python scripts/study.py
-```
+# Launch the web workstation (opens browser automatically)
+bible-study
 
-### Opening Directly to Any Passage
-If you already have a passage in mind for your personal study or teaching, you can jump straight into it:
+# Or launch the interactive Terminal User Interface (TUI)
+bible-study --tui
 
-```bash
-# Study the Prologue of John
-python scripts/study.py tui "John 1:1-18"
+# Open directly to any passage
+bible-study --tui "John 1:1-18"
+bible-study --tui "Genesis 1:1-2:3"
+bible-study --tui "Romans 1:16-17"
 
-# Study Creation and the Sabbath
-python scripts/study.py tui "Genesis 1:1-2:3"
-
-# Study Christ's High Priestly Prayer
+# Or run via Python directly from the repository
 python scripts/study.py tui "John 17:1-26"
-
-# Study Paul's Gospel thesis
-python scripts/study.py tui "Romans 1:16-17"
 ```
 
 ---

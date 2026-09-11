@@ -24,10 +24,13 @@
       </div>
     </form>
 
-    <label class="theme-control" for="theme-select">
-      Theme
-      <select id="theme-select" aria-label="Colour theme"></select>
-    </label>
+    <div class="header-controls">
+      <button id="open-wizard-btn" class="btn-setup" aria-label="Open Setup & Help" title="Open Setup Wizard & Guides">⚙ Setup</button>
+      <label class="theme-control" for="theme-select">
+        Theme
+        <select id="theme-select" aria-label="Colour theme"></select>
+      </label>
+    </div>
   </header>
 
   <main class="app-main">
@@ -64,6 +67,174 @@
     <span class="status-spacer"></span>
     <span id="status-right"></span>
   </footer>
+
+  <dialog id="setup-wizard-modal" class="wizard-dialog" aria-labelledby="wizard-title">
+    <div class="wizard-content">
+      <header class="wizard-header">
+        <div class="wizard-brand">
+          <span class="wizard-mark">ABST</span>
+          <div>
+            <h2 id="wizard-title" class="wizard-title">Welcome to Adventist Bible Study</h2>
+            <p class="wizard-subtitle">Offline-First Scripture &amp; Original Language Study Workstation</p>
+          </div>
+        </div>
+        <button id="wizard-close-btn" class="wizard-close-btn" aria-label="Close setup wizard" title="Close">&times;</button>
+      </header>
+
+      <nav class="wizard-stepper" aria-label="Setup progress">
+        <ol class="step-list">
+          <li class="step-indicator active" data-step="1" aria-current="step">
+            <span class="step-num">1</span>
+            <span class="step-label">Data Verification</span>
+          </li>
+          <li class="step-line" aria-hidden="true"></li>
+          <li class="step-indicator" data-step="2">
+            <span class="step-num">2</span>
+            <span class="step-label">Updates &amp; Privacy</span>
+          </li>
+          <li class="step-line" aria-hidden="true"></li>
+          <li class="step-indicator" data-step="3">
+            <span class="step-num">3</span>
+            <span class="step-label">Historical Writings</span>
+          </li>
+          <li class="step-line" aria-hidden="true"></li>
+          <li class="step-indicator" data-step="4">
+            <span class="step-num">4</span>
+            <span class="step-label">Study Guide</span>
+          </li>
+        </ol>
+      </nav>
+
+      <div class="wizard-body">
+        <!-- Step 1: Data Verification -->
+        <section class="wizard-step" id="wizard-step-1">
+          <h3 class="step-heading">Step 1: Pinned Data Integrity</h3>
+          <p class="step-desc">
+            The study workstation operates 100% offline from cryptographically pinned SQLite databases and lexicons.
+            Every artifact is verified against authoritative SHA-256 checksums before study begins.
+          </p>
+
+          <div class="verify-card" id="verify-card">
+            <div class="verify-status-header" aria-live="polite">
+              <span id="verify-status-icon" class="verify-icon status-pending">&#9679;</span>
+              <strong id="verify-status-text">Verifying sidecar data bundle…</strong>
+            </div>
+            <div id="verify-details" class="verify-details">
+              <ul class="verify-item-list">
+                <li id="verify-item-bible">
+                  <span class="verify-badge">Scripture DB</span>
+                  <code>bible.db</code> — 66 books, 31,102 verses (KJV + alignments)
+                </li>
+                <li id="verify-item-macula">
+                  <span class="verify-badge">Original Languages</span>
+                  <code>macula.db</code> — Macula Hebrew OT &amp; Greek NT morphology
+                </li>
+                <li id="verify-item-lexicons">
+                  <span class="verify-badge">Lexicons</span>
+                  <code>lexicons/</code> — Strong's Hebrew/Greek concordances &amp; apparatus
+                </li>
+              </ul>
+            </div>
+            <div id="verify-error-box" class="verify-error-box" hidden></div>
+          </div>
+
+          <div class="step-note">
+            <em>ADR-006 &amp; ADR-024:</em> Derived data files are audited deterministically so you never have to worry about data corruption or silent alterations.
+          </div>
+        </section>
+
+        <!-- Step 2: Updates & Privacy -->
+        <section class="wizard-step" id="wizard-step-2" hidden>
+          <h3 class="step-heading">Step 2: Updates &amp; Privacy Sovereignty</h3>
+          <p class="step-desc">
+            We believe your spiritual study and conscience belong to God alone. Adventist Bible Study has <strong>zero tracking, zero analytics, and zero advertising</strong>.
+          </p>
+
+          <div class="setting-card">
+            <label class="toggle-control" for="auto-update-toggle">
+              <input type="checkbox" id="auto-update-toggle" checked>
+              <div class="toggle-track"><span class="toggle-thumb"></span></div>
+              <div class="toggle-label">
+                <strong>Check for Application Updates</strong>
+                <span class="toggle-sub">Periodically checks GitLab Releases for new versions and critical bug fixes.</span>
+              </div>
+            </label>
+            <div class="privacy-callout">
+              <div class="privacy-badge">&#128274; Zero-Telemetry Guarantee</div>
+              <p>When update checking is active, the application only queries the public GitLab release tag. <strong>No identifiers, no IP logging, no queries, and no personal telemetry are ever transmitted.</strong></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3: Historical Commentary -->
+        <section class="wizard-step" id="wizard-step-3" hidden>
+          <h3 class="step-heading">Step 3: Historical Spirit of Prophecy Collection</h3>
+          <p class="step-desc">
+            In accordance with copyright law and ADR-002, 10 pre-1929 public-domain works by Ellen G. White are supported as an optional historical commentary database for Scripture cross-referencing:
+          </p>
+          <div class="book-grid">
+            <span class="book-tag">Patriarchs and Prophets</span>
+            <span class="book-tag">Prophets and Kings</span>
+            <span class="book-tag">The Desire of Ages</span>
+            <span class="book-tag">Acts of the Apostles</span>
+            <span class="book-tag">The Great Controversy</span>
+            <span class="book-tag">Steps to Christ</span>
+            <span class="book-tag">Christ's Object Lessons</span>
+            <span class="book-tag">Mount of Blessing</span>
+            <span class="book-tag">Education</span>
+            <span class="book-tag">Ministry of Healing</span>
+          </div>
+
+          <div id="egw-status-box" class="egw-status-box">
+            <p id="egw-status-msg">Commentary database is not pre-bundled to keep distribution packages clean.</p>
+            <p class="offline-hint">
+              <em>Working offline?</em> You can safely skip this step now. All Scripture study, Strong's concordances, and original-language tools are fully active. You can download or import historical works at any time from Setup.
+            </p>
+          </div>
+        </section>
+
+        <!-- Step 4: Study Guide & Official Library -->
+        <section class="wizard-step" id="wizard-step-4" hidden>
+          <h3 class="step-heading">Step 4: Research Library &amp; Quick Start</h3>
+          <p class="step-desc">
+            You are ready to begin studying the Word. For in-depth research across the entire official published writings:
+          </p>
+
+          <div class="resource-card">
+            <div class="resource-header">
+              <span class="resource-icon">&#128218;</span>
+              <div>
+                <strong>Official EGW Writings Online</strong>
+                <p>Access the complete, official, copyrighted Spirit of Prophecy research library.</p>
+              </div>
+            </div>
+            <a class="resource-link" href="https://m.egwwritings.org/" target="_blank" rel="noopener noreferrer">
+              Open egwwritings.org &rarr;
+            </a>
+          </div>
+
+          <div class="quickstart-tips">
+            <h4>Quick Keyboard &amp; Study Tips</h4>
+            <ul>
+              <li><strong>Passage Lookup:</strong> Type any reference (e.g. <code>John 17</code>, <code>Gen 1:1</code>, <code>Rom 8:28</code>) into the top search box.</li>
+              <li><strong>Original Languages:</strong> Hover or click on Strong's numbers to view Hebrew / Greek definitions.</li>
+              <li><strong>Translations:</strong> Click the "Translations" side tab to compare multiple translations in parallel.</li>
+              <li><strong>Reopen Setup:</strong> Click the <strong>⚙ Setup</strong> button in the top right at any time to re-verify data or change settings.</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <footer class="wizard-footer">
+        <button id="wizard-skip-btn" type="button" class="btn-wizard-ghost">Skip Setup</button>
+        <div class="wizard-nav-buttons">
+          <button id="wizard-back-btn" type="button" class="btn-wizard-secondary" hidden>&larr; Back</button>
+          <button id="wizard-next-btn" type="button" class="btn-wizard-primary">Next &rarr;</button>
+          <button id="wizard-finish-btn" type="button" class="btn-wizard-primary" hidden>Finish &amp; Open the Word</button>
+        </div>
+      </footer>
+    </div>
+  </dialog>
 
   <script src="/app.js"></script>
 </body>

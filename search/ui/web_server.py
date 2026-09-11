@@ -28,7 +28,7 @@ from urllib.parse import parse_qs, urlparse
 from search.ui.study_service import StudyService
 from search.ui.themes import DEFAULT_THEME, THEMES
 
-from search.resource import get_web_dir
+from search.resource import get_data_dir, get_web_dir, verify_data_bundle
 
 WEB_ROOT = get_web_dir()
 
@@ -176,6 +176,8 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
             query = parse_qs(parsed.query)
             if path == "/api/health":
                 self._api_health()
+            elif path == "/api/verify-bundle":
+                self._api_verify_bundle()
             elif path == "/api/passage":
                 self._api_passage(query)
             elif path == "/api/translations":
@@ -192,13 +194,35 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
             ]
             # Web-native themes first so the default face ("light") is selectable.
             themes = list(WEB_NATIVE_THEMES.values()) + themes
+            has_egw = study.egw_db is not None and study.egw_db.db_path.is_file()
             self._reply_json(HTTPStatus.OK, {
                 "status": "ok",
+                "version": "0.1.0",
                 # The web face defaults to the light token set; the TUI keeps
                 # its own DEFAULT_THEME (transparent) internally.
                 "default_theme": "light",
                 "themes": themes,
                 "translations_url": "/api/translations",
+                "verify_bundle_url": "/api/verify-bundle",
+                "egw_available": has_egw,
+            })
+
+        def _api_verify_bundle(self) -> None:
+            try:
+                is_valid, errors = verify_data_bundle()
+            except Exception as exc:
+                self._reply_json(HTTPStatus.OK, {
+                    "status": "error",
+                    "valid": False,
+                    "errors": [f"Bundle verification failed: {exc}"],
+                    "data_dir": str(get_data_dir()),
+                })
+                return
+            self._reply_json(HTTPStatus.OK, {
+                "status": "ok" if is_valid else "error",
+                "valid": is_valid,
+                "errors": errors,
+                "data_dir": str(get_data_dir()),
             })
 
         def _api_passage(self, query: dict[str, list[str]]) -> None:

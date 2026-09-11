@@ -57,6 +57,9 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("text/html", ctype)
         self.assertIn(b"Adventist Bible Study Tool", body)
+        self.assertIn(b"setup-wizard-modal", body)
+        self.assertIn(b"open-wizard-btn", body)
+        self.assertIn(b"auto-update-toggle", body)
 
     def test_head_request_supported(self) -> None:
         req = urllib.request.Request(self.base + "/", method="HEAD")
@@ -71,11 +74,15 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("text/css", ctype)
         self.assertIn(b"--bg", body)  # design tokens present
+        self.assertIn(b"wizard-dialog", body)
+        self.assertIn(b"btn-setup", body)
 
     def test_appjs_served(self) -> None:
-        status, _body, ctype = self._get("/app.js")
+        status, body, ctype = self._get("/app.js")
         self.assertEqual(status, 200)
         self.assertIn("javascript", ctype)
+        self.assertIn(b"verifyBundle", body)
+        self.assertIn(b"openWizard", body)
 
     def test_traversal_blocked(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:
@@ -87,7 +94,10 @@ class WebServerTests(unittest.TestCase):
     def test_health_ok(self) -> None:
         data = self._get_json("/api/health")
         self.assertEqual(data["status"], "ok")
+        self.assertEqual(data["version"], "0.1.0")
         self.assertEqual(data["default_theme"], "light")
+        self.assertIn("verify_bundle_url", data)
+        self.assertIn("egw_available", data)
         theme_ids = [t["id"] for t in data["themes"]]
         # Web-native themes are selectable (S4)...
         self.assertIn("light", theme_ids)
@@ -96,6 +106,21 @@ class WebServerTests(unittest.TestCase):
         for tid in ("transparent", "dracula", "catppuccin_mocha", "tokyo_night",
                     "nord", "gruvbox_dark", "solarized_dark"):
             self.assertIn(tid, theme_ids)
+
+    def test_verify_bundle_endpoint(self) -> None:
+        data = self._get_json("/api/verify-bundle")
+        self.assertIn("status", data)
+        self.assertIn("valid", data)
+        self.assertIn("errors", data)
+        self.assertIn("data_dir", data)
+
+    def test_verify_bundle_endpoint_exception_handled(self) -> None:
+        from unittest.mock import patch
+        with patch("search.ui.web_server.verify_data_bundle", side_effect=PermissionError("Access denied")):
+            data = self._get_json("/api/verify-bundle")
+            self.assertEqual(data["status"], "error")
+            self.assertFalse(data["valid"])
+            self.assertTrue(any("Access denied" in err for err in data["errors"]))
 
     def test_passage_returns_verses(self) -> None:
         data = self._get_json("/api/passage?ref=Genesis%201:1")
