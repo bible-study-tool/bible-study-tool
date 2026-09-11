@@ -105,10 +105,10 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 - [x] Add a frozen `textual-web` / `textual serve` smoke test to Phase 3's platform matrix (verifies the TUI-as-nightly-channel claim end-to-end, not just in a dev venv)
 
 ### Phase 2 — Data Bundling Strategy & Provenance
-- [ ] Define a `data/` sidecar bundle layout: `bible.db`, `macula.db`, `lexicons/` (all pre-built and gitignored raw → committed derived)
-- [ ] Write `scripts/build_release_data.sh` — builds all databases from pinned sources and packages them into `dist/data/`
-- [ ] **Define release-bundle provenance explicitly (ADR-006):** each release publishes a `SHA256SUMS` file covering every file in the release artifact (binary + data); record the release data bundle's SHA-256 in `data/PROVENANCE.md`; the installer verifies the data bundle hash before first run and on updates
-- [ ] Resolve and record the bundled-vs-sidecar split as a decision (this WP chooses sidecar; document why in ADR-024 consequences)
+- [x] Define a `data/` sidecar bundle layout: `bible.db`, `macula.db`, `lexicons/` (all pre-built and gitignored raw → committed derived)
+- [x] Write `scripts/build_release_data.sh` — builds all databases from pinned sources and packages them into `dist/data/`
+- [x] **Define release-bundle provenance explicitly (ADR-006):** each release publishes a `SHA256SUMS` file covering every file in the release artifact (binary + data); record the release data bundle's SHA-256 in `data/PROVENANCE.md`; the installer verifies the data bundle hash before first run and on updates
+- [x] Resolve and record the bundled-vs-sidecar split as a decision (this WP chooses sidecar; document why in ADR-024 consequences)
 
 ### Phase 3 — Launcher, Spec & Build Pipeline
 - [ ] Write the launcher: start hidden engine → wait for `localhost` readiness → open default browser → clean shutdown on app close

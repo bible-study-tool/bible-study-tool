@@ -91,6 +91,26 @@ engine is the cheapest thing that scales.
 | **Logos / Olive Tree** | Scholarly density done right: multi-pane, original-language access without intimidation |
 | **Notion** | Command palette / quick actions for study notes and annotations |
 
+### 7. Sidecar data architecture & release bundle layout
+
+The release artifact separates the application engine from large biblical and linguistic datasets:
+
+```
+<dist_root>/
+├── bible-study              # Standalone executable (~40–70 MB)
+└── data/                    # Sidecar data bundle (~430 MB raw; ~120 MB compressed)
+    ├── bible.db             # Whole-Bible SQLite (31,102 verses, KJV + BSB/ASV/YLT + Strong's + FTS5)
+    ├── macula.db            # Linguistic SQLite (Hebrew OT + Greek NT syntax & discourse)
+    ├── SHA256SUMS           # Cryptographic integrity hashes for all bundled data files
+    └── lexicons/            # Curated derived JSON lexicons
+        ├── strongs-lexicon.json
+        ├── strongs-list.json
+        ├── tbesh-glosses.json
+        └── tbesg-glosses.json
+```
+
+**Copyright boundary (ADR-002, ADR-023):** `data/egw.db` is strictly excluded from release archives. Public-domain historical works (10 titles) are offered post-install via one-click download, and an explicit link-out to [egwwritings.org](https://m.egwwritings.org/) provides access to the complete research corpus.
+
 ## Consequences
 
 ### Positive
@@ -99,8 +119,11 @@ engine is the cheapest thing that scales.
 * **Packaging friction drops** (vs. ADR-023's TUI-binary plan): no terminal
   dependency on any platform, no console/unicode quirks, and Linux
   double-click works because the browser opens — no terminal needs to attach.
-* **Size story resolves by fiat:** data ships sidecar (`data/` folder), the
-  binary stays small, and binary and data update independently.
+* **Sidecar vs. Monolithic Binary Decision:**
+  * *Eliminates startup extraction lag:* A monolithic 500 MB frozen executable would force PyInstaller to extract half a gigabyte to a temporary directory on every launch, causing multi-second startup delays, disk thrashing, and crashes on systems with small RAM disks or restricted `/tmp` partitions.
+  * *Bandwidth-efficient incremental updates:* Engine updates (<50 MB) download independently without forcing users to re-download immutable 430 MB biblical and linguistic databases on every patch.
+  * *Cryptographic provenance audit (ADR-006):* Users and downstream auditors can inspect and verify individual SQLite and lexicon checksums directly via `SHA256SUMS` without extracting a packed binary.
+  * *Clean copyright boundary:* Isolating databases to a sidecar folder provides a clear, natural home for post-install commentary downloads without modifying the executable.
 * Cross-platform simplifies: the engine is already cross-platform, Tauri is
   cross-platform, and the frontend is just HTML/CSS/JS.
 * The TUI investment is preserved and stays valuable as the nightly channel.

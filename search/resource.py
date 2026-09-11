@@ -13,6 +13,7 @@ dependencies across the engine and UI layers.
 
 from __future__ import annotations
 
+import hashlib
 import os
 from pathlib import Path
 import sys
@@ -248,3 +249,74 @@ def resource_path(rel_path: str | Path) -> Path:
         return cand_app
 
     return cand_bundle
+
+
+def verify_data_bundle(data_dir: Path | None = None) -> tuple[bool, list[str]]:
+    """Verify cryptographic integrity of the sidecar data bundle against SHA256SUMS.
+
+    Checks bible.db, macula.db, and lexicons/ relative to the data directory.
+
+    Args:
+        data_dir: Path to the data directory (defaults to get_data_dir()).
+
+    Returns:
+        A tuple (is_valid, errors) where is_valid is True if all files match,
+        and errors is a list of descriptive error strings.
+    """
+    root = (data_dir or get_data_dir()).resolve()
+    sums_file = root / "SHA256SUMS"
+    if not sums_file.is_file():
+        return False, [f"SHA256SUMS not found in data directory: {root}"]
+
+    errors: list[str] = []
+    lines = sums_file.read_text(encoding="utf-8").splitlines()
+    checked_count = 0
+
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split(None, 1)
+        if len(parts) != 2:
+            errors.append(f"Malformed line in SHA256SUMS: {line!r}")
+            continue
+
+        expected_sha256, raw_path = parts
+        if len(expected_sha256) != 64 or not all(c in "0123456789abcdefABCDEF" for c in expected_sha256):
+            errors.append(f"Malformed SHA-256 hash in SHA256SUMS: {expected_sha256!r}")
+            continue
+
+        # Strip coreutils binary indicator (*) and normalize path separators
+        clean_rel = raw_path.lstrip("*").strip().replace("\\", "/")
+        rel_obj = Path(clean_rel)
+        if rel_obj.is_absolute() or ".." in rel_obj.parts:
+            errors.append(f"Invalid path traversal in SHA256SUMS: {raw_path!r}")
+            continue
+
+        file_path = root / rel_obj
+
+        # Handle both root/lexicons/ and root/../lexicons/ layouts
+        if not file_path.is_file() and (root.parent / rel_obj).is_file():
+            file_path = root.parent / rel_obj
+
+        if not file_path.is_file():
+            errors.append(f"Missing bundle file: {clean_rel}")
+            continue
+
+        h = hashlib.sha256()
+        with open(file_path, "rb") as f:
+            while chunk := f.read(65536):
+                h.update(chunk)
+        actual_sha256 = h.hexdigest()
+
+        if actual_sha256.lower() != expected_sha256.lower():
+            errors.append(
+                f"Checksum mismatch for {clean_rel}: expected {expected_sha256}, got {actual_sha256}"
+            )
+        else:
+            checked_count += 1
+
+    if checked_count == 0 and not errors:
+        return False, ["SHA256SUMS contains no valid file entries"]
+
+    return len(errors) == 0, errors

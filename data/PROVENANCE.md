@@ -464,6 +464,55 @@ python -m search.corpus.build_wordgraph --repo .
 python -m search.macula.build_crosswalk --repo .
 ```
 
+## Release Data Bundle Provenance (ADR-006, ADR-024, WP-029)
+
+For zero-Python standalone distributions, pre-compiled biblical databases and derived
+lexicons are assembled into a sidecar `dist/data/` bundle.
+
+### Bundle Assembly and Layout
+
+Generated via `scripts/build_release_data.sh`:
+
+```
+dist/data/
+├── bible.db             # Whole-Bible SQLite (31,102 verses: KJV + BSB/ASV/YLT + Strong's + FTS5)
+├── macula.db            # Linguistic SQLite (Hebrew OT + Greek NT syntax & discourse trees)
+├── SHA256SUMS           # Cryptographic SHA-256 manifest over every file in the bundle
+└── lexicons/            # Canonical derived JSON lexicons (57 files)
+    ├── strongs-lexicon.json
+    ├── strongs-list.json
+    ├── tbesh-glosses.json
+    ├── tbesg-glosses.json
+    └── morphology-genesis*.json
+```
+
+### Build & Verification Commands
+
+```bash
+# Build sidecar bundle and tar.gz release archive
+scripts/build_release_data.sh
+
+# Build sidecar directory only (without creating archive)
+scripts/build_release_data.sh --no-archive
+
+# Verify sidecar bundle integrity against SHA256SUMS manifest
+scripts/build_release_data.sh --check dist/data
+```
+
+### Provenance & Integrity Model
+
+1. **Deterministic Compilation:** Both SQLite databases (`bible.db` and `macula.db`) are compiled
+   strictly from the pinned upstream sources and canonical lexicons listed above, then compacted
+   using SQLite `VACUUM INTO` and validated with `PRAGMA quick_check`.
+2. **Manifest Generation:** `SHA256SUMS` is computed directly inside the bundle folder across
+   `bible.db`, `macula.db`, and `lexicons/*.json`.
+3. **Runtime Verification:** At application startup or during the first-run setup wizard
+   (WP-029 Phase 4), `search.resource.verify_data_bundle()` validates the sidecar directory against
+   `SHA256SUMS` to detect any data corruption or tampering.
+4. **Copyright Boundary:** `data/egw.db` is strictly excluded from release bundles per ADR-002,
+   ADR-023, and ADR-024. Only public-domain and CC0/openly-licensed biblical and linguistic resources
+   are distributed in release bundles.
+
 ## Policy
 
 * Raw sources stay **out of git** (large, third-party). Only generated,
@@ -473,3 +522,4 @@ python -m search.macula.build_crosswalk --repo .
   committed `lexicons/*.json` through the normal MR workflow.
 * Nothing in `data/` may be redistributed by the project itself; it is fetched
   locally on demand (see `NOTICE.md` content-sourcing policy).
+
