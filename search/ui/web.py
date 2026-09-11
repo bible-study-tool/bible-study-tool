@@ -10,6 +10,7 @@ GUI-first launcher:
 from __future__ import annotations
 
 import argparse
+import signal
 import sys
 import threading
 import time
@@ -96,11 +97,26 @@ def run_web_server(
     if ready_event:
         ready_event.set()
 
+    old_sigterm = None
+    if threading.current_thread() is threading.main_thread():
+        try:
+            def _handle_sigterm(signum: int, frame: object) -> None:
+                raise KeyboardInterrupt()
+
+            old_sigterm = signal.signal(signal.SIGTERM, _handle_sigterm)
+        except (ValueError, AttributeError):
+            pass
+
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
+        if old_sigterm is not None:
+            try:
+                signal.signal(signal.SIGTERM, old_sigterm)
+            except Exception:
+                pass
         server.server_close()
         if study is None:
             service.close()

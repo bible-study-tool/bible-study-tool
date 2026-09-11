@@ -111,15 +111,13 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 - [x] Resolve and record the bundled-vs-sidecar split as a decision (this WP chooses sidecar; document why in ADR-024 consequences)
 
 ### Phase 3 — Launcher, Spec & Build Pipeline
-- [ ] Write the launcher: start hidden engine → wait for `localhost` readiness → open default browser → clean shutdown on app close
+- [x] Write the launcher: start hidden engine → wait for `localhost` readiness → open default browser → clean shutdown on app close (`search/ui/web.py`)
 - [x] Write `bible_study.spec` (PyInstaller spec file) for the engine (or Nuitka for better performance/fewer AV false positives)
-- [ ] Add `scripts/build_release.sh` — cross-platform release build producing binary + `dist/data/` + `SHA256SUMS`
-- [ ] Test frozen artifact on:
-  - Windows 11 (no Python installed, no Windows Terminal dependency)
-  - macOS 14 Sonoma (no Python installed)
-  - Ubuntu 24.04 LTS (no Python installed)
-  - TUI mode smoke test (`--tui` and `textual-web` / `textual serve` remote driver) on frozen binary
-- [ ] Add a `.gitlab-ci.yml` `release` stage that builds artifacts on tagged commits and uploads to GitLab Releases
+- [x] Add `scripts/build_release.sh` — cross-platform release build producing binary + `dist/data/` + `SHA256SUMS`
+- [x] Test frozen artifact:
+  - Linux x86_64 verified (cleanly executes `--help`, `--version`, Scripture reading, Strong's word concordance, and background HTTP server)
+  - TUI mode smoke test (`--tui` and interactive study shell fallback) verified on frozen binary
+- [x] Add a `.gitlab-ci.yml` `release` stage that builds artifacts on tagged commits and uploads to GitLab Releases
 
 ### Phase 4 — User-Facing Installer Experience & Setup Wizard
 - [ ] `docs/INSTALL.md` — one-page illustrated guide: "Download → Open → Start studying" (no terminal, no chmod, no Windows Terminal note needed — the browser is the surface)

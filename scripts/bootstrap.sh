@@ -17,33 +17,52 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-INSTALL_EXTRAS=".[test]"
+WANT_ML=false
+WANT_DIST=false
 RUN_VERIFY=false
 
 for arg in "$@"; do
   case "$arg" in
     --ml)
-      INSTALL_EXTRAS=".[test,ml]"
+      WANT_ML=true
+      ;;
+    --dist)
+      WANT_DIST=true
+      ;;
+    --all)
+      WANT_ML=true
+      WANT_DIST=true
       ;;
     --verify)
       RUN_VERIFY=true
       ;;
     -h|--help)
-      echo "Usage: $0 [--ml] [--verify]"
+      echo "Usage: $0 [--ml] [--dist] [--all] [--verify]"
       echo
       echo "Options:"
       echo "  --ml       Install optional machine-learning dependencies (sentence-transformers)"
+      echo "  --dist     Install standalone packaging tools (pyinstaller)"
+      echo "  --all      Install all optional dependency groups (ml + dist)"
       echo "  --verify   Run full verification suite (scripts/verify_all.sh) after bootstrap"
       echo "  -h, --help Show this help message"
       exit 0
       ;;
     *)
       echo "Unknown option: $arg" >&2
-      echo "Usage: $0 [--ml] [--verify]" >&2
+      echo "Usage: $0 [--ml] [--dist] [--all] [--verify]" >&2
       exit 2
       ;;
   esac
 done
+
+EXTRAS="test"
+if [[ "$WANT_ML" == true ]]; then
+  EXTRAS="$EXTRAS,ml"
+fi
+if [[ "$WANT_DIST" == true ]]; then
+  EXTRAS="$EXTRAS,dist"
+fi
+INSTALL_EXTRAS=".[${EXTRAS}]"
 
 echo "=============================================================="
 echo "Adventist Bible Study Tool — Environment Bootstrap"

@@ -33,6 +33,10 @@ ml = [
 test = [
     "pytest>=8.0",
 ]
+# Standalone distribution packaging (ADR-024, WP-029).
+dist = [
+    "pyinstaller>=6.0",
+]
 
 [project.scripts]
 bible-study = "search.ui.web:main"

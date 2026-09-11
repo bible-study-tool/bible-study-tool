@@ -446,7 +446,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify syntax viewport displays verbal stems and theological nuances."""
         app = BibleStudyApp(initial_ref="Gen 1:1")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             syntax_scroll = app.query_one("#syntax-content", VerticalScroll)
             content_text = _extract_text(syntax_scroll)
 
@@ -458,7 +458,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify lexicon viewport displays verbal stems and theological nuances on Strong's cards."""
         app = BibleStudyApp(initial_ref="Gen 1:1")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             app.action_tab_lexicon()
             await pilot.pause()
             lexicon_scroll = app.query_one("#lexicon-content", VerticalScroll)
