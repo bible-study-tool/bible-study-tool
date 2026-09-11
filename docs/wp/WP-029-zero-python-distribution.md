@@ -1,6 +1,6 @@
 # WP-029: Zero-Python Distribution — "Open the Book" Installer
 
-status: open
+status: done
 scope: Pillar P (Public Distribution) — package the full study tool as a single downloadable application that requires no Python, no terminal fluency, and no configuration from the end user. GUI-first local web app (ADR-024) with the TUI retained as a mode.
 priority: high
 
@@ -129,9 +129,9 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 - [x] Update `docs/USER_GUIDE.md` with the zero-Python installer path as the primary entry point (terminal / git clone method as "advanced developer setup")
 
 ### Phase 5 — ADR & Governance
-- [ ] Update ADR-023 to reference ADR-024 (distribution mechanism changed from frozen-TUI-binary to local-web-app); fix its size claims (binary ~40–70 MB + ~500 MB sidecar data)
-- [ ] Update `ROADMAP.md` Pillar D (D1/D5) and Pillar P entries to reflect GUI-first architecture (ADR-024)
-- [ ] Tag the first public release `v0.1.0-alpha` with GitLab Releases + changelog
+- [x] Update ADR-023 to reference ADR-024 (distribution mechanism changed from frozen-TUI-binary to local-web-app); fix its size claims (binary ~40–70 MB + ~500 MB sidecar data)
+- [x] Update `ROADMAP.md` Pillar D (D1/D5) and Pillar P entries to reflect GUI-first architecture (ADR-024)
+- [x] Tag the first public release `v0.1.0-alpha` with GitLab Releases + changelog
 
 ## Acceptance Criteria
 - A non-technical user (e.g. elementary school teacher or pastor) can get the workstation running on Windows or macOS by double-clicking a downloaded release — with no terminal ever visible and no Windows Terminal dependency.
