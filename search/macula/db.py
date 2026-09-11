@@ -103,21 +103,14 @@ class MaculaSqliteDB:
     """Disk-backed SQLite database engine for Macula linguistic and syntactic data."""
 
     def __init__(self, db_path: str | Path | None = None, repo_root: str | Path | None = None):
-        if repo_root is None:
-            self.repo_root = get_repo_root()
+        self.repo_root = get_repo_root() if repo_root is None else Path(repo_root)
+        p = Path(db_path) if db_path is not None else Path(DEFAULT_MACULA_DB)
+        if p.is_absolute():
+            self.db_path = p
+        elif (self.repo_root / p).exists():
+            self.db_path = self.repo_root / p
         else:
-            self.repo_root = Path(repo_root)
-
-        if db_path is None:
-            self.db_path = data_path(DEFAULT_MACULA_DB)
-        else:
-            p = Path(db_path)
-            if p.is_absolute():
-                self.db_path = p
-            elif (self.repo_root / p).exists():
-                self.db_path = self.repo_root / p
-            else:
-                self.db_path = data_path(p)
+            self.db_path = data_path(p)
 
         self._conn: sqlite3.Connection | None = None
         self._has_tables: bool | None = None

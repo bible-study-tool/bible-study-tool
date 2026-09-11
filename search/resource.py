@@ -16,7 +16,6 @@ from __future__ import annotations
 import os
 from pathlib import Path
 import sys
-from typing import Optional
 
 
 def is_frozen() -> bool:
@@ -238,6 +237,11 @@ def resource_path(rel_path: str | Path) -> Path:
     cand_bundle = get_bundle_root() / p
     if cand_bundle.exists():
         return cand_bundle
+
+    if p.parts and p.parts[0] == "search":
+        cand_stripped = get_bundle_root() / Path(*p.parts[1:])
+        if cand_stripped.exists():
+            return cand_stripped
 
     cand_app = get_app_dir() / p
     if cand_app.exists():

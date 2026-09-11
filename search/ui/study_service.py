@@ -283,15 +283,17 @@ class StudyService:
 
         lex_dir = self.strongs_path.parent if self.strongs_path.parent.exists() else get_lexicons_dir()
 
-        if tbesh_path and Path(tbesh_path).exists():
-            self.tbesh_path = Path(tbesh_path)
+        if tbesh_path:
+            p = Path(tbesh_path)
+            self.tbesh_path = p if p.exists() else lexicon_path(p)
         elif (lex_dir / "tbesh-glosses.json").exists():
             self.tbesh_path = lex_dir / "tbesh-glosses.json"
         else:
             self.tbesh_path = lexicon_path("tbesh-glosses.json")
 
-        if tbesg_path and Path(tbesg_path).exists():
-            self.tbesg_path = Path(tbesg_path)
+        if tbesg_path:
+            p = Path(tbesg_path)
+            self.tbesg_path = p if p.exists() else lexicon_path(p)
         elif (lex_dir / "tbesg-glosses.json").exists():
             self.tbesg_path = lex_dir / "tbesg-glosses.json"
         else:

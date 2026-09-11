@@ -38,6 +38,7 @@ test = [
 # `search/` is intentionally a namespace package (no __init__.py), so we
 # enumerate the real subpackages explicitly.
 packages = [
+    "search",
     "search.linking",
     "search.validation",
     "search.corpus",
@@ -46,7 +47,6 @@ packages = [
     "search.ui",
     "search.fixtures",
 ]
-py-modules = ["search.resource", "search.testutil"]
 
 [tool.setuptools.package-data]
 "*" = ["*.json", "*.json.gz", "*.txt"]

@@ -254,21 +254,14 @@ class EgwDB:
     """Local SQLite-backed database with FTS5 search for Spirit of Prophecy texts."""
 
     def __init__(self, db_path: str | Path | None = None, repo_root: str | Path | None = None):
-        if repo_root is None:
-            self.repo_root = get_repo_root()
+        self.repo_root = get_repo_root() if repo_root is None else Path(repo_root)
+        p = Path(db_path) if db_path is not None else Path(DEFAULT_EGW_DB)
+        if p.is_absolute():
+            self.db_path = p
+        elif (self.repo_root / p).exists():
+            self.db_path = self.repo_root / p
         else:
-            self.repo_root = Path(repo_root)
-
-        if db_path is None:
-            self.db_path = data_path(DEFAULT_EGW_DB)
-        else:
-            p = Path(db_path)
-            if p.is_absolute():
-                self.db_path = p
-            elif (self.repo_root / p).exists():
-                self.db_path = self.repo_root / p
-            else:
-                self.db_path = data_path(p)
+            self.db_path = data_path(p)
 
         self._conn: sqlite3.Connection | None = None
 
