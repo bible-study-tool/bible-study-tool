@@ -22,6 +22,7 @@ const els = {
   statusLeft: $("#status-left"),
   statusRight: $("#status-right"),
   translationsPanel: $("#panel-translations"),
+  languagesPanel: $("#panel-languages"),
   main: $(".app-main"),
   paneDivider: $("#pane-divider"),
   readingPane: $("#reading-pane"),
@@ -133,32 +134,157 @@ function renderPassage(p) {
   els.verses.innerHTML = "";
   for (const v of p.verses) els.verses.appendChild(renderVerse(v));
   renderTranslations(p);
+  renderLanguages(p);
   els.hint.textContent = "";
   els.statusLeft.textContent = p.ref;
   els.input.value = p.ref;
 }
 
+function bindMasterToggle(panel, btnSelector, cardSelector) {
+  const btn = panel.querySelector(btnSelector);
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    const cards = panel.querySelectorAll(cardSelector);
+    const anyClosed = Array.from(cards).some((c) => !c.open);
+    cards.forEach((c) => { c.open = anyClosed; });
+    btn.textContent = anyClosed ? "Collapse All" : "Expand All";
+  });
+}
+
 function renderTranslations(pass) {
-  const panels = pass.verses.slice(0, 12).map((v) => {
+  if (!els.translationsPanel) return;
+  const versesWithTranslations = pass.verses.filter(
+    (v) => v.translations && Object.keys(v.translations).length > 0
+  );
+
+  if (!versesWithTranslations.length) {
+    els.translationsPanel.innerHTML = `
+      <div class="panel-toolbar">
+        <span>Comparative Translations</span>
+      </div>
+      <p class="tab-hint">No comparative translations available for ${escapeHtml(pass.ref)}.</p>
+    `;
+    return;
+  }
+
+  const allInitiallyOpen = versesWithTranslations.length <= 1;
+  const toolbar = `
+    <div class="panel-toolbar">
+      <span>Comparative Translations · ${versesWithTranslations.length} verse${versesWithTranslations.length === 1 ? "" : "s"}</span>
+      <button type="button" class="btn-disclosure-toggle" id="toggle-all-translations">${allInitiallyOpen ? "Collapse All" : "Expand All"}</button>
+    </div>
+  `;
+
+  const cards = versesWithTranslations.map((v, idx) => {
     const extra = Object.entries(v.translations || {});
-    if (!extra.length) return `<p class="tab-hint">No additional translations for verse ${v.verse}.</p>`;
-    const lines = extra.map(
-      ([t, text]) => `<p><strong>[${escapeHtml(t)}]</strong> ${escapeHtml(text)}</p>`
-    ).join("");
-    return `<div class="verse-extra"><span class="verse-num">${v.verse}</span>${lines}</div>`;
+    const lines = extra.map(([t, text]) => `
+      <div class="translation-row">
+        <span class="translation-badge">[${escapeHtml(t.toUpperCase())}]</span>
+        <span class="translation-text">${escapeHtml(text)}</span>
+      </div>
+    `).join("");
+
+    // First verse defaults to open; subsequent verses default to collapsed per progressive disclosure
+    const isOpen = idx === 0 ? "open" : "";
+    return `
+      <details class="disclosure-card translation-card" ${isOpen}>
+        <summary class="disclosure-summary">
+          <span class="disclosure-arrow" aria-hidden="true">▸</span>
+          <span class="verse-num">${v.verse}</span>
+          <span class="translation-snippet">${escapeHtml(v.text.slice(0, 50))}${v.text.length > 50 ? "…" : ""}</span>
+          <span class="translation-count-badge">${extra.length} versions</span>
+        </summary>
+        <div class="disclosure-body">
+          ${lines}
+        </div>
+      </details>
+    `;
   }).join("");
-  els.translationsPanel.innerHTML = panels || "<p class='tab-hint'>Loading…</p>";
+
+  els.translationsPanel.innerHTML = toolbar + cards;
+  bindMasterToggle(els.translationsPanel, "#toggle-all-translations", "details.translation-card");
+}
+
+function renderLanguages(pass) {
+  if (!els.languagesPanel) return;
+  const versesWithNuances = pass.verses.filter(
+    (v) => v.verbal_nuances && v.verbal_nuances.length > 0
+  );
+
+  if (!versesWithNuances.length) {
+    els.languagesPanel.innerHTML = `
+      <div class="panel-toolbar">
+        <span>Original Languages</span>
+      </div>
+      <p class="tab-hint">No verbal nuances or morphological entries indexed for ${escapeHtml(pass.ref)}.</p>
+    `;
+    return;
+  }
+
+  const toolbar = `
+    <div class="panel-toolbar">
+      <span>Original Languages · ${versesWithNuances.length} verse${versesWithNuances.length === 1 ? "" : "s"}</span>
+      <button type="button" class="btn-disclosure-toggle" id="toggle-all-languages">Expand All</button>
+    </div>
+  `;
+
+  const sections = versesWithNuances.map((v) => {
+    const nuances = v.verbal_nuances || [];
+
+    const cards = nuances.map((n) => `
+      <details class="disclosure-card morph-card">
+        <summary class="disclosure-summary">
+          <span class="disclosure-arrow" aria-hidden="true">▸</span>
+          <span class="morph-surface">${escapeHtml(n.text || n.lemma)}</span>
+          <span class="morph-lemma">(${escapeHtml(n.lemma)})</span>
+          <span class="morph-stem-badge">${escapeHtml(n.stem_or_tense)}</span>
+          <span class="morph-strongs-badge">${escapeHtml(n.strongs)}</span>
+        </summary>
+        <div class="disclosure-body">
+          <div class="morph-summary-row">
+            <span class="morph-plain-summary">${escapeHtml(n.plain_summary)}</span>
+          </div>
+          ${n.theological_nuance ? `
+          <div class="morph-theological-card">
+            <strong class="theological-label">Theological Nuance</strong>
+            <p class="theological-text">${escapeHtml(n.theological_nuance)}</p>
+          </div>` : ""}
+          <div class="morph-details-grid">
+            <div class="detail-item"><span class="detail-key">Aspect:</span> <span class="detail-val">${escapeHtml(n.aspect_meaning || "—")}</span></div>
+            <div class="detail-item"><span class="detail-key">Voice:</span> <span class="detail-val">${escapeHtml(n.voice || "—")}</span></div>
+            <div class="detail-item"><span class="detail-key">Code:</span> <code class="detail-code">${escapeHtml(n.morph_code)}</code></div>
+            <div class="detail-item"><span class="detail-key">Gloss:</span> <em class="detail-val">${escapeHtml(n.gloss || "—")}</em></div>
+          </div>
+        </div>
+      </details>
+    `).join("");
+
+    return `
+      <div class="verse-language-group">
+        <div class="verse-language-header">
+          <span class="verse-num">${v.verse}</span>
+          <span class="verse-language-snippet">${escapeHtml(v.text.slice(0, 50))}${v.text.length > 50 ? "…" : ""}</span>
+        </div>
+        ${cards}
+      </div>
+    `;
+  }).join("");
+
+  els.languagesPanel.innerHTML = toolbar + sections;
+  bindMasterToggle(els.languagesPanel, "#toggle-all-languages", "details.morph-card");
 }
 
 function showError(message) {
   els.statusLeft.textContent = "error";
   els.hint.textContent = message;
   els.verses.innerHTML = "";
-  els.translationsPanel.innerHTML = "<p class='tab-hint'>No data.</p>";
+  if (els.translationsPanel) els.translationsPanel.innerHTML = "<p class='tab-hint'>No data.</p>";
+  if (els.languagesPanel) els.languagesPanel.innerHTML = "<p class='tab-hint'>No data.</p>";
 }
 
 /* small escaping helper (never trust fetched text into innerHTML unescaped) */
 function escapeHtml(s) {
+  if (s === null || s === undefined) return "";
   return String(s).replace(/[&<>"']/g, (c) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   }[c]));
@@ -168,7 +294,7 @@ function escapeHtml(s) {
 
 async function navigate(ref) {
   try {
-    const pass = await api(`/api/passage?ref=${encodeURIComponent(ref)}&eager=0`);
+    const pass = await api(`/api/passage?ref=${encodeURIComponent(ref)}&eager=1`);
     renderPassage(pass);
   } catch (err) {
     showError(String(err.message || err));

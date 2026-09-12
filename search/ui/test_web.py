@@ -99,6 +99,12 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"tab-exit-zoom", body)
         self.assertIn(b"tab-list", body)
         self.assertIn(b"prefers-reduced-motion", body)
+        self.assertIn(b"disclosure-card", body)
+        self.assertIn(b"disclosure-summary", body)
+        self.assertIn(b"disclosure-arrow", body)
+        self.assertIn(b"morph-card", body)
+        self.assertIn(b"translation-card", body)
+        self.assertIn(b"morph-theological-card", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -113,6 +119,11 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"verse-text", body)
         self.assertIn(b"strongs-tag", body)
         self.assertIn(b"code.startsWith", body)
+        self.assertIn(b"renderLanguages", body)
+        self.assertIn(b"disclosure-card", body)
+        self.assertIn(b"morph-card", body)
+        self.assertIn(b"toggle-all-languages", body)
+        self.assertIn(b"toggle-all-translations", body)
         self.assertIn(b"toggleFocusMode", body)
         self.assertIn(b"toggleSideZoom", body)
         self.assertIn(b"restoreStatusBar", body)
@@ -209,6 +220,29 @@ class WebServerTests(unittest.TestCase):
         self.assertNotIn("egw_correlations", data)
         for verse in data["verses"]:
             self.assertNotIn("egw_correlations", verse)
+
+    def test_passage_eager_verbal_nuances_structure(self) -> None:
+        # Progressive disclosure: eager=1 attaches verbal_nuances used by Languages tab (OT & NT)
+        data_ot = self._get_json("/api/passage?ref=Genesis%201:1&eager=1")
+        v_ot = data_ot["verses"][0]
+        self.assertIn("verbal_nuances", v_ot)
+        nuances_ot = v_ot["verbal_nuances"]
+        self.assertTrue(len(nuances_ot) >= 1)
+        n_ot = nuances_ot[0]
+        self.assertEqual(n_ot["language"], "hebrew")
+        self.assertIn("stem_or_tense", n_ot)
+        self.assertIn("theological_nuance", n_ot)
+        self.assertEqual(n_ot["strongs"], "H1254")
+
+        data_nt = self._get_json("/api/passage?ref=John%201:1&eager=1")
+        v_nt = data_nt["verses"][0]
+        self.assertIn("verbal_nuances", v_nt)
+        nuances_nt = v_nt["verbal_nuances"]
+        self.assertTrue(len(nuances_nt) >= 1)
+        n_nt = nuances_nt[0]
+        self.assertEqual(n_nt["language"], "greek")
+        self.assertIn("stem_or_tense", n_nt)
+        self.assertIn("theological_nuance", n_nt)
 
     def test_translations_endpoint(self) -> None:
         data = self._get_json("/api/translations")

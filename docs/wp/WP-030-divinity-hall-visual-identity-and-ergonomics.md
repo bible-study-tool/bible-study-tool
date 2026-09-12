@@ -38,7 +38,7 @@ Transform the local web interface into the "Divinity Hall Desk" environment defi
 - [x] Implement togglable alternating verse zebra shading (default: off).
 
 ### Phase 4 — Progressive Disclosure Primitives
-- [ ] Refactor dense Hebrew/Greek morphology and translation equivalents behind semantic `<details><summary>` progressive disclosure controls (`▸`/`▾`).
+- [x] Refactor dense Hebrew/Greek morphology and translation equivalents behind semantic `<details><summary>` progressive disclosure controls (`▸`/`▾`).
 
 ### Phase 5 — Verification & Accessibility
 - [ ] Verify WCAG AAA contrast across light sepia and dark walnut substrates.
@@ -56,4 +56,4 @@ Transform the local web interface into the "Divinity Hall Desk" environment defi
 - [ ] Shortcut `f` cleanly enters/exits Scripture Focus Mode.
 - [ ] Shortcut `z` / `Shift + F` maximizes active panel; `Escape` restores.
 - [ ] Header is uncluttered, retaining only navigation, search, and Settings button.
-- [ ] Dense morphological listings default to collapsed state with disclosure toggle.
+- [x] Dense morphological listings default to collapsed state with disclosure toggle.
