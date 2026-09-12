@@ -63,6 +63,9 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"pane-divider", body)
         self.assertIn(b"role=\"separator\"", body)
         self.assertIn(b"aria-controls=\"reading-pane\"", body)
+        self.assertIn(b"focus-mode-btn", body)
+        self.assertIn(b"exit-zoom-btn", body)
+        self.assertIn(b"tab-list", body)
 
     def test_head_request_supported(self) -> None:
         req = urllib.request.Request(self.base + "/", method="HEAD")
@@ -79,9 +82,14 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"--bg", body)  # design tokens present
         self.assertIn(b"wizard-dialog", body)
         self.assertIn(b"btn-setup", body)
+        self.assertIn(b"btn-tool", body)
         self.assertIn(b"pane-divider", body)
         self.assertIn(b"col-resize", body)
         self.assertIn(b"--split-percent", body)
+        self.assertIn(b"focus-mode", body)
+        self.assertIn(b"zoom-side", body)
+        self.assertIn(b"tab-exit-zoom", body)
+        self.assertIn(b"tab-list", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -90,6 +98,11 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"verifyBundle", body)
         self.assertIn(b"openWizard", body)
         self.assertIn(b"initPaneResizer", body)
+        self.assertIn(b"initFocusAndZoomModes", body)
+        self.assertIn(b"toggleFocusMode", body)
+        self.assertIn(b"toggleSideZoom", body)
+        self.assertIn(b"restoreStatusBar", body)
+        self.assertIn(b"isInputFocused", body)
         self.assertIn(b"split_percent", body)
         self.assertIn(b"setPointerCapture", body)
 

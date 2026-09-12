@@ -272,7 +272,8 @@ button:disabled { opacity: 0.45; cursor: default; }
   gap: var(--space-3);
 }
 
-.btn-setup {
+.btn-setup,
+.btn-tool {
   font-size: var(--type-sm);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-m);
@@ -283,11 +284,19 @@ button:disabled { opacity: 0.45; cursor: default; }
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
-.btn-setup:hover {
+.btn-setup:hover,
+.btn-tool:hover {
   border-color: var(--primary);
   color: var(--primary);
+}
+
+.btn-tool[aria-pressed="true"] {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
 }
 
 .theme-control {
@@ -315,11 +324,49 @@ button:disabled { opacity: 0.45; cursor: default; }
   min-height: 0;
   overflow: hidden;
   position: relative;
+  transition: grid-template-columns 150ms ease;
 }
 
 .app-main.is-resizing {
   user-select: none;
   cursor: col-resize;
+  transition: none;
+}
+
+/* Scripture Focus Mode ('f') — ADR-025 / WP-030 Phase 2 */
+.app-main.focus-mode {
+  grid-template-columns: 1fr;
+}
+
+.app-main.focus-mode .pane-divider,
+.app-main.focus-mode .pane-side {
+  display: none !important;
+}
+
+.app-main.focus-mode .pane-reading {
+  padding: var(--space-6) clamp(var(--space-4), 14vw, var(--space-6));
+}
+
+.app-main.focus-mode .passage-heading,
+.app-main.focus-mode .verses,
+.app-main.focus-mode .status-hint {
+  max-width: 72ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Panel Zoom ('z') for Side Pane Workstation */
+.app-main.zoom-side {
+  grid-template-columns: 1fr;
+}
+
+.app-main.zoom-side .pane-reading,
+.app-main.zoom-side .pane-divider {
+  display: none !important;
+}
+
+.app-main.zoom-side .pane-side {
+  width: 100%;
 }
 
 .pane { min-height: 0; overflow-y: auto; }
@@ -433,6 +480,11 @@ button:disabled { opacity: 0.45; cursor: default; }
   background: var(--surface);
 }
 
+.tab-list {
+  display: flex;
+  flex: 1;
+}
+
 .tab {
   flex: 1;
   border: none;
@@ -448,6 +500,25 @@ button:disabled { opacity: 0.45; cursor: default; }
 .tab[aria-selected="true"] {
   color: var(--primary);
   border-bottom-color: var(--primary);
+}
+
+.tab-exit-zoom {
+  border: none;
+  background: var(--surface-alt);
+  color: var(--ink-muted);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--type-xs);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  border-left: 1px solid var(--border);
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.tab-exit-zoom:hover {
+  color: var(--primary);
+  background: var(--border);
 }
 
 .tab-body { padding: var(--space-4); overflow-y: auto; font-size: var(--type-sm); }

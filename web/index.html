@@ -25,6 +25,9 @@
     </form>
 
     <div class="header-controls">
+      <button id="focus-mode-btn" class="btn-tool" aria-pressed="false" aria-label="Toggle Scripture Focus Mode (shortcut: f)" title="Toggle Scripture Focus Mode (f)">
+        <span class="focus-icon" aria-hidden="true">📖</span> Focus
+      </button>
       <button id="open-wizard-btn" class="btn-setup" aria-label="Open Setup & Help" title="Open Setup Wizard & Guides">⚙ Setup</button>
       <label class="theme-control" for="theme-select">
         Theme
@@ -34,7 +37,7 @@
   </header>
 
   <main class="app-main">
-    <section id="reading-pane" class="pane pane-reading" aria-live="polite">
+    <section id="reading-pane" class="pane pane-reading" aria-live="polite" tabindex="-1">
       <div class="passage-heading">
         <h1 id="passage-title">—</h1>
         <p id="passage-subtitle" class="passage-subtitle"></p>
@@ -51,19 +54,22 @@
     </div>
 
     <aside class="pane pane-side">
-      <div class="tab-bar" role="tablist" aria-label="Study panels">
-        <button class="tab" role="tab" aria-selected="true" data-tab="translations">Translations</button>
-        <button class="tab" role="tab" aria-selected="false" data-tab="languages">Languages</button>
-        <button class="tab" role="tab" aria-selected="false" data-tab="notes">Notes</button>
+      <div class="tab-bar">
+        <div class="tab-list" role="tablist" aria-label="Study panels">
+          <button class="tab" role="tab" aria-selected="true" data-tab="translations" title="Translations (double-click to maximize)">Translations</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="languages" title="Languages (double-click to maximize)">Languages</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="notes" title="Notes (double-click to maximize)">Notes</button>
+        </div>
+        <button id="exit-zoom-btn" class="tab-exit-zoom" aria-label="Exit full panel view" title="Exit full panel view (Esc / double-click)" hidden>⤢ Exit Full View</button>
       </div>
 
-      <section class="tab-body" id="panel-translations" role="tabpanel">
+      <section class="tab-body" id="panel-translations" role="tabpanel" tabindex="-1">
         <p class="tab-hint">Alignments for the passage appear here.</p>
       </section>
-      <section class="tab-body" id="panel-languages" role="tabpanel" hidden>
+      <section class="tab-body" id="panel-languages" role="tabpanel" tabindex="-1" hidden>
         <p class="tab-hint">Original-language framing (Hebrew / Greek) lands here in a later phase.</p>
       </section>
-      <section class="tab-body" id="panel-notes" role="tabpanel" hidden>
+      <section class="tab-body" id="panel-notes" role="tabpanel" tabindex="-1" hidden>
         <p class="tab-hint">Your study notes will live here (coming soon).</p>
       </section>
     </aside>

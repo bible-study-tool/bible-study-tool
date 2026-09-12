@@ -26,10 +26,10 @@ Transform the local web interface into the "Divinity Hall Desk" environment defi
 - [x] Style divider in `web/styles.css` with subtle hover cues and `cursor: col-resize`.
 
 ### Phase 2 — Distraction-Free Modes (`f` and `z`)
-- [ ] Implement global shortcut guard ignoring single-key navigation when focus is inside editable elements (`input`, `textarea`, `select`, `[contenteditable]`).
-- [ ] Shortcut `f`: toggles Scripture Focus Mode (collapses inspector pane, centers reading column to 65–75ch).
-- [ ] Shortcut `z` / `Shift + F`: toggles Panel Zoom for whichever panel or tab has active focus.
-- [ ] Tab double-click: expands active study tab to full-width workstation; `Escape` restores split view.
+- [x] Implement global shortcut guard ignoring single-key navigation when focus is inside editable elements (`input`, `textarea`, `select`, `[contenteditable]`).
+- [x] Shortcut `f`: toggles Scripture Focus Mode (collapses inspector pane, centers reading column to 65–75ch).
+- [x] Shortcut `z` / `Shift + F`: toggles Panel Zoom for whichever panel or tab has active focus.
+- [x] Tab double-click: expands active study tab to full-width workstation; `Escape` restores split view.
 
 ### Phase 3 — Palette, Tokens & Header Cleanup
 - [ ] Relocate theme picker out of top header into Settings modal (⚙).

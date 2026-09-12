@@ -24,8 +24,10 @@ const els = {
   translationsPanel: $("#panel-translations"),
   main: $(".app-main"),
   paneDivider: $("#pane-divider"),
-  readingPane: $("#reading-pane"), // Prepared for WP-030 Phase 2 Focus Mode ('f')
-  sidePane: $(".pane-side"),       // Prepared for WP-030 Phase 2 Panel Zoom ('z')
+  readingPane: $("#reading-pane"),
+  sidePane: $(".pane-side"),
+  focusModeBtn: $("#focus-mode-btn"),
+  exitZoomBtn: $("#exit-zoom-btn"),
   tabs: document.querySelectorAll(".tab"),
   openWizardBtn: $("#open-wizard-btn"),
   wizardModal: $("#setup-wizard-modal"),
@@ -389,6 +391,145 @@ function initPaneResizer() {
   });
 }
 
+/* ---- Focus & Panel Zoom Modes (ADR-025 / WP-030 Phase 2) ---- */
+
+function isInputFocused() {
+  const el = document.activeElement;
+  if (!el) return false;
+  const tag = el.tagName ? el.tagName.toLowerCase() : "";
+  return tag === "input" || tag === "textarea" || tag === "select" || el.isContentEditable;
+}
+
+function restoreStatusBar() {
+  if (els.statusLeft && els.title) {
+    els.statusLeft.textContent = els.title.textContent || "";
+  }
+}
+
+function toggleFocusMode(forceState) {
+  if (!els.main) return;
+  const shouldFocus = forceState !== undefined ? forceState : !els.main.classList.contains("focus-mode");
+  if (shouldFocus) {
+    els.main.classList.remove("zoom-side");
+    if (els.exitZoomBtn) els.exitZoomBtn.hidden = true;
+    els.main.classList.add("focus-mode");
+    if (els.focusModeBtn) {
+      els.focusModeBtn.setAttribute("aria-pressed", "true");
+      els.focusModeBtn.title = "Exit Scripture Focus Mode (f or Esc)";
+    }
+    if (els.statusLeft) {
+      els.statusLeft.textContent = "Focus Mode active — press 'f' or Esc to restore panels";
+    }
+  } else {
+    els.main.classList.remove("focus-mode");
+    if (els.focusModeBtn) {
+      els.focusModeBtn.setAttribute("aria-pressed", "false");
+      els.focusModeBtn.title = "Toggle Scripture Focus Mode (f)";
+    }
+    restoreStatusBar();
+  }
+}
+
+function toggleSideZoom(forceState) {
+  if (!els.main) return;
+  const shouldZoom = forceState !== undefined ? forceState : !els.main.classList.contains("zoom-side");
+  if (shouldZoom) {
+    els.main.classList.remove("focus-mode");
+    if (els.focusModeBtn) {
+      els.focusModeBtn.setAttribute("aria-pressed", "false");
+      els.focusModeBtn.title = "Toggle Scripture Focus Mode (f)";
+    }
+    els.main.classList.add("zoom-side");
+    if (els.exitZoomBtn) els.exitZoomBtn.hidden = false;
+    if (els.statusLeft) {
+      els.statusLeft.textContent = "Panel Zoom active — press 'z' or Esc to restore split";
+    }
+  } else {
+    els.main.classList.remove("zoom-side");
+    if (els.exitZoomBtn) els.exitZoomBtn.hidden = true;
+    restoreStatusBar();
+  }
+}
+
+function exitDistractionFreeModes() {
+  if (!els.main) return;
+  const wasActive = els.main.classList.contains("focus-mode") || els.main.classList.contains("zoom-side");
+  if (!wasActive) return;
+  els.main.classList.remove("focus-mode");
+  els.main.classList.remove("zoom-side");
+  if (els.focusModeBtn) {
+    els.focusModeBtn.setAttribute("aria-pressed", "false");
+    els.focusModeBtn.title = "Toggle Scripture Focus Mode (f)";
+  }
+  if (els.exitZoomBtn) els.exitZoomBtn.hidden = true;
+  restoreStatusBar();
+}
+
+function initFocusAndZoomModes() {
+  if (els.focusModeBtn) {
+    els.focusModeBtn.addEventListener("click", () => toggleFocusMode());
+  }
+
+  if (els.exitZoomBtn) {
+    els.exitZoomBtn.addEventListener("click", () => exitDistractionFreeModes());
+  }
+
+  // Double-clicking any study tab toggles full-width side workstation
+  for (const tab of els.tabs) {
+    tab.addEventListener("dblclick", (e) => {
+      e.preventDefault();
+      toggleSideZoom();
+    });
+  }
+
+  // Global keyboard shortcut dispatcher with input focus guard
+  window.addEventListener("keydown", (e) => {
+    // If wizard modal is open, do not intercept single-key navigation
+    if (els.wizardModal && els.wizardModal.open) return;
+
+    // Guard: ignore single-key shortcuts while typing in editable elements
+    if (isInputFocused()) {
+      if (e.key === "Escape") {
+        document.activeElement.blur();
+      }
+      return;
+    }
+
+    // Ignore if browser modifier keys (Ctrl/Meta/Alt) are held
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+    // 'f' or 'F' without Shift: toggle Scripture Focus Mode
+    if (!e.shiftKey && (e.key === "f" || e.key === "F")) {
+      e.preventDefault();
+      toggleFocusMode();
+      return;
+    }
+
+    // 'z' or 'Z' OR Shift + 'F' / 'f': toggle Panel Zoom
+    if ((e.key === "z" || e.key === "Z") || (e.shiftKey && (e.key === "f" || e.key === "F"))) {
+      e.preventDefault();
+      const inSidePane = els.sidePane && els.sidePane.contains(document.activeElement);
+      const isCurrentlyZoomed = els.main && (els.main.classList.contains("zoom-side") || els.main.classList.contains("focus-mode"));
+      if (isCurrentlyZoomed) {
+        exitDistractionFreeModes();
+      } else if (inSidePane) {
+        toggleSideZoom(true);
+      } else {
+        toggleFocusMode(true);
+      }
+      return;
+    }
+
+    // Escape: exit any active distraction-free mode
+    if (e.key === "Escape") {
+      if (els.main && (els.main.classList.contains("focus-mode") || els.main.classList.contains("zoom-side"))) {
+        e.preventDefault();
+        exitDistractionFreeModes();
+      }
+    }
+  });
+}
+
 /* ---- wiring ---- */
 
 els.form.addEventListener("submit", (e) => {
@@ -419,6 +560,7 @@ if (els.wizardBackBtn) els.wizardBackBtn.addEventListener("click", () => setWiza
 if (els.wizardNextBtn) els.wizardNextBtn.addEventListener("click", () => setWizardStep(currentWizardStep + 1));
 
 initPaneResizer();
+initFocusAndZoomModes();
 initAutoUpdate();
 if (!localStorage.getItem("abst.setup_completed")) {
   openWizard();
