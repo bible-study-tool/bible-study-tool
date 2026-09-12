@@ -18,12 +18,12 @@ Transform the local web interface into the "Divinity Hall Desk" environment defi
 ## Tasks
 
 ### Phase 1 — Draggable Split Pane & Layout System
-- [ ] Insert explicit pane divider `#pane-divider` with accessibility roles in `web/index.html`.
-- [ ] Implement pointer event listeners (`pointerdown`, `pointermove`, `pointerup`, `setPointerCapture`) in `web/app.js`.
-- [ ] Constrain resizing between 40% and 80% Scripture width.
-- [ ] Implement double-click on divider to restore default 65/35 ratio.
-- [ ] Persist split position to `localStorage` (`abst.split_ratio`).
-- [ ] Style divider in `web/styles.css` with subtle hover cues and `cursor: col-resize`.
+- [x] Insert explicit pane divider `#pane-divider` with accessibility roles in `web/index.html`.
+- [x] Implement pointer event listeners (`pointerdown`, `pointermove`, `pointerup`, `setPointerCapture`) in `web/app.js`.
+- [x] Constrain resizing between 40% and 80% Scripture width.
+- [x] Implement double-click on divider to restore default 65/35 ratio.
+- [x] Persist split position to `localStorage` (`abst.split_percent`).
+- [x] Style divider in `web/styles.css` with subtle hover cues and `cursor: col-resize`.
 
 ### Phase 2 — Distraction-Free Modes (`f` and `z`)
 - [ ] Implement global shortcut guard ignoring single-key navigation when focus is inside editable elements (`input`, `textarea`, `select`, `[contenteditable]`).

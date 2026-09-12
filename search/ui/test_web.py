@@ -60,6 +60,9 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"setup-wizard-modal", body)
         self.assertIn(b"open-wizard-btn", body)
         self.assertIn(b"auto-update-toggle", body)
+        self.assertIn(b"pane-divider", body)
+        self.assertIn(b"role=\"separator\"", body)
+        self.assertIn(b"aria-controls=\"reading-pane\"", body)
 
     def test_head_request_supported(self) -> None:
         req = urllib.request.Request(self.base + "/", method="HEAD")
@@ -76,6 +79,9 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"--bg", body)  # design tokens present
         self.assertIn(b"wizard-dialog", body)
         self.assertIn(b"btn-setup", body)
+        self.assertIn(b"pane-divider", body)
+        self.assertIn(b"col-resize", body)
+        self.assertIn(b"--split-percent", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -83,6 +89,9 @@ class WebServerTests(unittest.TestCase):
         self.assertIn("javascript", ctype)
         self.assertIn(b"verifyBundle", body)
         self.assertIn(b"openWizard", body)
+        self.assertIn(b"initPaneResizer", body)
+        self.assertIn(b"split_percent", body)
+        self.assertIn(b"setPointerCapture", body)
 
     def test_traversal_blocked(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:

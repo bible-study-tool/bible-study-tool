@@ -308,20 +308,70 @@ button:disabled { opacity: 0.45; cursor: default; }
   padding: var(--space-1) var(--space-2);
 }
 
-/* ---- Main layout: reading pane + side pane ---- */
+/* ---- Main layout: reading pane + pane divider + side pane ---- */
 .app-main {
   display: grid;
-  grid-template-columns: 1fr var(--side-w);
+  grid-template-columns: var(--split-percent, 65%) 8px minmax(0, 1fr);
   min-height: 0;
   overflow: hidden;
+  position: relative;
+}
+
+.app-main.is-resizing {
+  user-select: none;
+  cursor: col-resize;
 }
 
 .pane { min-height: 0; overflow-y: auto; }
 
 .pane-reading {
   padding: var(--space-5) clamp(var(--space-5), 6vw, var(--space-6));
-  border-right: 1px solid var(--border);
   background: var(--bg);
+}
+
+.pane-divider {
+  width: 8px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  cursor: col-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  touch-action: none;
+  transition: background 150ms ease, border-color 150ms ease;
+  z-index: 2;
+}
+
+.pane-divider:hover,
+.app-main.is-resizing .pane-divider {
+  background: var(--surface-alt);
+  border-color: var(--primary);
+}
+
+.pane-divider:focus-visible {
+  background: var(--surface-alt);
+  border-color: var(--primary);
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+.divider-handle {
+  width: 2px;
+  height: 28px;
+  border-radius: 1px;
+  background: var(--ink-muted);
+  opacity: 0.4;
+  transition: opacity 150ms ease, height 150ms ease, background-color 150ms ease;
+}
+
+.pane-divider:hover .divider-handle,
+.pane-divider:focus-visible .divider-handle,
+.app-main.is-resizing .divider-handle {
+  opacity: 1;
+  height: 36px;
+  background: var(--primary);
 }
 
 .pane-side {
@@ -421,6 +471,7 @@ button:disabled { opacity: 0.45; cursor: default; }
 /* ---- Small screens: drop the side pane ---- */
 @media (max-width: 720px) {
   .app-main { grid-template-columns: 1fr; }
+  .pane-divider { display: none; }
   .pane-side { display: none; }
   .brand-title { display: none; }
 }

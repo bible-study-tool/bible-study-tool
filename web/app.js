@@ -22,6 +22,10 @@ const els = {
   statusLeft: $("#status-left"),
   statusRight: $("#status-right"),
   translationsPanel: $("#panel-translations"),
+  main: $(".app-main"),
+  paneDivider: $("#pane-divider"),
+  readingPane: $("#reading-pane"), // Prepared for WP-030 Phase 2 Focus Mode ('f')
+  sidePane: $(".pane-side"),       // Prepared for WP-030 Phase 2 Panel Zoom ('z')
   tabs: document.querySelectorAll(".tab"),
   openWizardBtn: $("#open-wizard-btn"),
   wizardModal: $("#setup-wizard-modal"),
@@ -280,6 +284,111 @@ function initAutoUpdate() {
   });
 }
 
+/* ---- Split Pane Resizer (ADR-025 / WP-030 Phase 1) ---- */
+
+const DEFAULT_SPLIT = 65;
+const MIN_SPLIT = 40;
+const MAX_SPLIT = 80;
+
+function setSplit(percent, persist = true) {
+  if (!els.main || !els.paneDivider) return;
+  percent = Math.min(MAX_SPLIT, Math.max(MIN_SPLIT, percent));
+  els.main.style.setProperty("--split-percent", `${percent.toFixed(2)}%`);
+  els.paneDivider.setAttribute("aria-valuenow", String(Math.round(percent)));
+  if (persist) {
+    try {
+      localStorage.setItem("abst.split_percent", percent.toFixed(2));
+    } catch (_) {}
+  }
+}
+
+function resetSplit() {
+  if (!els.main || !els.paneDivider) return;
+  els.main.style.removeProperty("--split-percent");
+  els.paneDivider.setAttribute("aria-valuenow", String(DEFAULT_SPLIT));
+  try {
+    localStorage.removeItem("abst.split_percent");
+  } catch (_) {}
+}
+
+function initPaneResizer() {
+  if (!els.main || !els.paneDivider) return;
+
+  try {
+    const saved = parseFloat(localStorage.getItem("abst.split_percent"));
+    if (!isNaN(saved) && saved >= MIN_SPLIT && saved <= MAX_SPLIT) {
+      setSplit(saved, false);
+    }
+  } catch (_) {}
+
+  let isDragging = false;
+  let dragRect = null;
+
+  els.paneDivider.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return; // Primary mouse button only
+    isDragging = true;
+    dragRect = els.main.getBoundingClientRect();
+    try {
+      els.paneDivider.setPointerCapture(e.pointerId);
+    } catch (_) {}
+    els.main.classList.add("is-resizing");
+    document.body.style.userSelect = "none";
+  });
+
+  els.paneDivider.addEventListener("pointermove", (e) => {
+    if (!isDragging || !dragRect || dragRect.width <= 0) return;
+    const percent = ((e.clientX - dragRect.left) / dragRect.width) * 100;
+    setSplit(percent, false); // Performance: no synchronous localStorage in frame loop
+  });
+
+  const stopDrag = (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+    dragRect = null;
+    try {
+      els.paneDivider.releasePointerCapture(e.pointerId);
+    } catch (_) {}
+    els.main.classList.remove("is-resizing");
+    document.body.style.removeProperty("user-select");
+
+    // Persist final position once upon drag completion
+    const current = parseFloat(els.main.style.getPropertyValue("--split-percent"));
+    if (!isNaN(current)) {
+      try {
+        localStorage.setItem("abst.split_percent", current.toFixed(2));
+      } catch (_) {}
+    }
+  };
+
+  els.paneDivider.addEventListener("pointerup", stopDrag);
+  els.paneDivider.addEventListener("pointercancel", stopDrag);
+
+  els.paneDivider.addEventListener("dblclick", () => {
+    resetSplit();
+  });
+
+  // WAI-ARIA APG compliant separator keyboard navigation
+  els.paneDivider.addEventListener("keydown", (e) => {
+    const current = parseFloat(els.main.style.getPropertyValue("--split-percent")) || DEFAULT_SPLIT;
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      setSplit(current - 2, true);
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      setSplit(current + 2, true);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      setSplit(MIN_SPLIT, true);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      setSplit(MAX_SPLIT, true);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      resetSplit();
+    }
+  });
+}
+
 /* ---- wiring ---- */
 
 els.form.addEventListener("submit", (e) => {
@@ -309,6 +418,7 @@ if (els.wizardFinishBtn) els.wizardFinishBtn.addEventListener("click", completeW
 if (els.wizardBackBtn) els.wizardBackBtn.addEventListener("click", () => setWizardStep(currentWizardStep - 1));
 if (els.wizardNextBtn) els.wizardNextBtn.addEventListener("click", () => setWizardStep(currentWizardStep + 1));
 
+initPaneResizer();
 initAutoUpdate();
 if (!localStorage.getItem("abst.setup_completed")) {
   openWizard();
