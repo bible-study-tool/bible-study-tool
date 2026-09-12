@@ -186,6 +186,8 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 self._api_passage(query)
             elif path == "/api/translations":
                 self._api_translations()
+            elif path == "/api/nuance":
+                self._api_nuance(query)
             elif path.startswith("/api/"):
                 self._reply_error(HTTPStatus.NOT_FOUND, "unknown endpoint")
             else:
@@ -207,6 +209,7 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "default_theme": "sepia",
                 "themes": themes,
                 "translations_url": "/api/translations",
+                "nuance_url": "/api/nuance",
                 "verify_bundle_url": "/api/verify-bundle",
                 "egw_available": has_egw,
             })
@@ -257,6 +260,50 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
             self._reply_json(HTTPStatus.OK, {
                 "translations": _jsonable(study.get_available_translations()),
             })
+
+        def _api_nuance(self, query: dict[str, list[str]]) -> None:
+            morph = query.get("morph", [""])[0].strip()
+            ref = query.get("ref", query.get("verse", [""]))[0].strip()
+            strongs = query.get("strongs", [""])[0].strip()
+            lang = query.get("lang", query.get("language", [""]))[0].strip()
+            lemma = query.get("lemma", [""])[0].strip()
+            text = query.get("text", [""])[0].strip()
+            gloss = query.get("gloss", [""])[0].strip()
+
+            if morph:
+                gn = study.explain_verb(
+                    morph,
+                    language=lang,
+                    lemma=lemma,
+                    text=text,
+                    gloss=gloss,
+                    strongs=strongs,
+                )
+                if not gn:
+                    self._reply_error(HTTPStatus.BAD_REQUEST, f"cannot explain morphology code {morph!r}")
+                    return
+                self._reply_json(HTTPStatus.OK, {
+                    "status": "ok",
+                    "nuance": _jsonable(gn),
+                })
+                return
+
+            if ref:
+                try:
+                    nuances = study.get_verse_nuances(ref, strongs=strongs)
+                    self._reply_json(HTTPStatus.OK, {
+                        "status": "ok",
+                        "ref": ref,
+                        "strongs": strongs or None,
+                        "nuances": _jsonable(nuances),
+                        "count": len(nuances),
+                    })
+                    return
+                except Exception as exc:
+                    self._reply_error(HTTPStatus.INTERNAL_SERVER_ERROR, f"error fetching nuances: {exc}")
+                    return
+
+            self._reply_error(HTTPStatus.BAD_REQUEST, "missing 'morph' or 'ref' parameter")
 
     return StudyHandler
 

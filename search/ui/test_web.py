@@ -145,7 +145,7 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"zebra_shading", body)
         self.assertIn(b"verse-text", body)
         self.assertIn(b"strongs-tag", body)
-        self.assertIn(b"code.startsWith", body)
+        self.assertIn(b"startsWith", body)
         self.assertIn(b"renderLanguages", body)
         self.assertIn(b"disclosure-card", body)
         self.assertIn(b"morph-card", body)
@@ -157,6 +157,10 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"isInputFocused", body)
         self.assertIn(b"split_percent", body)
         self.assertIn(b"setPointerCapture", body)
+        self.assertIn(b"switchTab", body)
+        self.assertIn(b"data-strongs", body)
+        self.assertIn(b"data-verse", body)
+        self.assertIn(b"openNuance", body)
 
     def test_traversal_blocked(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:
@@ -170,6 +174,7 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(data["status"], "ok")
         self.assertEqual(data["version"], "0.1.0")
         self.assertEqual(data["default_theme"], "sepia")
+        self.assertEqual(data["nuance_url"], "/api/nuance")
         self.assertIn("verify_bundle_url", data)
         self.assertIn("egw_available", data)
         theme_ids = [t["id"] for t in data["themes"]]
@@ -274,6 +279,56 @@ class WebServerTests(unittest.TestCase):
     def test_translations_endpoint(self) -> None:
         data = self._get_json("/api/translations")
         self.assertTrue(len(data["translations"]) >= 1)
+
+    def test_nuance_endpoint_by_morph_hebrew(self) -> None:
+        data = self._get_json("/api/nuance?morph=Vqp3ms&strongs=H1254")
+        self.assertEqual(data["status"], "ok")
+        nuance = data["nuance"]
+        self.assertEqual(nuance["language"], "hebrew")
+        self.assertEqual(nuance["stem_or_tense"], "Qal (Simple Active)")
+        self.assertEqual(nuance["strongs"], "H1254")
+
+    def test_nuance_endpoint_by_morph_greek(self) -> None:
+        data = self._get_json("/api/nuance?morph=V-AMI-3S&lang=greek")
+        self.assertEqual(data["status"], "ok")
+        nuance = data["nuance"]
+        self.assertEqual(nuance["language"], "greek")
+        self.assertIn("Aorist Middle", nuance["stem_or_tense"])
+
+    def test_nuance_endpoint_by_ref_genesis(self) -> None:
+        data = self._get_json("/api/nuance?ref=Genesis%201:1")
+        self.assertEqual(data["status"], "ok")
+        self.assertGreaterEqual(data["count"], 1)
+        nuances = data["nuances"]
+        self.assertTrue(any(n["strongs"] == "H1254" for n in nuances))
+
+    def test_nuance_endpoint_by_ref_and_strongs(self) -> None:
+        data = self._get_json("/api/nuance?ref=John%201:1&strongs=G1510")
+        self.assertEqual(data["status"], "ok")
+        self.assertGreaterEqual(data["count"], 1)
+        for n in data["nuances"]:
+            self.assertEqual(n["strongs"], "G1510")
+            self.assertEqual(n["language"], "greek")
+            self.assertIn("Imperfect Active", n["stem_or_tense"])
+
+    def test_nuance_endpoint_romans(self) -> None:
+        data = self._get_json("/api/nuance?ref=Romans%203:24")
+        self.assertEqual(data["status"], "ok")
+        nuances = data["nuances"]
+        dikai = next((n for n in nuances if n["strongs"] == "G1344"), None)
+        self.assertIsNotNone(dikai)
+        self.assertIn("Present Passive", dikai["stem_or_tense"])
+        self.assertIn("Divine Verdict", dikai["theological_nuance"])
+
+    def test_nuance_endpoint_missing_params_is_400(self) -> None:
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._get("/api/nuance")
+        self.assertEqual(ctx.exception.code, 400)
+
+    def test_nuance_endpoint_bad_morph_is_400(self) -> None:
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._get("/api/nuance?morph=InvalidMorph")
+        self.assertEqual(ctx.exception.code, 400)
 
     def test_unknown_endpoint_is_404(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:

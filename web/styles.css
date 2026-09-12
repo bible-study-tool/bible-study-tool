@@ -569,13 +569,26 @@ button:disabled { opacity: 0.45; cursor: default; }
 
 .strongs,
 .strongs-tag {
-  cursor: help;
+  cursor: pointer;
   font-size: 0.55em;
   vertical-align: super;
   color: var(--strongs-code);
   font-family: var(--font-mono);
   font-weight: 500;
   margin-left: 2px;
+  padding: 1px 3px;
+  border-radius: var(--radius-s);
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.strongs-tag:hover {
+  background: var(--highlight);
+}
+
+.strongs-tag:focus-visible {
+  background: var(--highlight);
+  outline: var(--focus-ring);
+  outline-offset: 1px;
 }
 
 /* Alternating verse shading (Zebra) per ADR-025 */

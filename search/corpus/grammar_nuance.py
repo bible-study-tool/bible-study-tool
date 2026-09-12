@@ -342,6 +342,8 @@ def explain_hebrew_morph(
         return None
 
     stem_char = raw[1]
+    if stem_char == "n":
+        stem_char = "N"
     aspect_char = raw[2]
     rest = raw[3:].split("/")[0]
 
@@ -518,6 +520,29 @@ def explain_morph(
     if morph.startswith("V") or morph.startswith(("HV", "AV")) or morph == "ARAM":
         return explain_hebrew_morph(morph, lemma=lemma, text=text, gloss=gloss, strongs=strongs)
     return None
+
+
+def explain_verb(
+    morph: str,
+    language: str = "",
+    lemma: str = "",
+    text: str = "",
+    gloss: str = "",
+    strongs: str = "",
+) -> Optional[GrammarNuance]:
+    """Plain-English verbal nuance explainer (ADR-025, WP-031).
+
+    Explains Hebrew, Aramaic, or Greek verbal morphology in everyday language.
+    If language is provided, routes explicitly; otherwise auto-detects from morph code.
+    """
+    if not morph:
+        return None
+    lang_lower = (language or "").strip().lower()
+    if lang_lower in ("greek", "el", "grc"):
+        return explain_greek_morph(morph, lemma=lemma, text=text, gloss=gloss, strongs=strongs)
+    if lang_lower in ("hebrew", "he", "hbo", "aramaic", "arc"):
+        return explain_hebrew_morph(morph, lemma=lemma, text=text, gloss=gloss, strongs=strongs)
+    return explain_morph(morph, lemma=lemma, text=text, gloss=gloss, strongs=strongs)
 
 
 def get_verse_grammar_nuances(

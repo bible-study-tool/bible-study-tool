@@ -115,12 +115,37 @@ function renderVerse(v) {
   textSpan.className = "verse-text";
   textSpan.textContent = v.text;
   item.appendChild(textSpan);
-  // Lightweight Strong's markers show only when we have them (cursor: help).
+  // Lightweight Strong's markers show only when we have them (cursor: pointer).
   if (v.strongs_list && v.strongs_list.length) {
     const sup = document.createElement("sup");
     sup.className = "strongs strongs-tag";
-    const code = String(v.strongs_list[0]);
-    sup.textContent = ` ${code.startsWith("H") || code.startsWith("G") ? code : `H${code}`}`;
+    const rawCode = String(v.strongs_list[0]);
+    const normCode = rawCode.startsWith("H") || rawCode.startsWith("G") ? rawCode : `H${rawCode}`;
+    sup.textContent = ` ${normCode}`;
+    sup.setAttribute("role", "button");
+    sup.setAttribute("tabindex", "0");
+    const labelText = `Inspect original-language nuances for ${normCode} (Verse ${v.verse})`;
+    sup.title = labelText;
+    sup.setAttribute("aria-label", labelText);
+    const openNuance = () => {
+      switchTab("languages");
+      if (els.languagesPanel) {
+        const targetCard = els.languagesPanel.querySelector(`details.morph-card[data-verse="${v.verse}"][data-strongs="${normCode}"]`) ||
+                           els.languagesPanel.querySelector(`details.morph-card[data-strongs="${normCode}"]`) ||
+                           els.languagesPanel.querySelector(`details.morph-card[data-verse="${v.verse}"]`);
+        if (targetCard) {
+          targetCard.open = true;
+          targetCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }
+    };
+    sup.addEventListener("click", openNuance);
+    sup.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openNuance();
+      }
+    });
     item.appendChild(sup);
   }
   return item;
@@ -232,7 +257,7 @@ function renderLanguages(pass) {
     const nuances = v.verbal_nuances || [];
 
     const cards = nuances.map((n) => `
-      <details class="disclosure-card morph-card">
+      <details class="disclosure-card morph-card" data-strongs="${escapeHtml(n.strongs)}" data-verse="${v.verse}">
         <summary class="disclosure-summary">
           <span class="disclosure-arrow" aria-hidden="true">▸</span>
           <span class="morph-surface">${escapeHtml(n.text || n.lemma)}</span>
@@ -703,13 +728,17 @@ if (els.theme) els.theme.addEventListener("change", () => setTheme(els.theme.val
 els.prev.disabled = true; // wired when the API exposes next/prev (Phase 0 +)
 els.next.disabled = true;
 
-for (const tab of els.tabs) {
-  tab.addEventListener("click", () => {
-    for (const t of els.tabs) t.setAttribute("aria-selected", String(t === tab));
-    document.querySelectorAll(".tab-body").forEach((body) => {
-      body.hidden = body.id !== `panel-${tab.dataset.tab}`;
-    });
+function switchTab(tabName) {
+  for (const t of els.tabs) {
+    t.setAttribute("aria-selected", String(t.dataset.tab === tabName));
+  }
+  document.querySelectorAll(".tab-body").forEach((body) => {
+    body.hidden = body.id !== `panel-${tabName}`;
   });
+}
+
+for (const tab of els.tabs) {
+  tab.addEventListener("click", () => switchTab(tab.dataset.tab));
 }
 
 if (els.openWizardBtn) {

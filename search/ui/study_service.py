@@ -25,6 +25,7 @@ from search.macula.enrichment import (
 )
 from search.corpus.grammar_nuance import (
     GrammarNuance,
+    explain_verb,
     get_verse_grammar_nuances,
     get_verses_grammar_nuances_batch,
 )
@@ -247,6 +248,14 @@ class UnifiedSearchResult:
     query: str
     bible_hits: list[dict[str, Any]] = field(default_factory=list)
     egw_hits: list[dict[str, Any]] = field(default_factory=list)
+
+
+def _canonical_strongs(code: str) -> str:
+    """Normalize a Strong's number to its canonical uppercase prefix-trimmed form."""
+    if not code:
+        return ""
+    norm = code.strip().upper()
+    return norm[0] + norm[1:].lstrip("0") if len(norm) > 1 else norm
 
 
 class StudyService:
@@ -576,17 +585,47 @@ class StudyService:
         """Return verbal nuances for a specific Strong's number in a verse."""
         if not verse or not verse.verbal_nuances or not strongs_code:
             return []
-        norm = strongs_code.upper()
-        canon = norm[0] + norm[1:].lstrip("0") if len(norm) > 1 else norm
-        matches = []
-        for n in verse.verbal_nuances:
-            if not n.strongs:
-                continue
-            sc = n.strongs.upper()
-            sc_canon = sc[0] + sc[1:].lstrip("0") if len(sc) > 1 else sc
-            if sc == norm or sc_canon == canon:
-                matches.append(n)
-        return matches
+        target_canon = _canonical_strongs(strongs_code)
+        return [
+            n for n in verse.verbal_nuances
+            if n.strongs and _canonical_strongs(n.strongs) == target_canon
+        ]
+
+    def explain_verb(
+        self,
+        morph: str,
+        language: str = "",
+        lemma: str = "",
+        text: str = "",
+        gloss: str = "",
+        strongs: str = "",
+    ) -> Optional[GrammarNuance]:
+        """Explain a verbal morphology code in plain English (ADR-025, WP-031)."""
+        return explain_verb(
+            morph,
+            language=language,
+            lemma=lemma,
+            text=text,
+            gloss=gloss,
+            strongs=strongs,
+        )
+
+    def get_verse_nuances(self, ref: str, strongs: str = "") -> list[GrammarNuance]:
+        """Retrieve all verbal grammar nuances for a verse (optionally filtered by Strong's)."""
+        if not self.macula_db:
+            return []
+        with self._lock:
+            nuances = self._verse_nuance_cache.get(ref)
+            if nuances is None:
+                nuances = get_verse_grammar_nuances(ref, db=self.macula_db)
+                self._verse_nuance_cache[ref] = nuances
+            if strongs:
+                target_canon = _canonical_strongs(strongs)
+                return [
+                    n for n in nuances
+                    if n.strongs and _canonical_strongs(n.strongs) == target_canon
+                ]
+            return list(nuances)
 
     def get_available_translations(self) -> list[dict[str, Any]]:
         """Return metadata for all available Bible translations."""

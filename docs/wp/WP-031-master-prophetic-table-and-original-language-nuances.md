@@ -18,9 +18,9 @@ Make the rich linguistic nuances of the original languages immediately accessibl
 ## Tasks
 
 ### Phase 1 — Original-Language Nuance Gloss Engine
-- [ ] Expose existing `search/corpus/grammar_nuance.py` engine (`explain_verb()`) via study service / HTTP API endpoints.
-- [ ] Verify coverage across all Hebrew stems (Qal, Niphal, Piel, Pual, Hiphil, Hophal, Hitpael) and Greek aspects (Aorist, Present, Perfect, Middle).
-- [ ] Render nuance cards in the inspector morphology tab with progressive disclosure.
+- [x] Expose existing `search/corpus/grammar_nuance.py` engine (`explain_verb()`) via study service / HTTP API endpoints.
+- [x] Verify coverage across all Hebrew stems (Qal, Niphal, Piel, Pual, Hiphil, Hophal, Hitpael) and Greek aspects (Aorist, Present, Perfect, Middle).
+- [x] Render nuance cards in the inspector morphology tab with progressive disclosure.
 
 ### Phase 2 — Master Prophetic Lexicon Dataset
 - [ ] Compile deterministic dataset `data/prophetic_lexicon.json` mapping biblical symbols to definitions and primary canonical proof texts (Day=Year, Beast=Kingdom, Water=Peoples, Horn=Power/King, Rock=Christ, etc.).

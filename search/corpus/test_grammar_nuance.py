@@ -8,6 +8,7 @@ from search.corpus.grammar_nuance import (
     explain_hebrew_morph,
     explain_greek_morph,
     explain_morph,
+    explain_verb,
     get_verse_grammar_nuances,
     get_verse_nuance_by_strongs,
     get_verses_grammar_nuances_batch,
@@ -73,6 +74,29 @@ class HebrewGrammarNuanceTests(unittest.TestCase):
         self.assertEqual(gn.conjugation_or_mood, "Perfect (Qatal)")
         self.assertEqual(gn.person_number, "3rd Person Masculine Singular")
 
+    def test_all_seven_hebrew_stems_coverage(self):
+        stems = [
+            ("Vqp3ms", "Qal"),
+            ("VNp3ms", "Niphal"),
+            ("Vpp3ms", "Piel"),
+            ("VPp3ms", "Pual"),
+            ("Vhp3ms", "Hiphil"),
+            ("VHp3ms", "Hophal"),
+            ("Vtp3ms", "Hitpael"),
+        ]
+        for code, expected_stem in stems:
+            gn = explain_morph(code)
+            self.assertIsNotNone(gn, f"Failed to explain {code}")
+            self.assertIn(expected_stem, gn.stem_or_tense)
+
+    def test_explain_verb_hebrew_routing(self):
+        gn = explain_verb("Vqp3ms", language="hebrew", lemma="בָּרָא", text="בָּרָא", gloss="he created", strongs="H1254")
+        self.assertIsNotNone(gn)
+        self.assertEqual(gn.language, "hebrew")
+        self.assertEqual(gn.stem_or_tense, "Qal (Simple Active)")
+        self.assertEqual(gn.strongs, "H1254")
+        self.assertIn("Exclusively Divine Initiative", gn.theological_nuance)
+
 
 class GreekGrammarNuanceTests(unittest.TestCase):
     """Test Macula Greek verbal morphology decoding and theological nuances."""
@@ -118,6 +142,31 @@ class GreekGrammarNuanceTests(unittest.TestCase):
         self.assertIsNotNone(gn)
         self.assertEqual(gn.conjugation_or_mood, "Indicative Mood")
 
+    def test_all_greek_aspects_and_voices_coverage(self):
+        greek_aspects = [
+            ("V-AAI-3S", "Aorist", "Active"),
+            ("V-AMI-3S", "Aorist", "Middle"),
+            ("V-API-3S", "Aorist", "Passive"),
+            ("V-PAI-3S", "Present", "Active"),
+            ("V-PMI-3S", "Present", "Middle"),
+            ("V-RAI-3S", "Perfect", "Active"),
+            ("V-RPI-3S", "Perfect", "Passive"),
+            ("V-IAI-3S", "Imperfect", "Active"),
+        ]
+        for code, exp_tense, exp_voice in greek_aspects:
+            gn = explain_morph(code)
+            self.assertIsNotNone(gn, f"Failed to explain {code}")
+            self.assertIn(exp_tense, gn.stem_or_tense)
+            self.assertIn(exp_voice, gn.voice)
+
+    def test_explain_verb_greek_routing(self):
+        gn = explain_verb("V-AMI-3S", language="greek", lemma="ἐκλέγω", text="ἐξελέξατο", gloss="He chose", strongs="G1586")
+        self.assertIsNotNone(gn)
+        self.assertEqual(gn.language, "greek")
+        self.assertIn("Aorist Middle", gn.stem_or_tense)
+        self.assertEqual(gn.strongs, "G1586")
+        self.assertIn("Loving Personal Choice", gn.theological_nuance)
+
 
 class DatabaseNuanceQueryTests(unittest.TestCase):
     """Test querying verbal nuances directly from Macula SQLite DB."""
@@ -158,6 +207,35 @@ class DatabaseNuanceQueryTests(unittest.TestCase):
         self.assertIn("Eph.1.4", res)
         self.assertTrue(len(res["Gen.1.1"]) >= 1)
         self.assertTrue(len(res["Eph.1.4"]) >= 2)
+
+    def test_acceptance_criteria_passages_genesis_john_romans(self):
+        """Verifies WP-031 acceptance criteria: Gen 1:1, John 1:1, and Rom 3:24 verbs produce rich nuance cards."""
+        if not self.db.exists():
+            self.skipTest("macula.db not initialized")
+
+        # Genesis 1:1 — bārāʾ (H1254) Qal Perfect
+        gen_nuances = get_verse_grammar_nuances("Gen.1.1", db=self.db)
+        self.assertTrue(len(gen_nuances) >= 1)
+        gen_bara = next(n for n in gen_nuances if n.strongs == "H1254")
+        self.assertEqual(gen_bara.language, "hebrew")
+        self.assertEqual(gen_bara.stem_or_tense, "Qal (Simple Active)")
+        self.assertIn("Exclusively Divine Initiative", gen_bara.theological_nuance)
+
+        # John 1:1 — ēn (G1510) Imperfect Active
+        john_nuances = get_verse_grammar_nuances("John.1.1", db=self.db)
+        self.assertTrue(len(john_nuances) >= 1)
+        john_en = next(n for n in john_nuances if n.strongs == "G1510")
+        self.assertEqual(john_en.language, "greek")
+        self.assertEqual(john_en.stem_or_tense, "Imperfect Active Voice")
+        self.assertIn("Past Continuous Aspect", john_en.theological_nuance)
+
+        # Romans 3:24 — dikaioumenoi (G1344) Present Passive
+        rom_nuances = get_verse_grammar_nuances("Rom.3.24", db=self.db)
+        self.assertTrue(len(rom_nuances) >= 1)
+        rom_dikai = next(n for n in rom_nuances if n.strongs == "G1344")
+        self.assertEqual(rom_dikai.language, "greek")
+        self.assertEqual(rom_dikai.stem_or_tense, "Present Passive Voice (Divine Sovereign Action)")
+        self.assertIn("Divine Verdict", rom_dikai.theological_nuance)
 
 
 if __name__ == "__main__":
