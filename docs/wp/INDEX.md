@@ -39,7 +39,11 @@ entries `draft` -> `review`.
 | [WP-026](WP-026-scripture-interpreting-scripture-ot-citation-anchors.md) | Pillar B (B5), Pillar D (D3) | Scripture Interpreting Scripture: OT Citation Anchors in NT (Feature 4) | done |
 | [WP-027](WP-027-nt-corpus-and-john-curation.md) | Pillar A (A3) | New Testament Corpus Generation & John 1 / 17 Curation | done |
 | [WP-028](WP-028-engineering-hardening-and-test-expansion.md) | Pillar G (G2, G3) | Engineering Hardening & Test Expansion — validator self-tests, passage normalization regressions, generator golden tests, Textual flakiness elimination, CI health dashboard | open |
-| [WP-029](WP-029-zero-python-distribution.md) | Pillar P (new) | Zero-Python Distribution — frozen binary installer for Windows/macOS/Linux; "Open the Book" for non-technical users | open |
+| [WP-029](WP-029-zero-python-distribution.md) | Pillar P (new) | Zero-Python Distribution — frozen binary installer for Windows/macOS/Linux; "Open the Book" for non-technical users | done |
+| [WP-030](WP-030-divinity-hall-visual-identity-and-ergonomics.md) | Pillar D (GUI / UX) | Divinity Hall Visual Identity & Workspace Ergonomics (split pane, focus modes, warm sepia, progressive disclosure) | open |
+| [WP-031](WP-031-master-prophetic-table-and-original-language-nuances.md) | Pillar B, C | Master Prophetic Key Table & Original-Language Theological Nuances (plain-English stems, aggregated prophetic lexicon) | open |
+| [WP-032](WP-032-sanctuary-typology-blueprint-and-plan-of-salvation.md) | Pillar A, D | Sanctuary Typology Blueprint & Chronological Plan of Salvation (FB #24 spatial/chronological roadmap) | open |
+| [WP-033](WP-033-progressive-spirit-of-prophecy-chapter-reader.md) | Pillar A, D | Progressive Spirit of Prophecy Narrative Navigation & Chapter Reader (compact chips → full contextual reader) | open |
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1

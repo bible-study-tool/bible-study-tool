@@ -30,6 +30,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-022](ADR-022-historical-grammatical-context-layer.md) | Historical-Grammatical Context Layer — historical/cultural/geographical data in the workstation | Proposed |
 | [ADR-023](ADR-023-zero-python-distribution-and-packaging.md) | Zero-Python Distribution & Standalone Desktop Packaging (Pillar P) | Accepted (Partially superseded by ADR-024) |
 | [ADR-024](ADR-024-gui-first-architecture-tui-as-mode.md) | GUI-First Architecture — Local Web UI as Primary Face, TUI as a Mode (Pillar D/P) | Accepted |
+| [ADR-025](ADR-025-visual-identity-and-anti-slop-design-charter.md) | Visual Identity, "Divinity Hall Desk" Mental Anchor, and Anti-Slop Design Charter | Accepted |
 
 
 ## When to write one
