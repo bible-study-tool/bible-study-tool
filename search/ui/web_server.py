@@ -33,19 +33,23 @@ from search.resource import get_data_dir, get_web_dir, verify_data_bundle
 WEB_ROOT = get_web_dir()
 
 # Web-native themes beyond the TUI palettes: always present in the catalog so
-# the theme dropdown and persisted prefs can select them (light is the default
-# face; sepia is a warm reading theme). Defined here, not in themes.py, because
-# they are CSS-only token sets with no Textual counterpart.
+# the theme dropdown and persisted prefs can select them (sepia is the default
+# Divinity Hall Desk face per ADR-025; light is daytime paper; dark is walnut).
 WEB_NATIVE_THEMES: dict[str, dict[str, str]] = {
-    "light": {
-        "id": "light",
-        "name": "Light (Default)",
-        "description": "Clean light theme for daytime reading.",
-    },
     "sepia": {
         "id": "sepia",
-        "name": "Sepia (Warm Reading)",
-        "description": "Warm, paper-toned reading theme.",
+        "name": "Sepia (Divinity Hall Desk)",
+        "description": "Warm parchment substrate with deep indigo, gold, and olive accents.",
+    },
+    "light": {
+        "id": "light",
+        "name": "Light Paper",
+        "description": "Clean light paper tone for daytime reading.",
+    },
+    "dark": {
+        "id": "dark",
+        "name": "Dark Walnut (Divinity Hall Night)",
+        "description": "Deep walnut charcoal substrate with warm parchment text.",
     },
 }
 
@@ -192,15 +196,15 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 {"id": tid, "name": t.name, "description": t.description}
                 for tid, t in THEMES.items()
             ]
-            # Web-native themes first so the default face ("light") is selectable.
+            # Web-native themes first so the default face ("sepia") is selectable.
             themes = list(WEB_NATIVE_THEMES.values()) + themes
             has_egw = study.egw_db is not None and study.egw_db.db_path.is_file()
             self._reply_json(HTTPStatus.OK, {
                 "status": "ok",
                 "version": "0.1.0",
-                # The web face defaults to the light token set; the TUI keeps
-                # its own DEFAULT_THEME (transparent) internally.
-                "default_theme": "light",
+                # The web face defaults to the Divinity Hall Desk sepia token set (ADR-025);
+                # the TUI keeps its own DEFAULT_THEME (transparent) internally.
+                "default_theme": "sepia",
                 "themes": themes,
                 "translations_url": "/api/translations",
                 "verify_bundle_url": "/api/verify-bundle",

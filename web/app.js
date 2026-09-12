@@ -37,6 +37,7 @@ const els = {
   wizardNextBtn: $("#wizard-next-btn"),
   wizardFinishBtn: $("#wizard-finish-btn"),
   autoUpdateToggle: $("#auto-update-toggle"),
+  zebraToggle: $("#zebra-toggle"),
   verifyStatusIcon: $("#verify-status-icon"),
   verifyStatusText: $("#verify-status-text"),
   verifyErrorBox: $("#verify-error-box"),
@@ -55,29 +56,36 @@ async function loadThemes() {
   const data = await api("/api/health");
   themeCatalog = data.themes || [];
   egwAvailable = !!data.egw_available;
-  updateEgwStatus();
-  const saved = localStorage.getItem("abst.theme");
-  const current = saved || data.default_theme || "light";
-  els.theme.innerHTML = "";
-  for (const t of themeCatalog) {
-    const opt = document.createElement("option");
-    opt.value = t.id;
-    opt.textContent = t.name;
-    els.theme.appendChild(opt);
+  let saved = null;
+  try {
+    saved = localStorage.getItem("abst.theme");
+  } catch (_) {}
+  const defaultTheme = data.default_theme || "sepia";
+  const current = saved || defaultTheme;
+  if (els.theme) {
+    els.theme.innerHTML = "";
+    for (const t of themeCatalog) {
+      const opt = document.createElement("option");
+      opt.value = t.id;
+      opt.textContent = t.name;
+      els.theme.appendChild(opt);
+    }
   }
   if (!saved) {
     // Respect the OS preference on first visit; prefs win afterwards.
-    setTheme(matchMedia("(prefers-color-scheme: dark)").matches ? "transparent" : "light");
+    setTheme(matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : defaultTheme);
   } else {
     setTheme(current);
   }
 }
 
 function setTheme(id) {
-  if (!themeCatalog.some((t) => t.id === id)) id = "light";
+  if (!themeCatalog.some((t) => t.id === id)) id = "sepia";
   document.documentElement.dataset.theme = id;
-  localStorage.setItem("abst.theme", id);
-  els.theme.value = id;
+  try {
+    localStorage.setItem("abst.theme", id);
+  } catch (_) {}
+  if (els.theme) els.theme.value = id;
   els.statusRight.textContent = `theme: ${id}`;
 }
 
@@ -102,12 +110,16 @@ function renderVerse(v) {
   num.className = "verse-num";
   num.textContent = `${v.verse}`;
   item.appendChild(num);
-  item.appendChild(document.createTextNode(v.text));
+  const textSpan = document.createElement("span");
+  textSpan.className = "verse-text";
+  textSpan.textContent = v.text;
+  item.appendChild(textSpan);
   // Lightweight Strong's markers show only when we have them (cursor: help).
   if (v.strongs_list && v.strongs_list.length) {
     const sup = document.createElement("sup");
-    sup.className = "strongs";
-    sup.textContent = ` H${v.strongs_list[0]}`;
+    sup.className = "strongs strongs-tag";
+    const code = String(v.strongs_list[0]);
+    sup.textContent = ` ${code.startsWith("H") || code.startsWith("G") ? code : `H${code}`}`;
     item.appendChild(sup);
   }
   return item;
@@ -238,13 +250,16 @@ async function verifyBundle() {
   }
 }
 
-function openWizard() {
+function openWizard(initialStep = 1) {
   if (els.wizardModal && typeof els.wizardModal.showModal === "function") {
     if (!els.wizardModal.open) {
       els.wizardModal.showModal();
     }
-    setWizardStep(1);
-    verifyBundle();
+    const targetStep = typeof initialStep === "number" ? initialStep : 1;
+    setWizardStep(targetStep);
+    if (targetStep === 1) {
+      verifyBundle();
+    }
   }
 }
 
@@ -282,6 +297,25 @@ function initAutoUpdate() {
   els.autoUpdateToggle.addEventListener("change", () => {
     try {
       localStorage.setItem("abst.auto_update", String(els.autoUpdateToggle.checked));
+    } catch (_) {}
+  });
+}
+
+function initZebraShading() {
+  if (!els.zebraToggle || !els.verses) return;
+  let saved = null;
+  try {
+    saved = localStorage.getItem("abst.zebra_shading");
+  } catch (_) {}
+  const isEnabled = saved === "true";
+  els.zebraToggle.checked = isEnabled;
+  els.verses.classList.toggle("zebra-shading", isEnabled);
+
+  els.zebraToggle.addEventListener("change", () => {
+    const enabled = els.zebraToggle.checked;
+    els.verses.classList.toggle("zebra-shading", enabled);
+    try {
+      localStorage.setItem("abst.zebra_shading", String(enabled));
     } catch (_) {}
   });
 }
@@ -538,7 +572,7 @@ els.form.addEventListener("submit", (e) => {
   if (ref) navigate(ref);
 });
 
-els.theme.addEventListener("change", () => setTheme(els.theme.value));
+if (els.theme) els.theme.addEventListener("change", () => setTheme(els.theme.value));
 
 els.prev.disabled = true; // wired when the API exposes next/prev (Phase 0 +)
 els.next.disabled = true;
@@ -552,7 +586,15 @@ for (const tab of els.tabs) {
   });
 }
 
-if (els.openWizardBtn) els.openWizardBtn.addEventListener("click", openWizard);
+if (els.openWizardBtn) {
+  els.openWizardBtn.addEventListener("click", () => {
+    let completed = false;
+    try {
+      completed = localStorage.getItem("abst.setup_completed") === "true";
+    } catch (_) {}
+    openWizard(completed ? 2 : 1);
+  });
+}
 if (els.wizardCloseBtn) els.wizardCloseBtn.addEventListener("click", closeWizard);
 if (els.wizardSkipBtn) els.wizardSkipBtn.addEventListener("click", completeWizard);
 if (els.wizardFinishBtn) els.wizardFinishBtn.addEventListener("click", completeWizard);
@@ -562,7 +604,12 @@ if (els.wizardNextBtn) els.wizardNextBtn.addEventListener("click", () => setWiza
 initPaneResizer();
 initFocusAndZoomModes();
 initAutoUpdate();
-if (!localStorage.getItem("abst.setup_completed")) {
+initZebraShading();
+let setupCompleted = false;
+try {
+  setupCompleted = localStorage.getItem("abst.setup_completed") === "true";
+} catch (_) {}
+if (!setupCompleted) {
   openWizard();
 }
 

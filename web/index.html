@@ -28,11 +28,7 @@
       <button id="focus-mode-btn" class="btn-tool" aria-pressed="false" aria-label="Toggle Scripture Focus Mode (shortcut: f)" title="Toggle Scripture Focus Mode (f)">
         <span class="focus-icon" aria-hidden="true">📖</span> Focus
       </button>
-      <button id="open-wizard-btn" class="btn-setup" aria-label="Open Setup & Help" title="Open Setup Wizard & Guides">⚙ Setup</button>
-      <label class="theme-control" for="theme-select">
-        Theme
-        <select id="theme-select" aria-label="Colour theme"></select>
-      </label>
+      <button id="open-wizard-btn" class="btn-setup" aria-label="Open Settings &amp; Preferences" title="Open Settings &amp; Preferences">⚙ Settings</button>
     </div>
   </header>
 
@@ -103,7 +99,7 @@
           <li class="step-line" aria-hidden="true"></li>
           <li class="step-indicator" data-step="2">
             <span class="step-num">2</span>
-            <span class="step-label">Updates &amp; Privacy</span>
+            <span class="step-label">Appearance &amp; Prefs</span>
           </li>
           <li class="step-line" aria-hidden="true"></li>
           <li class="step-indicator" data-step="3">
@@ -156,12 +152,33 @@
           </div>
         </section>
 
-        <!-- Step 2: Updates & Privacy -->
+        <!-- Step 2: Appearance & Preferences -->
         <section class="wizard-step" id="wizard-step-2" hidden>
-          <h3 class="step-heading">Step 2: Updates &amp; Privacy Sovereignty</h3>
+          <h3 class="step-heading">Step 2: Workspace Appearance &amp; Preferences</h3>
           <p class="step-desc">
-            We believe your spiritual study and conscience belong to God alone. Adventist Bible Study has <strong>zero tracking, zero analytics, and zero advertising</strong>.
+            Configure your study desk environment. Your preferences are saved locally in your browser with <strong>zero telemetry and zero tracking</strong>.
           </p>
+
+          <div class="setting-card">
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="theme-select" class="setting-label"><strong>Visual Theme</strong></label>
+                <span class="setting-sub">Select your preferred study substrate (Divinity Hall warm parchment, dark walnut, or classic palettes).</span>
+              </div>
+              <select id="theme-select" class="theme-select-input" aria-label="Visual theme"></select>
+            </div>
+          </div>
+
+          <div class="setting-card">
+            <label class="toggle-control" for="zebra-toggle">
+              <input type="checkbox" id="zebra-toggle">
+              <div class="toggle-track"><span class="toggle-thumb"></span></div>
+              <div class="toggle-label">
+                <strong>Alternating Verse Shading (Zebra)</strong>
+                <span class="toggle-sub">Subtle alternating background shading on consecutive verses for reading tracking (disabled by default).</span>
+              </div>
+            </label>
+          </div>
 
           <div class="setting-card">
             <label class="toggle-control" for="auto-update-toggle">
@@ -232,7 +249,7 @@
               <li><strong>Passage Lookup:</strong> Type any reference (e.g. <code>John 17</code>, <code>Gen 1:1</code>, <code>Rom 8:28</code>) into the top search box.</li>
               <li><strong>Original Languages:</strong> Hover or click on Strong's numbers to view Hebrew / Greek definitions.</li>
               <li><strong>Translations:</strong> Click the "Translations" side tab to compare multiple translations in parallel.</li>
-              <li><strong>Reopen Setup:</strong> Click the <strong>⚙ Setup</strong> button in the top right at any time to re-verify data or change settings.</li>
+              <li><strong>Reopen Setup:</strong> Click the <strong>⚙ Settings</strong> button in the top right at any time to re-verify data or change settings.</li>
             </ul>
           </div>
         </section>

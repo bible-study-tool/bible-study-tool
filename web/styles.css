@@ -13,7 +13,7 @@
 /* ---- Non-colour tokens (theme-independent) ---- */
 :root {
   --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-reading: Charter, "Bitstream Charter", "Sitka Text", Georgia, "Iowan Old Style", serif;
+  --font-reading: Charter, "Bitstream Charter", "Sitka Text", Georgia, "Iowan Old Style", Cardo, "Gentium Plus", serif;
   --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Liberation Mono", monospace;
 
   --space-1: 0.25rem;
@@ -35,41 +35,74 @@
   --header-h: 3.5rem;
   --footer-h: 1.75rem;
   --side-w: min(21rem, 30vw);
+
+  /* Data hierarchy tokens default mapping (ADR-025) */
+  --verse-text: var(--ink);
+  --verse-num: var(--secondary);
+  --strongs-code: var(--primary);
+  --zebra-bg: rgba(44, 38, 33, 0.035);
 }
 
-/* ---- Colour tokens: LIGHT (default) ---- */
-[data-theme="light"],
+/* ---- Colour tokens: SEPIA / DIVINITY HALL DESK (default, ADR-025) ---- */
+[data-theme="sepia"],
 :root {
+  --bg: #f4efe6;
+  --surface: #fbf8f1;
+  --surface-alt: #ede6d8;
+  --border: #d8cebe;
+  --ink: #2c2621;
+  --ink-muted: #685e52;
+  --primary: #244b6e;   /* Deep Scripture Indigo */
+  --secondary: #9a721d; /* Muted Sanctuary Gold */
+  --accent: #456637;    /* Quiet Olive Green */
+  --highlight: rgba(36, 75, 110, 0.12);
+  --focus-ring: 2px solid var(--primary);
+  --verse-text: #2c2621;
+  --verse-num: #825e14;
+  --strongs-code: #244b6e;
+  --zebra-bg: rgba(44, 38, 33, 0.035);
+}
+
+/* ---- Colour tokens: LIGHT (clean daytime paper) ---- */
+[data-theme="light"] {
   --bg: #f6f4ef;
-  --surface: #ffffff;
+  --surface: #faf8f5;
   --surface-alt: #efece4;
   --border: #ddd8cc;
   --ink: #23201a;
   --ink-muted: #6b6457;
-  --primary: #2f5d7a;   /* deep Scripture blue */
-  --secondary: #8a6d1f;  /* muted gold */
-  --accent: #3f7d5a;     /* quiet green */
-  --highlight: rgba(47, 93, 122, 0.14);
+  --primary: #244b6e;   /* Deep Scripture Indigo */
+  --secondary: #9a721d; /* Muted Sanctuary Gold */
+  --accent: #456637;    /* Quiet Olive Green */
+  --highlight: rgba(36, 75, 110, 0.12);
   --focus-ring: 2px solid var(--primary);
+  --verse-text: #23201a;
+  --verse-num: #825e14;
+  --strongs-code: #244b6e;
+  --zebra-bg: rgba(0, 0, 0, 0.03);
 }
 
-/* ---- Colour tokens: SEPIA (warm reading) ---- */
-[data-theme="sepia"] {
-  --bg: #f2e8d4;
-  --surface: #faf3e3;
-  --surface-alt: #e9dcc0;
-  --border: #d4c4a4;
-  --ink: #3a2f1d;
-  --ink-muted: #7a6a4b;
-  --primary: #7a4a1f;
-  --secondary: #8a6d1f;
-  --accent: #4f6d3a;
-  --highlight: rgba(122, 74, 31, 0.14);
+/* ---- Colour tokens: DARK WALNUT (Divinity Hall Night, ADR-025) ---- */
+[data-theme="dark"] {
+  --bg: #141211;
+  --surface: #1a1816;
+  --surface-alt: #26221f;
+  --border: #3c352e;
+  --ink: #e8e2d5;
+  --ink-muted: #a3998b;
+  --primary: #7ba3c7;   /* Calm Scripture Indigo */
+  --secondary: #d4ad57; /* Muted Sanctuary Gold */
+  --accent: #8fb87a;    /* Quiet Olive Green */
+  --highlight: rgba(123, 163, 199, 0.18);
+  --focus-ring: 2px solid var(--primary);
+  --verse-text: #e8e2d5;
+  --verse-num: #d4ad57;
+  --strongs-code: #7ba3c7;
+  --zebra-bg: rgba(232, 226, 213, 0.04);
 }
 
 /* ---- Dark bridge for the TUI's "transparent" palette ---- */
-[data-theme="transparent"],
-[data-theme="dark"] {
+[data-theme="transparent"] {
   --bg: #0d1117;
   --surface: #161b22;
   --surface-alt: #21262d;
@@ -80,6 +113,11 @@
   --secondary: #ffd700;
   --accent: #50fa7b;
   --highlight: rgba(0, 215, 255, 0.20);
+  --focus-ring: 2px solid var(--primary);
+  --verse-text: var(--ink);
+  --verse-num: var(--secondary);
+  --strongs-code: var(--primary);
+  --zebra-bg: rgba(255, 255, 255, 0.04);
 }
 
 /* ---- Dracula ---- */
@@ -94,6 +132,10 @@
   --secondary: #ff79c6;
   --accent: #8be9fd;
   --highlight: rgba(189, 147, 249, 0.25);
+  --verse-text: var(--ink);
+  --verse-num: var(--secondary);
+  --strongs-code: var(--primary);
+  --zebra-bg: rgba(255, 255, 255, 0.04);
 }
 
 /* ---- Catppuccin Mocha ---- */
@@ -108,6 +150,10 @@
   --secondary: #f5c2e7;
   --accent: #74c7ec;
   --highlight: rgba(203, 166, 247, 0.25);
+  --verse-text: var(--ink);
+  --verse-num: var(--secondary);
+  --strongs-code: var(--primary);
+  --zebra-bg: rgba(255, 255, 255, 0.04);
 }
 
 /* ---- Tokyo Night ---- */
@@ -122,6 +168,10 @@
   --secondary: #bb9af7;
   --accent: #7dcfff;
   --highlight: rgba(122, 162, 247, 0.25);
+  --verse-text: var(--ink);
+  --verse-num: var(--secondary);
+  --strongs-code: var(--primary);
+  --zebra-bg: rgba(255, 255, 255, 0.04);
 }
 
 /* ---- Nord ---- */
@@ -136,6 +186,10 @@
   --secondary: #81a1c1;
   --accent: #a3be8c;
   --highlight: rgba(136, 192, 208, 0.25);
+  --verse-text: var(--ink);
+  --verse-num: var(--secondary);
+  --strongs-code: var(--primary);
+  --zebra-bg: rgba(255, 255, 255, 0.04);
 }
 
 /* ---- Gruvbox Dark ---- */
@@ -150,6 +204,10 @@
   --secondary: #fe8019;
   --accent: #b8bb26;
   --highlight: rgba(250, 189, 47, 0.25);
+  --verse-text: var(--ink);
+  --verse-num: var(--secondary);
+  --strongs-code: var(--primary);
+  --zebra-bg: rgba(255, 255, 255, 0.04);
 }
 
 /* ---- Solarized Dark ---- */
@@ -164,6 +222,10 @@
   --secondary: #2aa198;
   --accent: #b58900;
   --highlight: rgba(38, 139, 210, 0.25);
+  --verse-text: var(--ink);
+  --verse-num: var(--secondary);
+  --strongs-code: var(--primary);
+  --zebra-bg: rgba(255, 255, 255, 0.04);
 }
 
 /* ---- Base ---- */
@@ -299,22 +361,46 @@ button:disabled { opacity: 0.45; cursor: default; }
   border-color: var(--primary);
 }
 
-.theme-control {
+.setting-row {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  font-size: var(--type-sm);
-  color: var(--ink-muted);
+  justify-content: space-between;
+  gap: var(--space-4);
 }
 
-.theme-control select {
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.setting-label {
+  color: var(--ink);
+  font-size: var(--type-sm);
+  cursor: pointer;
+}
+
+.setting-sub {
+  color: var(--ink-muted);
+  font-size: var(--type-xs);
+  line-height: 1.4;
+}
+
+.theme-select-input {
   font: inherit;
   font-size: var(--type-sm);
   color: var(--ink);
-  background: var(--surface-alt);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-m);
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.theme-select-input:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /* ---- Main layout: reading pane + pane divider + side pane ---- */
@@ -449,26 +535,52 @@ button:disabled { opacity: 0.45; cursor: default; }
   color: var(--ink-muted);
 }
 
-.verses { font-family: var(--font-reading); font-size: var(--type-lg); }
+.verses {
+  font-family: var(--font-reading);
+  font-size: var(--type-lg);
+}
 
 .verse-item {
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
   line-height: 1.7;
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-s);
+  transition: background-color 150ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verse-item {
+    transition: none;
+  }
 }
 
 .verse-item .verse-num {
   font-family: var(--font-ui);
   font-size: var(--type-sm);
   font-weight: 600;
-  color: var(--secondary);
-  margin-right: var(--space-1);
+  color: var(--verse-num);
+  margin-right: var(--space-2);
+  user-select: none;
 }
 
-.strongs {
+.verse-item .verse-text {
+  color: var(--verse-text);
+}
+
+.strongs,
+.strongs-tag {
   cursor: help;
   font-size: 0.55em;
   vertical-align: super;
-  color: var(--primary);
+  color: var(--strongs-code);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+/* Alternating verse shading (Zebra) per ADR-025 */
+.verses.zebra-shading .verse-item:nth-child(even) {
+  background-color: var(--zebra-bg);
 }
 
 .status-hint { color: var(--ink-muted); font-size: var(--type-sm); }

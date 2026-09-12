@@ -59,6 +59,8 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"Adventist Bible Study Tool", body)
         self.assertIn(b"setup-wizard-modal", body)
         self.assertIn(b"open-wizard-btn", body)
+        self.assertIn(b"theme-select", body)
+        self.assertIn(b"zebra-toggle", body)
         self.assertIn(b"auto-update-toggle", body)
         self.assertIn(b"pane-divider", body)
         self.assertIn(b"role=\"separator\"", body)
@@ -80,6 +82,12 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("text/css", ctype)
         self.assertIn(b"--bg", body)  # design tokens present
+        self.assertIn(b"--verse-text", body)
+        self.assertIn(b"--verse-num", body)
+        self.assertIn(b"--strongs-code", body)
+        self.assertIn(b"--zebra-bg", body)
+        self.assertIn(b"zebra-shading", body)
+        self.assertIn(b"theme-select-input", body)
         self.assertIn(b"wizard-dialog", body)
         self.assertIn(b"btn-setup", body)
         self.assertIn(b"btn-tool", body)
@@ -90,6 +98,7 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"zoom-side", body)
         self.assertIn(b"tab-exit-zoom", body)
         self.assertIn(b"tab-list", body)
+        self.assertIn(b"prefers-reduced-motion", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -99,6 +108,11 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"openWizard", body)
         self.assertIn(b"initPaneResizer", body)
         self.assertIn(b"initFocusAndZoomModes", body)
+        self.assertIn(b"initZebraShading", body)
+        self.assertIn(b"zebra_shading", body)
+        self.assertIn(b"verse-text", body)
+        self.assertIn(b"strongs-tag", body)
+        self.assertIn(b"code.startsWith", body)
         self.assertIn(b"toggleFocusMode", body)
         self.assertIn(b"toggleSideZoom", body)
         self.assertIn(b"restoreStatusBar", body)
@@ -117,13 +131,14 @@ class WebServerTests(unittest.TestCase):
         data = self._get_json("/api/health")
         self.assertEqual(data["status"], "ok")
         self.assertEqual(data["version"], "0.1.0")
-        self.assertEqual(data["default_theme"], "light")
+        self.assertEqual(data["default_theme"], "sepia")
         self.assertIn("verify_bundle_url", data)
         self.assertIn("egw_available", data)
         theme_ids = [t["id"] for t in data["themes"]]
         # Web-native themes are selectable (S4)...
-        self.assertIn("light", theme_ids)
         self.assertIn("sepia", theme_ids)
+        self.assertIn("light", theme_ids)
+        self.assertIn("dark", theme_ids)
         # ...and the 7 TUI palettes are ported (ADR-018 parity).
         for tid in ("transparent", "dracula", "catppuccin_mocha", "tokyo_night",
                     "nord", "gruvbox_dark", "solarized_dark"):

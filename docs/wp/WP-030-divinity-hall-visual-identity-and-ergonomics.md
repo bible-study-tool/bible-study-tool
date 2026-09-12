@@ -32,10 +32,10 @@ Transform the local web interface into the "Divinity Hall Desk" environment defi
 - [x] Tab double-click: expands active study tab to full-width workstation; `Escape` restores split view.
 
 ### Phase 3 — Palette, Tokens & Header Cleanup
-- [ ] Relocate theme picker out of top header into Settings modal (⚙).
-- [ ] Define CSS custom properties for Core Accent Palette (Deep Indigo, Muted Gold, Quiet Olive) and warm sepia light/dark substrates.
-- [ ] Establish distinct color tokens for Scripture text, verse numbers, and Strong's concordances.
-- [ ] Implement togglable alternating verse zebra shading (default: off).
+- [x] Relocate theme picker out of top header into Settings modal (⚙).
+- [x] Define CSS custom properties for Core Accent Palette (Deep Indigo, Muted Gold, Quiet Olive) and warm sepia light/dark substrates.
+- [x] Establish distinct color tokens for Scripture text, verse numbers, and Strong's concordances.
+- [x] Implement togglable alternating verse zebra shading (default: off).
 
 ### Phase 4 — Progressive Disclosure Primitives
 - [ ] Refactor dense Hebrew/Greek morphology and translation equivalents behind semantic `<details><summary>` progressive disclosure controls (`▸`/`▾`).
