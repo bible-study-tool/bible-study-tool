@@ -1,6 +1,6 @@
 # WP-030: Divinity Hall Visual Identity & Workspace Ergonomics
 
-status: open
+status: done
 scope: Pillar D (GUI / UX) — Foundation layout, draggable split pane, focus modes, warm sepia design tokens, typography, and progressive disclosure primitives.
 priority: high
 
@@ -41,9 +41,9 @@ Transform the local web interface into the "Divinity Hall Desk" environment defi
 - [x] Refactor dense Hebrew/Greek morphology and translation equivalents behind semantic `<details><summary>` progressive disclosure controls (`▸`/`▾`).
 
 ### Phase 5 — Verification & Accessibility
-- [ ] Verify WCAG AAA contrast across light sepia and dark walnut substrates.
-- [ ] Add automated tests in `search/ui/test_web.py` for DOM structure, classes, and divider attributes.
-- [ ] Ensure `scripts/verify_all.sh` is green.
+- [x] Verify WCAG AAA contrast across light sepia and dark walnut substrates.
+- [x] Add automated tests in `search/ui/test_web.py` for DOM structure, classes, and divider attributes.
+- [x] Ensure `scripts/verify_all.sh` is green.
 
 ## Conventions that apply
 - ADR-013 (Stewardship and Scalability)
@@ -52,8 +52,8 @@ Transform the local web interface into the "Divinity Hall Desk" environment defi
 - AGENTS.md Non-negotiable 2 (One step at a time)
 
 ## Acceptance criteria
-- [ ] Dragging divider smoothly resizes panels; double-click snaps back to 65/35.
-- [ ] Shortcut `f` cleanly enters/exits Scripture Focus Mode.
-- [ ] Shortcut `z` / `Shift + F` maximizes active panel; `Escape` restores.
-- [ ] Header is uncluttered, retaining only navigation, search, and Settings button.
+- [x] Dragging divider smoothly resizes panels; double-click snaps back to 65/35.
+- [x] Shortcut `f` cleanly enters/exits Scripture Focus Mode.
+- [x] Shortcut `z` / `Shift + F` maximizes active panel; `Escape` restores.
+- [x] Header is uncluttered, retaining only navigation, search, and Settings button.
 - [x] Dense morphological listings default to collapsed state with disclosure toggle.

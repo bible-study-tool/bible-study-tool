@@ -10,11 +10,13 @@ from __future__ import annotations
 import dataclasses
 import enum
 import json
+import re
 import threading
 import unittest
 import urllib.error
 import urllib.request
 
+from search.resource import get_web_dir
 from search.ui import web_server
 from search.ui.study_service import StudyService
 
@@ -68,6 +70,31 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"focus-mode-btn", body)
         self.assertIn(b"exit-zoom-btn", body)
         self.assertIn(b"tab-list", body)
+
+    def test_pane_divider_accessibility_attributes(self) -> None:
+        status, body, _ = self._get("/")
+        self.assertEqual(status, 200)
+        html = body.decode("utf-8")
+        self.assertIn('id="pane-divider"', html)
+        self.assertIn('role="separator"', html)
+        self.assertIn('tabindex="0"', html)
+        self.assertIn('aria-orientation="vertical"', html)
+        self.assertIn('aria-valuenow="65"', html)
+        self.assertIn('aria-valuemin="40"', html)
+        self.assertIn('aria-valuemax="80"', html)
+        self.assertIn('aria-controls="reading-pane"', html)
+        self.assertIn('class="divider-handle"', html)
+
+    def test_distraction_free_and_accessibility_controls(self) -> None:
+        status, body, _ = self._get("/")
+        self.assertEqual(status, 200)
+        html = body.decode("utf-8")
+        self.assertIn('id="focus-mode-btn"', html)
+        self.assertIn('aria-pressed="false"', html)
+        self.assertIn('id="exit-zoom-btn"', html)
+        self.assertIn('class="tab-exit-zoom"', html)
+        self.assertIn('id="panel-languages"', html)
+        self.assertIn('id="panel-translations"', html)
 
     def test_head_request_supported(self) -> None:
         req = urllib.request.Request(self.base + "/", method="HEAD")
@@ -291,6 +318,82 @@ class WebServerModuleTests(unittest.TestCase):
             QUOTATION = "quotation"
         self.assertEqual(web_server._jsonable(Kind.ALLUSION), "allusion")
         self.assertIsInstance(web_server._jsonable(Kind.QUOTATION), str)
+
+    def test_wcag_aaa_contrast_ratios(self) -> None:
+        """Verifies that core typography tokens meet WCAG AAA (>= 7.0:1) on surface substrates."""
+        css_path = get_web_dir() / "styles.css"
+        css_text = css_path.read_text(encoding="utf-8")
+
+        def parse_theme_tokens(css: str, selector_pattern: str) -> dict[str, str]:
+            pattern = selector_pattern + r"[^\{]*\{([^}]+)\}"
+            m = re.search(pattern, css)
+            self.assertIsNotNone(m, f"Selector {selector_pattern} not found in styles.css")
+            body = re.sub(r"/\*.*?\*/", "", m.group(1), flags=re.DOTALL)
+            tokens = {}
+            for line in body.split(";"):
+                if ":" in line:
+                    k, v = line.split(":", 1)
+                    tokens[k.strip()] = v.strip()
+            return tokens
+
+        def srgb_to_lin(c: int) -> float:
+            c_norm = c / 255.0
+            return c_norm / 12.92 if c_norm <= 0.04045 else ((c_norm + 0.055) / 1.055) ** 2.4
+
+        def luminance(hex_str: str) -> float:
+            hex_clean = hex_str.strip().lstrip("#")
+            if len(hex_clean) == 3:
+                hex_clean = "".join(c * 2 for c in hex_clean)
+            r, g, b = [int(hex_clean[i:i + 2], 16) for i in (0, 2, 4)]
+            return 0.2126 * srgb_to_lin(r) + 0.7152 * srgb_to_lin(g) + 0.0722 * srgb_to_lin(b)
+
+        def contrast(c1: str, c2: str) -> float:
+            l1, l2 = luminance(c1), luminance(c2)
+            if l1 < l2:
+                l1, l2 = l2, l1
+            return (l1 + 0.05) / (l2 + 0.05)
+
+        themes_to_check = [
+            (r'\[data-theme="sepia"\]', "Sepia (Divinity Hall Desk)"),
+            (r'\[data-theme="light"\]', "Light Paper"),
+            (r'\[data-theme="dark"\]', "Dark Walnut (Divinity Hall Night)"),
+        ]
+
+        # AAA normal text threshold per WCAG 2.1 is 7.0:1
+        AAA_THRESHOLD = 7.0
+
+        for sel, theme_name in themes_to_check:
+            tokens = parse_theme_tokens(css_text, sel)
+            self.assertIn("--surface", tokens, f"--surface missing in {theme_name}")
+            surface = tokens["--surface"]
+
+            for token_key in ["--ink", "--verse-text", "--verse-num", "--strongs-code", "--primary", "--accent", "--ink-muted"]:
+                self.assertIn(token_key, tokens, f"{token_key} missing in {theme_name}")
+                color = tokens[token_key]
+                cr = contrast(surface, color)
+                self.assertGreaterEqual(
+                    cr,
+                    AAA_THRESHOLD,
+                    f"WCAG AAA failure in {theme_name}: {token_key} ({color}) on {surface} has contrast {cr:.2f}:1 (< {AAA_THRESHOLD}:1)",
+                )
+
+    def test_styles_anti_slop_charter_compliance(self) -> None:
+        """Verifies that styles.css obeys the 10 bans in ADR-025 Anti-Slop Charter."""
+        css_text = (get_web_dir() / "styles.css").read_text(encoding="utf-8")
+
+        # Ban 3: No frosted glass / backdrop-filter blur
+        self.assertNotIn("backdrop-filter: blur", css_text)
+        self.assertNotIn("-webkit-backdrop-filter: blur", css_text)
+
+        # Ban 6: No magic sparkle icons
+        self.assertNotIn("✨", css_text)
+
+        # Ban 7: No bouncy spring physics
+        self.assertNotIn("cubic-bezier(0.68, -0.55", css_text)
+        self.assertNotIn("cubic-bezier(0.175, 0.885, 0.32, 1.275)", css_text)
+
+        # Must support prefers-reduced-motion
+        self.assertIn("@media (prefers-reduced-motion: reduce)", css_text)
 
 
 if __name__ == "__main__":
