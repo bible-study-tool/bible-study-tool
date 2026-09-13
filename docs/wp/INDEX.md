@@ -42,7 +42,7 @@ entries `draft` -> `review`.
 | [WP-029](WP-029-zero-python-distribution.md) | Pillar P (new) | Zero-Python Distribution — frozen binary installer for Windows/macOS/Linux; "Open the Book" for non-technical users | done |
 | [WP-030](WP-030-divinity-hall-visual-identity-and-ergonomics.md) | Pillar D (GUI / UX) | Divinity Hall Visual Identity & Workspace Ergonomics (split pane, focus modes, warm sepia, progressive disclosure) | done |
 | [WP-031](WP-031-master-prophetic-table-and-original-language-nuances.md) | Pillar B, C | Master Prophetic Key Table & Original-Language Theological Nuances (plain-English stems, aggregated prophetic lexicon) | done |
-| [WP-032](WP-032-sanctuary-typology-blueprint-and-plan-of-salvation.md) | Pillar A, D | Sanctuary Typology Blueprint & Chronological Plan of Salvation (FB #24 spatial/chronological roadmap) | open |
+| [WP-032](WP-032-sanctuary-typology-blueprint-and-plan-of-salvation.md) | Pillar A, D | Sanctuary Typology Blueprint & Chronological Plan of Salvation (FB #24 spatial/chronological roadmap) | done |
 | [WP-033](WP-033-progressive-spirit-of-prophecy-chapter-reader.md) | Pillar A, D | Progressive Spirit of Prophecy Narrative Navigation & Chapter Reader (compact chips → full contextual reader) | open |
 
 

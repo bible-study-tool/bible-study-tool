@@ -42,6 +42,7 @@ const els = {
   sanctuaryZoomBtn: $("#sanctuary-zoom-btn"),
   sanctuarySvg: $("#sanctuary-svg"),
   sanctuaryDetailCard: $("#sanctuary-detail-card"),
+  sanctuaryInContext: $("#sanctuary-in-context"),
   main: $(".app-main"),
   paneDivider: $("#pane-divider"),
   readingPane: $("#reading-pane"),
@@ -342,6 +343,41 @@ function renderVerse(v) {
     item.appendChild(badgesSpan);
   }
 
+  // Canonical sanctuary station badges (WP-032 Phase 4)
+  if (v.sanctuary_stations && v.sanctuary_stations.length > 0) {
+    const sBadgesSpan = document.createElement("span");
+    sBadgesSpan.className = "verse-sanctuary-badges";
+    for (const st of v.sanctuary_stations) {
+      const badge = document.createElement("button");
+      badge.type = "button";
+      const compLower = (st.compartment || "").toLowerCase();
+      badge.className = `sanctuary-verse-badge comp-${compLower}`;
+      badge.dataset.stationId = st.id;
+      badge.dataset.verse = String(v.verse);
+      const antitypeText = st.is_nt_fulfillment ? " (Antitypical Fulfillment)" : (st.is_ot_institution ? " (OT Institution)" : "");
+      badge.title = `${st.name} — ${st.spiritual_reality}${antitypeText} — Click to inspect in Sanctuary Blueprint`;
+      badge.setAttribute("aria-label", `Sanctuary Station: ${st.name}`);
+
+      badge.innerHTML = `
+        <span class="badge-icon" aria-hidden="true">☩</span>
+        <span class="badge-name">${escapeHtml(st.common_name || st.name)}</span>
+        ${st.is_nt_fulfillment ? '<span class="badge-nt-label">Antitype</span>' : ''}
+      `;
+
+      badge.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (els.main && els.main.classList.contains("focus-mode")) {
+          toggleFocusMode(false);
+        }
+        switchTab("sanctuary");
+        selectSanctuaryStation(st.id);
+      });
+
+      sBadgesSpan.appendChild(badge);
+    }
+    item.appendChild(sBadgesSpan);
+  }
+
   return item;
 }
 
@@ -503,6 +539,7 @@ function showError(message) {
     els.prophecyInContext.hidden = true;
     els.prophecyInContext.innerHTML = "";
   }
+  clearSanctuaryInContext();
 }
 
 /* small escaping helper (never trust fetched text into innerHTML unescaped) */
@@ -520,6 +557,7 @@ async function navigate(ref) {
     const pass = await api(`/api/passage?ref=${encodeURIComponent(ref)}&eager=1`);
     renderPassage(pass);
     updateProphecyInContext(pass.ref);
+    updateSanctuaryInContext(pass.ref);
   } catch (err) {
     showError(String(err.message || err));
   }
@@ -1211,6 +1249,62 @@ async function updateProphecyInContext(passageRef) {
     }
   } catch (_e) {
     // Fail soft if offline or error
+  }
+}
+
+let currentSanctuaryPassageRef = null;
+let sanctuaryRequestId = 0;
+
+function clearSanctuaryInContext() {
+  if (els.sanctuaryInContext) {
+    els.sanctuaryInContext.hidden = true;
+    els.sanctuaryInContext.innerHTML = "";
+  }
+  if (els.tabSanctuary) {
+    els.tabSanctuary.textContent = "Sanctuary";
+  }
+}
+
+async function updateSanctuaryInContext(passageRef) {
+  if (!els.sanctuaryInContext || !passageRef) return;
+  const reqId = ++sanctuaryRequestId;
+  currentSanctuaryPassageRef = passageRef;
+  try {
+    const data = await api(`/api/sanctuary?ref=${encodeURIComponent(passageRef)}`);
+    if (reqId !== sanctuaryRequestId) return; // Discard stale out-of-order response
+    const matched = data.stations || [];
+    if (matched.length > 0) {
+      els.sanctuaryInContext.hidden = false;
+      els.sanctuaryInContext.innerHTML = `
+        <div class="sanctuary-in-context-header">In-Context Stations for <strong>${escapeHtml(passageRef)}</strong> (${matched.length}):</div>
+        <div class="sanctuary-in-context-tags">
+          ${matched.map((s) => `
+            <button type="button" class="sanctuary-context-tag comp-${(s.compartment || "").toLowerCase()}" data-station-id="${escapeHtml(s.id)}" title="${escapeHtml(s.spiritual_reality || "")}">
+              <span class="badge-icon" aria-hidden="true">☩</span>
+              <span class="station-name">${escapeHtml(s.common_name || s.name)}</span>
+              <span class="compartment-badge">${escapeHtml(s.compartment_name || "")}</span>
+              ${s.is_nt_fulfillment ? '<span class="badge-nt-label">Antitype</span>' : ''}
+            </button>
+          `).join("")}
+        </div>
+      `;
+      els.sanctuaryInContext.querySelectorAll(".sanctuary-context-tag").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (els.main && els.main.classList.contains("focus-mode")) {
+            toggleFocusMode(false);
+          }
+          switchTab("sanctuary");
+          selectSanctuaryStation(btn.dataset.stationId);
+        });
+      });
+      if (els.tabSanctuary) {
+        els.tabSanctuary.innerHTML = `Sanctuary <span class="sanctuary-count-badge tab-count-badge">${matched.length}</span>`;
+      }
+    } else {
+      clearSanctuaryInContext();
+    }
+  } catch (_e) {
+    clearSanctuaryInContext();
   }
 }
 

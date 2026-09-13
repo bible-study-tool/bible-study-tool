@@ -1544,6 +1544,72 @@ button:disabled { opacity: 0.45; cursor: default; }
   padding: 1px 4px;
 }
 
+/* In-context sanctuary banner in inspector */
+.sanctuary-in-context {
+  padding: var(--space-2) var(--space-3);
+  background: rgba(154, 114, 29, 0.08);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sanctuary-in-context-header {
+  font-size: var(--type-xs);
+  font-weight: 600;
+  color: var(--verse-num);
+}
+
+.sanctuary-in-context-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.sanctuary-context-tag {
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: 2px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.sanctuary-context-tag:hover {
+  background: var(--highlight);
+  border-color: var(--secondary);
+}
+
+.sanctuary-context-tag:focus-visible {
+  outline: var(--focus-ring);
+}
+
+.sanctuary-context-tag .badge-icon {
+  font-size: 0.7rem;
+  color: var(--secondary);
+}
+
+.sanctuary-context-tag .compartment-badge {
+  font-size: 0.68rem;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+.sanctuary-context-tag .badge-nt-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 0 3px;
+  background: var(--surface-alt);
+  color: var(--accent);
+  border-radius: 2px;
+}
+
 #panel-prophecy {
   overflow: hidden;
 }
@@ -1945,9 +2011,79 @@ button:disabled { opacity: 0.45; cursor: default; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .prophecy-verse-badge {
+  .prophecy-verse-badge,
+  .sanctuary-verse-badge,
+  .sanctuary-context-tag {
     transition: none;
   }
+}
+
+/* ==========================================================================
+   In-Context Sanctuary Station Badges (WP-032 Phase 4, ADR-025)
+   ========================================================================== */
+
+.verse-sanctuary-badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-left: var(--space-2);
+  vertical-align: middle;
+}
+
+.sanctuary-verse-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: 1px 6px;
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  line-height: 1.3;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 150ms ease, border-color 150ms ease;
+  vertical-align: middle;
+}
+
+.sanctuary-verse-badge:hover {
+  background: var(--highlight);
+  border-color: var(--secondary);
+}
+
+.sanctuary-verse-badge:focus-visible {
+  outline: var(--focus-ring);
+}
+
+.sanctuary-verse-badge .badge-icon {
+  font-size: 0.68rem;
+  color: var(--secondary);
+}
+
+.sanctuary-verse-badge.comp-courtyard .badge-icon {
+  color: #8c6239;
+}
+
+.sanctuary-verse-badge.comp-holy_place .badge-icon,
+.sanctuary-verse-badge.comp-holy .badge-icon {
+  color: var(--secondary);
+}
+
+.sanctuary-verse-badge.comp-most_holy_place .badge-icon,
+.sanctuary-verse-badge.comp-most_holy .badge-icon {
+  color: var(--secondary);
+}
+
+.sanctuary-verse-badge .badge-nt-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 0 3px;
+  background: var(--surface-alt);
+  color: var(--accent);
+  border-radius: 2px;
+  margin-left: 2px;
 }
 
 /* ==========================================================================

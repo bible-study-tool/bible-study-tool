@@ -161,8 +161,9 @@ class WebServerTests(unittest.TestCase):
         self.assertIn('swatch-courtyard', html)
         self.assertIn('swatch-holy', html)
         self.assertIn('swatch-most-holy', html)
-        # Detail Card
+        # Detail Card & In-context banner
         self.assertIn('id="sanctuary-detail-card"', html)
+        self.assertIn('id="sanctuary-in-context"', html)
 
     def test_head_request_supported(self) -> None:
         req = urllib.request.Request(self.base + "/", method="HEAD")
@@ -222,6 +223,10 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"sanctuary-detail-card", body)
         self.assertIn(b"sanctuary-reality-callout", body)
         self.assertIn(b"sanctuary-ref-chip", body)
+        self.assertIn(b"sanctuary-in-context", body)
+        self.assertIn(b"sanctuary-context-tag", body)
+        self.assertIn(b"verse-sanctuary-badges", body)
+        self.assertIn(b"sanctuary-verse-badge", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -274,6 +279,13 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"initSanctuaryWorkstation", body)
         self.assertIn(b"SANCTUARY_STATION_ORDER", body)
         self.assertIn(b"createSanctuaryRefChip", body)
+        self.assertIn(b"sanctuaryInContext", body)
+        self.assertIn(b"verse-sanctuary-badges", body)
+        self.assertIn(b"sanctuary-verse-badge", body)
+        self.assertIn(b"updateSanctuaryInContext", body)
+        self.assertIn(b"currentSanctuaryPassageRef", body)
+        self.assertIn(b"sanctuaryRequestId", body)
+        self.assertIn(b"clearSanctuaryInContext", body)
 
     def test_traversal_blocked(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:

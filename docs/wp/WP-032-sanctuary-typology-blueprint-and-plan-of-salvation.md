@@ -1,6 +1,6 @@
 # WP-032: Sanctuary Typology Blueprint & Chronological Plan of Salvation
 
-status: open
+status: done
 scope: Pillar A (Biblical Corpus & SDA Doctrinal Foundations), Pillar D (Workstation Component) — Interactive spatial and chronological roadmap of the Sanctuary (Fundamental Belief #24).
 priority: medium
 
@@ -31,11 +31,11 @@ Provide an interactive, typological Sanctuary Blueprint representing the bluepri
 - [x] Add "Plan of Salvation" chronological slider: Courtyard (AD 31 Sacrifice) $\to$ Holy Place (Inauguration & Heavenly Intercession) $\to$ Most Holy Place (1844 Cleansing of the Sanctuary).
 
 ### Phase 4 — Scripture In-Text Breadcrumbs
-- [ ] When reading sanctuary passages (e.g. Lev 16, Heb 8–10, Rev 4, 8, 11), display an active Sanctuary Station chip in the inspector.
+- [x] When reading sanctuary passages (e.g. Lev 16, Heb 8–10, Rev 4, 8, 11), display an active Sanctuary Station chip in the inspector.
 
 ### Phase 5 — Verification & Validation
-- [ ] Verify all scripture anchors in `data/sanctuary_schema.json` resolve validly.
-- [ ] Run `scripts/verify_all.sh`.
+- [x] Verify all scripture anchors in `data/sanctuary_schema.json` resolve validly.
+- [x] Run `scripts/verify_all.sh`.
 
 ## Conventions that apply
 - ADR-013 (Stewardship and Scalability)
@@ -43,6 +43,6 @@ Provide an interactive, typological Sanctuary Blueprint representing the bluepri
 - NOTICE.md (Doctrinal Basis)
 
 ## Acceptance criteria
-- [ ] Interactive Sanctuary blueprint renders cleanly in light sepia and dark walnut substrates.
-- [ ] Clicking any station displays theological significance, priestly ministry, and Scripture links.
-- [ ] Chronological slider updates visual path from the Cross to the Heavenly Sanctuary.
+- [x] Interactive Sanctuary blueprint renders cleanly in light sepia and dark walnut substrates.
+- [x] Clicking any station displays theological significance, priestly ministry, and Scripture links.
+- [x] Chronological slider updates visual path from the Cross to the Heavenly Sanctuary.
