@@ -188,6 +188,8 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 self._api_translations()
             elif path == "/api/nuance":
                 self._api_nuance(query)
+            elif path == "/api/prophetic":
+                self._api_prophetic(query)
             elif path.startswith("/api/"):
                 self._reply_error(HTTPStatus.NOT_FOUND, "unknown endpoint")
             else:
@@ -210,6 +212,7 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "themes": themes,
                 "translations_url": "/api/translations",
                 "nuance_url": "/api/nuance",
+                "prophetic_url": "/api/prophetic",
                 "verify_bundle_url": "/api/verify-bundle",
                 "egw_available": has_egw,
             })
@@ -304,6 +307,52 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                     return
 
             self._reply_error(HTTPStatus.BAD_REQUEST, "missing 'morph' or 'ref' parameter")
+
+        def _api_prophetic(self, query: dict[str, list[str]]) -> None:
+            symbol_id = query.get("id", [""])[0].strip()
+            if symbol_id:
+                sym = study.get_prophetic_symbol(symbol_id)
+                if not sym:
+                    self._reply_error(HTTPStatus.NOT_FOUND, f"unknown symbol {symbol_id!r}")
+                    return
+                self._reply_json(HTTPStatus.OK, {
+                    "status": "ok",
+                    "symbol": _jsonable(sym),
+                })
+                return
+
+            ref = query.get("ref", [""])[0].strip()
+            if ref:
+                raw_proofs = query.get("include_proofs", ["true"])[0].strip().lower()
+                include_proofs = raw_proofs not in ("false", "0", "no")
+                try:
+                    symbols = study.get_prophetic_symbols_for_passage(ref, include_proofs=include_proofs)
+                    self._reply_json(HTTPStatus.OK, {
+                        "status": "ok",
+                        "ref": ref,
+                        "include_proofs": include_proofs,
+                        "symbols": _jsonable(symbols),
+                        "count": len(symbols),
+                    })
+                    return
+                except Exception as exc:
+                    self._reply_error(HTTPStatus.INTERNAL_SERVER_ERROR, f"error resolving prophetic symbols: {exc}")
+                    return
+
+            category = query.get("category", [""])[0].strip() or None
+            book = query.get("book", [""])[0].strip() or None
+            q = query.get("q", query.get("query", [""]))[0].strip() or None
+
+            lex = study.get_prophetic_lexicon()
+            symbols = study.get_prophetic_symbols(category=category, book=book, query=q)
+            self._reply_json(HTTPStatus.OK, {
+                "status": "ok",
+                "version": lex.version,
+                "title": lex.title,
+                "categories": lex.categories,
+                "symbols": _jsonable(symbols),
+                "count": len(symbols),
+            })
 
     return StudyHandler
 

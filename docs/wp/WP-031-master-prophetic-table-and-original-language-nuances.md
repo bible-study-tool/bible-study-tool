@@ -23,8 +23,8 @@ Make the rich linguistic nuances of the original languages immediately accessibl
 - [x] Render nuance cards in the inspector morphology tab with progressive disclosure.
 
 ### Phase 2 — Master Prophetic Lexicon Dataset
-- [ ] Compile deterministic dataset `data/prophetic_lexicon.json` mapping biblical symbols to definitions and primary canonical proof texts (Day=Year, Beast=Kingdom, Water=Peoples, Horn=Power/King, Rock=Christ, etc.).
-- [ ] Link historical SDA prophetic consensus citations.
+- [x] Compile deterministic dataset `data/prophetic_lexicon.json` mapping biblical symbols to definitions and primary canonical proof texts (Day=Year, Beast=Kingdom, Water=Peoples, Horn=Power/King, Rock=Christ, etc.).
+- [x] Link historical SDA prophetic consensus citations.
 
 ### Phase 3 — Aggregated Prophetic Key Table UI
 - [ ] Build full-width workstation tab ("Prophetic Lexicon") with a searchable, filterable table.

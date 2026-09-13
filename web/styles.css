@@ -46,21 +46,21 @@
 /* ---- Colour tokens: SEPIA / DIVINITY HALL DESK (default, ADR-025) ---- */
 [data-theme="sepia"],
 :root {
-  --bg: #f4efe6;
-  --surface: #fbf8f1;
-  --surface-alt: #ede6d8;
-  --border: #d8cebe;
-  --ink: #2c2621;
-  --ink-muted: #564d42;
-  --primary: #244b6e;   /* Deep Scripture Indigo */
-  --secondary: #9a721d; /* Muted Sanctuary Gold */
-  --accent: #3b582f;    /* Quiet Olive Green */
-  --highlight: rgba(36, 75, 110, 0.12);
+  --bg: #e6dcce;        /* Darkened warm parchment substrate desk */
+  --surface: #efe6d8;   /* Rich warm parchment page */
+  --surface-alt: #e0d4c3;
+  --border: #c9bea9;
+  --ink: #241e18;       /* Deep walnut ink */
+  --ink-muted: #483f34;
+  --primary: #1a3d5c;   /* Deep Scripture Indigo */
+  --secondary: #886212; /* Muted Sanctuary Gold */
+  --accent: #2e4a21;    /* Quiet Olive Green */
+  --highlight: rgba(26, 61, 92, 0.14);
   --focus-ring: 2px solid var(--primary);
-  --verse-text: #2c2621;
-  --verse-num: #6d4d0b;
-  --strongs-code: #244b6e;
-  --zebra-bg: rgba(44, 38, 33, 0.035);
+  --verse-text: #241e18;
+  --verse-num: #593c03;
+  --strongs-code: #1a3d5c;
+  --zebra-bg: rgba(36, 30, 24, 0.045);
 }
 
 /* ---- Colour tokens: LIGHT (clean daytime paper) ---- */
@@ -1274,7 +1274,7 @@ button:disabled { opacity: 0.45; cursor: default; }
   font-family: var(--font-mono);
   font-size: var(--type-xs);
   font-weight: 600;
-  color: var(--secondary);
+  color: var(--verse-num);
   margin-right: var(--space-2);
 }
 

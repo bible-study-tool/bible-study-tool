@@ -41,6 +41,11 @@ from search.corpus.ot_citations import (
     lookup_citations_for_verse,
     get_passage_ot_citations_batch,
 )
+from search.corpus.prophetic import (
+    PropheticLexicon,
+    PropheticSymbol,
+    get_prophetic_lexicon,
+)
 from search.linking.egw import EgwDB, DEFAULT_EGW_DB, is_egw_token, normalize_token
 from search.resource import data_path, get_lexicons_dir, lexicon_path
 
@@ -896,6 +901,37 @@ class StudyService:
                 except Exception:
                     pass
         return citation.ot_text_kjv
+
+    def get_prophetic_lexicon(self) -> PropheticLexicon:
+        """Retrieve the canonical PropheticLexicon index."""
+        return get_prophetic_lexicon()
+
+    def get_prophetic_symbols(
+        self,
+        category: Optional[str] = None,
+        book: Optional[str] = None,
+        query: Optional[str] = None,
+    ) -> list[dict[str, Any]]:
+        """Retrieve filtered prophetic symbols as dictionaries."""
+        lex = self.get_prophetic_lexicon()
+        symbols = lex.list_symbols(category=category, book=book, query=query)
+        return [s.to_dict() for s in symbols]
+
+    def get_prophetic_symbol(self, symbol_id: str) -> Optional[dict[str, Any]]:
+        """Retrieve a prophetic symbol by its unique ID."""
+        lex = self.get_prophetic_lexicon()
+        s = lex.get_symbol(symbol_id)
+        return s.to_dict() if s else None
+
+    def get_prophetic_symbols_for_passage(
+        self,
+        ref: str,
+        include_proofs: bool = True,
+    ) -> list[dict[str, Any]]:
+        """Retrieve prophetic symbols anchored in or referencing the given passage."""
+        lex = self.get_prophetic_lexicon()
+        symbols = lex.get_symbols_for_passage(ref, include_proofs=include_proofs)
+        return [s.to_dict() for s in symbols]
 
     def close(self) -> None:
         """Close database connections."""

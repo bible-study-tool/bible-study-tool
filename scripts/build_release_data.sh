@@ -154,6 +154,11 @@ cp "$LEXICONS_SRC"/*.json "$OUT_DIR/lexicons/"
 LEX_COUNT=$(ls -1 "$OUT_DIR/lexicons/"*.json | wc -l)
 echo "   ✔ Copied $LEX_COUNT lexicon JSON artifacts."
 
+if [[ -f "$DATA_SRC/prophetic_lexicon.json" ]]; then
+  cp "$DATA_SRC/prophetic_lexicon.json" "$OUT_DIR/"
+  echo "   ✔ Copied prophetic_lexicon.json."
+fi
+
 # Enforce copyright boundary tripwire (ADR-002, ADR-023, ADR-024)
 if [[ -e "$OUT_DIR/egw.db" ]]; then
   echo "FATAL: egw.db found in release bundle directory! Violates copyright boundary." >&2
@@ -165,7 +170,11 @@ echo "6. Generating SHA256SUMS manifest..."
 (
   cd "$OUT_DIR"
   export LC_ALL=C
-  sha256sum bible.db macula.db lexicons/*.json > SHA256SUMS
+  EXTRA_FILES=()
+  if [[ -f prophetic_lexicon.json ]]; then
+    EXTRA_FILES+=(prophetic_lexicon.json)
+  fi
+  sha256sum bible.db macula.db lexicons/*.json "${EXTRA_FILES[@]}" > SHA256SUMS
 )
 echo "   ✔ Manifest created: $OUT_DIR/SHA256SUMS ($(wc -l < "$OUT_DIR/SHA256SUMS") entries)."
 

@@ -24,6 +24,7 @@ hiddenimports = [
 datas = [
     ("web", "web"),
     ("search/fixtures", "search/fixtures"),
+    ("data/prophetic_lexicon.json", "data"),
 ]
 
 a = Analysis(

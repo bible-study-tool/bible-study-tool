@@ -175,6 +175,7 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(data["version"], "0.1.0")
         self.assertEqual(data["default_theme"], "sepia")
         self.assertEqual(data["nuance_url"], "/api/nuance")
+        self.assertEqual(data["prophetic_url"], "/api/prophetic")
         self.assertIn("verify_bundle_url", data)
         self.assertIn("egw_available", data)
         theme_ids = [t["id"] for t in data["themes"]]
@@ -329,6 +330,61 @@ class WebServerTests(unittest.TestCase):
         with self.assertRaises(urllib.error.HTTPError) as ctx:
             self._get("/api/nuance?morph=InvalidMorph")
         self.assertEqual(ctx.exception.code, 400)
+
+    def test_prophetic_endpoint_all_symbols(self) -> None:
+        data = self._get_json("/api/prophetic")
+        self.assertEqual(data["status"], "ok")
+        self.assertGreaterEqual(data["count"], 25)
+        self.assertEqual(set(data["categories"]), {"Time", "Entities", "Elements"})
+        self.assertEqual(len(data["symbols"]), data["count"])
+
+    def test_prophetic_endpoint_category_filter(self) -> None:
+        data = self._get_json("/api/prophetic?category=Time")
+        self.assertEqual(data["status"], "ok")
+        self.assertGreaterEqual(data["count"], 4)
+        for sym in data["symbols"]:
+            self.assertEqual(sym["category"], "Time")
+
+    def test_prophetic_endpoint_by_id(self) -> None:
+        data = self._get_json("/api/prophetic?id=day-year-principle")
+        self.assertEqual(data["status"], "ok")
+        sym = data["symbol"]
+        self.assertEqual(sym["id"], "day-year-principle")
+        self.assertEqual(sym["symbol"], "Day")
+        self.assertIn("Numbers 14:34", sym["proof_texts"])
+
+    def test_prophetic_endpoint_by_id_not_found_is_404(self) -> None:
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._get("/api/prophetic?id=fake-symbol")
+        self.assertEqual(ctx.exception.code, 404)
+
+    def test_prophetic_endpoint_by_ref_daniel(self) -> None:
+        data = self._get_json("/api/prophetic?ref=Daniel%207:25")
+        self.assertEqual(data["status"], "ok")
+        ids = [s["id"] for s in data["symbols"]]
+        self.assertIn("day-year-principle", ids)
+        self.assertIn("time-times-half", ids)
+
+    def test_prophetic_endpoint_by_ref_revelation(self) -> None:
+        data = self._get_json("/api/prophetic?ref=Revelation%2012:1")
+        self.assertEqual(data["status"], "ok")
+        ids = [s["id"] for s in data["symbols"]]
+        self.assertIn("pure-woman", ids)
+        self.assertIn("sun-and-moon", ids)
+        self.assertIn("crowns", ids)
+
+    def test_prophetic_endpoint_include_proofs_filtering(self) -> None:
+        data_with_proofs = self._get_json("/api/prophetic?ref=Numbers%2014:34&include_proofs=1")
+        self.assertEqual(data_with_proofs["status"], "ok")
+        self.assertTrue(data_with_proofs["include_proofs"])
+        ids_with = [s["id"] for s in data_with_proofs["symbols"]]
+        self.assertIn("day-year-principle", ids_with)
+
+        data_anchors_only = self._get_json("/api/prophetic?ref=Numbers%2014:34&include_proofs=0")
+        self.assertEqual(data_anchors_only["status"], "ok")
+        self.assertFalse(data_anchors_only["include_proofs"])
+        ids_without = [s["id"] for s in data_anchors_only["symbols"]]
+        self.assertNotIn("day-year-principle", ids_without)
 
     def test_unknown_endpoint_is_404(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:
