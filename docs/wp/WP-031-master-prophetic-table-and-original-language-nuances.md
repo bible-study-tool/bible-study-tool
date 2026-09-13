@@ -1,6 +1,6 @@
 # WP-031: Master Prophetic Key Table & Original-Language Theological Nuances
 
-status: open
+status: done
 scope: Pillar B (Original Languages), Pillar C (Prophetic Structure) — Plain-English theological glosses for Hebrew/Greek grammar + aggregated prophetic symbols lexicon and in-context chaining.
 priority: high
 
@@ -35,8 +35,8 @@ Make the rich linguistic nuances of the original languages immediately accessibl
 - [x] Clicking a symbol opens an in-context definition card with immediate links to defining passages.
 
 ### Phase 5 — Verification & Validation
-- [ ] Add unit tests verifying all proof scriptures in `data/prophetic_lexicon.json` resolve in `BibleDB`.
-- [ ] Run `scripts/verify_all.sh`.
+- [x] Add unit tests verifying all proof scriptures in `data/prophetic_lexicon.json` resolve in `BibleDB`.
+- [x] Run `scripts/verify_all.sh`.
 
 ## Conventions that apply
 - ADR-013 (Stewardship and Scalability)
@@ -44,6 +44,6 @@ Make the rich linguistic nuances of the original languages immediately accessibl
 - ADR-025 (Anti-Slop Charter)
 
 ## Acceptance criteria
-- [ ] Verbs in Gen 1:1, John 1:1, and Rom 3:24 display plain-English nuance cards.
+- [x] Verbs in Gen 1:1, John 1:1, and Rom 3:24 display plain-English nuance cards.
 - [x] Prophetic Lexicon table filters symbols and meanings in real time.
 - [x] In-context symbols in Daniel 7 and Revelation 12 link directly to defining scriptures.
