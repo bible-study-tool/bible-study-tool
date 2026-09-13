@@ -54,6 +54,7 @@
         <div class="tab-list" role="tablist" aria-label="Study panels">
           <button class="tab" role="tab" aria-selected="true" data-tab="translations" title="Translations (double-click to maximize)">Translations</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="languages" title="Languages (double-click to maximize)">Languages</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="prophecy" title="Prophetic Lexicon (double-click to maximize)">Prophecy</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="notes" title="Notes (double-click to maximize)">Notes</button>
         </div>
         <button id="exit-zoom-btn" class="tab-exit-zoom" aria-label="Exit full panel view" title="Exit full panel view (Esc / double-click)" hidden>⤢ Exit Full View</button>
@@ -64,6 +65,56 @@
       </section>
       <section class="tab-body" id="panel-languages" role="tabpanel" tabindex="-1" hidden>
         <p class="tab-hint">Original-language framing (Hebrew / Greek) lands here in a later phase.</p>
+      </section>
+      <section class="tab-body" id="panel-prophecy" role="tabpanel" tabindex="-1" hidden>
+        <div class="prophecy-toolbar">
+          <div class="prophecy-search-box">
+            <input type="search" id="prophecy-search-input" class="prophecy-search-input" placeholder="Search symbols, meanings, Strong's, refs..." aria-label="Search prophetic symbols">
+          </div>
+          <div class="prophecy-filters">
+            <select id="prophecy-category-filter" class="prophecy-select" aria-label="Filter by category">
+              <option value="">All Categories</option>
+              <option value="Time">Time</option>
+              <option value="Entities">Entities</option>
+              <option value="Elements">Elements</option>
+            </select>
+            <select id="prophecy-book-filter" class="prophecy-select" aria-label="Filter by prophetic book">
+              <option value="">All Books</option>
+              <option value="Daniel">Daniel</option>
+              <option value="Revelation">Revelation</option>
+              <option value="Zechariah">Zechariah</option>
+              <option value="Ezekiel">Ezekiel</option>
+              <option value="Isaiah">Isaiah</option>
+              <option value="Jeremiah">Jeremiah</option>
+            </select>
+            <button id="prophecy-reset-btn" class="btn-tool btn-prophecy-reset" title="Reset filters" aria-label="Reset filters">Reset</button>
+          </div>
+          <div class="prophecy-meta">
+            <span id="prophecy-count-badge" class="prophecy-count-badge" aria-live="polite">25 symbols</span>
+            <button id="prophecy-zoom-btn" class="btn-tool btn-prophecy-zoom" title="Toggle full-width table view (or press 'z' / double-click tab)">⤢ Maximize</button>
+          </div>
+        </div>
+
+        <div id="prophecy-in-context" class="prophecy-in-context" hidden></div>
+
+        <div class="prophecy-table-container">
+          <table class="prophecy-table" role="table" aria-label="Master Prophetic Key Lexicon">
+            <thead>
+              <tr>
+                <th scope="col" class="prophecy-th-symbol">Symbol</th>
+                <th scope="col" class="prophecy-th-meaning">Biblical Meaning</th>
+                <th scope="col" class="prophecy-th-proofs">Primary Proof Texts</th>
+                <th scope="col" class="prophecy-th-anchors">Apocalyptic Anchors</th>
+              </tr>
+            </thead>
+            <tbody id="prophecy-table-body">
+              <!-- Dynamically populated from /api/prophetic -->
+            </tbody>
+          </table>
+          <div id="prophecy-empty-state" class="prophecy-empty-state" role="status" aria-live="polite" hidden>
+            <p>No prophetic symbols match the current filters.</p>
+          </div>
+        </div>
       </section>
       <section class="tab-body" id="panel-notes" role="tabpanel" tabindex="-1" hidden>
         <p class="tab-hint">Your study notes will live here (coming soon).</p>

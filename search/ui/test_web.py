@@ -70,6 +70,11 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"focus-mode-btn", body)
         self.assertIn(b"exit-zoom-btn", body)
         self.assertIn(b"tab-list", body)
+        self.assertIn(b'data-tab="prophecy"', body)
+        self.assertIn(b'id="panel-prophecy"', body)
+        self.assertIn(b'id="prophecy-search-input"', body)
+        self.assertIn(b'id="prophecy-category-filter"', body)
+        self.assertIn(b'id="prophecy-book-filter"', body)
 
     def test_pane_divider_accessibility_attributes(self) -> None:
         status, body, _ = self._get("/")
@@ -95,6 +100,42 @@ class WebServerTests(unittest.TestCase):
         self.assertIn('class="tab-exit-zoom"', html)
         self.assertIn('id="panel-languages"', html)
         self.assertIn('id="panel-translations"', html)
+        self.assertIn('id="panel-prophecy"', html)
+
+    def test_prophecy_workstation_dom_integration(self) -> None:
+        status, body, _ = self._get("/")
+        self.assertEqual(status, 200)
+        html = body.decode("utf-8")
+        # Tab and container
+        self.assertIn('data-tab="prophecy"', html)
+        self.assertIn('id="panel-prophecy"', html)
+        # Search & filters
+        self.assertIn('id="prophecy-search-input"', html)
+        self.assertIn('id="prophecy-category-filter"', html)
+        self.assertIn('id="prophecy-book-filter"', html)
+        self.assertIn('id="prophecy-reset-btn"', html)
+        self.assertIn('id="prophecy-zoom-btn"', html)
+        self.assertIn('id="prophecy-count-badge"', html)
+        # Category options
+        self.assertIn('<option value="Time">Time</option>', html)
+        self.assertIn('<option value="Entities">Entities</option>', html)
+        self.assertIn('<option value="Elements">Elements</option>', html)
+        # Book options
+        self.assertIn('<option value="Daniel">Daniel</option>', html)
+        self.assertIn('<option value="Revelation">Revelation</option>', html)
+        self.assertIn('<option value="Zechariah">Zechariah</option>', html)
+        # Table landmarks and columns
+        self.assertIn('class="prophecy-table"', html)
+        self.assertIn('aria-label="Master Prophetic Key Lexicon"', html)
+        self.assertIn('class="prophecy-th-symbol"', html)
+        self.assertIn('class="prophecy-th-meaning"', html)
+        self.assertIn('class="prophecy-th-proofs"', html)
+        self.assertIn('class="prophecy-th-anchors"', html)
+        self.assertIn('id="prophecy-table-body"', html)
+        self.assertIn('id="prophecy-empty-state"', html)
+        self.assertIn('role="status"', html)
+        self.assertIn('aria-live="polite"', html)
+        self.assertIn('id="prophecy-in-context"', html)
 
     def test_head_request_supported(self) -> None:
         req = urllib.request.Request(self.base + "/", method="HEAD")
@@ -132,6 +173,12 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"morph-card", body)
         self.assertIn(b"translation-card", body)
         self.assertIn(b"morph-theological-card", body)
+        self.assertIn(b"prophecy-table", body)
+        self.assertIn(b"prophecy-toolbar", body)
+        self.assertIn(b"category-badge", body)
+        self.assertIn(b"prophecy-ref-link", body)
+        self.assertIn(b"prophecy-consensus-details", body)
+        self.assertIn(b"tab-count-badge", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -161,6 +208,14 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"data-strongs", body)
         self.assertIn(b"data-verse", body)
         self.assertIn(b"openNuance", body)
+        self.assertIn(b"loadPropheticLexicon", body)
+        self.assertIn(b"renderProphecyTable", body)
+        self.assertIn(b"filterProphecySymbols", body)
+        self.assertIn(b"updateProphecyInContext", body)
+        self.assertIn(b"initProphecyWorkstation", body)
+        self.assertIn(b"createRefChip", body)
+        self.assertIn(b"currentProphecyPassageRef", body)
+        self.assertIn(b"tab-count-badge", body)
 
     def test_traversal_blocked(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:

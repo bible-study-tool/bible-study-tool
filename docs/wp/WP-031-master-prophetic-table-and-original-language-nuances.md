@@ -27,8 +27,8 @@ Make the rich linguistic nuances of the original languages immediately accessibl
 - [x] Link historical SDA prophetic consensus citations.
 
 ### Phase 3 — Aggregated Prophetic Key Table UI
-- [ ] Build full-width workstation tab ("Prophetic Lexicon") with a searchable, filterable table.
-- [ ] Support category filters (Time, Entities, Elements) and prophetic book scopes (Daniel, Revelation, Zechariah).
+- [x] Build full-width workstation tab ("Prophetic Lexicon") with a searchable, filterable table.
+- [x] Support category filters (Time, Entities, Elements) and prophetic book scopes (Daniel, Revelation, Zechariah).
 
 ### Phase 4 — In-Context Prophetic Symbol Chaining
 - [ ] In Scripture reading view, subtly badge canonical prophetic symbols.
@@ -45,5 +45,5 @@ Make the rich linguistic nuances of the original languages immediately accessibl
 
 ## Acceptance criteria
 - [ ] Verbs in Gen 1:1, John 1:1, and Rom 3:24 display plain-English nuance cards.
-- [ ] Prophetic Lexicon table filters symbols and meanings in real time.
+- [x] Prophetic Lexicon table filters symbols and meanings in real time.
 - [ ] In-context symbols in Daniel 7 and Revelation 12 link directly to defining scriptures.

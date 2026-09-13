@@ -1398,3 +1398,352 @@ button:disabled { opacity: 0.45; cursor: default; }
   display: inline-block;
   width: fit-content;
 }
+
+/* ==========================================================================
+   Master Prophetic Key Table & Lexicon Workstation (WP-031 Phase 3, ADR-025)
+   ========================================================================== */
+
+.prophecy-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.prophecy-search-box {
+  flex: 1 1 200px;
+  min-width: 160px;
+}
+
+.prophecy-search-input {
+  width: 100%;
+  height: 2.15rem;
+  padding: 0 var(--space-2);
+  font-family: var(--font-ui);
+  font-size: var(--type-sm);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  outline: none;
+}
+
+.prophecy-search-input:focus-visible {
+  border-color: var(--primary);
+  outline: var(--focus-ring);
+}
+
+.prophecy-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.prophecy-select {
+  height: 2.15rem;
+  padding: 0 var(--space-2);
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  outline: none;
+  cursor: pointer;
+}
+
+.prophecy-select:focus-visible {
+  border-color: var(--primary);
+  outline: var(--focus-ring);
+}
+
+.btn-prophecy-reset {
+  height: 2.15rem;
+  padding: 0 var(--space-2);
+  font-size: var(--type-xs);
+  cursor: pointer;
+}
+
+.prophecy-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+.prophecy-count-badge {
+  font-family: var(--font-mono);
+  font-size: var(--type-xs);
+  color: var(--ink-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: var(--radius-s);
+  white-space: nowrap;
+}
+
+.btn-prophecy-zoom {
+  height: 2.15rem;
+  padding: 0 var(--space-2);
+  font-size: var(--type-xs);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.prophecy-in-context {
+  padding: var(--space-2) var(--space-3);
+  background: rgba(136, 98, 18, 0.08);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.prophecy-in-context-header {
+  font-size: var(--type-xs);
+  font-weight: 600;
+  color: var(--verse-num);
+}
+
+.prophecy-in-context-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.prophecy-context-tag {
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.prophecy-context-tag:hover {
+  background: var(--highlight);
+  border-color: var(--primary);
+}
+
+.prophecy-context-tag:focus-visible {
+  outline: var(--focus-ring);
+}
+
+.tab-count-badge {
+  margin-left: 4px;
+  padding: 1px 4px;
+}
+
+#panel-prophecy {
+  overflow: hidden;
+}
+
+.prophecy-table-container {
+  flex: 1;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.prophecy-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--type-sm);
+  min-width: 620px;
+}
+
+.prophecy-table th {
+  position: sticky;
+  top: 0;
+  background: var(--surface-alt);
+  color: var(--ink);
+  font-weight: 600;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 2px solid var(--border);
+  z-index: 2;
+  font-size: var(--type-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prophecy-table td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--ink);
+}
+
+.prophecy-table tbody tr:nth-child(even) {
+  background: var(--zebra-bg);
+}
+
+.prophecy-table tbody tr:hover {
+  background: rgba(26, 61, 92, 0.05);
+}
+
+.prophecy-table tbody tr.highlight-symbol {
+  background: rgba(136, 98, 18, 0.12);
+  outline: 2px solid var(--secondary);
+}
+
+.symbol-name {
+  font-weight: 600;
+  font-size: var(--type-sm);
+  color: var(--ink);
+  display: block;
+}
+
+.symbol-header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-bottom: var(--space-1);
+}
+
+.category-badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1px 5px;
+  border-radius: var(--radius-s);
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.category-badge.cat-time {
+  border: 1px solid var(--secondary);
+  color: var(--verse-num);
+  background: rgba(136, 98, 18, 0.08);
+}
+
+.category-badge.cat-entities {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background: rgba(26, 61, 92, 0.08);
+}
+
+.category-badge.cat-elements {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: rgba(46, 74, 33, 0.08);
+}
+
+.symbol-strongs {
+  margin-top: var(--space-1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.prophecy-strongs-tag {
+  font-family: var(--font-mono);
+  font-size: var(--type-xs);
+  color: var(--strongs-code);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1px 4px;
+  border-radius: var(--radius-s);
+  cursor: pointer;
+}
+
+.prophecy-strongs-tag:hover {
+  background: var(--highlight);
+  border-color: var(--primary);
+}
+
+.prophecy-strongs-tag:focus-visible {
+  outline: var(--focus-ring);
+}
+
+.symbol-meaning {
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.symbol-books {
+  margin-top: var(--space-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.prophecy-book-tag {
+  font-size: var(--type-xs);
+  color: var(--ink-muted);
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border);
+  padding: 0 4px;
+  border-radius: 2px;
+}
+
+.prophecy-ref-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.prophecy-ref-link {
+  font-family: var(--font-mono);
+  font-size: var(--type-xs);
+  color: var(--primary);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.prophecy-ref-link:hover {
+  color: var(--accent);
+  background: var(--highlight);
+}
+
+.prophecy-ref-link:focus-visible {
+  outline: var(--focus-ring);
+}
+
+.prophecy-consensus-details {
+  margin-top: var(--space-2);
+  font-size: var(--type-xs);
+}
+
+.prophecy-consensus-summary {
+  color: var(--ink-muted);
+  cursor: pointer;
+  font-style: italic;
+  outline: none;
+}
+
+.prophecy-consensus-summary:hover {
+  color: var(--ink);
+}
+
+.prophecy-consensus-summary:focus-visible {
+  outline: var(--focus-ring);
+}
+
+.prophecy-consensus-body {
+  margin-top: var(--space-1);
+  padding: var(--space-2);
+  background: var(--surface-alt);
+  border-left: 2px solid var(--secondary);
+  font-size: var(--type-xs);
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.prophecy-empty-state {
+  padding: var(--space-5);
+  text-align: center;
+  color: var(--ink-muted);
+  font-style: italic;
+}

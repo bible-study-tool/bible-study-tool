@@ -23,6 +23,17 @@ const els = {
   statusRight: $("#status-right"),
   translationsPanel: $("#panel-translations"),
   languagesPanel: $("#panel-languages"),
+  prophecyPanel: $("#panel-prophecy"),
+  tabProphecy: document.querySelector("button.tab[data-tab='prophecy']"),
+  prophecySearchInput: $("#prophecy-search-input"),
+  prophecyCategoryFilter: $("#prophecy-category-filter"),
+  prophecyBookFilter: $("#prophecy-book-filter"),
+  prophecyResetBtn: $("#prophecy-reset-btn"),
+  prophecyCountBadge: $("#prophecy-count-badge"),
+  prophecyZoomBtn: $("#prophecy-zoom-btn"),
+  prophecyInContext: $("#prophecy-in-context"),
+  prophecyTableBody: $("#prophecy-table-body"),
+  prophecyEmptyState: $("#prophecy-empty-state"),
   main: $(".app-main"),
   paneDivider: $("#pane-divider"),
   readingPane: $("#reading-pane"),
@@ -305,6 +316,10 @@ function showError(message) {
   els.verses.innerHTML = "";
   if (els.translationsPanel) els.translationsPanel.innerHTML = "<p class='tab-hint'>No data.</p>";
   if (els.languagesPanel) els.languagesPanel.innerHTML = "<p class='tab-hint'>No data.</p>";
+  if (els.prophecyInContext) {
+    els.prophecyInContext.hidden = true;
+    els.prophecyInContext.innerHTML = "";
+  }
 }
 
 /* small escaping helper (never trust fetched text into innerHTML unescaped) */
@@ -321,6 +336,7 @@ async function navigate(ref) {
   try {
     const pass = await api(`/api/passage?ref=${encodeURIComponent(ref)}&eager=1`);
     renderPassage(pass);
+    updateProphecyInContext(pass.ref);
   } catch (err) {
     showError(String(err.message || err));
   }
@@ -626,12 +642,14 @@ function toggleSideZoom(forceState) {
     }
     els.main.classList.add("zoom-side");
     if (els.exitZoomBtn) els.exitZoomBtn.hidden = false;
+    if (els.prophecyZoomBtn) els.prophecyZoomBtn.textContent = "⤡ Split View";
     if (els.statusLeft) {
       els.statusLeft.textContent = "Panel Zoom active — press 'z' or Esc to restore split";
     }
   } else {
     els.main.classList.remove("zoom-side");
     if (els.exitZoomBtn) els.exitZoomBtn.hidden = true;
+    if (els.prophecyZoomBtn) els.prophecyZoomBtn.textContent = "⤢ Maximize";
     restoreStatusBar();
   }
 }
@@ -647,6 +665,7 @@ function exitDistractionFreeModes() {
     els.focusModeBtn.title = "Toggle Scripture Focus Mode (f)";
   }
   if (els.exitZoomBtn) els.exitZoomBtn.hidden = true;
+  if (els.prophecyZoomBtn) els.prophecyZoomBtn.textContent = "⤢ Maximize";
   restoreStatusBar();
 }
 
@@ -756,10 +775,287 @@ if (els.wizardFinishBtn) els.wizardFinishBtn.addEventListener("click", completeW
 if (els.wizardBackBtn) els.wizardBackBtn.addEventListener("click", () => setWizardStep(currentWizardStep - 1));
 if (els.wizardNextBtn) els.wizardNextBtn.addEventListener("click", () => setWizardStep(currentWizardStep + 1));
 
+
+/* ---- Master Prophetic Key Table Workstation (WP-031 Phase 3) ---- */
+
+let cachedPropheticLexicon = null;
+let currentProphecyPassageRef = null;
+
+async function loadPropheticLexicon() {
+  try {
+    const data = await api("/api/prophetic");
+    // Precompute searchable string on load for zero-allocation real-time filtering
+    for (const s of (data.symbols || [])) {
+      s._searchable = [
+        s.symbol || "",
+        s.meaning || "",
+        s.category || "",
+        ...(s.books || []),
+        s.sda_consensus || "",
+        ...(s.proof_texts || []),
+        ...(s.canonical_anchors || []),
+        ...(s.strongs || []),
+      ].join(" ").toLowerCase();
+    }
+    cachedPropheticLexicon = data;
+    renderProphecyTable(data.symbols);
+  } catch (err) {
+    if (els.prophecyTableBody) {
+      els.prophecyTableBody.innerHTML = `<tr><td colspan="4" class="tab-hint">Cannot load prophetic lexicon: ${escapeHtml(err.message)}</td></tr>`;
+    }
+  }
+}
+
+function renderProphecyTable(symbols) {
+  if (!els.prophecyTableBody) return;
+  els.prophecyTableBody.innerHTML = "";
+
+  if (!symbols || symbols.length === 0) {
+    if (els.prophecyEmptyState) els.prophecyEmptyState.hidden = false;
+    if (els.prophecyCountBadge) els.prophecyCountBadge.textContent = "0 symbols";
+    return;
+  }
+
+  if (els.prophecyEmptyState) els.prophecyEmptyState.hidden = true;
+  if (els.prophecyCountBadge) {
+    els.prophecyCountBadge.textContent = `${symbols.length} symbol${symbols.length === 1 ? "" : "s"}`;
+  }
+
+  function createRefChip(ref) {
+    const link = document.createElement("button");
+    link.type = "button";
+    link.className = "prophecy-ref-link";
+    link.textContent = ref;
+    link.title = `Read ${ref} in Scripture view`;
+    link.addEventListener("click", () => {
+      if (els.input) els.input.value = ref;
+      navigate(ref);
+      if (els.main && els.main.classList.contains("zoom-side")) {
+        toggleSideZoom(false);
+      }
+    });
+    return link;
+  }
+
+  const fragment = document.createDocumentFragment();
+
+  for (const s of symbols) {
+    const tr = document.createElement("tr");
+    tr.id = `prophecy-row-${s.id}`;
+    tr.dataset.symbolId = s.id;
+
+    // 1. Symbol column
+    const tdSymbol = document.createElement("td");
+    tdSymbol.className = "prophecy-col-symbol";
+
+    const headerDiv = document.createElement("div");
+    headerDiv.className = "symbol-header";
+
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "symbol-name";
+    nameSpan.textContent = s.symbol;
+    headerDiv.appendChild(nameSpan);
+
+    const catBadge = document.createElement("span");
+    const catLower = (s.category || "").toLowerCase();
+    catBadge.className = `category-badge cat-${catLower}`;
+    catBadge.textContent = s.category;
+    headerDiv.appendChild(catBadge);
+
+    tdSymbol.appendChild(headerDiv);
+
+    // Strong's codes
+    if (s.strongs && s.strongs.length > 0) {
+      const strongsDiv = document.createElement("div");
+      strongsDiv.className = "symbol-strongs";
+      for (const code of s.strongs) {
+        const strongsBtn = document.createElement("button");
+        strongsBtn.type = "button";
+        strongsBtn.className = "prophecy-strongs-tag";
+        strongsBtn.textContent = code;
+        strongsBtn.title = `Inspect ${code} in Languages tab`;
+        strongsBtn.addEventListener("click", () => {
+          switchTab("languages");
+          if (els.languagesPanel) {
+            const targetCard = els.languagesPanel.querySelector(`details.morph-card[data-strongs="${code}"]`);
+            if (targetCard) {
+              targetCard.open = true;
+              targetCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+          }
+        });
+        strongsDiv.appendChild(strongsBtn);
+      }
+      tdSymbol.appendChild(strongsDiv);
+    }
+
+    // Historical consensus
+    if (s.sda_consensus) {
+      const consensusDetails = document.createElement("details");
+      consensusDetails.className = "prophecy-consensus-details";
+      consensusDetails.innerHTML = `
+        <summary class="prophecy-consensus-summary">Historical Consensus</summary>
+        <div class="prophecy-consensus-body">${escapeHtml(s.sda_consensus)}</div>
+      `;
+      tdSymbol.appendChild(consensusDetails);
+    }
+
+    // 2. Meaning column
+    const tdMeaning = document.createElement("td");
+    tdMeaning.className = "prophecy-col-meaning";
+    const meaningDiv = document.createElement("div");
+    meaningDiv.className = "symbol-meaning";
+    meaningDiv.textContent = s.meaning;
+    tdMeaning.appendChild(meaningDiv);
+
+    if (s.books && s.books.length > 0) {
+      const booksDiv = document.createElement("div");
+      booksDiv.className = "symbol-books";
+      for (const b of s.books) {
+        const bSpan = document.createElement("span");
+        bSpan.className = "prophecy-book-tag";
+        bSpan.textContent = b;
+        booksDiv.appendChild(bSpan);
+      }
+      tdMeaning.appendChild(booksDiv);
+    }
+
+    // 3. Proof Texts column
+    const tdProofs = document.createElement("td");
+    tdProofs.className = "prophecy-col-proofs";
+    const proofsList = document.createElement("div");
+    proofsList.className = "prophecy-ref-list";
+    for (const ref of (s.proof_texts || [])) {
+      proofsList.appendChild(createRefChip(ref));
+    }
+    tdProofs.appendChild(proofsList);
+
+    // 4. Apocalyptic Anchors column
+    const tdAnchors = document.createElement("td");
+    tdAnchors.className = "prophecy-col-anchors";
+    const anchorsList = document.createElement("div");
+    anchorsList.className = "prophecy-ref-list";
+    for (const ref of (s.canonical_anchors || [])) {
+      anchorsList.appendChild(createRefChip(ref));
+    }
+    tdAnchors.appendChild(anchorsList);
+
+    tr.appendChild(tdSymbol);
+    tr.appendChild(tdMeaning);
+    tr.appendChild(tdProofs);
+    tr.appendChild(tdAnchors);
+    fragment.appendChild(tr);
+  }
+
+  els.prophecyTableBody.appendChild(fragment);
+}
+
+function filterProphecySymbols() {
+  if (!cachedPropheticLexicon) return;
+  const q = (els.prophecySearchInput ? els.prophecySearchInput.value : "").trim().toLowerCase();
+  const cat = (els.prophecyCategoryFilter ? els.prophecyCategoryFilter.value : "").trim();
+  const book = (els.prophecyBookFilter ? els.prophecyBookFilter.value : "").trim().toLowerCase();
+
+  const qTerms = q ? q.split(/\s+/) : [];
+
+  const filtered = (cachedPropheticLexicon.symbols || []).filter((s) => {
+    if (cat && s.category !== cat) return false;
+    if (book && !(s.books || []).some((b) => (b || "").toLowerCase() === book)) return false;
+    if (qTerms.length > 0) {
+      const searchable = s._searchable || [
+        s.symbol || "",
+        s.meaning || "",
+        s.category || "",
+        ...(s.books || []),
+        s.sda_consensus || "",
+        ...(s.proof_texts || []),
+        ...(s.canonical_anchors || []),
+        ...(s.strongs || []),
+      ].join(" ").toLowerCase();
+      if (!qTerms.every((term) => searchable.includes(term))) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  renderProphecyTable(filtered);
+}
+
+function resetProphecyFilters() {
+  if (els.prophecySearchInput) els.prophecySearchInput.value = "";
+  if (els.prophecyCategoryFilter) els.prophecyCategoryFilter.value = "";
+  if (els.prophecyBookFilter) els.prophecyBookFilter.value = "";
+  filterProphecySymbols();
+}
+
+async function updateProphecyInContext(passageRef) {
+  if (!els.prophecyInContext || !passageRef) return;
+  currentProphecyPassageRef = passageRef;
+  try {
+    const data = await api(`/api/prophetic?ref=${encodeURIComponent(passageRef)}`);
+    if (currentProphecyPassageRef !== passageRef) return; // Discard stale out-of-order response
+    const matched = data.symbols || [];
+    if (matched.length > 0) {
+      els.prophecyInContext.hidden = false;
+      els.prophecyInContext.innerHTML = `
+        <div class="prophecy-in-context-header">In-Context Symbols for <strong>${escapeHtml(passageRef)}</strong> (${matched.length}):</div>
+        <div class="prophecy-in-context-tags">
+          ${matched.map((s) => `
+            <button type="button" class="prophecy-context-tag" data-symbol-id="${escapeHtml(s.id)}" title="${escapeHtml(s.meaning || "")}">
+              ${escapeHtml(s.symbol)} <span class="category-badge cat-${(s.category || "").toLowerCase()}">${escapeHtml(s.category || "")}</span>
+            </button>
+          `).join("")}
+        </div>
+      `;
+      els.prophecyInContext.querySelectorAll(".prophecy-context-tag").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          switchTab("prophecy");
+          let targetRow = $(`#prophecy-row-${btn.dataset.symbolId}`);
+          if (!targetRow) {
+            resetProphecyFilters();
+            targetRow = $(`#prophecy-row-${btn.dataset.symbolId}`);
+          }
+          if (targetRow) {
+            document.querySelectorAll(".prophecy-table tr.highlight-symbol").forEach((r) => r.classList.remove("highlight-symbol"));
+            targetRow.classList.add("highlight-symbol");
+            const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            targetRow.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "center" });
+            setTimeout(() => targetRow.classList.remove("highlight-symbol"), 3000);
+          }
+        });
+      });
+      if (els.tabProphecy) {
+        els.tabProphecy.innerHTML = `Prophecy <span class="prophecy-count-badge tab-count-badge">${matched.length}</span>`;
+      }
+    } else {
+      els.prophecyInContext.hidden = true;
+      els.prophecyInContext.innerHTML = "";
+      if (els.tabProphecy) {
+        els.tabProphecy.textContent = "Prophecy";
+      }
+    }
+  } catch (_e) {
+    // Fail soft if offline or error
+  }
+}
+
+function initProphecyWorkstation() {
+  if (els.prophecySearchInput) els.prophecySearchInput.addEventListener("input", filterProphecySymbols);
+  if (els.prophecyCategoryFilter) els.prophecyCategoryFilter.addEventListener("change", filterProphecySymbols);
+  if (els.prophecyBookFilter) els.prophecyBookFilter.addEventListener("change", filterProphecySymbols);
+  if (els.prophecyResetBtn) els.prophecyResetBtn.addEventListener("click", resetProphecyFilters);
+  if (els.prophecyZoomBtn) {
+    els.prophecyZoomBtn.addEventListener("click", () => toggleSideZoom());
+  }
+  loadPropheticLexicon();
+}
+
 initPaneResizer();
 initFocusAndZoomModes();
 initAutoUpdate();
 initZebraShading();
+initProphecyWorkstation();
 let setupCompleted = false;
 try {
   setupCompleted = localStorage.getItem("abst.setup_completed") === "true";
