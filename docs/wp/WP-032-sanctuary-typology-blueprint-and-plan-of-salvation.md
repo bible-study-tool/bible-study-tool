@@ -17,13 +17,13 @@ Provide an interactive, typological Sanctuary Blueprint representing the bluepri
 ## Tasks
 
 ### Phase 1 — Sanctuary Typological Schema & Knowledge Graph
-- [ ] Define `data/sanctuary_schema.json` mapping compartments, furniture, services, and spiritual realities:
+- [x] Define `data/sanctuary_schema.json` mapping compartments, furniture, services, and spiritual realities:
   - Courtyard: Altar of Burnt Offering (Justification/Cross), Laver (Regeneration/Baptism).
   - Holy Place: Menorah (Spirit/Witness), Shewbread (Word), Altar of Incense (Intercession).
   - Most Holy Place: Ark of the Covenant, Mercy Seat, Law (Judgment/Vindication).
 
 ### Phase 2 — Typological Scripture Crosswalk
-- [ ] Map each station to Old Testament institution, prophetic fulfillment, Hebrews heavenly ministry counterparts, and Revelation throne-room scenes.
+- [x] Map each station to Old Testament institution, prophetic fulfillment, Hebrews heavenly ministry counterparts, and Revelation throne-room scenes.
 
 ### Phase 3 — Interactive Blueprint Workstation Component
 - [ ] Construct dedicated "Sanctuary" tab using responsive, zero-dependency inline SVG styled with design tokens (`--primary`, `--secondary`, sepia/walnut substrates).

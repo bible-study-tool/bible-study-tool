@@ -100,6 +100,8 @@ def _verse_payload(study: StudyService, verse: Any) -> dict[str, Any]:
     }
     if getattr(verse, "prophetic_symbols", None):
         payload["prophetic_symbols"] = _jsonable(verse.prophetic_symbols)
+    if getattr(verse, "sanctuary_stations", None):
+        payload["sanctuary_stations"] = _jsonable(verse.sanctuary_stations)
     return payload
 
 
@@ -193,6 +195,8 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 self._api_nuance(query)
             elif path == "/api/prophetic":
                 self._api_prophetic(query)
+            elif path == "/api/sanctuary":
+                self._api_sanctuary(query)
             elif path.startswith("/api/"):
                 self._reply_error(HTTPStatus.NOT_FOUND, "unknown endpoint")
             else:
@@ -216,6 +220,7 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "translations_url": "/api/translations",
                 "nuance_url": "/api/nuance",
                 "prophetic_url": "/api/prophetic",
+                "sanctuary_url": "/api/sanctuary",
                 "verify_bundle_url": "/api/verify-bundle",
                 "egw_available": has_egw,
             })
@@ -355,6 +360,58 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "categories": lex.categories,
                 "symbols": _jsonable(symbols),
                 "count": len(symbols),
+            })
+
+        def _api_sanctuary(self, query: dict[str, list[str]]) -> None:
+            station_id = query.get("station", query.get("id", [""]))[0].strip()
+            if station_id:
+                station = study.get_sanctuary_station(station_id)
+                if not station:
+                    self._reply_error(HTTPStatus.NOT_FOUND, f"unknown sanctuary station {station_id!r}")
+                    return
+                self._reply_json(HTTPStatus.OK, {
+                    "status": "ok",
+                    "station": _jsonable(station),
+                })
+                return
+
+            ref = query.get("ref", [""])[0].strip()
+            if ref:
+                try:
+                    stations = study.get_annotated_sanctuary_stations_for_passage(ref)
+                    self._reply_json(HTTPStatus.OK, {
+                        "status": "ok",
+                        "ref": ref,
+                        "stations": _jsonable(stations),
+                        "count": len(stations),
+                    })
+                    return
+                except ValueError as exc:
+                    self._reply_error(HTTPStatus.BAD_REQUEST, f"cannot resolve sanctuary passage {ref!r}: {exc}")
+                    return
+                except Exception as exc:
+                    self._reply_error(HTTPStatus.INTERNAL_SERVER_ERROR, f"error resolving sanctuary stations: {exc}")
+                    return
+
+            compartment = query.get("compartment", [""])[0].strip() or None
+            q = query.get("q", query.get("query", [""]))[0].strip() or None
+
+            if compartment or q:
+                stations = study.get_sanctuary_stations(compartment=compartment, query=q)
+                self._reply_json(HTTPStatus.OK, {
+                    "status": "ok",
+                    "compartment": compartment,
+                    "query": q,
+                    "stations": _jsonable(stations),
+                    "count": len(stations),
+                })
+                return
+
+            # No filter parameters -> return full structured knowledge graph
+            sanctuary_data = study.get_sanctuary_data()
+            self._reply_json(HTTPStatus.OK, {
+                "status": "ok",
+                **_jsonable(sanctuary_data),
             })
 
     return StudyHandler

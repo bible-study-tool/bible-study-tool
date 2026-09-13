@@ -240,6 +240,7 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(data["default_theme"], "sepia")
         self.assertEqual(data["nuance_url"], "/api/nuance")
         self.assertEqual(data["prophetic_url"], "/api/prophetic")
+        self.assertEqual(data["sanctuary_url"], "/api/sanctuary")
         self.assertIn("verify_bundle_url", data)
         self.assertIn("egw_available", data)
         theme_ids = [t["id"] for t in data["themes"]]
@@ -488,6 +489,72 @@ class WebServerTests(unittest.TestCase):
         self.assertIsNotNone(eze_day)
         self.assertFalse(eze_day["is_anchor"])
         self.assertTrue(eze_day["is_proof"])
+
+    def test_sanctuary_endpoint_full_dataset(self) -> None:
+        data = self._get_json("/api/sanctuary")
+        self.assertEqual(data["status"], "ok")
+        self.assertEqual(data["version"], "1.0.0")
+        self.assertEqual(len(data["compartments"]), 3)
+        self.assertEqual(len(data["stations"]), 6)
+        self.assertEqual(len(data["services"]), 2)
+        self.assertEqual(len(data["plan_of_salvation"]), 4)
+
+    def test_sanctuary_endpoint_by_station(self) -> None:
+        data = self._get_json("/api/sanctuary?station=ark_of_the_covenant")
+        self.assertEqual(data["status"], "ok")
+        st = data["station"]
+        self.assertEqual(st["id"], "ark_of_the_covenant")
+        self.assertEqual(st["compartment"], "most_holy_place")
+        self.assertIn("H727", st["strongs"])
+
+    def test_sanctuary_endpoint_unknown_station_is_404(self) -> None:
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._get("/api/sanctuary?station=golden_calf")
+        self.assertEqual(ctx.exception.code, 404)
+
+    def test_sanctuary_endpoint_by_compartment(self) -> None:
+        data = self._get_json("/api/sanctuary?compartment=courtyard")
+        self.assertEqual(data["status"], "ok")
+        self.assertEqual(data["count"], 2)
+        station_ids = {s["id"] for s in data["stations"]}
+        self.assertEqual(station_ids, {"altar_of_burnt_offering", "laver"})
+
+    def test_sanctuary_endpoint_by_ref(self) -> None:
+        data = self._get_json("/api/sanctuary?ref=Hebrews%209:4")
+        self.assertEqual(data["status"], "ok")
+        self.assertGreaterEqual(data["count"], 1)
+        station_ids = [s["id"] for s in data["stations"]]
+        self.assertIn("ark_of_the_covenant", station_ids)
+
+    def test_passage_endpoint_in_context_sanctuary_stations(self) -> None:
+        # Exodus 27:1 (Altar of Burnt Offering OT institution)
+        data_exod = self._get_json("/api/passage?ref=Exodus+27:1")
+        v_exod = data_exod["verses"][0]
+        self.assertIn("sanctuary_stations", v_exod)
+        altar_st = next((s for s in v_exod["sanctuary_stations"] if s["id"] == "altar_of_burnt_offering"), None)
+        self.assertIsNotNone(altar_st)
+        self.assertTrue(altar_st["is_ot_institution"])
+
+        # Hebrews 13:10 (Altar of Burnt Offering NT fulfillment)
+        data_heb = self._get_json("/api/passage?ref=Hebrews+13:10")
+        v_heb = data_heb["verses"][0]
+        self.assertIn("sanctuary_stations", v_heb)
+        altar_heb = next((s for s in v_heb["sanctuary_stations"] if s["id"] == "altar_of_burnt_offering"), None)
+        self.assertIsNotNone(altar_heb)
+        self.assertTrue(altar_heb["is_nt_fulfillment"])
+
+        # Revelation 11:19 (Ark of the Covenant heavenly fulfillment)
+        data_rev = self._get_json("/api/passage?ref=Revelation+11:19")
+        v_rev = data_rev["verses"][0]
+        self.assertIn("sanctuary_stations", v_rev)
+        ark_rev = next((s for s in v_rev["sanctuary_stations"] if s["id"] == "ark_of_the_covenant"), None)
+        self.assertIsNotNone(ark_rev)
+        self.assertTrue(ark_rev["is_nt_fulfillment"])
+
+    def test_sanctuary_endpoint_invalid_passage_is_400(self) -> None:
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._get("/api/sanctuary?ref=InvalidBook+99:99")
+        self.assertEqual(ctx.exception.code, 400)
 
     def test_unknown_endpoint_is_404(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:

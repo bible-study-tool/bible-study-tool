@@ -47,6 +47,11 @@ from search.corpus.prophetic import (
     PropheticSymbol,
     get_prophetic_lexicon,
 )
+from search.corpus.sanctuary import (
+    AnnotatedSanctuaryStation,
+    SanctuaryEngine,
+    get_sanctuary_engine,
+)
 from search.linking.egw import EgwDB, DEFAULT_EGW_DB, is_egw_token, normalize_token
 from search.resource import data_path, get_lexicons_dir, lexicon_path
 
@@ -215,6 +220,7 @@ class VerseStudy:
     discourse_markers: list[DiscourseMarker] = field(default_factory=list)
     ot_citations: list[OTCitation] = field(default_factory=list)
     prophetic_symbols: list[AnnotatedPropheticSymbol] = field(default_factory=list)
+    sanctuary_stations: list[AnnotatedSanctuaryStation] = field(default_factory=list)
 
 
 
@@ -408,8 +414,9 @@ class StudyService:
             # Pre-fetch OT citations and NT covenant anchors (<0.1ms)
             batch_citations = get_passage_ot_citations_batch(book_code, ch)
 
-            # Pre-fetch prophetic symbols for verses (<0.05ms)
+            # Pre-fetch prophetic symbols and sanctuary stations for verses (<0.05ms)
             prophetic_lex = self.get_prophetic_lexicon()
+            sanct_engine = self.get_sanctuary_engine()
 
             for vr in verses_raw:
                 verse_id = f"{vr['osis']}.{vr['chapter']}.{vr['verse']}"
@@ -449,6 +456,9 @@ class StudyService:
                 v_prophetic = prophetic_lex.get_annotated_symbols_for_verse(
                     vr.get("osis", book_code), vr["chapter"], vr["verse"]
                 )
+                v_sanctuary = sanct_engine.get_annotated_stations_for_verse(
+                    vr.get("osis", book_code), vr["chapter"], vr["verse"]
+                )
 
                 verse_studies.append(
                     VerseStudy(
@@ -466,6 +476,7 @@ class StudyService:
                         discourse_markers=v_discourse,
                         ot_citations=v_citations,
                         prophetic_symbols=v_prophetic,
+                        sanctuary_stations=v_sanctuary,
                     )
                 )
 
@@ -951,6 +962,39 @@ class StudyService:
         lex = self.get_prophetic_lexicon()
         symbols = lex.get_annotated_symbols_for_passage(ref, include_proofs=include_proofs)
         return [s.to_dict() for s in symbols]
+
+    def get_sanctuary_engine(self) -> SanctuaryEngine:
+        """Get the singleton SanctuaryEngine instance."""
+        return get_sanctuary_engine()
+
+    def get_sanctuary_data(self) -> dict[str, Any]:
+        """Retrieve the complete structured Sanctuary knowledge graph."""
+        return self.get_sanctuary_engine().get_all_data()
+
+    def get_sanctuary_stations(
+        self,
+        compartment: Optional[str] = None,
+        query: Optional[str] = None,
+    ) -> list[dict[str, Any]]:
+        """Retrieve sanctuary stations filtered by compartment or query."""
+        engine = self.get_sanctuary_engine()
+        stations = engine.list_stations(compartment=compartment, query=query)
+        return [s.to_dict() for s in stations]
+
+    def get_sanctuary_station(self, station_id: str) -> Optional[dict[str, Any]]:
+        """Retrieve a single sanctuary station by ID."""
+        engine = self.get_sanctuary_engine()
+        s = engine.get_station(station_id)
+        return s.to_dict() if s else None
+
+    def get_annotated_sanctuary_stations_for_passage(
+        self,
+        ref: str,
+    ) -> list[dict[str, Any]]:
+        """Retrieve annotated sanctuary stations with OT/NT flags for the passage."""
+        engine = self.get_sanctuary_engine()
+        stations = engine.get_annotated_stations_for_passage(ref)
+        return [s.to_dict() for s in stations]
 
     def close(self) -> None:
         """Close database connections."""
