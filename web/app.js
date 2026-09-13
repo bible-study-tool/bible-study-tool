@@ -34,6 +34,14 @@ const els = {
   prophecyInContext: $("#prophecy-in-context"),
   prophecyTableBody: $("#prophecy-table-body"),
   prophecyEmptyState: $("#prophecy-empty-state"),
+  sanctuaryPanel: $("#panel-sanctuary"),
+  tabSanctuary: document.querySelector("button.tab[data-tab='sanctuary']"),
+  sanctuaryStageSlider: $("#sanctuary-stage-slider"),
+  sanctuaryStageBtns: document.querySelectorAll(".sanctuary-stage-btn"),
+  sanctuaryStageBadge: $("#sanctuary-stage-badge"),
+  sanctuaryZoomBtn: $("#sanctuary-zoom-btn"),
+  sanctuarySvg: $("#sanctuary-svg"),
+  sanctuaryDetailCard: $("#sanctuary-detail-card"),
   main: $(".app-main"),
   paneDivider: $("#pane-divider"),
   readingPane: $("#reading-pane"),
@@ -115,10 +123,10 @@ async function api(path) {
 
 /* ---- rendering ---- */
 
-function createRefChip(ref) {
+function createRefChip(ref, className = "prophecy-ref-link") {
   const link = document.createElement("button");
   link.type = "button";
-  link.className = "prophecy-ref-link";
+  link.className = className;
   link.textContent = ref;
   link.title = `Read ${ref} in Scripture view`;
   link.addEventListener("click", () => {
@@ -818,6 +826,7 @@ function toggleSideZoom(forceState) {
     els.main.classList.add("zoom-side");
     if (els.exitZoomBtn) els.exitZoomBtn.hidden = false;
     if (els.prophecyZoomBtn) els.prophecyZoomBtn.textContent = "⤡ Split View";
+    if (els.sanctuaryZoomBtn) els.sanctuaryZoomBtn.textContent = "⤡ Split View";
     if (els.statusLeft) {
       els.statusLeft.textContent = "Panel Zoom active — press 'z' or Esc to restore split";
     }
@@ -825,6 +834,7 @@ function toggleSideZoom(forceState) {
     els.main.classList.remove("zoom-side");
     if (els.exitZoomBtn) els.exitZoomBtn.hidden = true;
     if (els.prophecyZoomBtn) els.prophecyZoomBtn.textContent = "⤢ Maximize";
+    if (els.sanctuaryZoomBtn) els.sanctuaryZoomBtn.textContent = "⤢ Maximize";
     restoreStatusBar();
   }
 }
@@ -841,6 +851,7 @@ function exitDistractionFreeModes() {
   }
   if (els.exitZoomBtn) els.exitZoomBtn.hidden = true;
   if (els.prophecyZoomBtn) els.prophecyZoomBtn.textContent = "⤢ Maximize";
+  if (els.sanctuaryZoomBtn) els.sanctuaryZoomBtn.textContent = "⤢ Maximize";
   restoreStatusBar();
 }
 
@@ -1214,11 +1225,571 @@ function initProphecyWorkstation() {
   loadPropheticLexicon();
 }
 
+
+/* ---- Sanctuary Typology Blueprint & Plan of Salvation Workstation (WP-032) ---- */
+
+let cachedSanctuaryData = null;
+let activeSanctuaryStage = 0; // 0 = All, 1 = Cross, 2 = Intercession, 3 = 1844 Judgment, 4 = Consummation
+let selectedSanctuaryStationId = null;
+const SANCTUARY_STATION_ORDER = [
+  "altar_of_burnt_offering",
+  "laver",
+  "table_of_shewbread",
+  "golden_lampstand",
+  "altar_of_incense",
+  "ark_of_the_covenant",
+];
+
+const createSanctuaryRefChip = (ref) => createRefChip(ref, "sanctuary-ref-chip");
+
+function renderSanctuaryOverview() {
+  if (!els.sanctuaryDetailCard) return;
+  els.sanctuaryDetailCard.innerHTML = `
+    <div class="sanctuary-card-header">
+      <div class="sanctuary-card-title-group">
+        <h3 class="sanctuary-card-title">The Sanctuary: Blueprint of the Plan of Salvation</h3>
+        <div class="sanctuary-card-hebrew">
+          <strong>מִקְדָּשׁ (Miqdash)</strong> — <em>"And let them make me a sanctuary; that I may dwell among them." (Exodus 25:8)</em>
+        </div>
+      </div>
+      <span class="badge-compartment comp-holy_place">Fundamental Belief #24</span>
+    </div>
+
+    <div class="sanctuary-reality-callout">
+      <span class="sanctuary-reality-label">The Central Doctrine</span>
+      <p class="sanctuary-reality-text">"The scripture which above all others had been both the foundation and the central pillar of the advent faith was the declaration: 'Unto two thousand and three hundred days; then shall the sanctuary be cleansed.'" (The Great Controversy, p. 409)</p>
+    </div>
+
+    <div class="sanctuary-section">
+      <span class="sanctuary-section-label">Spatial &amp; Chronological Progression</span>
+      <p class="sanctuary-section-text">
+        The Hebrew Tabernacle is God's pedagogical diagram of redemption across three spatial spheres and four chronological stages:
+        <br><strong>1. Courtyard (Earth):</strong> Justification by faith through Christ's unrepeatable sacrifice at the Cross (AD 31) and regeneration (Laver).
+        <br><strong>2. Holy Place (Heavenly Sanctuary):</strong> Christ's ongoing high-priestly mediation, daily intercession, and the ministry of the Spirit and Word (AD 31–1844).
+        <br><strong>3. Most Holy Place (Heavenly Throne):</strong> The final cleansing of the sanctuary, antitypical Day of Atonement, and Investigative Judgment (1844+).
+      </p>
+    </div>
+
+    <div class="sanctuary-section">
+      <span class="sanctuary-section-label">How to Study</span>
+      <p class="sanctuary-section-text">
+        Click any sacred furniture station on the blueprint or use the <strong>Plan of Salvation</strong> timeline slider above to trace salvation history from the Cross to the Earth Made New. Click any Scripture reference to jump directly to the biblical text.
+      </p>
+    </div>
+  `;
+}
+
+function renderSanctuaryStationDetail(s) {
+  if (!els.sanctuaryDetailCard) return;
+  const comp = cachedSanctuaryData && cachedSanctuaryData.compartments.find((c) => c.id === s.compartment);
+  const compName = comp ? comp.name : s.compartment;
+
+  els.sanctuaryDetailCard.innerHTML = `
+    <div class="sanctuary-card-header">
+      <div class="sanctuary-card-title-group">
+        <h3 class="sanctuary-card-title">${escapeHtml(s.name)} (${escapeHtml(s.common_name)})</h3>
+        <div class="sanctuary-card-hebrew">
+          <strong>${escapeHtml(s.hebrew_name)}</strong> — <em>${escapeHtml(s.transliteration)}</em>
+          ${(s.strongs || []).map(sc => `<button type="button" class="sanctuary-strongs-chip" data-strongs="${escapeHtml(sc)}">${escapeHtml(sc)}</button>`).join(" ")}
+        </div>
+      </div>
+      <span class="badge-compartment comp-${escapeHtml(s.compartment)}">${escapeHtml(compName)}</span>
+    </div>
+
+    <div class="sanctuary-reality-callout">
+      <span class="sanctuary-reality-label">Spiritual Reality</span>
+      <p class="sanctuary-reality-text">${escapeHtml(s.spiritual_reality)}</p>
+    </div>
+
+    <div class="sanctuary-section">
+      <span class="sanctuary-section-label">Theological Meaning</span>
+      <p class="sanctuary-section-text">${escapeHtml(s.theological_meaning)}</p>
+    </div>
+
+    <div class="sanctuary-section">
+      <span class="sanctuary-section-label">Priestly Service &amp; Daily/Yearly Ministry</span>
+      <p class="sanctuary-section-text">${escapeHtml(s.priestly_service)}</p>
+    </div>
+
+    <div class="sanctuary-section">
+      <span class="sanctuary-section-label">Sacred Materials &amp; Position</span>
+      <p class="sanctuary-section-text">${escapeHtml(s.materials)}. <em>${escapeHtml(s.position)}</em></p>
+    </div>
+
+    <div class="sanctuary-consensus-quote">
+      <strong>Adventist Theological Consensus:</strong>
+      <p style="margin: 4px 0 0 0;">${escapeHtml(s.sda_consensus)}</p>
+    </div>
+
+    <div class="sanctuary-ref-grid">
+      <div class="sanctuary-ref-column">
+        <span class="sanctuary-section-label">Old Testament Types &amp; Institution</span>
+        <div class="sanctuary-ref-chips" id="sanctuary-ot-chips"></div>
+      </div>
+      <div class="sanctuary-ref-column">
+        <span class="sanctuary-section-label">New Testament Fulfillment (Antitype)</span>
+        <div class="sanctuary-ref-chips" id="sanctuary-nt-chips"></div>
+      </div>
+    </div>
+  `;
+
+  // Wire Strong's chips
+  els.sanctuaryDetailCard.querySelectorAll(".sanctuary-strongs-chip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      switchTab("languages");
+      const morphCard = document.querySelector(`.morph-card[data-strongs="${btn.dataset.strongs}"]`);
+      if (morphCard) {
+        morphCard.open = true;
+        morphCard.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    });
+  });
+
+  // Wire Scripture chips
+  const otWrap = els.sanctuaryDetailCard.querySelector("#sanctuary-ot-chips");
+  if (otWrap && s.ot_passages) {
+    for (const ref of s.ot_passages) {
+      otWrap.appendChild(createSanctuaryRefChip(ref));
+    }
+  }
+
+  const ntWrap = els.sanctuaryDetailCard.querySelector("#sanctuary-nt-chips");
+  if (ntWrap && s.nt_fulfillment) {
+    for (const ref of s.nt_fulfillment) {
+      ntWrap.appendChild(createSanctuaryRefChip(ref));
+    }
+  }
+}
+
+function renderSanctuaryStageDetail(stageNumber) {
+  if (!els.sanctuaryDetailCard) return;
+  if (stageNumber === 0) {
+    renderSanctuaryOverview();
+    return;
+  }
+  if (!cachedSanctuaryData || !cachedSanctuaryData.plan_of_salvation) return;
+  const phase = cachedSanctuaryData.plan_of_salvation.find((p) => p.stage_number === stageNumber);
+  if (!phase) return;
+
+  els.sanctuaryDetailCard.innerHTML = `
+    <div class="sanctuary-card-header">
+      <div class="sanctuary-card-title-group">
+        <h3 class="sanctuary-card-title">Stage ${phase.stage_number}: ${escapeHtml(phase.title)}</h3>
+        <div class="sanctuary-card-hebrew">
+          <strong>Prophetic Timeline:</strong> <em>${escapeHtml(phase.prophetic_time)}</em>
+        </div>
+      </div>
+      <span class="badge-compartment comp-${escapeHtml(phase.symbolic_compartment || 'courtyard')}">Stage ${phase.stage_number}</span>
+    </div>
+
+    <div class="sanctuary-reality-callout">
+      <span class="sanctuary-reality-label">Historical Event</span>
+      <p class="sanctuary-reality-text">${escapeHtml(phase.historical_event)}</p>
+    </div>
+
+    <div class="sanctuary-section">
+      <span class="sanctuary-section-label">Theological Significance</span>
+      <p class="sanctuary-section-text">${escapeHtml(phase.theological_significance)}</p>
+    </div>
+
+    ${phase.symbolic_furniture && phase.symbolic_furniture.length > 0 ? `
+      <div class="sanctuary-section">
+        <span class="sanctuary-section-label">Associated Sacred Furniture Articles</span>
+        <div class="sanctuary-ref-chips" id="sanctuary-phase-furniture-chips"></div>
+      </div>
+    ` : ""}
+
+    <div class="sanctuary-section">
+      <span class="sanctuary-section-label">Scriptural Anchors &amp; Prophetic Keys</span>
+      <div class="sanctuary-ref-chips" id="sanctuary-stage-anchors"></div>
+    </div>
+  `;
+
+  if (phase.symbolic_furniture && phase.symbolic_furniture.length > 0) {
+    const furnWrap = els.sanctuaryDetailCard.querySelector("#sanctuary-phase-furniture-chips");
+    if (furnWrap) {
+      for (const stId of phase.symbolic_furniture) {
+        const st = cachedSanctuaryData.stations.find((s) => s.id === stId);
+        if (st) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "sanctuary-ref-chip";
+          btn.textContent = `Inspect ${st.common_name}`;
+          btn.addEventListener("click", () => selectSanctuaryStation(st.id));
+          furnWrap.appendChild(btn);
+        }
+      }
+    }
+  }
+
+  const anchorWrap = els.sanctuaryDetailCard.querySelector("#sanctuary-stage-anchors");
+  if (anchorWrap && phase.biblical_anchors) {
+    for (const ref of phase.biblical_anchors) {
+      anchorWrap.appendChild(createSanctuaryRefChip(ref));
+    }
+  }
+}
+
+function selectSanctuaryStation(stationId) {
+  selectedSanctuaryStationId = stationId;
+  document.querySelectorAll(".sanctuary-station-node").forEach((node) => {
+    const isSelected = node.dataset.stationId === stationId;
+    node.classList.toggle("selected", isSelected);
+    node.setAttribute("aria-pressed", String(isSelected));
+  });
+
+  if (!cachedSanctuaryData) return;
+  const st = cachedSanctuaryData.stations.find((s) => s.id === stationId);
+  if (st) {
+    renderSanctuaryStationDetail(st);
+  }
+}
+
+function setPlanOfSalvationStage(stageNumber) {
+  activeSanctuaryStage = stageNumber;
+  selectedSanctuaryStationId = null;
+  document.querySelectorAll(".sanctuary-station-node").forEach((node) => {
+    node.classList.remove("selected");
+    node.setAttribute("aria-pressed", "false");
+  });
+
+  if (els.sanctuaryStageSlider) els.sanctuaryStageSlider.value = stageNumber;
+
+  els.sanctuaryStageBtns.forEach((btn) => {
+    const isActive = parseInt(btn.dataset.stage, 10) === stageNumber;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-pressed", String(isActive));
+  });
+
+  const stageLabels = [
+    "Full Tabernacle Blueprint",
+    "Stage 1: AD 31 Cross — Justification",
+    "Stage 2: Heavenly Intercession",
+    "Stage 3: 1844 Investigative Judgment",
+    "Stage 4: Consummation — Earth Made New",
+  ];
+  if (els.sanctuaryStageBadge) {
+    els.sanctuaryStageBadge.textContent = stageLabels[stageNumber] || "Sanctuary Blueprint";
+  }
+
+  // Update station highlighting / dimming
+  const stageStations = {
+    0: SANCTUARY_STATION_ORDER,
+    1: ["altar_of_burnt_offering", "laver"],
+    2: ["table_of_shewbread", "golden_lampstand", "altar_of_incense"],
+    3: ["ark_of_the_covenant"],
+    4: SANCTUARY_STATION_ORDER,
+  };
+
+  const activeSet = new Set(stageStations[stageNumber] || SANCTUARY_STATION_ORDER);
+
+  document.querySelectorAll(".sanctuary-station-node").forEach((node) => {
+    const isStageMember = activeSet.has(node.dataset.stationId);
+    if (stageNumber === 0 || stageNumber === 4) {
+      node.classList.remove("is-dimmed");
+      node.classList.add("is-highlighted");
+    } else {
+      node.classList.toggle("is-dimmed", !isStageMember);
+      node.classList.toggle("is-highlighted", isStageMember);
+    }
+  });
+
+  // Update salvation path geometry
+  const pathEl = document.querySelector("#svg-salvation-path");
+  if (pathEl) {
+    const paths = {
+      0: "M 60,250 L 180,250 L 340,250 L 470,250 L 550,250 L 660,250 L 730,250 L 800,250",
+      1: "M 60,250 L 180,250 L 340,250",
+      2: "M 60,250 L 180,250 L 340,250 L 470,250 L 550,250 L 660,250",
+      3: "M 60,250 L 180,250 L 340,250 L 470,250 L 550,250 L 660,250 L 730,250 L 800,250",
+      4: "M 60,250 L 180,250 L 340,250 L 470,250 L 550,250 L 660,250 L 730,250 L 800,250",
+    };
+    pathEl.setAttribute("d", paths[stageNumber] || paths[0]);
+    pathEl.style.opacity = stageNumber === 0 ? "0.55" : "0.9";
+  }
+
+  // Display stage details
+  renderSanctuaryStageDetail(stageNumber);
+}
+
+function cycleSanctuaryStation(delta) {
+  let currentIndex = SANCTUARY_STATION_ORDER.indexOf(selectedSanctuaryStationId);
+  let nextIndex;
+  if (currentIndex === -1) {
+    nextIndex = delta > 0 ? 0 : SANCTUARY_STATION_ORDER.length - 1;
+  } else {
+    nextIndex = (currentIndex + delta + SANCTUARY_STATION_ORDER.length) % SANCTUARY_STATION_ORDER.length;
+  }
+  const nextId = SANCTUARY_STATION_ORDER[nextIndex];
+  selectSanctuaryStation(nextId);
+  const nextNode = document.querySelector(`#station-${nextId}`);
+  if (nextNode) nextNode.focus();
+}
+
+function renderSanctuaryBlueprint(data) {
+  if (!els.sanctuarySvg) return;
+
+  // Build bronze perimeter fence posts
+  let fencePosts = "";
+  for (let x = 60; x <= 940; x += 80) {
+    fencePosts += `<circle class="svg-courtyard-post" cx="${x}" cy="40" r="3" />`;
+    fencePosts += `<circle class="svg-courtyard-post" cx="${x}" cy="460" r="3" />`;
+  }
+  for (let y = 40; y <= 460; y += 70) {
+    if (y < 170 || y > 330) {
+      fencePosts += `<circle class="svg-courtyard-post" cx="60" cy="${y}" r="3" />`;
+    }
+    fencePosts += `<circle class="svg-courtyard-post" cx="940" cy="${y}" r="3" />`;
+  }
+
+  els.sanctuarySvg.innerHTML = `
+    <defs>
+      <marker id="salvation-marker" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+        <path d="M 0,1 L 5,3 L 0,5 Z" fill="var(--secondary)" />
+      </marker>
+    </defs>
+
+    <!-- Courtyard Ground & Boundary Fence -->
+    <rect class="svg-bg-courtyard" x="60" y="40" width="880" height="420" rx="6" />
+    <rect class="svg-courtyard-fence" x="60" y="40" width="880" height="420" rx="6" />
+    ${fencePosts}
+
+    <!-- Gate of the Courtyard (East Screen) -->
+    <line class="svg-gate-screen" x1="60" y1="170" x2="60" y2="330" />
+
+    <!-- Cardinal Orientation Labels -->
+    <text class="svg-orient-text" x="40" y="254" transform="rotate(-90 40 254)">EAST (ENTRANCE)</text>
+    <text class="svg-orient-text" x="500" y="26">NORTH</text>
+    <text class="svg-orient-text" x="500" y="482">SOUTH</text>
+    <text class="svg-orient-text" x="965" y="254" transform="rotate(90 965 254)">WEST</text>
+
+    <!-- Courtyard Label -->
+    <text class="svg-compartment-text" x="80" y="70">COURTYARD (EARTH / JUSTIFICATION)</text>
+
+    <!-- Tabernacle Tent Outer Wall & Chambers -->
+    <rect class="svg-tent-outer" x="470" y="120" width="400" height="260" rx="4" />
+
+    <!-- Holy Place Chamber -->
+    <rect class="svg-holy-place" x="470" y="120" width="260" height="260" />
+    <text class="svg-compartment-text" x="485" y="142">HOLY PLACE (SANCTIFICATION / DAILY)</text>
+
+    <!-- Holy Place Door Veil -->
+    <line class="svg-tent-door" x1="470" y1="170" x2="470" y2="330" />
+
+    <!-- The Veil (Katapetasma) -->
+    <line class="svg-veil" x1="730" y1="120" x2="730" y2="380" />
+
+    <!-- Most Holy Place Chamber -->
+    <rect class="svg-most-holy-place" x="730" y="120" width="140" height="260" />
+    <text class="svg-compartment-text" x="742" y="142">MOST HOLY</text>
+    <text class="svg-compartment-text" x="742" y="156" style="font-size: 9px;">(YEARLY / 1844)</text>
+
+    <!-- Directional Salvation Path -->
+    <path id="svg-salvation-path" class="svg-salvation-path" marker-end="url(#salvation-marker)"
+          d="M 60,250 L 180,250 L 340,250 L 470,250 L 550,250 L 660,250 L 730,250 L 800,250" />
+
+    <!-- Sacred Furniture Stations -->
+    <g id="sanctuary-stations-group">
+      <!-- 1. Altar of Burnt Offering (Courtyard) -->
+      <g class="sanctuary-station-node" id="station-altar_of_burnt_offering" data-station-id="altar_of_burnt_offering"
+         role="button" tabindex="0" aria-pressed="false" aria-label="Altar of Burnt Offering: The Cross of Christ &amp; Justification">
+        <rect class="station-halo" x="135" y="205" width="90" height="90" rx="6" />
+        <rect class="furniture-bronze" x="145" y="215" width="70" height="70" rx="2" />
+        <polygon class="furniture-bronze" points="145,215 139,207 148,215" />
+        <polygon class="furniture-bronze" points="215,215 221,207 215,223" />
+        <polygon class="furniture-bronze" points="145,285 139,293 153,285" />
+        <polygon class="furniture-bronze" points="215,285 221,293 207,285" />
+        <rect class="furniture-grate" x="156" y="226" width="48" height="48" fill="none" />
+        <line class="furniture-grate" x1="168" y1="226" x2="168" y2="274" />
+        <line class="furniture-grate" x1="180" y1="226" x2="180" y2="274" />
+        <line class="furniture-grate" x1="192" y1="226" x2="192" y2="274" />
+        <line class="furniture-grate" x1="156" y1="238" x2="204" y2="238" />
+        <line class="furniture-grate" x1="156" y1="250" x2="204" y2="250" />
+        <line class="furniture-grate" x1="156" y1="262" x2="204" y2="262" />
+        <text class="station-label" x="180" y="318">Brazen Altar</text>
+        <text class="station-sublabel" x="180" y="332">Mizbach Ha'olah</text>
+      </g>
+
+      <!-- 2. Brazen Laver (Courtyard) -->
+      <g class="sanctuary-station-node" id="station-laver" data-station-id="laver"
+         role="button" tabindex="0" aria-pressed="false" aria-label="Brazen Laver: Cleansing, Regeneration &amp; Baptism">
+        <circle class="station-halo" cx="340" cy="250" r="42" />
+        <circle class="furniture-bronze" cx="340" cy="250" r="30" />
+        <circle class="furniture-water" cx="340" cy="250" r="22" />
+        <circle cx="340" cy="250" r="12" fill="none" stroke="#244b6e" stroke-width="0.8" stroke-dasharray="3 2" />
+        <text class="station-label" x="340" y="318">The Laver</text>
+        <text class="station-sublabel" x="340" y="332">Kiyyor Nechoshet</text>
+      </g>
+
+      <!-- 3. Table of Shewbread (Holy Place - North) -->
+      <g class="sanctuary-station-node" id="station-table_of_shewbread" data-station-id="table_of_shewbread"
+         role="button" tabindex="0" aria-pressed="false" aria-label="Table of Shewbread: Christ the Bread of Life &amp; Word of God">
+        <rect class="station-halo" x="510" y="145" width="80" height="70" rx="6" />
+        <rect class="furniture-gold" x="520" y="155" width="60" height="40" rx="2" />
+        <rect x="523" y="158" width="54" height="34" fill="none" stroke="#735712" stroke-width="0.8" stroke-dasharray="2 1" />
+        <!-- 12 loaves in 2 rows of 6 -->
+        <circle cx="528" cy="168" r="3" fill="#8c6218" />
+        <circle cx="536" cy="168" r="3" fill="#8c6218" />
+        <circle cx="544" cy="168" r="3" fill="#8c6218" />
+        <circle cx="552" cy="168" r="3" fill="#8c6218" />
+        <circle cx="560" cy="168" r="3" fill="#8c6218" />
+        <circle cx="568" cy="168" r="3" fill="#8c6218" />
+        <circle cx="528" cy="182" r="3" fill="#8c6218" />
+        <circle cx="536" cy="182" r="3" fill="#8c6218" />
+        <circle cx="544" cy="182" r="3" fill="#8c6218" />
+        <circle cx="552" cy="182" r="3" fill="#8c6218" />
+        <circle cx="560" cy="182" r="3" fill="#8c6218" />
+        <circle cx="568" cy="182" r="3" fill="#8c6218" />
+        <text class="station-label" x="550" y="210">Shewbread Table</text>
+        <text class="station-sublabel" x="550" y="222">Lechem Happanim</text>
+      </g>
+
+      <!-- 4. Golden Lampstand (Holy Place - South) -->
+      <g class="sanctuary-station-node" id="station-golden_lampstand" data-station-id="golden_lampstand"
+         role="button" tabindex="0" aria-pressed="false" aria-label="Golden Lampstand (Menorah): The Holy Spirit &amp; Light of the World">
+        <rect class="station-halo" x="510" y="285" width="80" height="75" rx="6" />
+        <line x1="535" y1="340" x2="565" y2="340" stroke="#735712" stroke-width="2.5" stroke-linecap="round" />
+        <line x1="550" y1="340" x2="550" y2="300" stroke="#735712" stroke-width="2.5" />
+        <path d="M 550,330 Q 550,314 542,302" fill="none" stroke="#735712" stroke-width="1.8" />
+        <path d="M 550,330 Q 550,314 558,302" fill="none" stroke="#735712" stroke-width="1.8" />
+        <path d="M 550,324 Q 550,310 534,302" fill="none" stroke="#735712" stroke-width="1.8" />
+        <path d="M 550,324 Q 550,310 566,302" fill="none" stroke="#735712" stroke-width="1.8" />
+        <path d="M 550,318 Q 550,306 524,302" fill="none" stroke="#735712" stroke-width="1.8" />
+        <path d="M 550,318 Q 550,306 576,302" fill="none" stroke="#735712" stroke-width="1.8" />
+        <!-- 7 lamps and flames -->
+        <ellipse cx="524" cy="301" rx="2.5" ry="1.5" class="furniture-gold" />
+        <ellipse cx="534" cy="301" rx="2.5" ry="1.5" class="furniture-gold" />
+        <ellipse cx="542" cy="301" rx="2.5" ry="1.5" class="furniture-gold" />
+        <ellipse cx="550" cy="301" rx="2.5" ry="1.5" class="furniture-gold" />
+        <ellipse cx="558" cy="301" rx="2.5" ry="1.5" class="furniture-gold" />
+        <ellipse cx="566" cy="301" rx="2.5" ry="1.5" class="furniture-gold" />
+        <ellipse cx="576" cy="301" rx="2.5" ry="1.5" class="furniture-gold" />
+        <circle cx="524" cy="296" r="2" class="furniture-flame" />
+        <circle cx="534" cy="296" r="2" class="furniture-flame" />
+        <circle cx="542" cy="296" r="2" class="furniture-flame" />
+        <circle cx="550" cy="296" r="2" class="furniture-flame" />
+        <circle cx="558" cy="296" r="2" class="furniture-flame" />
+        <circle cx="566" cy="296" r="2" class="furniture-flame" />
+        <circle cx="576" cy="296" r="2" class="furniture-flame" />
+        <text class="station-label" x="550" y="354">Golden Lampstand</text>
+        <text class="station-sublabel" x="550" y="366">Menorah</text>
+      </g>
+
+      <!-- 5. Altar of Incense (Holy Place - Before the Veil) -->
+      <g class="sanctuary-station-node" id="station-altar_of_incense" data-station-id="altar_of_incense"
+         role="button" tabindex="0" aria-pressed="false" aria-label="Altar of Incense: Continual Intercession &amp; Merits of Christ">
+        <rect class="station-halo" x="630" y="218" width="60" height="64" rx="6" />
+        <rect class="furniture-gold" x="640" y="228" width="40" height="40" rx="2" />
+        <polygon class="furniture-gold" points="640,228 637,223 644,228" />
+        <polygon class="furniture-gold" points="680,228 683,223 676,228" />
+        <polygon class="furniture-gold" points="640,268 637,273 644,268" />
+        <polygon class="furniture-gold" points="680,268 683,273 676,268" />
+        <path class="furniture-incense-vapor" d="M 655,232 Q 652,224 656,218 T 653,208" />
+        <path class="furniture-incense-vapor" d="M 665,232 Q 668,224 664,218 T 667,208" />
+        <text class="station-label" x="660" y="284">Altar of Incense</text>
+        <text class="station-sublabel" x="660" y="296">Mizbach Haqqetoret</text>
+      </g>
+
+      <!-- 6. Ark of the Covenant & Mercy Seat (Most Holy Place) -->
+      <g class="sanctuary-station-node" id="station-ark_of_the_covenant" data-station-id="ark_of_the_covenant"
+         role="button" tabindex="0" aria-pressed="false" aria-label="Ark of the Covenant &amp; Mercy Seat: The Law, Grace &amp; Judgment">
+        <rect class="station-halo" x="760" y="215" width="80" height="70" rx="6" />
+        <ellipse class="furniture-glory" cx="800" cy="245" rx="32" ry="22" />
+        <line x1="768" y1="250" x2="832" y2="250" stroke="#735712" stroke-width="1.2" stroke-linecap="round" />
+        <rect class="furniture-gold" x="775" y="235" width="50" height="30" rx="2" />
+        <rect x="773" y="233" width="54" height="4" fill="#d4ad57" stroke="#735712" stroke-width="0.8" />
+        <!-- Cherubim facing each other -->
+        <circle cx="782" cy="229" r="3" class="furniture-cherub" />
+        <path d="M 782,232 Q 788,220 798,223" fill="none" stroke="#735712" stroke-width="1.8" stroke-linecap="round" />
+        <circle cx="818" cy="229" r="3" class="furniture-cherub" />
+        <path d="M 818,232 Q 812,220 802,223" fill="none" stroke="#735712" stroke-width="1.8" stroke-linecap="round" />
+        <text class="station-label" x="800" y="280">Ark &amp; Mercy Seat</text>
+        <text class="station-sublabel" x="800" y="292">Aron Habberit</text>
+      </g>
+    </g>
+  `;
+
+  // Attach event listeners to all station nodes
+  els.sanctuarySvg.querySelectorAll(".sanctuary-station-node").forEach((node) => {
+    node.addEventListener("click", () => {
+      selectSanctuaryStation(node.dataset.stationId);
+    });
+
+    node.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        selectSanctuaryStation(node.dataset.stationId);
+      }
+    });
+  });
+}
+
+function initSanctuaryKeyboardNavigation() {
+  const container = document.querySelector(".sanctuary-blueprint-container");
+  if (!container) return;
+
+  container.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      cycleSanctuaryStation(1);
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      cycleSanctuaryStation(-1);
+    } else if (e.key === "Escape") {
+      if (selectedSanctuaryStationId) {
+        e.preventDefault();
+        e.stopPropagation();
+        selectedSanctuaryStationId = null;
+        document.querySelectorAll(".sanctuary-station-node").forEach((node) => {
+          node.classList.remove("selected");
+          node.setAttribute("aria-pressed", "false");
+        });
+        renderSanctuaryStageDetail(activeSanctuaryStage);
+      }
+    }
+  });
+}
+
+async function loadSanctuaryData() {
+  try {
+    const data = await api("/api/sanctuary");
+    cachedSanctuaryData = data;
+    renderSanctuaryBlueprint(data);
+    renderSanctuaryOverview();
+  } catch (err) {
+    console.error("Failed to load sanctuary data:", err);
+  }
+}
+
+function initSanctuaryWorkstation() {
+  if (els.sanctuaryStageSlider) {
+    els.sanctuaryStageSlider.addEventListener("input", () => {
+      const val = parseInt(els.sanctuaryStageSlider.value, 10);
+      setPlanOfSalvationStage(val);
+    });
+  }
+
+  els.sanctuaryStageBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const stage = parseInt(btn.dataset.stage, 10);
+      setPlanOfSalvationStage(stage);
+    });
+  });
+
+  if (els.sanctuaryZoomBtn) {
+    els.sanctuaryZoomBtn.addEventListener("click", () => toggleSideZoom());
+  }
+
+  initSanctuaryKeyboardNavigation();
+  loadSanctuaryData();
+}
+
 initPaneResizer();
 initFocusAndZoomModes();
 initAutoUpdate();
 initZebraShading();
 initProphecyWorkstation();
+initSanctuaryWorkstation();
 let setupCompleted = false;
 try {
   setupCompleted = localStorage.getItem("abst.setup_completed") === "true";

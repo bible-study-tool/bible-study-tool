@@ -1945,3 +1945,626 @@ button:disabled { opacity: 0.45; cursor: default; }
     transition: none;
   }
 }
+
+/* ==========================================================================
+   WP-032: Sanctuary Typology Blueprint Workstation
+   ADR-025: Divinity Hall Desk, Native SVG, Anti-Slop Charter
+   ========================================================================== */
+
+#panel-sanctuary {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sanctuary-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.sanctuary-stepper-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.sanctuary-toolbar-label {
+  font-size: var(--type-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+}
+
+.sanctuary-stage-buttons {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  overflow: hidden;
+}
+
+.sanctuary-stage-btn {
+  background: var(--surface);
+  border: none;
+  border-right: 1px solid var(--border);
+  padding: 4px 9px;
+  font-size: var(--type-xs);
+  font-weight: 500;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+  font-family: var(--font-ui);
+}
+
+.sanctuary-stage-btn:last-child {
+  border-right: none;
+}
+
+.sanctuary-stage-btn:hover {
+  background: rgba(36, 75, 110, 0.08);
+  color: var(--ink);
+}
+
+.sanctuary-stage-btn:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: -1px;
+  z-index: 1;
+}
+
+.sanctuary-stage-btn.active {
+  background: var(--secondary);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .sanctuary-stage-btn.active {
+  color: #1a1816;
+}
+
+.sanctuary-slider-wrap {
+  display: flex;
+  align-items: center;
+  width: 90px;
+  margin-left: var(--space-1);
+}
+
+.sanctuary-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  accent-color: var(--secondary);
+  cursor: pointer;
+}
+
+.sanctuary-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sanctuary-stage-badge {
+  font-size: var(--type-xs);
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(36, 75, 110, 0.08);
+  padding: 3px 8px;
+  border-radius: var(--radius-s);
+  border: 1px solid rgba(36, 75, 110, 0.2);
+  white-space: nowrap;
+}
+
+.btn-sanctuary-zoom {
+  font-size: var(--type-xs);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.btn-sanctuary-zoom:hover {
+  background: var(--surface-alt);
+  border-color: var(--ink-muted);
+}
+
+.sanctuary-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.sanctuary-blueprint-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: var(--space-3);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.sanctuary-blueprint-container:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+.sanctuary-svg {
+  width: 100%;
+  max-width: 1000px;
+  height: auto;
+  display: block;
+  overflow: visible;
+  user-select: none;
+}
+
+/* Blueprint architectural vector styling */
+.svg-bg-courtyard {
+  fill: var(--surface-alt);
+  fill-opacity: 0.55;
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.svg-courtyard-fence {
+  stroke: var(--ink-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 3;
+  fill: none;
+}
+
+.svg-courtyard-post {
+  fill: #8c5123;
+}
+
+.svg-gate-screen {
+  stroke: #992d2d;
+  stroke-width: 4;
+  stroke-dasharray: 4 2;
+}
+
+.svg-tent-outer {
+  fill: none;
+  stroke: var(--ink-muted);
+  stroke-width: 2;
+}
+
+.svg-holy-place {
+  fill: rgba(36, 75, 110, 0.07);
+  stroke: var(--primary);
+  stroke-width: 1.5;
+}
+
+.svg-most-holy-place {
+  fill: rgba(154, 114, 29, 0.10);
+  stroke: var(--secondary);
+  stroke-width: 1.5;
+}
+
+.svg-veil {
+  stroke: #663a75;
+  stroke-width: 3.5;
+  stroke-dasharray: 4 2;
+}
+
+.svg-tent-door {
+  stroke: #244b6e;
+  stroke-width: 3;
+  stroke-dasharray: 2 2;
+}
+
+.svg-salvation-path {
+  stroke: var(--secondary);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+  fill: none;
+  opacity: 0.55;
+  transition: opacity 150ms ease;
+}
+
+.svg-compartment-text {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  fill: var(--ink-muted);
+}
+
+.svg-orient-text {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  fill: var(--ink-muted);
+  text-anchor: middle;
+}
+
+.station-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--verse-text);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.station-sublabel {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-style: italic;
+  fill: var(--ink-muted);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+/* Interactive Station Nodes */
+.sanctuary-station-node {
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.sanctuary-station-node:focus {
+  outline: none;
+}
+
+.station-halo {
+  stroke: transparent;
+  stroke-width: 2;
+  fill: transparent;
+  rx: 6px;
+  transition: stroke 150ms ease, fill 150ms ease;
+}
+
+.sanctuary-station-node:hover .station-halo,
+.sanctuary-station-node:focus-visible .station-halo {
+  stroke: var(--highlight);
+  fill: rgba(154, 114, 29, 0.08);
+}
+
+.sanctuary-station-node.selected .station-halo {
+  stroke: var(--secondary);
+  stroke-width: 2.5;
+  fill: rgba(154, 114, 29, 0.16);
+}
+
+.sanctuary-station-node.selected .station-label {
+  fill: var(--primary);
+  font-weight: 700;
+}
+
+.sanctuary-station-node.is-dimmed:not(.selected) {
+  opacity: 0.32;
+}
+
+.sanctuary-station-node.is-highlighted {
+  opacity: 1.0;
+}
+
+.sanctuary-station-node.is-highlighted .station-halo {
+  stroke: var(--secondary);
+  stroke-width: 2;
+  fill: rgba(154, 114, 29, 0.10);
+}
+
+/* Furniture Visual Material Styling */
+.furniture-bronze {
+  fill: #9e5c26;
+  stroke: #663812;
+  stroke-width: 1.5;
+}
+
+.furniture-grate {
+  stroke: #663812;
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+
+.furniture-water {
+  fill: rgba(36, 75, 110, 0.35);
+  stroke: #244b6e;
+  stroke-width: 1.2;
+}
+
+.furniture-gold {
+  fill: #b58d24;
+  stroke: #735712;
+  stroke-width: 1.5;
+}
+
+.furniture-flame {
+  fill: #d97706;
+}
+
+.furniture-incense-vapor {
+  stroke: rgba(154, 114, 29, 0.65);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  fill: none;
+}
+
+.furniture-cherub {
+  fill: #c99f2e;
+  stroke: #735712;
+  stroke-width: 1;
+}
+
+.furniture-glory {
+  fill: rgba(254, 240, 138, 0.35);
+}
+
+[data-theme="dark"] .furniture-bronze {
+  fill: #b36e35;
+  stroke: #d98d4e;
+}
+
+[data-theme="dark"] .furniture-gold {
+  fill: #d4ad57;
+  stroke: #f0cb6b;
+}
+
+[data-theme="dark"] .furniture-cherub {
+  fill: #e6c163;
+  stroke: #f0cb6b;
+}
+
+.sanctuary-blueprint-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+  width: 100%;
+  font-size: var(--type-xs);
+  color: var(--ink-muted);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.swatch-courtyard {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+}
+
+.swatch-holy {
+  background: rgba(36, 75, 110, 0.15);
+  border: 1px solid var(--primary);
+}
+
+.swatch-most-holy {
+  background: rgba(154, 114, 29, 0.20);
+  border: 1px solid var(--secondary);
+}
+
+.legend-hint {
+  font-style: italic;
+  margin-left: auto;
+}
+
+/* Detail Card */
+.sanctuary-detail-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.sanctuary-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--space-2);
+}
+
+.sanctuary-card-title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.sanctuary-card-title {
+  font-family: var(--font-reading);
+  font-size: var(--type-lg);
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.sanctuary-card-hebrew {
+  font-size: var(--type-sm);
+  color: var(--ink-muted);
+  margin-top: 2px;
+}
+
+.badge-compartment {
+  font-size: var(--type-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: var(--radius-s);
+}
+
+.comp-courtyard {
+  background: rgba(100, 116, 139, 0.12);
+  color: var(--ink);
+  border: 1px solid var(--border);
+}
+
+.comp-holy_place {
+  background: rgba(36, 75, 110, 0.12);
+  color: var(--primary);
+  border: 1px solid rgba(36, 75, 110, 0.3);
+}
+
+.comp-most_holy_place {
+  background: rgba(154, 114, 29, 0.14);
+  color: var(--verse-num);
+  border: 1px solid rgba(154, 114, 29, 0.3);
+}
+
+.sanctuary-reality-callout {
+  border-left: 3px solid var(--secondary);
+  background: var(--surface-alt);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 0 var(--radius-s) var(--radius-s) 0;
+}
+
+.sanctuary-reality-label {
+  font-size: var(--type-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--verse-num);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.sanctuary-reality-text {
+  font-family: var(--font-reading);
+  font-size: var(--type-base);
+  font-weight: 600;
+  color: var(--verse-text);
+  margin: 0;
+}
+
+.sanctuary-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sanctuary-section-label {
+  font-size: var(--type-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+}
+
+.sanctuary-section-text {
+  font-family: var(--font-reading);
+  font-size: var(--type-sm);
+  line-height: 1.6;
+  color: var(--verse-text);
+  margin: 0;
+}
+
+.sanctuary-consensus-quote {
+  border-left: 3px solid var(--accent);
+  background: rgba(59, 88, 47, 0.06);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-reading);
+  font-size: var(--type-sm);
+  line-height: 1.5;
+  color: var(--ink);
+  border-radius: 0 var(--radius-s) var(--radius-s) 0;
+}
+
+.sanctuary-ref-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+@media (max-width: 640px) {
+  .sanctuary-ref-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sanctuary-ref-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sanctuary-ref-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.sanctuary-ref-chip {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: 2px 7px;
+  font-size: var(--type-xs);
+  color: var(--primary);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.sanctuary-ref-chip:hover {
+  background: var(--highlight);
+  border-color: var(--primary);
+  text-decoration: underline;
+}
+
+.sanctuary-ref-chip:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.sanctuary-strongs-chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--type-xs);
+  color: var(--strongs-code);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: 1px 6px;
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+.sanctuary-strongs-chip:hover {
+  background: var(--highlight);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sanctuary-stage-btn,
+  .sanctuary-station-node,
+  .station-halo,
+  .svg-salvation-path,
+  .sanctuary-ref-chip {
+    transition: none !important;
+  }
+}

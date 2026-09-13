@@ -26,9 +26,9 @@ Provide an interactive, typological Sanctuary Blueprint representing the bluepri
 - [x] Map each station to Old Testament institution, prophetic fulfillment, Hebrews heavenly ministry counterparts, and Revelation throne-room scenes.
 
 ### Phase 3 — Interactive Blueprint Workstation Component
-- [ ] Construct dedicated "Sanctuary" tab using responsive, zero-dependency inline SVG styled with design tokens (`--primary`, `--secondary`, sepia/walnut substrates).
-- [ ] Interactive furniture hotspots displaying theological significance, daily vs. yearly services, and cross-references.
-- [ ] Add "Plan of Salvation" chronological slider: Courtyard (AD 31 Sacrifice) $\to$ Holy Place (Inauguration & Heavenly Intercession) $\to$ Most Holy Place (1844 Cleansing of the Sanctuary).
+- [x] Construct dedicated "Sanctuary" tab using responsive, zero-dependency inline SVG styled with design tokens (`--primary`, `--secondary`, sepia/walnut substrates).
+- [x] Interactive furniture hotspots displaying theological significance, daily vs. yearly services, and cross-references.
+- [x] Add "Plan of Salvation" chronological slider: Courtyard (AD 31 Sacrifice) $\to$ Holy Place (Inauguration & Heavenly Intercession) $\to$ Most Holy Place (1844 Cleansing of the Sanctuary).
 
 ### Phase 4 — Scripture In-Text Breadcrumbs
 - [ ] When reading sanctuary passages (e.g. Lev 16, Heb 8–10, Rev 4, 8, 11), display an active Sanctuary Station chip in the inspector.

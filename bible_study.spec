@@ -25,6 +25,7 @@ datas = [
     ("web", "web"),
     ("search/fixtures", "search/fixtures"),
     ("data/prophetic_lexicon.json", "data"),
+    ("data/sanctuary_schema.json", "data"),
 ]
 
 a = Analysis(

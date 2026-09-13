@@ -55,6 +55,7 @@
           <button class="tab" role="tab" aria-selected="true" data-tab="translations" title="Translations (double-click to maximize)">Translations</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="languages" title="Languages (double-click to maximize)">Languages</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="prophecy" title="Prophetic Lexicon (double-click to maximize)">Prophecy</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="sanctuary" title="Sanctuary Blueprint (double-click to maximize)">Sanctuary</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="notes" title="Notes (double-click to maximize)">Notes</button>
         </div>
         <button id="exit-zoom-btn" class="tab-exit-zoom" aria-label="Exit full panel view" title="Exit full panel view (Esc / double-click)" hidden>⤢ Exit Full View</button>
@@ -113,6 +114,45 @@
           </table>
           <div id="prophecy-empty-state" class="prophecy-empty-state" role="status" aria-live="polite" hidden>
             <p>No prophetic symbols match the current filters.</p>
+          </div>
+        </div>
+      </section>
+      <section class="tab-body" id="panel-sanctuary" role="tabpanel" tabindex="-1" hidden>
+        <div class="sanctuary-toolbar">
+          <div class="sanctuary-stepper-group" role="group" aria-label="Plan of Salvation chronological timeline">
+            <span class="sanctuary-toolbar-label">Plan of Salvation:</span>
+            <div class="sanctuary-stage-buttons">
+              <button type="button" class="btn-tool sanctuary-stage-btn active" data-stage="0" aria-pressed="true">All</button>
+              <button type="button" class="btn-tool sanctuary-stage-btn" data-stage="1" aria-pressed="false" title="AD 31 Cross — Justification">1. Cross (AD 31)</button>
+              <button type="button" class="btn-tool sanctuary-stage-btn" data-stage="2" aria-pressed="false" title="Ascension to 1844 — Heavenly Intercession">2. Intercession</button>
+              <button type="button" class="btn-tool sanctuary-stage-btn" data-stage="3" aria-pressed="false" title="1844 Yom Kippur — Investigative Judgment">3. 1844 Judgment</button>
+              <button type="button" class="btn-tool sanctuary-stage-btn" data-stage="4" aria-pressed="false" title="Consummation — Earth Made New">4. Consummation</button>
+            </div>
+            <div class="sanctuary-slider-wrap">
+              <input type="range" id="sanctuary-stage-slider" class="sanctuary-slider" min="0" max="4" value="0" step="1" aria-label="Plan of Salvation chronological stage slider">
+            </div>
+          </div>
+          <div class="sanctuary-meta">
+            <span id="sanctuary-stage-badge" class="sanctuary-stage-badge" aria-live="polite">Full Tabernacle Blueprint</span>
+            <button id="sanctuary-zoom-btn" class="btn-tool btn-sanctuary-zoom" title="Toggle full-width blueprint view (or press 'z' / double-click tab)">⤢ Maximize</button>
+          </div>
+        </div>
+
+        <div class="sanctuary-workspace">
+          <div class="sanctuary-blueprint-container" tabindex="0" role="region" aria-label="Interactive Sanctuary Blueprint">
+            <svg id="sanctuary-svg" class="sanctuary-svg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Hebrew Sanctuary Typology Blueprint">
+              <!-- Rendered dynamically by app.js with high-fidelity vector elements -->
+            </svg>
+            <div class="sanctuary-blueprint-legend">
+              <span class="legend-item"><span class="legend-swatch swatch-courtyard"></span> Courtyard (Earth)</span>
+              <span class="legend-item"><span class="legend-swatch swatch-holy"></span> Holy Place (Daily)</span>
+              <span class="legend-item"><span class="legend-swatch swatch-most-holy"></span> Most Holy Place (Yearly)</span>
+              <span class="legend-item legend-hint">Click or use Arrow keys to inspect stations</span>
+            </div>
+          </div>
+
+          <div id="sanctuary-detail-card" class="sanctuary-detail-card" aria-live="polite">
+            <!-- Dynamically populated station or plan of salvation details -->
           </div>
         </div>
       </section>

@@ -137,6 +137,33 @@ class WebServerTests(unittest.TestCase):
         self.assertIn('aria-live="polite"', html)
         self.assertIn('id="prophecy-in-context"', html)
 
+    def test_sanctuary_workstation_dom_integration(self) -> None:
+        status, body, _ = self._get("/")
+        self.assertEqual(status, 200)
+        html = body.decode("utf-8")
+        # Tab and panel
+        self.assertIn('data-tab="sanctuary"', html)
+        self.assertIn('id="panel-sanctuary"', html)
+        # Stepper buttons and slider
+        self.assertIn('class="sanctuary-toolbar"', html)
+        self.assertIn('class="btn-tool sanctuary-stage-btn active" data-stage="0"', html)
+        self.assertIn('data-stage="1"', html)
+        self.assertIn('data-stage="2"', html)
+        self.assertIn('data-stage="3"', html)
+        self.assertIn('data-stage="4"', html)
+        self.assertIn('id="sanctuary-stage-slider"', html)
+        self.assertIn('id="sanctuary-stage-badge"', html)
+        self.assertIn('id="sanctuary-zoom-btn"', html)
+        # Blueprint SVG container & Legend
+        self.assertIn('class="sanctuary-blueprint-container"', html)
+        self.assertIn('id="sanctuary-svg"', html)
+        self.assertIn('class="sanctuary-blueprint-legend"', html)
+        self.assertIn('swatch-courtyard', html)
+        self.assertIn('swatch-holy', html)
+        self.assertIn('swatch-most-holy', html)
+        # Detail Card
+        self.assertIn('id="sanctuary-detail-card"', html)
+
     def test_head_request_supported(self) -> None:
         req = urllib.request.Request(self.base + "/", method="HEAD")
         with urllib.request.urlopen(req, timeout=15) as res:
@@ -183,6 +210,18 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"prophecy-verse-badge", body)
         self.assertIn(b"prophecy-inline-card", body)
         self.assertIn(b"btn-goto-lexicon", body)
+        self.assertIn(b"sanctuary-toolbar", body)
+        self.assertIn(b"sanctuary-stage-btn", body)
+        self.assertIn(b"sanctuary-stage-badge", body)
+        self.assertIn(b"sanctuary-blueprint-container", body)
+        self.assertIn(b"sanctuary-svg", body)
+        self.assertIn(b"sanctuary-station-node", body)
+        self.assertIn(b"station-halo", body)
+        self.assertIn(b"furniture-bronze", body)
+        self.assertIn(b"furniture-gold", body)
+        self.assertIn(b"sanctuary-detail-card", body)
+        self.assertIn(b"sanctuary-reality-callout", body)
+        self.assertIn(b"sanctuary-ref-chip", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -225,6 +264,16 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"prophecy-verse-badge", body)
         self.assertIn(b"prophecy-inline-card", body)
         self.assertIn(b"highlightProphecySymbolInLexicon", body)
+        self.assertIn(b"loadSanctuaryData", body)
+        self.assertIn(b"renderSanctuaryBlueprint", body)
+        self.assertIn(b"setPlanOfSalvationStage", body)
+        self.assertIn(b"selectSanctuaryStation", body)
+        self.assertIn(b"renderSanctuaryStationDetail", body)
+        self.assertIn(b"renderSanctuaryStageDetail", body)
+        self.assertIn(b"renderSanctuaryOverview", body)
+        self.assertIn(b"initSanctuaryWorkstation", body)
+        self.assertIn(b"SANCTUARY_STATION_ORDER", body)
+        self.assertIn(b"createSanctuaryRefChip", body)
 
     def test_traversal_blocked(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:

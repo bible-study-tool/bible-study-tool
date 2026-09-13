@@ -159,6 +159,11 @@ if [[ -f "$DATA_SRC/prophetic_lexicon.json" ]]; then
   echo "   ✔ Copied prophetic_lexicon.json."
 fi
 
+if [[ -f "$DATA_SRC/sanctuary_schema.json" ]]; then
+  cp "$DATA_SRC/sanctuary_schema.json" "$OUT_DIR/"
+  echo "   ✔ Copied sanctuary_schema.json."
+fi
+
 # Enforce copyright boundary tripwire (ADR-002, ADR-023, ADR-024)
 if [[ -e "$OUT_DIR/egw.db" ]]; then
   echo "FATAL: egw.db found in release bundle directory! Violates copyright boundary." >&2
@@ -173,6 +178,9 @@ echo "6. Generating SHA256SUMS manifest..."
   EXTRA_FILES=()
   if [[ -f prophetic_lexicon.json ]]; then
     EXTRA_FILES+=(prophetic_lexicon.json)
+  fi
+  if [[ -f sanctuary_schema.json ]]; then
+    EXTRA_FILES+=(sanctuary_schema.json)
   fi
   sha256sum bible.db macula.db lexicons/*.json "${EXTRA_FILES[@]}" > SHA256SUMS
 )
