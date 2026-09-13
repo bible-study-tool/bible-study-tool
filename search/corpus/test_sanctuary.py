@@ -20,6 +20,7 @@ from search.corpus.sanctuary import (
     get_sanctuary_engine,
 )
 from search.resource import data_path
+from search.testutil import ensure_test_databases
 
 
 class SanctuaryDatasetValidationTests(unittest.TestCase):
@@ -31,7 +32,9 @@ class SanctuaryDatasetValidationTests(unittest.TestCase):
         cls.assertTrue(cls.path.is_file(), f"Dataset not found at {cls.path}")
         with open(cls.path, "r", encoding="utf-8") as f:
             cls.raw = json.load(f)
+        ensure_test_databases()
         cls.bible = BibleDB()
+        cls.verse_count = cls.bible.count()["verses"]
         with open("lexicons/strongs-lexicon.json", "r", encoding="utf-8") as f:
             cls.strongs_lex = json.load(f)
 
@@ -130,6 +133,8 @@ class SanctuaryDatasetValidationTests(unittest.TestCase):
 
     def test_all_ot_passages_resolve_in_bibledb(self):
         """Tripwire: Every OT passage in stations must resolve to actual verses in BibleDB."""
+        if self.verse_count < 31102:
+            self.skipTest("Full 31,102-verse Bible database not present (run scripts/fetch_sources.sh)")
         missing = []
         for s in self.raw["stations"]:
             for ref in s["ot_passages"]:
@@ -140,6 +145,8 @@ class SanctuaryDatasetValidationTests(unittest.TestCase):
 
     def test_all_nt_fulfillments_resolve_in_bibledb(self):
         """Tripwire: Every NT fulfillment passage in stations must resolve to actual verses in BibleDB."""
+        if self.verse_count < 31102:
+            self.skipTest("Full 31,102-verse Bible database not present (run scripts/fetch_sources.sh)")
         missing = []
         for s in self.raw["stations"]:
             for ref in s["nt_fulfillment"]:
@@ -150,6 +157,8 @@ class SanctuaryDatasetValidationTests(unittest.TestCase):
 
     def test_all_service_scriptures_resolve_in_bibledb(self):
         """Tripwire: Every service scripture must resolve in BibleDB."""
+        if self.verse_count < 31102:
+            self.skipTest("Full 31,102-verse Bible database not present (run scripts/fetch_sources.sh)")
         missing = []
         for srv in self.raw["services"]:
             for ref in srv["scriptures"]:
@@ -160,6 +169,8 @@ class SanctuaryDatasetValidationTests(unittest.TestCase):
 
     def test_all_plan_anchors_resolve_in_bibledb(self):
         """Tripwire: Every Plan of Salvation biblical anchor must resolve in BibleDB."""
+        if self.verse_count < 31102:
+            self.skipTest("Full 31,102-verse Bible database not present (run scripts/fetch_sources.sh)")
         missing = []
         for p in self.raw["plan_of_salvation"]:
             for ref in p["biblical_anchors"]:

@@ -435,7 +435,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             for _ in range(9):
                 app.action_next_verse()
 
-            await pilot.pause()
+            await pilot.pause(0.05)
             self.assertEqual(app.selected_verse_idx, 9)
 
             # DOM tree size must remain constant (no DOM thrashing / leaking)

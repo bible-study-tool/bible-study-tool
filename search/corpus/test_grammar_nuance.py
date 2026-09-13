@@ -14,6 +14,7 @@ from search.corpus.grammar_nuance import (
     get_verses_grammar_nuances_batch,
 )
 from search.macula.db import MaculaSqliteDB
+from search.testutil import ensure_test_databases
 
 
 class HebrewGrammarNuanceTests(unittest.TestCase):
@@ -173,7 +174,12 @@ class DatabaseNuanceQueryTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        ensure_test_databases()
         cls.db = MaculaSqliteDB()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
 
     def test_get_verse_grammar_nuances_hebrew(self):
         if not self.db.exists():

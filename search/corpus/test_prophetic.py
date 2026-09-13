@@ -24,6 +24,7 @@ from search.corpus.prophetic import (
     get_prophetic_lexicon,
 )
 from search.resource import data_path
+from search.testutil import ensure_test_databases
 from search.ui.study_service import StudyService
 
 
@@ -36,7 +37,9 @@ class PropheticLexiconDatasetValidationTests(unittest.TestCase):
         cls.assertTrue(cls.path.is_file(), f"Dataset not found at {cls.path}")
         with open(cls.path, "r", encoding="utf-8") as f:
             cls.raw = json.load(f)
+        ensure_test_databases()
         cls.bible = BibleDB()
+        cls.verse_count = cls.bible.count()["verses"]
         with open("lexicons/strongs-lexicon.json", "r", encoding="utf-8") as f:
             cls.strongs_lex = json.load(f)
 
@@ -104,6 +107,8 @@ class PropheticLexiconDatasetValidationTests(unittest.TestCase):
 
     def test_all_proof_texts_resolve_in_bibledb(self):
         """Tripwire: Every proof text in data/prophetic_lexicon.json must resolve in BibleDB."""
+        if self.verse_count < 31102:
+            self.skipTest("Full 31,102-verse Bible database not present (run scripts/fetch_sources.sh)")
         missing = []
         for s in self.raw["symbols"]:
             for ref in s["proof_texts"]:
@@ -114,6 +119,8 @@ class PropheticLexiconDatasetValidationTests(unittest.TestCase):
 
     def test_all_canonical_anchors_resolve_in_bibledb(self):
         """Tripwire: Every canonical anchor in data/prophetic_lexicon.json must resolve in BibleDB."""
+        if self.verse_count < 31102:
+            self.skipTest("Full 31,102-verse Bible database not present (run scripts/fetch_sources.sh)")
         missing = []
         for s in self.raw["symbols"]:
             for ref in s["canonical_anchors"]:
@@ -292,6 +299,10 @@ class PropheticLexiconEngineTests(unittest.TestCase):
 
 class PropheticStudyServiceIntegrationTests(unittest.TestCase):
     """Test StudyService integration with prophetic lexicon."""
+
+    @classmethod
+    def setUpClass(cls):
+        ensure_test_databases()
 
     def test_study_service_prophetic_methods(self):
         with StudyService() as study:
