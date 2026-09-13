@@ -312,6 +312,35 @@ class PropheticStudyServiceIntegrationTests(unittest.TestCase):
             dan_ids = [s["id"] for s in dan_syms]
             self.assertIn("day-year-principle", dan_ids)
 
+            # Annotated symbols with is_anchor and is_proof flags
+            annotated_dan = study.get_annotated_prophetic_symbols_for_passage("Dan 7:25")
+            day_sym = next(s for s in annotated_dan if s["id"] == "day-year-principle")
+            self.assertTrue(day_sym["is_anchor"])
+            self.assertFalse(day_sym["is_proof"])
+
+            # In-context VerseStudy prophetic symbols
+            ps = study.get_passage_study("Dan 7:25")
+            self.assertEqual(len(ps.verses), 1)
+            v_sym_ids = [s.id for s in ps.verses[0].prophetic_symbols]
+            self.assertIn("day-year-principle", v_sym_ids)
+            self.assertIn("time-times-half", v_sym_ids)
+
+            # Proof text recognition in Ezekiel 4:6
+            ps_eze = study.get_passage_study("Ezekiel 4:6")
+            self.assertEqual(len(ps_eze.verses), 1)
+            eze_day = next((s for s in ps_eze.verses[0].prophetic_symbols if s.id == "day-year-principle"), None)
+            self.assertIsNotNone(eze_day)
+            self.assertFalse(eze_day.is_anchor)
+            self.assertTrue(eze_day.is_proof)
+
+            # Revelation 12:1 symbols
+            ps_rev = study.get_passage_study("Revelation 12:1")
+            rev_ids = {s.id for s in ps_rev.verses[0].prophetic_symbols}
+            self.assertIn("pure-woman", rev_ids)
+            self.assertIn("sun-and-moon", rev_ids)
+            self.assertIn("stars", rev_ids)
+            self.assertIn("crowns", rev_ids)
+
 
 if __name__ == "__main__":
     unittest.main()

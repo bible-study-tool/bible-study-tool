@@ -115,9 +115,151 @@ async function api(path) {
 
 /* ---- rendering ---- */
 
+function createRefChip(ref) {
+  const link = document.createElement("button");
+  link.type = "button";
+  link.className = "prophecy-ref-link";
+  link.textContent = ref;
+  link.title = `Read ${ref} in Scripture view`;
+  link.addEventListener("click", () => {
+    if (els.input) els.input.value = ref;
+    navigate(ref);
+    if (els.main && els.main.classList.contains("zoom-side")) {
+      toggleSideZoom(false);
+    }
+  });
+  return link;
+}
+
+function highlightProphecySymbolInLexicon(symbolId) {
+  if (els.main && els.main.classList.contains("focus-mode")) {
+    toggleFocusMode(false);
+  }
+  switchTab("prophecy");
+  let targetRow = $(`#prophecy-row-${symbolId}`);
+  if (!targetRow) {
+    resetProphecyFilters();
+    targetRow = $(`#prophecy-row-${symbolId}`);
+  }
+  if (targetRow) {
+    document.querySelectorAll(".prophecy-table tr.highlight-symbol").forEach((r) => r.classList.remove("highlight-symbol"));
+    targetRow.classList.add("highlight-symbol");
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    targetRow.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "center" });
+    setTimeout(() => targetRow.classList.remove("highlight-symbol"), 3000);
+  }
+}
+
+function toggleProphecyInlineCard(verseItem, v, sym, badgeBtn) {
+  const cardId = `prophecy-card-${v.verse}-${sym.id}`;
+  const existingCard = verseItem.querySelector(`.prophecy-inline-card[data-symbol-id="${sym.id}"]`);
+  if (existingCard) {
+    existingCard.remove();
+    badgeBtn.setAttribute("aria-expanded", "false");
+    badgeBtn.classList.remove("badge-active");
+    return;
+  }
+
+  // Close any other open cards in this verse
+  verseItem.querySelectorAll(".prophecy-inline-card").forEach((c) => c.remove());
+  verseItem.querySelectorAll(".prophecy-verse-badge").forEach((b) => {
+    b.setAttribute("aria-expanded", "false");
+    b.classList.remove("badge-active");
+  });
+
+  badgeBtn.setAttribute("aria-expanded", "true");
+  badgeBtn.classList.add("badge-active");
+
+  const card = document.createElement("div");
+  card.className = "prophecy-inline-card";
+  card.id = cardId;
+  card.dataset.symbolId = sym.id;
+  card.setAttribute("role", "region");
+  card.setAttribute("aria-label", `Prophetic symbol definition for ${sym.symbol}`);
+
+  const catLower = (sym.category || "").toLowerCase();
+  const isKey = sym.is_proof && !sym.is_anchor;
+
+  card.innerHTML = `
+    <div class="prophecy-card-header">
+      <div class="prophecy-card-title-group">
+        <span class="prophecy-card-icon" aria-hidden="true">◈</span>
+        <strong class="prophecy-card-title">${escapeHtml(sym.symbol)}</strong>
+        <span class="category-badge cat-${catLower}">${escapeHtml(sym.category)}</span>
+        <span class="prophecy-card-role-tag">${isKey ? "Defining Key / Proof Text" : "Apocalyptic Anchor"}</span>
+      </div>
+      <button type="button" class="prophecy-card-close" aria-label="Close card" title="Close card (Esc)">✕</button>
+    </div>
+
+    <div class="prophecy-card-section">
+      <span class="prophecy-card-label">Biblical Meaning:</span>
+      <div class="prophecy-card-meaning">${escapeHtml(sym.meaning)}</div>
+    </div>
+
+    <div class="prophecy-card-section">
+      <span class="prophecy-card-label">Primary Proof Texts (Defining Passages):</span>
+      <div class="prophecy-card-refs prophecy-card-proofs"></div>
+    </div>
+
+    ${(sym.canonical_anchors && sym.canonical_anchors.length > 0) ? `
+      <div class="prophecy-card-section">
+        <span class="prophecy-card-label">Apocalyptic Anchors:</span>
+        <div class="prophecy-card-refs prophecy-card-anchors"></div>
+      </div>
+    ` : ""}
+
+    ${sym.sda_consensus ? `
+      <details class="prophecy-card-consensus">
+        <summary class="prophecy-consensus-summary">Historical Consensus</summary>
+        <div class="prophecy-consensus-body">${escapeHtml(sym.sda_consensus)}</div>
+      </details>
+    ` : ""}
+
+    <div class="prophecy-card-footer">
+      <button type="button" class="btn-tool btn-goto-lexicon">View in Prophetic Lexicon ➔</button>
+    </div>
+  `;
+
+  // Attach close listener
+  const closeBtn = card.querySelector(".prophecy-card-close");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      card.remove();
+      badgeBtn.setAttribute("aria-expanded", "false");
+      badgeBtn.classList.remove("badge-active");
+      badgeBtn.focus();
+    });
+  }
+
+  // Populate proof text ref chips
+  const proofsContainer = card.querySelector(".prophecy-card-proofs");
+  if (proofsContainer) {
+    for (const ref of (sym.proof_texts || [])) {
+      proofsContainer.appendChild(createRefChip(ref));
+    }
+  }
+
+  // Populate anchor ref chips
+  const anchorsContainer = card.querySelector(".prophecy-card-anchors");
+  if (anchorsContainer) {
+    for (const ref of (sym.canonical_anchors || [])) {
+      anchorsContainer.appendChild(createRefChip(ref));
+    }
+  }
+
+  // Attach Go to Lexicon button
+  const gotoLexiconBtn = card.querySelector(".btn-goto-lexicon");
+  if (gotoLexiconBtn) {
+    gotoLexiconBtn.addEventListener("click", () => highlightProphecySymbolInLexicon(sym.id));
+  }
+
+  verseItem.appendChild(card);
+}
+
 function renderVerse(v) {
-  const item = document.createElement("p");
+  const item = document.createElement("div");
   item.className = "verse-item";
+  item.dataset.verse = String(v.verse);
   const num = document.createElement("span");
   num.className = "verse-num";
   num.textContent = `${v.verse}`;
@@ -159,6 +301,39 @@ function renderVerse(v) {
     });
     item.appendChild(sup);
   }
+
+  // Canonical prophetic symbol badges
+  if (v.prophetic_symbols && v.prophetic_symbols.length > 0) {
+    const badgesSpan = document.createElement("span");
+    badgesSpan.className = "verse-prophecy-badges";
+    for (const sym of v.prophetic_symbols) {
+      const badge = document.createElement("button");
+      badge.type = "button";
+      const catLower = (sym.category || "").toLowerCase();
+      badge.className = `prophecy-verse-badge cat-${catLower}`;
+      badge.dataset.symbolId = sym.id;
+      badge.dataset.verse = String(v.verse);
+      badge.title = `${sym.symbol} (${sym.category}): ${sym.meaning} — Click to inspect in-context definition`;
+      badge.setAttribute("aria-expanded", "false");
+      badge.setAttribute("aria-controls", `prophecy-card-${v.verse}-${sym.id}`);
+      badge.setAttribute("aria-label", `Prophetic symbol: ${sym.symbol}`);
+
+      badge.innerHTML = `
+        <span class="badge-icon" aria-hidden="true">◈</span>
+        <span class="badge-name">${escapeHtml(sym.symbol)}</span>
+        ${sym.is_proof && !sym.is_anchor ? '<span class="badge-proof-label">Key</span>' : ''}
+      `;
+
+      badge.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleProphecyInlineCard(item, v, sym, badge);
+      });
+
+      badgesSpan.appendChild(badge);
+    }
+    item.appendChild(badgesSpan);
+  }
+
   return item;
 }
 
@@ -724,8 +899,24 @@ function initFocusAndZoomModes() {
       return;
     }
 
-    // Escape: exit any active distraction-free mode
+    // Escape: close open inline cards or exit any active distraction-free mode
     if (e.key === "Escape") {
+      const openCard = document.querySelector(".prophecy-inline-card");
+      if (openCard) {
+        e.preventDefault();
+        const symbolId = openCard.dataset.symbolId;
+        const parentVerse = openCard.closest(".verse-item");
+        openCard.remove();
+        if (parentVerse) {
+          const badge = parentVerse.querySelector(`.prophecy-verse-badge[data-symbol-id="${symbolId}"]`);
+          if (badge) {
+            badge.setAttribute("aria-expanded", "false");
+            badge.classList.remove("badge-active");
+            badge.focus();
+          }
+        }
+        return;
+      }
       if (els.main && (els.main.classList.contains("focus-mode") || els.main.classList.contains("zoom-side"))) {
         e.preventDefault();
         exitDistractionFreeModes();
@@ -819,22 +1010,6 @@ function renderProphecyTable(symbols) {
   if (els.prophecyEmptyState) els.prophecyEmptyState.hidden = true;
   if (els.prophecyCountBadge) {
     els.prophecyCountBadge.textContent = `${symbols.length} symbol${symbols.length === 1 ? "" : "s"}`;
-  }
-
-  function createRefChip(ref) {
-    const link = document.createElement("button");
-    link.type = "button";
-    link.className = "prophecy-ref-link";
-    link.textContent = ref;
-    link.title = `Read ${ref} in Scripture view`;
-    link.addEventListener("click", () => {
-      if (els.input) els.input.value = ref;
-      navigate(ref);
-      if (els.main && els.main.classList.contains("zoom-side")) {
-        toggleSideZoom(false);
-      }
-    });
-    return link;
   }
 
   const fragment = document.createDocumentFragment();
@@ -1010,19 +1185,7 @@ async function updateProphecyInContext(passageRef) {
       `;
       els.prophecyInContext.querySelectorAll(".prophecy-context-tag").forEach((btn) => {
         btn.addEventListener("click", () => {
-          switchTab("prophecy");
-          let targetRow = $(`#prophecy-row-${btn.dataset.symbolId}`);
-          if (!targetRow) {
-            resetProphecyFilters();
-            targetRow = $(`#prophecy-row-${btn.dataset.symbolId}`);
-          }
-          if (targetRow) {
-            document.querySelectorAll(".prophecy-table tr.highlight-symbol").forEach((r) => r.classList.remove("highlight-symbol"));
-            targetRow.classList.add("highlight-symbol");
-            const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-            targetRow.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "center" });
-            setTimeout(() => targetRow.classList.remove("highlight-symbol"), 3000);
-          }
+          highlightProphecySymbolInLexicon(btn.dataset.symbolId);
         });
       });
       if (els.tabProphecy) {

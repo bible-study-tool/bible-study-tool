@@ -45,6 +45,46 @@ class PropheticSymbol:
         return asdict(self)
 
 
+@dataclass(frozen=True)
+class AnnotatedPropheticSymbol:
+    """A prophetic symbol annotated with context flags for a specific passage."""
+    id: str
+    symbol: str
+    meaning: str
+    category: str
+    books: list[str]
+    proof_texts: list[str]
+    canonical_anchors: list[str]
+    strongs: list[str]
+    sda_consensus: str
+    is_anchor: bool = False
+    is_proof: bool = False
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_symbol(
+        cls,
+        symbol: PropheticSymbol,
+        is_anchor: bool = False,
+        is_proof: bool = False,
+    ) -> "AnnotatedPropheticSymbol":
+        return cls(
+            id=symbol.id,
+            symbol=symbol.symbol,
+            meaning=symbol.meaning,
+            category=symbol.category,
+            books=list(symbol.books),
+            proof_texts=list(symbol.proof_texts),
+            canonical_anchors=list(symbol.canonical_anchors),
+            strongs=list(symbol.strongs),
+            sda_consensus=symbol.sda_consensus,
+            is_anchor=is_anchor,
+            is_proof=is_proof,
+        )
+
+
 class PropheticLexicon:
     """In-memory index and query engine for biblical prophetic symbols."""
 
@@ -165,8 +205,48 @@ class PropheticLexicon:
 
         return results
 
-    def get_symbols_for_passage(self, ref: str, include_proofs: bool = True) -> list[PropheticSymbol]:
-        """Find symbols whose canonical anchors (or proof texts) overlap the given passage."""
+    def get_annotated_symbols_for_verse(
+        self,
+        osis: str,
+        chap: int,
+        verse: int,
+        include_proofs: bool = True,
+    ) -> list[AnnotatedPropheticSymbol]:
+        """Direct lookup for symbols overlapping a specific verse without string parsing."""
+        results: list[AnnotatedPropheticSymbol] = []
+        for s in self._symbols:
+            is_anchor = False
+            for c_osis, c_chap, c_start, c_end in self._anchor_ranges.get(s.id, []):
+                if c_osis == osis and c_chap == chap:
+                    if c_start <= verse <= c_end:
+                        is_anchor = True
+                        break
+
+            is_proof = False
+            if include_proofs:
+                for c_osis, c_chap, c_start, c_end in self._proof_ranges.get(s.id, []):
+                    if c_osis == osis and c_chap == chap:
+                        if c_start <= verse <= c_end:
+                            is_proof = True
+                            break
+
+            if is_anchor or is_proof:
+                results.append(
+                    AnnotatedPropheticSymbol.from_symbol(
+                        s,
+                        is_anchor=is_anchor,
+                        is_proof=is_proof,
+                    )
+                )
+
+        return results
+
+    def get_annotated_symbols_for_passage(
+        self,
+        ref: str,
+        include_proofs: bool = True,
+    ) -> list[AnnotatedPropheticSymbol]:
+        """Find symbols overlapping ref, annotated with is_anchor and is_proof flags."""
         parsed = parse_passage_ref(ref)
         if not parsed:
             return []
@@ -174,20 +254,38 @@ class PropheticLexicon:
         p_osis, p_chap, p_s, p_e = parsed
         p_start, p_end = _normalize_range(p_s, p_e)
 
-        matched: list[PropheticSymbol] = []
+        results: list[AnnotatedPropheticSymbol] = []
         for s in self._symbols:
-            ranges_to_check = list(self._anchor_ranges.get(s.id, []))
-            if include_proofs:
-                ranges_to_check.extend(self._proof_ranges.get(s.id, []))
-
-            for c_osis, c_chap, c_start, c_end in ranges_to_check:
+            is_anchor = False
+            for c_osis, c_chap, c_start, c_end in self._anchor_ranges.get(s.id, []):
                 if c_osis == p_osis and c_chap == p_chap:
-                    # Interval intersection: max(start1, start2) <= min(end1, end2)
                     if max(p_start, c_start) <= min(p_end, c_end):
-                        matched.append(s)
+                        is_anchor = True
                         break
 
-        return matched
+            is_proof = False
+            if include_proofs:
+                for c_osis, c_chap, c_start, c_end in self._proof_ranges.get(s.id, []):
+                    if c_osis == p_osis and c_chap == p_chap:
+                        if max(p_start, c_start) <= min(p_end, c_end):
+                            is_proof = True
+                            break
+
+            if is_anchor or is_proof:
+                results.append(
+                    AnnotatedPropheticSymbol.from_symbol(
+                        s,
+                        is_anchor=is_anchor,
+                        is_proof=is_proof,
+                    )
+                )
+
+        return results
+
+    def get_symbols_for_passage(self, ref: str, include_proofs: bool = True) -> list[PropheticSymbol]:
+        """Find symbols whose canonical anchors (or proof texts) overlap the given passage."""
+        annotated = self.get_annotated_symbols_for_passage(ref, include_proofs=include_proofs)
+        return [self._by_id[a.id] for a in annotated]
 
 
 _CACHED_LEXICON: Optional[PropheticLexicon] = None

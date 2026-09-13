@@ -179,6 +179,10 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"prophecy-ref-link", body)
         self.assertIn(b"prophecy-consensus-details", body)
         self.assertIn(b"tab-count-badge", body)
+        self.assertIn(b"verse-prophecy-badges", body)
+        self.assertIn(b"prophecy-verse-badge", body)
+        self.assertIn(b"prophecy-inline-card", body)
+        self.assertIn(b"btn-goto-lexicon", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -216,6 +220,11 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"createRefChip", body)
         self.assertIn(b"currentProphecyPassageRef", body)
         self.assertIn(b"tab-count-badge", body)
+        self.assertIn(b"toggleProphecyInlineCard", body)
+        self.assertIn(b"verse-prophecy-badges", body)
+        self.assertIn(b"prophecy-verse-badge", body)
+        self.assertIn(b"prophecy-inline-card", body)
+        self.assertIn(b"highlightProphecySymbolInLexicon", body)
 
     def test_traversal_blocked(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:
@@ -440,6 +449,45 @@ class WebServerTests(unittest.TestCase):
         self.assertFalse(data_anchors_only["include_proofs"])
         ids_without = [s["id"] for s in data_anchors_only["symbols"]]
         self.assertNotIn("day-year-principle", ids_without)
+
+    def test_passage_endpoint_in_context_prophetic_symbols(self) -> None:
+        """Acceptance Criterion: In-context symbols in Daniel 7 and Revelation 12 link directly to defining scriptures."""
+        # Daniel 7:25 contains Day-Year principle and 1260 Days
+        data_dan = self._get_json("/api/passage?ref=Dan+7:25")
+        self.assertEqual(data_dan["book_name"], "Daniel")
+        self.assertEqual(len(data_dan["verses"]), 1)
+        v_dan = data_dan["verses"][0]
+        self.assertIn("prophetic_symbols", v_dan)
+        dan_sym_ids = [s["id"] for s in v_dan["prophetic_symbols"]]
+        self.assertIn("day-year-principle", dan_sym_ids)
+        self.assertIn("time-times-half", dan_sym_ids)
+        day_sym = next(s for s in v_dan["prophetic_symbols"] if s["id"] == "day-year-principle")
+        self.assertTrue(day_sym["is_anchor"])
+        self.assertIn("Numbers 14:34", day_sym["proof_texts"])
+        self.assertIn("Ezekiel 4:6", day_sym["proof_texts"])
+
+        # Revelation 12:1 contains Woman, Stars, Sun and Moon, Crowns
+        data_rev = self._get_json("/api/passage?ref=Rev+12:1")
+        self.assertEqual(data_rev["book_name"], "Revelation")
+        v_rev = data_rev["verses"][0]
+        self.assertIn("prophetic_symbols", v_rev)
+        rev_sym_ids = {s["id"] for s in v_rev["prophetic_symbols"]}
+        self.assertIn("pure-woman", rev_sym_ids)
+        self.assertIn("sun-and-moon", rev_sym_ids)
+        self.assertIn("stars", rev_sym_ids)
+        self.assertIn("crowns", rev_sym_ids)
+        woman_sym = next(s for s in v_rev["prophetic_symbols"] if s["id"] == "pure-woman")
+        self.assertIn("Jeremiah 6:2", woman_sym["proof_texts"])
+        self.assertIn("2 Corinthians 11:2", woman_sym["proof_texts"])
+
+        # Ezekiel 4:6 recognizes Day as a defining proof text
+        data_eze = self._get_json("/api/passage?ref=Ezekiel+4:6")
+        v_eze = data_eze["verses"][0]
+        self.assertIn("prophetic_symbols", v_eze)
+        eze_day = next((s for s in v_eze["prophetic_symbols"] if s["id"] == "day-year-principle"), None)
+        self.assertIsNotNone(eze_day)
+        self.assertFalse(eze_day["is_anchor"])
+        self.assertTrue(eze_day["is_proof"])
 
     def test_unknown_endpoint_is_404(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:

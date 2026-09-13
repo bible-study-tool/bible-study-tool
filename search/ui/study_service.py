@@ -42,6 +42,7 @@ from search.corpus.ot_citations import (
     get_passage_ot_citations_batch,
 )
 from search.corpus.prophetic import (
+    AnnotatedPropheticSymbol,
     PropheticLexicon,
     PropheticSymbol,
     get_prophetic_lexicon,
@@ -213,6 +214,7 @@ class VerseStudy:
     translations: dict[str, str] = field(default_factory=dict)
     discourse_markers: list[DiscourseMarker] = field(default_factory=list)
     ot_citations: list[OTCitation] = field(default_factory=list)
+    prophetic_symbols: list[AnnotatedPropheticSymbol] = field(default_factory=list)
 
 
 
@@ -406,6 +408,9 @@ class StudyService:
             # Pre-fetch OT citations and NT covenant anchors (<0.1ms)
             batch_citations = get_passage_ot_citations_batch(book_code, ch)
 
+            # Pre-fetch prophetic symbols for verses (<0.05ms)
+            prophetic_lex = self.get_prophetic_lexicon()
+
             for vr in verses_raw:
                 verse_id = f"{vr['osis']}.{vr['chapter']}.{vr['verse']}"
                 tokens = vr.get("tokens", [])
@@ -441,6 +446,9 @@ class StudyService:
                     v_trans["kjv"] = vr.get("clean_text") or vr["text"]
                 v_discourse = batch_discourse.get(verse_id, [])
                 v_citations = batch_citations.get(verse_id, []) or lookup_citations_for_verse(verse_id)
+                v_prophetic = prophetic_lex.get_annotated_symbols_for_verse(
+                    vr.get("osis", book_code), vr["chapter"], vr["verse"]
+                )
 
                 verse_studies.append(
                     VerseStudy(
@@ -457,6 +465,7 @@ class StudyService:
                         translations=v_trans,
                         discourse_markers=v_discourse,
                         ot_citations=v_citations,
+                        prophetic_symbols=v_prophetic,
                     )
                 )
 
@@ -931,6 +940,16 @@ class StudyService:
         """Retrieve prophetic symbols anchored in or referencing the given passage."""
         lex = self.get_prophetic_lexicon()
         symbols = lex.get_symbols_for_passage(ref, include_proofs=include_proofs)
+        return [s.to_dict() for s in symbols]
+
+    def get_annotated_prophetic_symbols_for_passage(
+        self,
+        ref: str,
+        include_proofs: bool = True,
+    ) -> list[dict[str, Any]]:
+        """Retrieve annotated prophetic symbols with anchor/proof flags for the passage."""
+        lex = self.get_prophetic_lexicon()
+        symbols = lex.get_annotated_symbols_for_passage(ref, include_proofs=include_proofs)
         return [s.to_dict() for s in symbols]
 
     def close(self) -> None:

@@ -89,8 +89,8 @@ def _jsonable(value: Any) -> Any:
 
 
 def _verse_payload(study: StudyService, verse: Any) -> dict[str, Any]:
-    """Wire payload for a single verse: text, translations, Strong's list."""
-    return {
+    """Wire payload for a single verse: text, translations, Strong's list, prophetic symbols."""
+    payload = {
         "osis": verse.osis,
         "chapter": verse.chapter,
         "verse": verse.verse,
@@ -98,6 +98,9 @@ def _verse_payload(study: StudyService, verse: Any) -> dict[str, Any]:
         "translations": verse.translations,
         "strongs_list": verse.strongs_list,
     }
+    if getattr(verse, "prophetic_symbols", None):
+        payload["prophetic_symbols"] = _jsonable(verse.prophetic_symbols)
+    return payload
 
 
 # Per-verse fields included only under ?eager=1, attached to the verse (never
@@ -326,7 +329,7 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 raw_proofs = query.get("include_proofs", ["true"])[0].strip().lower()
                 include_proofs = raw_proofs not in ("false", "0", "no")
                 try:
-                    symbols = study.get_prophetic_symbols_for_passage(ref, include_proofs=include_proofs)
+                    symbols = study.get_annotated_prophetic_symbols_for_passage(ref, include_proofs=include_proofs)
                     self._reply_json(HTTPStatus.OK, {
                         "status": "ok",
                         "ref": ref,

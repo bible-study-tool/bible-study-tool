@@ -1747,3 +1747,201 @@ button:disabled { opacity: 0.45; cursor: default; }
   color: var(--ink-muted);
   font-style: italic;
 }
+
+/* ==========================================================================
+   In-Context Prophetic Symbol Badges & Cards (WP-031 Phase 4, ADR-025)
+   ========================================================================== */
+
+.verse-prophecy-badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-left: var(--space-2);
+  vertical-align: middle;
+}
+
+.prophecy-verse-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: 1px 6px;
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  line-height: 1.3;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 150ms ease, border-color 150ms ease;
+  vertical-align: middle;
+}
+
+.prophecy-verse-badge:hover {
+  background: var(--highlight);
+  border-color: var(--primary);
+}
+
+.prophecy-verse-badge:focus-visible {
+  outline: var(--focus-ring);
+}
+
+.prophecy-verse-badge.badge-active {
+  background: var(--surface-alt);
+  border-color: var(--primary);
+}
+
+.prophecy-verse-badge .badge-icon {
+  font-size: 0.65rem;
+  color: var(--verse-num);
+}
+
+.prophecy-verse-badge.cat-time .badge-icon {
+  color: var(--primary);
+}
+
+.prophecy-verse-badge.cat-entities .badge-icon {
+  color: var(--secondary);
+}
+
+.prophecy-verse-badge.cat-elements .badge-icon {
+  color: var(--accent);
+}
+
+.prophecy-verse-badge .badge-proof-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 0 3px;
+  background: var(--surface-alt);
+  color: var(--verse-num);
+  border-radius: 2px;
+  margin-left: 2px;
+}
+
+/* In-context definition card */
+.prophecy-inline-card {
+  margin: var(--space-2) 0 var(--space-3) 0;
+  padding: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--secondary);
+  border-radius: var(--radius-s);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-family: var(--font-ui);
+  font-size: var(--type-sm);
+  color: var(--ink);
+}
+
+.prophecy-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--space-2);
+}
+
+.prophecy-card-title-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.prophecy-card-icon {
+  color: var(--secondary);
+  font-size: 0.85rem;
+}
+
+.prophecy-card-title {
+  font-family: var(--font-ui);
+  font-size: var(--type-base);
+  color: var(--ink);
+}
+
+.prophecy-card-role-tag {
+  font-family: var(--font-mono);
+  font-size: var(--type-xs);
+  color: var(--ink-muted);
+  background: var(--surface-alt);
+  padding: 1px 6px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--border);
+}
+
+.prophecy-card-close {
+  background: transparent;
+  border: none;
+  color: var(--ink-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-s);
+  line-height: 1;
+}
+
+.prophecy-card-close:hover {
+  background: var(--surface-alt);
+  color: var(--ink);
+}
+
+.prophecy-card-close:focus-visible {
+  outline: var(--focus-ring);
+}
+
+.prophecy-card-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.prophecy-card-label {
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  font-weight: 600;
+  color: var(--verse-num);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.prophecy-card-meaning {
+  font-family: var(--font-reading);
+  font-size: var(--type-sm);
+  line-height: 1.5;
+  color: var(--verse-text);
+}
+
+.prophecy-card-refs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.prophecy-card-consensus {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  background: var(--surface-alt);
+  padding: var(--space-1) var(--space-2);
+}
+
+.prophecy-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-1);
+  border-top: 1px solid var(--border);
+}
+
+.btn-goto-lexicon {
+  font-size: var(--type-xs);
+  cursor: pointer;
+  padding: 3px 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prophecy-verse-badge {
+    transition: none;
+  }
+}

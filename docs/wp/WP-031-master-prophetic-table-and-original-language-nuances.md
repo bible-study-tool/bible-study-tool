@@ -31,8 +31,8 @@ Make the rich linguistic nuances of the original languages immediately accessibl
 - [x] Support category filters (Time, Entities, Elements) and prophetic book scopes (Daniel, Revelation, Zechariah).
 
 ### Phase 4 — In-Context Prophetic Symbol Chaining
-- [ ] In Scripture reading view, subtly badge canonical prophetic symbols.
-- [ ] Clicking a symbol opens an in-context definition card with immediate links to defining passages.
+- [x] In Scripture reading view, subtly badge canonical prophetic symbols.
+- [x] Clicking a symbol opens an in-context definition card with immediate links to defining passages.
 
 ### Phase 5 — Verification & Validation
 - [ ] Add unit tests verifying all proof scriptures in `data/prophetic_lexicon.json` resolve in `BibleDB`.
@@ -46,4 +46,4 @@ Make the rich linguistic nuances of the original languages immediately accessibl
 ## Acceptance criteria
 - [ ] Verbs in Gen 1:1, John 1:1, and Rom 3:24 display plain-English nuance cards.
 - [x] Prophetic Lexicon table filters symbols and meanings in real time.
-- [ ] In-context symbols in Daniel 7 and Revelation 12 link directly to defining scriptures.
+- [x] In-context symbols in Daniel 7 and Revelation 12 link directly to defining scriptures.
