@@ -176,20 +176,19 @@ def data_path(rel_path: str | Path) -> Path:
     else:
         rel = p
 
-    # 1. Look inside get_data_dir()
-    cand = get_data_dir() / rel
-    if cand.exists():
-        return cand
-
-    # 2. Look relative to get_app_dir() directly
-    cand_app = get_app_dir() / p
-    if cand_app.exists():
-        return cand_app
-
-    # 3. Look relative to CWD
-    cand_cwd = Path.cwd() / p
-    if cand_cwd.exists():
-        return cand_cwd
+    candidates = (
+        get_data_dir() / rel,
+        get_app_dir() / "data" / rel,
+        get_app_dir() / p,
+        Path.cwd() / p,
+        Path.cwd() / "data" / rel,
+    )
+    seen = set()
+    for cand in candidates:
+        if cand not in seen:
+            seen.add(cand)
+            if cand.exists():
+                return cand
 
     # Default to expected location under data dir
     return get_data_dir() / rel

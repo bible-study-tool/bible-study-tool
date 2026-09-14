@@ -129,6 +129,26 @@ class TestBibleBooks(unittest.TestCase):
         self.assertEqual(parse_passage_ref("2 John 4"), ("2John", 1, 4, 4))
         self.assertEqual(parse_passage_ref("3 John 11"), ("3John", 1, 11, 11))
 
+        # Single-chapter books cited as 'Book v1-v2'
+        self.assertEqual(parse_passage_ref("Jude 5-10"), ("Jude", 1, 5, 10))
+        self.assertEqual(parse_passage_ref("Jude 5 - 10"), ("Jude", 1, 5, 10))
+        self.assertEqual(parse_passage_ref("Philemon 4-7"), ("Phlm", 1, 4, 7))
+        self.assertEqual(parse_passage_ref("Obadiah 10-14"), ("Obad", 1, 10, 14))
+
+        # Whitespace tolerance in ranges
+        self.assertEqual(parse_passage_ref("Gen 1:1 - 5"), ("Gen", 1, 1, 5))
+        self.assertEqual(parse_passage_ref("John 3:16 - 18"), ("John", 3, 16, 18))
+        self.assertEqual(parse_passage_ref("1 Cor 13:4 - 8"), ("1Cor", 13, 4, 8))
+
+        # Multi-chapter range without verse colon defaults to starting chapter
+        self.assertEqual(parse_passage_ref("Genesis 1-3"), ("Gen", 1, None, None))
+        self.assertEqual(parse_passage_ref("Gen 1-3"), ("Gen", 1, None, None))
+        self.assertEqual(parse_passage_ref("John 1 - 2"), ("John", 1, None, None))
+
+        # Unicode en-dash and em-dash normalization
+        self.assertEqual(parse_passage_ref("John 3:16–18"), ("John", 3, 16, 18))
+        self.assertEqual(parse_passage_ref("Jude 5—10"), ("Jude", 1, 5, 10))
+
     def test_invalid_passage_raises(self):
         with self.assertRaises(ValueError):
             parse_passage_ref("InvalidPassageStringWithoutNumbers")
@@ -136,6 +156,12 @@ class TestBibleBooks(unittest.TestCase):
         # Inverted range
         with self.assertRaises(ValueError):
             parse_passage_ref("John 3:16-10")
+
+        with self.assertRaises(ValueError):
+            parse_passage_ref("Jude 10-5")
+
+        with self.assertRaises(ValueError):
+            parse_passage_ref("Genesis 5-1")
 
 
 if __name__ == "__main__":

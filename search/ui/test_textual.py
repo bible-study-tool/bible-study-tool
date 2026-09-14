@@ -32,10 +32,16 @@ def _extract_text(widget) -> str:
     return " ".join(texts)
 
 
-async def _wait_until_ready(app, pilot, max_attempts: int = 25) -> None:
-    """Wait for background worker thread to load passage and mount verse widgets."""
+async def _wait_until_ready(app, pilot, max_attempts: int = 35) -> None:
+    """Wait for background worker thread to load passage and mount verse widgets in the DOM."""
     for _ in range(max_attempts):
-        if app.verse_widgets and app.current_passage:
+        if (
+            app.verse_widgets
+            and app.current_passage
+            and all(getattr(w, "is_mounted", True) for w in app.verse_widgets)
+        ):
+            await _wait_for_workers(app)
+            await pilot.pause(0.05)
             return
         await pilot.pause(0.05)
 

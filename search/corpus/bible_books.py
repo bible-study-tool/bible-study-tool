@@ -268,12 +268,14 @@ def parse_passage_ref(raw: str) -> tuple[str, int, Optional[int], Optional[int]]
       'Ps.51.0b'       -> ('Ps', 51, 0, 0)
     """
     cleaned = raw.strip()
+    cleaned = cleaned.replace("–", "-").replace("—", "-")
     cleaned = re.sub(r"\.md$", "", cleaned)
     cleaned = re.sub(r"-kjv$", "", cleaned)
 
-    # 1. Full reference: Book chapter:start_v-end_v or Book c:v
+    # 1. Full reference: Book chapter:start_v[-end_v] with colon or period separator
+    # e.g. 'John 3:16', 'John 3:16-18', 'John 3:16 - 18', 'Gen.1.1', 'Ps 51:0b'
     m = re.fullmatch(
-        r"([0-9A-Za-z\s]+?)[\s._-]+(\d+)[\s.:_-]+(\d+[a-zA-Z]?)(?:-(\d+[a-zA-Z]?))?",
+        r"([0-9A-Za-z\s]+?)[\s._-]+(\d+)[\s]*[:.][\s]*(\d+[a-zA-Z]?)(?:\s*-\s*(\d+[a-zA-Z]?))?",
         cleaned,
         re.IGNORECASE,
     )
@@ -298,7 +300,28 @@ def parse_passage_ref(raw: str) -> tuple[str, int, Optional[int], Optional[int]]
             raise ValueError(f"Invalid verse range in '{raw}': end verse {v2} < start verse {v1}")
         return osis, ch, v1, v2
 
-    # 2. Whole chapter or single-chapter book verse reference (e.g. 'John 3', 'Psalm 23', 'Jude 24')
+    # 2. Hyphenated range without colon or period: Book num1 - num2
+    # e.g. 'Jude 5-10', 'Philemon 4-7', 'Genesis 1-3'
+    m_range = re.fullmatch(
+        r"([0-9A-Za-z\s]+?)[\s._-]+(\d+)\s*-\s*(\d+)",
+        cleaned,
+        re.IGNORECASE,
+    )
+    if m_range:
+        book_str = m_range.group(1).strip()
+        osis = resolve_book_code(book_str)
+        n1 = int(m_range.group(2))
+        n2 = int(m_range.group(3))
+        if n2 < n1:
+            kind = "verse" if BIBLE_BOOKS[osis].chapters == 1 else "chapter"
+            raise ValueError(f"Invalid {kind} range in '{raw}': end {kind} {n2} < start {kind} {n1}")
+        b_info = BIBLE_BOOKS[osis]
+        if b_info.chapters == 1:
+            return osis, 1, n1, n2
+        # Multi-chapter book: default to starting chapter
+        return osis, n1, None, None
+
+    # 3. Whole chapter or single-chapter book verse reference (e.g. 'John 3', 'Psalm 23', 'Jude 24')
     m_ch = re.fullmatch(r"([0-9A-Za-z\s]+?)[\s._-]+(\d+)", cleaned, re.IGNORECASE)
     if m_ch:
         book_str = m_ch.group(1).strip()
@@ -309,7 +332,7 @@ def parse_passage_ref(raw: str) -> tuple[str, int, Optional[int], Optional[int]]
             return osis, 1, num, num
         return osis, num, None, None
 
-    # 3. Bare book name or abbreviation (e.g. 'Genesis', 'Gen', '1 Corinthians', 'Rev') -> default to chapter 1
+    # 4. Bare book name or abbreviation (e.g. 'Genesis', 'Gen', '1 Corinthians', 'Rev') -> default to chapter 1
     try:
         osis = resolve_book_code(cleaned)
         return osis, 1, None, None

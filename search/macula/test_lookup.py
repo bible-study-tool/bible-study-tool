@@ -165,6 +165,11 @@ class NormalizeVerseRefTests(unittest.TestCase):
         self.assertEqual(normalize_verse_ref("gen-1-1-kjv.md"), "Gen.1.1")
         self.assertEqual(normalize_verse_ref("Genesis 1:1"), "Gen.1.1")
         self.assertEqual(normalize_verse_ref("Gen.50.26"), "Gen.50.26")
+        # Single-chapter books with single verse number
+        self.assertEqual(normalize_verse_ref("Jude 5"), "Jude.1.5")
+        self.assertEqual(normalize_verse_ref("Philemon 10"), "Phlm.1.10")
+        self.assertEqual(normalize_verse_ref("2 John 4"), "2John.1.4")
+        self.assertEqual(normalize_verse_ref("Obadiah 15"), "Obad.1.15")
 
     def test_invalid_ref(self):
         with self.assertRaises(ValueError):

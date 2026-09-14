@@ -283,6 +283,9 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"btn-browse", body)
         self.assertIn(b"dropzone-status", body)
         self.assertIn(b"visually-hidden", body)
+        # Organic texture tokens (whisper-subtle desk and paper grain)
+        self.assertIn(b"--desk-grain", body)
+        self.assertIn(b"--paper-grain", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")

@@ -13,6 +13,7 @@ from pathlib import Path
 import re
 from typing import Any
 
+from search.corpus.bible_books import BIBLE_BOOKS
 from search.macula.extract import (
     normalize_greek_strongs,
     normalize_hebrew_strongs,
@@ -60,6 +61,20 @@ def normalize_verse_ref(raw: str) -> str:
         v_str = m_full.group(3)
         v = int(v_str) if v_str.isdigit() else v_str
         return f"{osis_b}.{c}.{v}"
+
+    # 3. Single-chapter book with verse (e.g. 'Jude 5', 'Philemon 10', 'Obadiah 4', '2 John 3')
+    m_single = re.fullmatch(r"([0-9A-Za-z\s]+?)[\s._-]+(\d+[a-zA-Z]?)", cleaned, re.IGNORECASE)
+    if m_single:
+        book_str = m_single.group(1).strip()
+        try:
+            osis_b = resolve_osis_book(book_str)
+            b_info = BIBLE_BOOKS.get(osis_b)
+            if b_info and b_info.chapters == 1:
+                v_str = m_single.group(2)
+                v = int(v_str) if v_str.isdigit() else v_str
+                return f"{osis_b}.1.{v}"
+        except (KeyError, ValueError):
+            pass
 
     raise ValueError(f"Cannot parse verse reference from '{raw}'")
 
