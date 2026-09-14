@@ -56,6 +56,7 @@
           <button class="tab" role="tab" aria-selected="false" data-tab="languages" title="Languages (double-click to maximize)">Languages</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="prophecy" title="Prophetic Lexicon (double-click to maximize)">Prophecy</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="sanctuary" title="Sanctuary Blueprint (double-click to maximize)">Sanctuary</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="commentary" id="tab-commentary" title="Spirit of Prophecy Commentary (double-click to maximize)">Commentary</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="notes" title="Notes (double-click to maximize)">Notes</button>
         </div>
         <button id="exit-zoom-btn" class="tab-exit-zoom" aria-label="Exit full panel view" title="Exit full panel view (Esc / double-click)" hidden>⤢ Exit Full View</button>
@@ -155,6 +156,48 @@
 
           <div id="sanctuary-detail-card" class="sanctuary-detail-card" aria-live="polite">
             <!-- Dynamically populated station or plan of salvation details -->
+          </div>
+        </div>
+      </section>
+      <section class="tab-body" id="panel-commentary" role="tabpanel" tabindex="-1" hidden>
+        <!-- Commentary Correlations Listing View -->
+        <div id="commentary-list-view" class="commentary-list-view">
+          <div class="commentary-toolbar">
+            <div class="commentary-context-info">
+              <span class="commentary-toolbar-title">Spirit of Prophecy Correlations</span>
+              <span id="commentary-passage-label" class="commentary-passage-label"></span>
+            </div>
+            <div class="commentary-toolbar-actions">
+              <span id="commentary-count-badge" class="commentary-count-badge" aria-live="polite">0 entries</span>
+              <button type="button" id="commentary-zoom-btn" class="btn-tool btn-commentary-zoom" title="Toggle full-width commentary view (or press 'z' / double-click tab)">⤢ Maximize</button>
+            </div>
+          </div>
+
+          <div id="commentary-empty-state" class="commentary-empty-state" hidden>
+            <p class="tab-hint" id="commentary-empty-message">No direct Spirit of Prophecy correlations for this passage.</p>
+          </div>
+
+          <div id="commentary-chips-list" class="commentary-chips-list" role="list" aria-label="Commentary references">
+            <!-- Dynamically populated compact reference chips -->
+          </div>
+        </div>
+
+        <!-- Full Chapter Reader View (Contextual Reader Drawer) -->
+        <div id="commentary-reader-view" class="commentary-reader-view" hidden>
+          <div class="commentary-reader-toolbar">
+            <button type="button" id="commentary-back-btn" class="btn-tool commentary-back-btn" title="Return to commentary reference chips">← Back</button>
+            <div class="commentary-reader-headings">
+              <h3 id="commentary-reader-title" class="commentary-reader-title"></h3>
+              <div id="commentary-reader-subtitle" class="commentary-reader-subtitle"></div>
+            </div>
+            <div class="commentary-reader-nav">
+              <button type="button" id="commentary-prev-ch-btn" class="btn-tool commentary-nav-btn" title="Previous chapter" disabled>‹ Prev</button>
+              <button type="button" id="commentary-next-ch-btn" class="btn-tool commentary-nav-btn" title="Next chapter" disabled>Next ›</button>
+              <button type="button" id="commentary-reader-zoom-btn" class="btn-tool btn-commentary-zoom" title="Toggle full-width chapter reading (or press 'z')">⤢ Maximize</button>
+            </div>
+          </div>
+          <div id="commentary-reader-content" class="commentary-reader-content" tabindex="0" role="region" aria-label="Chapter Text">
+            <!-- Dynamically populated paragraphs -->
           </div>
         </div>
       </section>

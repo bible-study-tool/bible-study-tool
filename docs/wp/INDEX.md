@@ -43,7 +43,7 @@ entries `draft` -> `review`.
 | [WP-030](WP-030-divinity-hall-visual-identity-and-ergonomics.md) | Pillar D (GUI / UX) | Divinity Hall Visual Identity & Workspace Ergonomics (split pane, focus modes, warm sepia, progressive disclosure) | done |
 | [WP-031](WP-031-master-prophetic-table-and-original-language-nuances.md) | Pillar B, C | Master Prophetic Key Table & Original-Language Theological Nuances (plain-English stems, aggregated prophetic lexicon) | done |
 | [WP-032](WP-032-sanctuary-typology-blueprint-and-plan-of-salvation.md) | Pillar A, D | Sanctuary Typology Blueprint & Chronological Plan of Salvation (FB #24 spatial/chronological roadmap) | done |
-| [WP-033](WP-033-progressive-spirit-of-prophecy-chapter-reader.md) | Pillar A, D | Progressive Spirit of Prophecy Narrative Navigation & Chapter Reader (compact chips → full contextual reader) | open |
+| [WP-033](WP-033-progressive-spirit-of-prophecy-chapter-reader.md) | Pillar A, D | Progressive Spirit of Prophecy Narrative Navigation & Chapter Reader (compact chips → full contextual reader) | done |
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1

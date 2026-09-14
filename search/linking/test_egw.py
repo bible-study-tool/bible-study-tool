@@ -181,6 +181,54 @@ class EgwDatabaseTests(unittest.TestCase):
         self.assertIn("Chapter 1: God's Love for Man", formatted)
         self.assertIn("Nature and revelation alike testify", formatted)
 
+    def test_get_chapter_and_metadata(self):
+        seed_core_genesis_passages(self.db)
+        # Chapter 2: The Creation has 3 seeded paragraphs (pages 44, 45, 47)
+        ch2_paras = self.db.get_chapter("PP", 2)
+        self.assertEqual(len(ch2_paras), 3)
+        self.assertEqual(ch2_paras[0]["id"], "PP.44.1")
+        self.assertEqual(ch2_paras[1]["id"], "PP.45.1")
+        self.assertEqual(ch2_paras[2]["id"], "PP.47.1")
+
+        # Chapter info
+        info = self.db.get_chapter_info("PP", 2)
+        self.assertIsNotNone(info)
+        self.assertEqual(info["book_code"], "PP")
+        self.assertEqual(info["chapter_num"], 2)
+        self.assertEqual(info["chapter_title"], "The Creation")
+        self.assertEqual(info["start_page"], 44)
+        self.assertEqual(info["end_page"], 47)
+        self.assertEqual(info["paragraph_count"], 3)
+
+        # Empty on non-existent chapter
+        self.assertEqual(self.db.get_chapter("PP", 999), [])
+        self.assertIsNone(self.db.get_chapter_info("PP", 999))
+
+    def test_get_chapter_for_token_and_adjacent(self):
+        seed_core_genesis_passages(self.db)
+        # Token in Chapter 3: The Temptation and Fall (pages 53, 57)
+        res = self.db.get_chapter_for_token("PP.57.1")
+        self.assertIsNotNone(res)
+        self.assertEqual(res["book_code"], "PP")
+        self.assertEqual(res["chapter_num"], 3)
+        self.assertEqual(res["chapter_title"], "The Temptation and Fall")
+        self.assertEqual(res["target_id"], "PP.57.1")
+        self.assertEqual(len(res["paragraphs"]), 2)
+
+        # Check target flag
+        target_paras = [p for p in res["paragraphs"] if p.get("is_target")]
+        self.assertEqual(len(target_paras), 1)
+        self.assertEqual(target_paras[0]["id"], "PP.57.1")
+
+        # Adjacent chapters
+        prev_ch, next_ch = self.db.get_adjacent_chapters("PP", 3)
+        self.assertIsNotNone(prev_ch)
+        self.assertEqual(prev_ch["chapter_num"], 2)
+        self.assertEqual(prev_ch["chapter_title"], "The Creation")
+        self.assertIsNotNone(next_ch)
+        self.assertEqual(next_ch["chapter_num"], 4)
+        self.assertEqual(next_ch["chapter_title"], "The Plan of Redemption")
+
 
 class EgwCliTests(unittest.TestCase):
     def setUp(self):

@@ -159,6 +159,7 @@ CREATE TABLE IF NOT EXISTS egw_paragraphs (
 );
 
 CREATE INDEX IF NOT EXISTS idx_egw_book_page ON egw_paragraphs(book_code, page);
+CREATE INDEX IF NOT EXISTS idx_egw_book_chapter ON egw_paragraphs(book_code, chapter_num, page, paragraph);
 
 CREATE VIRTUAL TABLE IF NOT EXISTS egw_fts USING fts5(
     id UNINDEXED,
@@ -311,6 +312,14 @@ class EgwDB:
                     "SELECT name FROM sqlite_master WHERE type='table' AND name='egw_paragraphs';"
                 )
                 self._has_tables = cur.fetchone() is not None
+                if self._has_tables:
+                    try:
+                        self.conn.execute(
+                            "CREATE INDEX IF NOT EXISTS idx_egw_book_chapter ON egw_paragraphs(book_code, chapter_num, page, paragraph);"
+                        )
+                        self.conn.commit()
+                    except sqlite3.Error:
+                        pass
             except sqlite3.Error:
                 return False
         return self._has_tables
@@ -455,6 +464,123 @@ class EgwDB:
             (b_code, page),
         )
         return [dict(r) for r in cur.fetchall()]
+
+    def get_chapter(self, book_code: str, chapter_num: int | str) -> list[dict[str, Any]]:
+        """Retrieve all paragraphs in an EGW book chapter, ordered by page and paragraph."""
+        if not self.exists():
+            return []
+        b_code = book_code.strip().upper()
+        try:
+            ch_num = int(chapter_num)
+        except (ValueError, TypeError):
+            return []
+        cur = self.conn.execute(
+            "SELECT * FROM egw_paragraphs WHERE book_code = ? AND chapter_num = ? ORDER BY page ASC, paragraph ASC;",
+            (b_code, ch_num),
+        )
+        return [dict(r) for r in cur.fetchall()]
+
+    def get_chapter_info(self, book_code: str, chapter_num: int | str) -> dict[str, Any] | None:
+        """Retrieve chapter metadata (title, start/end page, count) without loading all paragraph text."""
+        if not self.exists():
+            return None
+        b_code = book_code.strip().upper()
+        try:
+            ch_num = int(chapter_num)
+        except (ValueError, TypeError):
+            return None
+        cur = self.conn.execute(
+            """
+            SELECT book_code, book_title, chapter_num, chapter_title,
+                   MIN(page) as start_page, MAX(page) as end_page,
+                   COUNT(*) as paragraph_count
+            FROM egw_paragraphs
+            WHERE book_code = ? AND chapter_num = ?
+            GROUP BY book_code, chapter_num;
+            """,
+            (b_code, ch_num),
+        )
+        row = cur.fetchone()
+        return dict(row) if row else None
+
+    def get_chapter_for_token(self, token: str) -> dict[str, Any] | None:
+        """Retrieve the entire chapter containing a given paragraph token, marking the target paragraph."""
+        if not self.exists():
+            return None
+        target = self.get_paragraph(token)
+        if not target:
+            return None
+        b_code = target["book_code"]
+        ch_num = target.get("chapter_num")
+        if ch_num is None:
+            # Fallback to page if chapter_num is unassigned
+            page = target["page"]
+            paras = self.get_page(b_code, page)
+            for p in paras:
+                p["is_target"] = (p["id"] == target["id"])
+            return {
+                "token": target["id"],
+                "book_code": b_code,
+                "book_title": target["book_title"],
+                "chapter_num": None,
+                "chapter_title": target.get("chapter_title") or f"Page {page}",
+                "target_id": target["id"],
+                "target_page": page,
+                "target_paragraph": target["paragraph"],
+                "paragraphs": paras,
+            }
+
+        paras = self.get_chapter(b_code, ch_num)
+        for p in paras:
+            p["is_target"] = (p["id"] == target["id"])
+
+        return {
+            "token": target["id"],
+            "book_code": b_code,
+            "book_title": target["book_title"],
+            "chapter_num": ch_num,
+            "chapter_title": target.get("chapter_title") or (paras and paras[0].get("chapter_title")) or f"Chapter {ch_num}",
+            "target_id": target["id"],
+            "target_page": target["page"],
+            "target_paragraph": target["paragraph"],
+            "paragraphs": paras,
+        }
+
+    def get_adjacent_chapters(
+        self, book_code: str, chapter_num: int | str
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        """Find the immediate previous and next chapters within the same book."""
+        if not self.exists():
+            return None, None
+        b_code = book_code.strip().upper()
+        try:
+            ch_num = int(chapter_num)
+        except (ValueError, TypeError):
+            return None, None
+
+        prev_row = self.conn.execute(
+            """
+            SELECT chapter_num, chapter_title
+            FROM egw_paragraphs
+            WHERE book_code = ? AND chapter_num IS NOT NULL AND chapter_num < ?
+            ORDER BY chapter_num DESC LIMIT 1;
+            """,
+            (b_code, ch_num),
+        ).fetchone()
+
+        next_row = self.conn.execute(
+            """
+            SELECT chapter_num, chapter_title
+            FROM egw_paragraphs
+            WHERE book_code = ? AND chapter_num IS NOT NULL AND chapter_num > ?
+            ORDER BY chapter_num ASC LIMIT 1;
+            """,
+            (b_code, ch_num),
+        ).fetchone()
+
+        prev_ch = dict(prev_row) if prev_row else None
+        next_ch = dict(next_row) if next_row else None
+        return prev_ch, next_ch
 
     def search(
         self,

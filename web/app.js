@@ -43,6 +43,23 @@ const els = {
   sanctuarySvg: $("#sanctuary-svg"),
   sanctuaryDetailCard: $("#sanctuary-detail-card"),
   sanctuaryInContext: $("#sanctuary-in-context"),
+  commentaryPanel: $("#panel-commentary"),
+  tabCommentary: document.querySelector("button.tab[data-tab='commentary']"),
+  commentaryListView: $("#commentary-list-view"),
+  commentaryReaderView: $("#commentary-reader-view"),
+  commentaryPassageLabel: $("#commentary-passage-label"),
+  commentaryCountBadge: $("#commentary-count-badge"),
+  commentaryZoomBtn: $("#commentary-zoom-btn"),
+  commentaryReaderZoomBtn: $("#commentary-reader-zoom-btn"),
+  commentaryEmptyState: $("#commentary-empty-state"),
+  commentaryEmptyMessage: $("#commentary-empty-message"),
+  commentaryChipsList: $("#commentary-chips-list"),
+  commentaryBackBtn: $("#commentary-back-btn"),
+  commentaryReaderTitle: $("#commentary-reader-title"),
+  commentaryReaderSubtitle: $("#commentary-reader-subtitle"),
+  commentaryPrevChBtn: $("#commentary-prev-ch-btn"),
+  commentaryNextChBtn: $("#commentary-next-ch-btn"),
+  commentaryReaderContent: $("#commentary-reader-content"),
   main: $(".app-main"),
   paneDivider: $("#pane-divider"),
   readingPane: $("#reading-pane"),
@@ -540,6 +557,7 @@ function showError(message) {
     els.prophecyInContext.innerHTML = "";
   }
   clearSanctuaryInContext();
+  clearCommentary();
 }
 
 /* small escaping helper (never trust fetched text into innerHTML unescaped) */
@@ -558,6 +576,7 @@ async function navigate(ref) {
     renderPassage(pass);
     updateProphecyInContext(pass.ref);
     updateSanctuaryInContext(pass.ref);
+    updateCommentary(pass.ref);
   } catch (err) {
     showError(String(err.message || err));
   }
@@ -865,6 +884,7 @@ function toggleSideZoom(forceState) {
     if (els.exitZoomBtn) els.exitZoomBtn.hidden = false;
     if (els.prophecyZoomBtn) els.prophecyZoomBtn.textContent = "⤡ Split View";
     if (els.sanctuaryZoomBtn) els.sanctuaryZoomBtn.textContent = "⤡ Split View";
+    document.querySelectorAll(".btn-commentary-zoom").forEach((b) => { b.textContent = "⤡ Split View"; });
     if (els.statusLeft) {
       els.statusLeft.textContent = "Panel Zoom active — press 'z' or Esc to restore split";
     }
@@ -873,6 +893,7 @@ function toggleSideZoom(forceState) {
     if (els.exitZoomBtn) els.exitZoomBtn.hidden = true;
     if (els.prophecyZoomBtn) els.prophecyZoomBtn.textContent = "⤢ Maximize";
     if (els.sanctuaryZoomBtn) els.sanctuaryZoomBtn.textContent = "⤢ Maximize";
+    document.querySelectorAll(".btn-commentary-zoom").forEach((b) => { b.textContent = "⤢ Maximize"; });
     restoreStatusBar();
   }
 }
@@ -890,6 +911,7 @@ function exitDistractionFreeModes() {
   if (els.exitZoomBtn) els.exitZoomBtn.hidden = true;
   if (els.prophecyZoomBtn) els.prophecyZoomBtn.textContent = "⤢ Maximize";
   if (els.sanctuaryZoomBtn) els.sanctuaryZoomBtn.textContent = "⤢ Maximize";
+  document.querySelectorAll(".btn-commentary-zoom").forEach((b) => { b.textContent = "⤢ Maximize"; });
   restoreStatusBar();
 }
 
@@ -937,10 +959,13 @@ function initFocusAndZoomModes() {
     if ((e.key === "z" || e.key === "Z") || (e.shiftKey && (e.key === "f" || e.key === "F"))) {
       e.preventDefault();
       const inSidePane = els.sidePane && els.sidePane.contains(document.activeElement);
+      const isReaderActive = els.commentaryReaderView && !els.commentaryReaderView.hidden;
+      const activeTab = document.querySelector(".tab[aria-selected='true']");
+      const isSideTab = activeTab && (activeTab.dataset.tab === "commentary" || activeTab.dataset.tab === "prophecy" || activeTab.dataset.tab === "sanctuary");
       const isCurrentlyZoomed = els.main && (els.main.classList.contains("zoom-side") || els.main.classList.contains("focus-mode"));
       if (isCurrentlyZoomed) {
         exitDistractionFreeModes();
-      } else if (inSidePane) {
+      } else if (inSidePane || isReaderActive || isSideTab) {
         toggleSideZoom(true);
       } else {
         toggleFocusMode(true);
@@ -1878,12 +1903,277 @@ function initSanctuaryWorkstation() {
   loadSanctuaryData();
 }
 
+/* ==========================================================================
+   WP-033: Progressive Spirit of Prophecy Commentary & Chapter Reader
+   ========================================================================== */
+
+let commentaryRequestId = 0;
+let currentCommentaryPassageRef = null;
+let activeCommentaryBook = null;
+let activeCommentaryChapter = null;
+
+function clearCommentary() {
+  if (els.commentaryChipsList) els.commentaryChipsList.innerHTML = "";
+  if (els.commentaryCountBadge) els.commentaryCountBadge.textContent = "0 entries";
+  if (els.commentaryPassageLabel) els.commentaryPassageLabel.textContent = "";
+  if (els.commentaryEmptyState) els.commentaryEmptyState.hidden = true;
+  if (els.commentaryListView) els.commentaryListView.hidden = false;
+  if (els.commentaryReaderView) els.commentaryReaderView.hidden = true;
+  if (els.tabCommentary) els.tabCommentary.textContent = "Commentary";
+}
+
+async function updateCommentary(passageRef) {
+  if (!els.commentaryPanel || !passageRef) return;
+  const reqId = ++commentaryRequestId;
+  currentCommentaryPassageRef = passageRef;
+  if (els.commentaryPassageLabel) els.commentaryPassageLabel.textContent = `for ${passageRef}`;
+
+  try {
+    const data = await api(`/api/commentary?ref=${encodeURIComponent(passageRef)}`);
+    if (reqId !== commentaryRequestId) return; // Stale out-of-order response discard
+
+    if (!data.available) {
+      if (els.commentaryChipsList) els.commentaryChipsList.innerHTML = "";
+      if (els.commentaryEmptyState) {
+        els.commentaryEmptyState.hidden = false;
+        if (els.commentaryEmptyMessage) {
+          els.commentaryEmptyMessage.innerHTML = `
+            ${escapeHtml(data.message || "Spirit of Prophecy database not installed.")}<br>
+            <small>You can download historical writings in <strong>⚙ Setup</strong> or visit <a href="https://m.egwwritings.org/" target="_blank" rel="noopener noreferrer">egwwritings.org</a>.</small>
+          `;
+        }
+      }
+      if (els.tabCommentary) els.tabCommentary.textContent = "Commentary";
+      if (els.commentaryCountBadge) els.commentaryCountBadge.textContent = "0 entries";
+      return;
+    }
+
+    const items = data.correlations || [];
+    if (items.length > 0) {
+      if (els.commentaryEmptyState) els.commentaryEmptyState.hidden = true;
+      if (els.commentaryCountBadge) els.commentaryCountBadge.textContent = `${items.length} ${items.length === 1 ? "entry" : "entries"}`;
+      if (els.tabCommentary) {
+        els.tabCommentary.innerHTML = `Commentary <span class="tab-count-badge">${items.length}</span>`;
+      }
+      renderCommentaryChips(items);
+    } else {
+      if (els.commentaryChipsList) els.commentaryChipsList.innerHTML = "";
+      if (els.commentaryEmptyState) {
+        els.commentaryEmptyState.hidden = false;
+        if (els.commentaryEmptyMessage) {
+          els.commentaryEmptyMessage.textContent = `No direct Spirit of Prophecy correlations found for ${passageRef}.`;
+        }
+      }
+      if (els.commentaryCountBadge) els.commentaryCountBadge.textContent = "0 entries";
+      if (els.tabCommentary) els.tabCommentary.textContent = "Commentary";
+    }
+  } catch (_e) {
+    if (reqId === commentaryRequestId) {
+      clearCommentary();
+    }
+  }
+}
+
+function renderCommentaryChips(items) {
+  if (!els.commentaryChipsList) return;
+  els.commentaryChipsList.innerHTML = "";
+
+  for (const c of items) {
+    const chip = document.createElement("article");
+    chip.className = "commentary-chip";
+    chip.tabIndex = 0;
+    chip.setAttribute("role", "button");
+    chip.setAttribute("aria-label", `Read ${c.book_title || c.book_code} citation ${c.token}`);
+
+    chip.innerHTML = `
+      <div class="chip-header">
+        <div class="chip-identity">
+          <span class="chip-book-tag">${escapeHtml(c.book_code || "")}</span>
+          <span class="chip-book-title">${escapeHtml(c.book_title || c.book_code || "")}</span>
+          <span class="chip-ref-badge">${escapeHtml(c.token || "")}</span>
+        </div>
+        <button type="button" class="chip-read-btn" data-token="${escapeHtml(c.token || "")}">📖 Read Full Chapter</button>
+      </div>
+      ${c.chapter_title ? `<div class="chip-chapter-name">${escapeHtml(c.chapter_title)}</div>` : ""}
+      <div class="chip-teaser">“${escapeHtml(c.teaser || c.snippet || "")}”</div>
+    `;
+
+    chip.addEventListener("click", () => {
+      openCommentaryChapterByToken(c.token);
+    });
+
+    chip.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openCommentaryChapterByToken(c.token);
+      }
+    });
+
+    const readBtn = chip.querySelector(".chip-read-btn");
+    if (readBtn) {
+      readBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openCommentaryChapterByToken(c.token);
+      });
+    }
+
+    els.commentaryChipsList.appendChild(chip);
+  }
+}
+
+async function openCommentaryChapterByToken(token) {
+  if (!token) return;
+  switchTab("commentary");
+  if (els.main && els.main.classList.contains("focus-mode")) {
+    toggleFocusMode(false);
+  }
+
+  try {
+    const data = await api(`/api/commentary?token=${encodeURIComponent(token)}`);
+    if (!data || !data.paragraphs) return;
+    renderCommentaryChapter(data, data.target_id || token);
+  } catch (err) {
+    showError(String(err.message || err));
+  }
+}
+
+async function openCommentaryChapter(bookCode, chapterNum, targetToken = null) {
+  if (!bookCode || chapterNum === null || chapterNum === undefined) return;
+  switchTab("commentary");
+  if (els.main && els.main.classList.contains("focus-mode")) {
+    toggleFocusMode(false);
+  }
+
+  try {
+    const data = await api(`/api/commentary?book=${encodeURIComponent(bookCode)}&chapter=${encodeURIComponent(chapterNum)}`);
+    if (!data || !data.paragraphs) return;
+    renderCommentaryChapter(data, targetToken);
+  } catch (err) {
+    showError(String(err.message || err));
+  }
+}
+
+function renderCommentaryChapter(data, targetToken = null) {
+  if (!els.commentaryReaderView || !els.commentaryListView) return;
+
+  activeCommentaryBook = data.book_code;
+  activeCommentaryChapter = data.chapter_num;
+
+  els.commentaryListView.hidden = true;
+  els.commentaryReaderView.hidden = false;
+
+  if (els.commentaryReaderTitle) {
+    els.commentaryReaderTitle.textContent = data.chapter_title || `${data.book_title} — Chapter ${data.chapter_num}`;
+  }
+  if (els.commentaryReaderSubtitle) {
+    els.commentaryReaderSubtitle.textContent = `${data.book_title} (${data.book_code})${data.chapter_num ? ` · Chapter ${data.chapter_num}` : ""}`;
+  }
+
+  // Prev / Next chapter buttons
+  if (els.commentaryPrevChBtn) {
+    if (data.prev_chapter && data.prev_chapter.chapter_num != null) {
+      els.commentaryPrevChBtn.disabled = false;
+      els.commentaryPrevChBtn.title = `Previous: ${data.prev_chapter.chapter_title || `Chapter ${data.prev_chapter.chapter_num}`}`;
+      els.commentaryPrevChBtn.onclick = () => {
+        openCommentaryChapter(data.book_code, data.prev_chapter.chapter_num);
+      };
+    } else {
+      els.commentaryPrevChBtn.disabled = true;
+      els.commentaryPrevChBtn.title = "No previous chapter";
+      els.commentaryPrevChBtn.onclick = null;
+    }
+  }
+
+  if (els.commentaryNextChBtn) {
+    if (data.next_chapter && data.next_chapter.chapter_num != null) {
+      els.commentaryNextChBtn.disabled = false;
+      els.commentaryNextChBtn.title = `Next: ${data.next_chapter.chapter_title || `Chapter ${data.next_chapter.chapter_num}`}`;
+      els.commentaryNextChBtn.onclick = () => {
+        openCommentaryChapter(data.book_code, data.next_chapter.chapter_num);
+      };
+    } else {
+      els.commentaryNextChBtn.disabled = true;
+      els.commentaryNextChBtn.title = "No next chapter";
+      els.commentaryNextChBtn.onclick = null;
+    }
+  }
+
+  // Render paragraphs
+  if (!els.commentaryReaderContent) return;
+  els.commentaryReaderContent.innerHTML = "";
+
+  let targetElement = null;
+  let lastPage = null;
+
+  for (const p of data.paragraphs || []) {
+    if (p.page && p.page !== lastPage) {
+      const pageMarker = document.createElement("div");
+      pageMarker.className = "reader-page-break";
+      pageMarker.innerHTML = `<span class="reader-page-label">Page ${escapeHtml(p.page)}</span>`;
+      els.commentaryReaderContent.appendChild(pageMarker);
+      lastPage = p.page;
+    }
+
+    const pEl = document.createElement("div");
+    const isTarget = Boolean(p.is_target || (targetToken && p.id === targetToken));
+    pEl.className = `reader-paragraph${isTarget ? " target-paragraph" : ""}`;
+    pEl.id = `para-${escapeHtml(p.id)}`;
+
+    pEl.innerHTML = `
+      <div class="reader-para-header">
+        <span class="reader-para-ref" title="Official physical page ${escapeHtml(p.page)}, paragraph ${escapeHtml(p.paragraph)}">${escapeHtml(p.id)}</span>
+      </div>
+      <div class="reader-para-text">${escapeHtml(p.text || "")}</div>
+    `;
+
+    if (isTarget) {
+      targetElement = pEl;
+    }
+
+    els.commentaryReaderContent.appendChild(pEl);
+  }
+
+  if (targetElement) {
+    setTimeout(() => {
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      targetElement.scrollIntoView({ block: "center", behavior: prefersReduced ? "auto" : "smooth" });
+    }, 50);
+  } else {
+    els.commentaryReaderContent.scrollTop = 0;
+  }
+  els.commentaryReaderContent.focus();
+}
+
+function initCommentaryWorkstation() {
+  if (els.commentaryBackBtn) {
+    els.commentaryBackBtn.addEventListener("click", () => {
+      if (els.commentaryReaderView) els.commentaryReaderView.hidden = true;
+      if (els.commentaryListView) {
+        els.commentaryListView.hidden = false;
+        const firstChip = els.commentaryChipsList ? els.commentaryChipsList.querySelector(".commentary-chip") : null;
+        if (firstChip) firstChip.focus();
+      }
+    });
+  }
+  if (els.commentaryZoomBtn) {
+    els.commentaryZoomBtn.addEventListener("click", () => {
+      toggleSideZoom();
+    });
+  }
+  if (els.commentaryReaderZoomBtn) {
+    els.commentaryReaderZoomBtn.addEventListener("click", () => {
+      toggleSideZoom();
+    });
+  }
+}
+
 initPaneResizer();
 initFocusAndZoomModes();
 initAutoUpdate();
 initZebraShading();
 initProphecyWorkstation();
 initSanctuaryWorkstation();
+initCommentaryWorkstation();
 let setupCompleted = false;
 try {
   setupCompleted = localStorage.getItem("abst.setup_completed") === "true";

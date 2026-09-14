@@ -498,10 +498,16 @@ class BibleStudyApp(App):
 
                 loc_str = f"Page {page}, par. {para}" if page else ""
                 hdr_sub = f" — {escape(ch_title)}" if ch_title else ""
+                teaser = egw.get("teaser")
+                if not teaser:
+                    raw = (egw.get("text") or egw.get("snippet", "")).strip()
+                    s = " ".join(raw.split())
+                    teaser = s[:140] + ("…" if len(s) > 140 else "")
                 lines.append(f"[bold yellow]\\[{escape(token)}\\] {escape(book_title)}{hdr_sub}[/bold yellow]")
                 if loc_str:
                     lines.append(f"[dim]{escape(loc_str)}[/dim]")
-                lines.append(f"\n{escape(full_text)}\n\n[dim]────────────────────────────────────────[/dim]\n")
+                lines.append(f"  [italic]{escape(teaser)}[/italic]")
+                lines.append(f"  [dim cyan]→ Press \\[c\\] to read full context, or \\[g\\] to jump directly[/dim cyan]\n[dim]────────────────────────────────────────[/dim]\n")
         else:
             lines.append(
                 "[dim]No direct Spirit of Prophecy correlations for this chapter. Press \\[/\\] to search all writings or \\[g\\] to jump directly to a citation (e.g. PP 44.1).[/dim]"

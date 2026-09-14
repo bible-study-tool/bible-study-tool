@@ -2708,3 +2708,344 @@ button:disabled { opacity: 0.45; cursor: default; }
     transition: none !important;
   }
 }
+
+/* ==========================================================================
+   WP-033: Progressive Spirit of Prophecy Narrative Navigation & Reader
+   ADR-025: Divinity Hall Desk, Progressive Disclosure, Anti-Slop Charter
+   ========================================================================== */
+
+#panel-commentary {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+}
+
+.commentary-list-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.commentary-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.commentary-context-info {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.commentary-toolbar-title {
+  font-family: var(--font-ui);
+  font-size: var(--type-s);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.commentary-passage-label {
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  color: var(--verse-num);
+  font-weight: 500;
+}
+
+.commentary-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.commentary-count-badge {
+  font-family: var(--font-mono);
+  font-size: var(--type-xs);
+  color: var(--primary);
+  background: rgba(36, 75, 110, 0.08);
+  padding: 2px 7px;
+  border-radius: var(--radius-s);
+  border: 1px solid rgba(36, 75, 110, 0.2);
+}
+
+.commentary-empty-state {
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--ink-muted);
+}
+
+.commentary-chips-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.commentary-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-s);
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.commentary-chip:hover {
+  background: var(--surface-alt);
+  border-left-color: var(--secondary);
+}
+
+.commentary-chip:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 1px;
+}
+
+.chip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.chip-identity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chip-book-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.chip-book-title {
+  font-family: var(--font-ui);
+  font-size: var(--type-s);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.chip-ref-badge {
+  font-family: var(--font-mono);
+  font-size: var(--type-xs);
+  color: var(--verse-num);
+  font-style: normal;
+}
+
+.chip-read-btn {
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  font-weight: 500;
+  color: var(--primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: 2px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.chip-read-btn:hover {
+  background: var(--highlight);
+  border-color: var(--primary);
+}
+
+.chip-chapter-name {
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  color: var(--accent);
+  font-style: italic;
+}
+
+.chip-teaser {
+  font-family: var(--font-serif);
+  font-size: var(--type-s);
+  color: var(--ink-muted);
+  line-height: 1.45;
+  margin-top: 2px;
+}
+
+/* Contextual Chapter Reader Drawer */
+.commentary-reader-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.commentary-reader-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.commentary-back-btn {
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: 4px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.commentary-back-btn:hover {
+  background: var(--highlight);
+}
+
+.commentary-reader-headings {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.commentary-reader-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--type-m);
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.commentary-reader-subtitle {
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  color: var(--verse-num);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.commentary-reader-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.commentary-nav-btn {
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  padding: 3px 8px;
+}
+
+.commentary-reader-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-4);
+  max-width: 76ch;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.reader-paragraph {
+  margin-bottom: var(--space-3);
+  line-height: 1.68;
+  font-family: var(--font-serif);
+  font-size: var(--type-m);
+  color: var(--ink);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-s);
+  transition: background-color 150ms ease;
+}
+
+.reader-paragraph.target-paragraph {
+  background: rgba(154, 114, 29, 0.12);
+  border-left: 3px solid var(--secondary);
+  padding-left: var(--space-3);
+}
+
+[data-theme="dark"] .reader-paragraph.target-paragraph {
+  background: rgba(212, 173, 87, 0.14);
+}
+
+.reader-para-header {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.reader-para-ref {
+  font-family: var(--font-mono);
+  font-size: var(--type-xs);
+  color: var(--verse-num);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  padding: 0 4px;
+  border-radius: 2px;
+}
+
+.reader-para-text {
+  font-family: var(--font-serif);
+  font-size: var(--type-m);
+  color: var(--ink);
+}
+
+.reader-page-break {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--space-4) 0 var(--space-3) 0;
+  position: relative;
+  text-align: center;
+}
+
+.reader-page-break::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px dashed var(--border);
+  z-index: 1;
+}
+
+.reader-page-label {
+  position: relative;
+  z-index: 2;
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: var(--type-xs);
+  padding: 0 var(--space-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .commentary-chip,
+  .chip-read-btn,
+  .commentary-back-btn,
+  .reader-paragraph {
+    transition: none !important;
+  }
+}

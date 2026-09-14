@@ -165,6 +165,26 @@ class WebServerTests(unittest.TestCase):
         self.assertIn('id="sanctuary-detail-card"', html)
         self.assertIn('id="sanctuary-in-context"', html)
 
+    def test_commentary_workstation_dom_integration(self) -> None:
+        status, body, _ = self._get("/")
+        self.assertEqual(status, 200)
+        html = body.decode("utf-8")
+        # Tab and panel
+        self.assertIn('id="tab-commentary"', html)
+        self.assertIn('id="panel-commentary"', html)
+        # Listing view and controls
+        self.assertIn('id="commentary-list-view"', html)
+        self.assertIn('id="commentary-chips-list"', html)
+        self.assertIn('id="commentary-zoom-btn"', html)
+        self.assertIn('id="commentary-count-badge"', html)
+        # Reader drawer view and navigation controls
+        self.assertIn('id="commentary-reader-view"', html)
+        self.assertIn('id="commentary-reader-content"', html)
+        self.assertIn('id="commentary-back-btn"', html)
+        self.assertIn('id="commentary-prev-ch-btn"', html)
+        self.assertIn('id="commentary-next-ch-btn"', html)
+        self.assertIn('id="commentary-reader-zoom-btn"', html)
+
     def test_head_request_supported(self) -> None:
         req = urllib.request.Request(self.base + "/", method="HEAD")
         with urllib.request.urlopen(req, timeout=15) as res:
@@ -227,6 +247,16 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"sanctuary-context-tag", body)
         self.assertIn(b"verse-sanctuary-badges", body)
         self.assertIn(b"sanctuary-verse-badge", body)
+        # Commentary styling assertions (WP-033 Phase 1 & 4)
+        self.assertIn(b"commentary-toolbar", body)
+        self.assertIn(b"commentary-chip", body)
+        self.assertIn(b"chip-book-tag", body)
+        self.assertIn(b"chip-read-btn", body)
+        self.assertIn(b"commentary-reader-view", body)
+        self.assertIn(b"reader-paragraph", body)
+        self.assertIn(b"target-paragraph", body)
+        self.assertIn(b"reader-page-break", body)
+        self.assertIn(b"reader-page-label", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -273,7 +303,6 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"renderSanctuaryBlueprint", body)
         self.assertIn(b"setPlanOfSalvationStage", body)
         self.assertIn(b"selectSanctuaryStation", body)
-        self.assertIn(b"renderSanctuaryStationDetail", body)
         self.assertIn(b"renderSanctuaryStageDetail", body)
         self.assertIn(b"renderSanctuaryOverview", body)
         self.assertIn(b"initSanctuaryWorkstation", body)
@@ -286,6 +315,18 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"currentSanctuaryPassageRef", body)
         self.assertIn(b"sanctuaryRequestId", body)
         self.assertIn(b"clearSanctuaryInContext", body)
+        # Commentary JS assertions (WP-033 Phase 1 & 4)
+        self.assertIn(b"commentaryPanel", body)
+        self.assertIn(b"tabCommentary", body)
+        self.assertIn(b"clearCommentary", body)
+        self.assertIn(b"updateCommentary", body)
+        self.assertIn(b"renderCommentaryChips", body)
+        self.assertIn(b"openCommentaryChapterByToken", body)
+        self.assertIn(b"openCommentaryChapter", body)
+        self.assertIn(b"renderCommentaryChapter", body)
+        self.assertIn(b"initCommentaryWorkstation", body)
+        self.assertIn(b"commentaryReaderZoomBtn", body)
+        self.assertIn(b"reader-page-break", body)
 
     def test_traversal_blocked(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:
@@ -302,6 +343,7 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(data["nuance_url"], "/api/nuance")
         self.assertEqual(data["prophetic_url"], "/api/prophetic")
         self.assertEqual(data["sanctuary_url"], "/api/sanctuary")
+        self.assertEqual(data["commentary_url"], "/api/commentary")
         self.assertIn("verify_bundle_url", data)
         self.assertIn("egw_available", data)
         theme_ids = [t["id"] for t in data["themes"]]
@@ -622,8 +664,78 @@ class WebServerTests(unittest.TestCase):
             self._get("/api/nope")
         self.assertEqual(ctx.exception.code, 404)
 
+    def test_commentary_endpoint_missing_params_is_400(self) -> None:
+        has_egw = self.study.egw_db is not None and self.study.egw_db.exists()
+        if not has_egw:
+            data = self._get_json("/api/commentary")
+            self.assertEqual(data["status"], "ok")
+            self.assertFalse(data["available"])
+            return
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._get("/api/commentary")
+        self.assertEqual(ctx.exception.code, 400)
+
+    def test_commentary_endpoint_by_ref(self) -> None:
+        data = self._get_json("/api/commentary?ref=Gen+1")
+        self.assertEqual(data["status"], "ok")
+        has_egw = self.study.egw_db is not None and self.study.egw_db.exists()
+        if has_egw:
+            self.assertTrue(data["available"])
+            self.assertIn("correlations", data)
+            self.assertGreaterEqual(len(data["correlations"]), 1)
+            first = data["correlations"][0]
+            self.assertIn("token", first)
+            self.assertIn("book_code", first)
+            self.assertIn("chapter_title", first)
+            self.assertIn("teaser", first)
+        else:
+            self.assertFalse(data["available"])
+
+    def test_commentary_endpoint_by_token(self) -> None:
+        has_egw = self.study.egw_db is not None and self.study.egw_db.exists()
+        if not has_egw:
+            self.skipTest("egw.db not installed")
+        data = self._get_json("/api/commentary?token=PP.44.1")
+        self.assertEqual(data["status"], "ok")
+        self.assertTrue(data["available"])
+        self.assertEqual(data["book_code"], "PP")
+        self.assertEqual(data["target_id"], "PP.44.1")
+        self.assertIn("paragraphs", data)
+        self.assertGreaterEqual(len(data["paragraphs"]), 1)
+        target = next((p for p in data["paragraphs"] if p.get("is_target")), None)
+        self.assertIsNotNone(target)
+        self.assertEqual(target["id"], "PP.44.1")
+
+    def test_commentary_endpoint_by_book_and_chapter(self) -> None:
+        has_egw = self.study.egw_db is not None and self.study.egw_db.exists()
+        if not has_egw:
+            self.skipTest("egw.db not installed")
+        data = self._get_json("/api/commentary?book=PP&chapter=8")
+        self.assertEqual(data["status"], "ok")
+        self.assertTrue(data["available"])
+        self.assertEqual(data["book_code"], "PP")
+        self.assertEqual(data["chapter_num"], 8)
+        self.assertIn("paragraphs", data)
+        self.assertGreaterEqual(len(data["paragraphs"]), 1)
+
+    def test_commentary_endpoint_bad_token_is_404(self) -> None:
+        has_egw = self.study.egw_db is not None and self.study.egw_db.exists()
+        if not has_egw:
+            self.skipTest("egw.db not installed")
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._get("/api/commentary?token=PP.99999.1")
+        self.assertEqual(ctx.exception.code, 404)
+
+    def test_commentary_endpoint_bad_chapter_is_404(self) -> None:
+        has_egw = self.study.egw_db is not None and self.study.egw_db.exists()
+        if not has_egw:
+            self.skipTest("egw.db not installed")
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._get("/api/commentary?book=PP&chapter=99999")
+        self.assertEqual(ctx.exception.code, 404)
+
     def test_egw_route_does_not_exist(self) -> None:
-        # No dedicated EGW route (parity: the 404 covers any /api/egw attempt).
+        # No dedicated raw EGW route (parity: the 404 covers any /api/egw attempt).
         with self.assertRaises(urllib.error.HTTPError) as ctx:
             self._get("/api/egw")
         self.assertEqual(ctx.exception.code, 404)

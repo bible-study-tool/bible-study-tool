@@ -197,6 +197,8 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 self._api_prophetic(query)
             elif path == "/api/sanctuary":
                 self._api_sanctuary(query)
+            elif path == "/api/commentary":
+                self._api_commentary(query)
             elif path.startswith("/api/"):
                 self._reply_error(HTTPStatus.NOT_FOUND, "unknown endpoint")
             else:
@@ -221,6 +223,7 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "nuance_url": "/api/nuance",
                 "prophetic_url": "/api/prophetic",
                 "sanctuary_url": "/api/sanctuary",
+                "commentary_url": "/api/commentary",
                 "verify_bundle_url": "/api/verify-bundle",
                 "egw_available": has_egw,
             })
@@ -413,6 +416,94 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "status": "ok",
                 **_jsonable(sanctuary_data),
             })
+
+        def _api_commentary(self, query: dict[str, list[str]]) -> None:
+            has_egw = study.egw_db is not None and study.egw_db.exists()
+            if not has_egw:
+                self._reply_json(HTTPStatus.OK, {
+                    "status": "ok",
+                    "available": False,
+                    "message": "Spirit of Prophecy database (egw.db) not installed.",
+                    "correlations": [],
+                    "count": 0,
+                })
+                return
+
+            token = query.get("token", [""])[0].strip()
+            if token:
+                ch_data = study.get_egw_chapter_for_token(token)
+                if not ch_data:
+                    self._reply_error(HTTPStatus.NOT_FOUND, f"unknown EGW citation token {token!r}")
+                    return
+                b_code = ch_data["book_code"]
+                ch_num = ch_data.get("chapter_num")
+                prev_ch, next_ch = study.get_egw_adjacent_chapters(b_code, ch_num) if ch_num is not None else (None, None)
+                self._reply_json(HTTPStatus.OK, {
+                    "status": "ok",
+                    "available": True,
+                    "token": token,
+                    "book_code": b_code,
+                    "book_title": ch_data["book_title"],
+                    "chapter_num": ch_num,
+                    "chapter_title": ch_data["chapter_title"],
+                    "target_id": ch_data["target_id"],
+                    "target_page": ch_data["target_page"],
+                    "target_paragraph": ch_data["target_paragraph"],
+                    "prev_chapter": prev_ch,
+                    "next_chapter": next_ch,
+                    "paragraphs": ch_data["paragraphs"],
+                    "count": len(ch_data["paragraphs"]),
+                })
+                return
+
+            book = query.get("book", [""])[0].strip().upper()
+            raw_chap = query.get("chapter", [""])[0].strip()
+            if book and raw_chap:
+                try:
+                    ch_num = int(raw_chap)
+                except ValueError:
+                    self._reply_error(HTTPStatus.BAD_REQUEST, f"invalid chapter number {raw_chap!r}")
+                    return
+                paras = study.get_egw_chapter(book, ch_num)
+                info = study.get_egw_chapter_info(book, ch_num)
+                if not paras and not info:
+                    self._reply_error(HTTPStatus.NOT_FOUND, f"chapter {ch_num} not found in book {book}")
+                    return
+                prev_ch, next_ch = study.get_egw_adjacent_chapters(book, ch_num)
+                title = (info and info.get("chapter_title")) or (paras and paras[0].get("chapter_title")) or f"Chapter {ch_num}"
+                btitle = (info and info.get("book_title")) or (paras and paras[0].get("book_title")) or book
+                self._reply_json(HTTPStatus.OK, {
+                    "status": "ok",
+                    "available": True,
+                    "book_code": book,
+                    "book_title": btitle,
+                    "chapter_num": ch_num,
+                    "chapter_title": title,
+                    "prev_chapter": prev_ch,
+                    "next_chapter": next_ch,
+                    "paragraphs": paras,
+                    "count": len(paras),
+                })
+                return
+
+            ref = query.get("ref", [""])[0].strip()
+            if ref:
+                limit_str = query.get("limit", ["10"])[0].strip()
+                try:
+                    limit = max(1, min(50, int(limit_str)))
+                except ValueError:
+                    limit = 10
+                correlations = study.get_egw_correlations_for_passage(ref, limit=limit)
+                self._reply_json(HTTPStatus.OK, {
+                    "status": "ok",
+                    "available": True,
+                    "ref": ref,
+                    "correlations": correlations,
+                    "count": len(correlations),
+                })
+                return
+
+            self._reply_error(HTTPStatus.BAD_REQUEST, "missing 'ref', 'token', or 'book'+'chapter' parameters")
 
     return StudyHandler
 

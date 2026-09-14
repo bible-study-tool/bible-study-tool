@@ -481,78 +481,7 @@ class StudyService:
                 )
 
             # 3. Correlated Spirit of Prophecy passages
-            egw_correlations: list[dict[str, Any]] = []
-            if self.egw_db:
-                search_query = f'"{book_name} {s_ch}"'
-                try:
-                    hits = self.egw_db.search(search_query, limit=30)
-                    candidate_hits: list[dict[str, Any]] = []
-                    for h in hits:
-                        b_code = h.get("book_code", "")
-                        page_num = int(h.get("page") or 0)
-                        hit_para = int(h.get("paragraph") or h.get("paragraph_num") or 0)
-                        raw_text = (h.get("text", "") or h.get("snippet", "")).strip()
-
-                        # Skip front matter eBook metadata (e.g. ISBN, Online Books overview)
-                        if page_num <= 2 and any(meta in raw_text.lower() for meta in EBOOK_METADATA_KEYWORDS):
-                            continue
-
-                        candidate_hits.append(
-                            {
-                                "token": h.get("id") or h.get("canonical_token") or h.get("ref_code", ""),
-                                "book_code": b_code,
-                                "book_title": h.get("book_title", ""),
-                                "chapter_title": h.get("chapter_title", ""),
-                                "page": page_num,
-                                "paragraph": hit_para,
-                                "heading": h.get("chapter_title") or h.get("heading", ""),
-                                "snippet": h.get("snippet", ""),
-                                "text": raw_text,
-                            }
-                        )
-
-                    # Prioritize canonical pages of primary Conflict of the Ages and commentary books
-                    candidate_hits.sort(
-                        key=lambda c: (
-                            0 if (c["book_code"] in PRIORITY_EGW_RANK and c["page"] > 1) else (1 if c["book_code"] in PRIORITY_EGW_RANK else 2),
-                            PRIORITY_EGW_RANK.get(c["book_code"], 999),
-                            c["page"],
-                            c["paragraph"],
-                        )
-                    )
-                    top_hits = candidate_hits[:10]
-
-                    # Expand introductory notes only for top hits to avoid N+1 DB queries
-                    for item in top_hits:
-                        raw_text = item["text"]
-                        b_code = item["book_code"]
-                        page_num = item["page"]
-                        hit_para = item["paragraph"]
-
-                        if (
-                            page_num
-                            and b_code
-                            and (
-                                hit_para <= 1
-                                or len(raw_text) < 120
-                                or any(k in raw_text.lower() for k in ("based on", "see egw", "vol."))
-                            )
-                        ):
-                            page_paras = self.get_egw_page(b_code, page_num)
-                            if page_paras:
-                                subsequent = [
-                                    p.get("text", "").strip()
-                                    for p in page_paras
-                                    if int(p.get("paragraph") or p.get("paragraph_num") or 0) > hit_para
-                                    and p.get("text", "").strip()
-                                    and not any(meta in p.get("text", "").lower() for meta in EBOOK_METADATA_KEYWORDS)
-                                ][:4]
-                                if subsequent:
-                                    item["text"] = f"{raw_text}\n\n" + "\n\n".join(subsequent)
-
-                    egw_correlations = top_hits
-                except sqlite3.Error:
-                    egw_correlations = []
+            egw_correlations = self._find_egw_correlations(book_name, s_ch, limit=10)
 
             return PassageStudy(
                 ref=passage_ref,
@@ -888,6 +817,138 @@ class StudyService:
             if not self.egw_db:
                 return []
             return self.egw_db.get_page(book_code, page)
+
+    @staticmethod
+    def _create_egw_teaser(text: str, max_len: int = 140) -> str:
+        """Create a clean, single-line excerpt for compact reference chips."""
+        s = " ".join((text or "").split()).strip()
+        if len(s) <= max_len:
+            return s
+        cutoff = s[:max_len].rfind(" ")
+        if cutoff > max_len // 2:
+            return s[:cutoff] + "…"
+        return s[:max_len] + "…"
+
+    def _find_egw_correlations(self, book_name: str, s_ch: int, limit: int = 10) -> list[dict[str, Any]]:
+        """Internal helper to discover and rank EGW correlations for a book and chapter."""
+        if not self.egw_db or not self.egw_db.exists():
+            return []
+        search_query = f'"{book_name} {s_ch}"'
+        try:
+            hits = self.egw_db.search(search_query, limit=30)
+            candidate_hits: list[dict[str, Any]] = []
+            for h in hits:
+                b_code = h.get("book_code", "")
+                page_num = int(h.get("page") or 0)
+                hit_para = int(h.get("paragraph") or h.get("paragraph_num") or 0)
+                raw_text = (h.get("text", "") or h.get("snippet", "")).strip()
+
+                # Skip front matter eBook metadata (e.g. ISBN, Online Books overview)
+                if page_num <= 2 and any(meta in raw_text.lower() for meta in EBOOK_METADATA_KEYWORDS):
+                    continue
+
+                candidate_hits.append(
+                    {
+                        "token": h.get("id") or h.get("canonical_token") or h.get("ref_code", ""),
+                        "book_code": b_code,
+                        "book_title": h.get("book_title", ""),
+                        "chapter_num": h.get("chapter_num"),
+                        "chapter_title": h.get("chapter_title", ""),
+                        "page": page_num,
+                        "paragraph": hit_para,
+                        "heading": h.get("chapter_title") or h.get("heading", ""),
+                        "snippet": h.get("snippet", ""),
+                        "teaser": self._create_egw_teaser(raw_text),
+                        "text": raw_text,
+                    }
+                )
+
+            # Prioritize canonical pages of primary Conflict of the Ages and commentary books
+            candidate_hits.sort(
+                key=lambda c: (
+                    0 if (c["book_code"] in PRIORITY_EGW_RANK and c["page"] > 1) else (1 if c["book_code"] in PRIORITY_EGW_RANK else 2),
+                    PRIORITY_EGW_RANK.get(c["book_code"], 999),
+                    c["page"],
+                    c["paragraph"],
+                )
+            )
+            top_hits = candidate_hits[:limit]
+
+            # Expand introductory notes only for top hits to avoid N+1 DB queries
+            for item in top_hits:
+                raw_text = item["text"]
+                b_code = item["book_code"]
+                page_num = item["page"]
+                hit_para = item["paragraph"]
+
+                if (
+                    page_num
+                    and b_code
+                    and (
+                        hit_para <= 1
+                        or len(raw_text) < 120
+                        or any(k in raw_text.lower() for k in ("based on", "see egw", "vol."))
+                    )
+                ):
+                    page_paras = self.get_egw_page(b_code, page_num)
+                    if page_paras:
+                        subsequent = [
+                            p.get("text", "").strip()
+                            for p in page_paras
+                            if int(p.get("paragraph") or p.get("paragraph_num") or 0) > hit_para
+                            and p.get("text", "").strip()
+                            and not any(meta in p.get("text", "").lower() for meta in EBOOK_METADATA_KEYWORDS)
+                        ][:4]
+                        if subsequent:
+                            item["text"] = f"{raw_text}\n\n" + "\n\n".join(subsequent)
+                            item["teaser"] = self._create_egw_teaser(item["text"])
+
+            return top_hits
+        except sqlite3.Error:
+            return []
+
+    def get_egw_chapter(self, book_code: str, chapter_num: int | str) -> list[dict[str, Any]]:
+        """Retrieve all paragraphs in an EGW book chapter."""
+        with self._lock:
+            if not self.egw_db:
+                return []
+            return self.egw_db.get_chapter(book_code, chapter_num)
+
+    def get_egw_chapter_info(self, book_code: str, chapter_num: int | str) -> dict[str, Any] | None:
+        """Retrieve metadata for an EGW book chapter."""
+        with self._lock:
+            if not self.egw_db:
+                return None
+            return self.egw_db.get_chapter_info(book_code, chapter_num)
+
+    def get_egw_chapter_for_token(self, token: str) -> dict[str, Any] | None:
+        """Retrieve the entire chapter containing a given paragraph token, marking the target paragraph."""
+        with self._lock:
+            if not self.egw_db:
+                return None
+            return self.egw_db.get_chapter_for_token(token)
+
+    def get_egw_adjacent_chapters(
+        self, book_code: str, chapter_num: int | str
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        """Find the immediate previous and next chapters within the same book."""
+        with self._lock:
+            if not self.egw_db:
+                return None, None
+            return self.egw_db.get_adjacent_chapters(book_code, chapter_num)
+
+    def get_egw_correlations_for_passage(self, passage_ref: str, limit: int = 10) -> list[dict[str, Any]]:
+        """Retrieve correlated Spirit of Prophecy commentary for a passage reference."""
+        with self._lock:
+            if not self.egw_db:
+                return []
+            try:
+                book_code, ch, _, _ = parse_passage_ref(passage_ref)
+            except Exception:
+                return []
+            book_info = BIBLE_BOOKS.get(book_code)
+            book_name = book_info.name if book_info else book_code
+            return self._find_egw_correlations(book_name, ch, limit=limit)
 
     def get_greek_gloss(self, greek_strongs: str) -> str:
         """Fetch concise English translation gloss for a Greek Strong's code (e.g. 'G4160' -> 'to do/make: do')."""
