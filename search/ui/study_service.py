@@ -8,9 +8,10 @@ and Spirit of Prophecy commentary (EgwDB) into a cohesive study engine.
 from __future__ import annotations
 
 import json
-import re
 from dataclasses import dataclass, field
 from pathlib import Path
+import re
+import shutil
 import sqlite3
 import threading
 from typing import Any
@@ -296,6 +297,7 @@ class StudyService:
         e_path = Path(egw_db_path)
         if not e_path.exists():
             e_path = data_path(egw_db_path)
+        self.egw_db_path = e_path
         self.egw_db = EgwDB(e_path) if e_path.exists() else None
 
         s_path = Path(strongs_path)
@@ -483,8 +485,12 @@ class StudyService:
             # 3. Correlated Spirit of Prophecy passages
             egw_correlations = self._find_egw_correlations(book_name, s_ch, limit=10)
 
+            canonical_ref = passage_ref
+            if v1 is None and v2 is None:
+                canonical_ref = f"{book_name} {s_ch}"
+
             return PassageStudy(
-                ref=passage_ref,
+                ref=canonical_ref,
                 book_code=book_code,
                 book_name=book_name,
                 start_chapter=s_ch,
@@ -1056,6 +1062,87 @@ class StudyService:
         engine = self.get_sanctuary_engine()
         stations = engine.get_annotated_stations_for_passage(ref)
         return [s.to_dict() for s in stations]
+
+    def ensure_egw_db(self) -> EgwDB:
+        """Ensure an active EgwDB instance is connected, initializing the database if needed."""
+        with self._lock:
+            if self.egw_db is None or not self.egw_db.exists():
+                if self.egw_db is not None:
+                    try:
+                        self.egw_db.close()
+                    except Exception:
+                        pass
+                self.egw_db = EgwDB(self.egw_db_path)
+                self.egw_db.init_db()
+            return self.egw_db
+
+    def reload_egw_db(self) -> EgwDB | None:
+        """Close and reconnect to egw_db to refresh tables/indices after external updates."""
+        with self._lock:
+            if self.egw_db is not None:
+                try:
+                    self.egw_db.close()
+                except Exception:
+                    pass
+                self.egw_db = None
+            if self.egw_db_path.exists():
+                self.egw_db = EgwDB(self.egw_db_path)
+                if not self.egw_db.exists():
+                    self.egw_db.init_db()
+            return self.egw_db
+
+    def replace_egw_db(self, src_path: Path | str) -> EgwDB:
+        """Atomically replace egw.db from a verified file, clearing WAL artifacts."""
+        with self._lock:
+            if self.egw_db is not None:
+                try:
+                    self.egw_db.close()
+                except Exception:
+                    pass
+                self.egw_db = None
+            self.egw_db_path.parent.mkdir(parents=True, exist_ok=True)
+            for suffix in ("-wal", "-shm"):
+                wal_file = self.egw_db_path.with_name(self.egw_db_path.name + suffix)
+                if wal_file.exists():
+                    try:
+                        wal_file.unlink(missing_ok=True)
+                    except OSError:
+                        pass
+            shutil.copy2(src_path, self.egw_db_path)
+            self.egw_db = EgwDB(self.egw_db_path)
+            if not self.egw_db.exists():
+                self.egw_db.init_db()
+            return self.egw_db
+
+    def get_egw_stats(self) -> dict[str, Any]:
+        """Return summary statistics for the local EGW database."""
+        with self._lock:
+            available = bool(self.egw_db and self.egw_db.exists())
+            if not available:
+                return {
+                    "available": False,
+                    "path": str(self.egw_db_path),
+                    "books_count": 0,
+                    "paragraphs_count": 0,
+                }
+            try:
+                total_paragraphs = self.egw_db.count()
+                cur = self.egw_db.conn.execute("SELECT COUNT(DISTINCT book_code) FROM egw_paragraphs;")
+                row = cur.fetchone()
+                books_count = row[0] if row else 0
+                return {
+                    "available": True,
+                    "path": str(self.egw_db_path),
+                    "books_count": books_count,
+                    "paragraphs_count": total_paragraphs,
+                }
+            except Exception:
+                return {
+                    "available": available,
+                    "path": str(self.egw_db_path),
+                    "books_count": 0,
+                    "paragraphs_count": 0,
+                }
 
     def close(self) -> None:
         """Close database connections."""

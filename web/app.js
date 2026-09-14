@@ -80,6 +80,12 @@ const els = {
   verifyStatusText: $("#verify-status-text"),
   verifyErrorBox: $("#verify-error-box"),
   egwStatusMsg: $("#egw-status-msg"),
+  commentaryImportBtn: $("#commentary-import-btn"),
+  commentaryEmptyImportBtn: $("#commentary-empty-import-btn"),
+  bookDropzone: $("#book-dropzone"),
+  browseBooksBtn: $("#browse-books-btn"),
+  bookFileInput: $("#book-file-input"),
+  dropzoneStatus: $("#dropzone-status"),
   wizardSteps: document.querySelectorAll(".wizard-step"),
   stepIndicators: document.querySelectorAll(".step-indicator"),
 };
@@ -89,11 +95,14 @@ const els = {
 let themeCatalog = [];
 let currentWizardStep = 1;
 let egwAvailable = false;
+let egwStats = null;
 
 async function loadThemes() {
   const data = await api("/api/health");
   themeCatalog = data.themes || [];
   egwAvailable = !!data.egw_available;
+  egwStats = data.egw_stats || null;
+  updateEgwStatus();
   let saved = null;
   try {
     saved = localStorage.getItem("abst.theme");
@@ -587,14 +596,23 @@ async function navigate(ref) {
 function updateEgwStatus() {
   if (!els.egwStatusMsg) return;
   if (egwAvailable) {
-    els.egwStatusMsg.innerHTML = "<strong>Status:</strong> Historical commentary database (<code>egw.db</code>) is active and available.";
+    let details = "";
+    if (egwStats && egwStats.paragraphs_count) {
+      const bookCount = egwStats.books_count || "Multiple";
+      const paraCount = Number(egwStats.paragraphs_count).toLocaleString();
+      details = ` (${bookCount} books, ${paraCount} paragraphs active)`;
+    }
+    els.egwStatusMsg.innerHTML = `<strong>Status:</strong> Historical commentary database (<code>egw.db</code>) is active and available${details}.`;
   } else {
-    els.egwStatusMsg.innerHTML = "<strong>Status:</strong> Commentary database is not pre-bundled to keep distribution packages clean.";
+    els.egwStatusMsg.innerHTML = "<strong>Status:</strong> Commentary database is not pre-bundled. Drag and drop book files below to feed the library.";
   }
 }
 
 function setWizardStep(step) {
   currentWizardStep = Math.max(1, Math.min(4, step));
+  if (currentWizardStep === 3) {
+    updateEgwStatus();
+  }
   els.wizardSteps.forEach((s, idx) => {
     s.hidden = (idx + 1) !== currentWizardStep;
   });
@@ -664,6 +682,7 @@ function openWizard(initialStep = 1) {
     }
     const targetStep = typeof initialStep === "number" ? initialStep : 1;
     setWizardStep(targetStep);
+    updateEgwStatus();
     if (targetStep === 1) {
       verifyBundle();
     }
@@ -685,6 +704,168 @@ function completeWizard() {
     /* ignore storage errors in restricted contexts */
   }
   closeWizard();
+}
+
+/* ---- Book Feed & Ingestion (Drag & Drop) ---- */
+
+async function uploadBookFiles(files) {
+  if (!files || files.length === 0) return;
+  if (!els.dropzoneStatus) return;
+
+  els.dropzoneStatus.hidden = false;
+  els.dropzoneStatus.className = "dropzone-status status-loading";
+  els.dropzoneStatus.textContent = `Feeding ${files.length} book file${files.length > 1 ? "s" : ""} into library…`;
+
+  let totalAdded = 0;
+  let hasErrors = false;
+  const errorMsgs = [];
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    els.dropzoneStatus.textContent = `Ingesting ${file.name} (${i + 1}/${files.length})…`;
+    try {
+      const res = await fetch(`/api/import-books?filename=${encodeURIComponent(file.name)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "X-Filename": file.name,
+        },
+        body: file,
+      });
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || `Upload failed with status ${res.status}`);
+      }
+      const data = await res.json();
+      if (data.stats) {
+        egwStats = data.stats;
+        egwAvailable = !!data.stats.available;
+      } else {
+        egwAvailable = true;
+      }
+      totalAdded += (data.paragraphs_added || 0);
+    } catch (err) {
+      hasErrors = true;
+      errorMsgs.push(`${file.name}: ${err.message}`);
+    }
+  }
+
+  if (hasErrors) {
+    els.dropzoneStatus.className = "dropzone-status status-error";
+    els.dropzoneStatus.textContent = `Import encountered issues:\n${errorMsgs.join("\n")}`;
+  } else {
+    els.dropzoneStatus.className = "dropzone-status status-success";
+    const addedText = totalAdded > 0 ? ` (${totalAdded.toLocaleString()} paragraphs added)` : "";
+    els.dropzoneStatus.textContent = `Successfully ingested book library${addedText} ✔`;
+  }
+
+  if (egwStats && typeof egwStats.available === "boolean") {
+    egwAvailable = egwStats.available;
+  }
+  updateEgwStatus();
+  if (state.currentPassage) {
+    updateCommentary(state.currentPassage.ref);
+  }
+}
+
+function initBookDropzone() {
+  const dropzone = els.bookDropzone;
+  const fileInput = els.bookFileInput;
+  const browseBtn = els.browseBooksBtn;
+
+  if (browseBtn && fileInput) {
+    browseBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      fileInput.click();
+    });
+  }
+
+  if (dropzone && fileInput) {
+    dropzone.addEventListener("click", (e) => {
+      if (e.target.closest("#dropzone-status") || e.target.closest("button")) return;
+      fileInput.click();
+    });
+
+    dropzone.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        fileInput.click();
+      }
+    });
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files && fileInput.files.length > 0) {
+        uploadBookFiles(Array.from(fileInput.files));
+        fileInput.value = "";
+      }
+    });
+
+    ["dragenter", "dragover"].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add("drag-over");
+      });
+    });
+
+    ["dragleave", "dragend"].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove("drag-over");
+      });
+    });
+
+    dropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.remove("drag-over");
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        uploadBookFiles(Array.from(e.dataTransfer.files));
+      }
+    });
+  }
+
+  // Allow dropping book files onto the commentary panel directly
+  const commentaryPanel = els.commentaryPanel;
+  if (commentaryPanel) {
+    ["dragenter", "dragover"].forEach((eventName) => {
+      commentaryPanel.addEventListener(eventName, (e) => {
+        if (e.dataTransfer && Array.from(e.dataTransfer.types).includes("Files")) {
+          e.preventDefault();
+          commentaryPanel.classList.add("drag-over-panel");
+        }
+      });
+    });
+
+    ["dragleave", "dragend"].forEach((eventName) => {
+      commentaryPanel.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        commentaryPanel.classList.remove("drag-over-panel");
+      });
+    });
+
+    commentaryPanel.addEventListener("drop", (e) => {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        commentaryPanel.classList.remove("drag-over-panel");
+        openWizard(3);
+        uploadBookFiles(Array.from(e.dataTransfer.files));
+      }
+    });
+  }
+
+  if (els.commentaryImportBtn) {
+    els.commentaryImportBtn.addEventListener("click", () => {
+      openWizard(3);
+    });
+  }
+  if (els.commentaryEmptyImportBtn) {
+    els.commentaryEmptyImportBtn.addEventListener("click", () => {
+      openWizard(3);
+    });
+  }
 }
 
 function initAutoUpdate() {
@@ -2174,6 +2355,7 @@ initZebraShading();
 initProphecyWorkstation();
 initSanctuaryWorkstation();
 initCommentaryWorkstation();
+initBookDropzone();
 let setupCompleted = false;
 try {
   setupCompleted = localStorage.getItem("abst.setup_completed") === "true";

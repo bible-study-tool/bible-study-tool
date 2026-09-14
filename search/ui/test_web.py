@@ -52,6 +52,22 @@ class WebServerTests(unittest.TestCase):
         self.assertIn("application/json", ctype)
         return json.loads(body)
 
+    def _post(self, path: str, data: bytes, headers: dict | None = None):
+        req = urllib.request.Request(
+            self.base + path,
+            data=data,
+            headers=headers or {},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=15) as res:
+            return res.status, res.read(), res.headers.get_content_type()
+
+    def _post_json(self, path: str, data: bytes, headers: dict | None = None) -> dict:
+        status, body, ctype = self._post(path, data, headers)
+        self.assertEqual(status, 200)
+        self.assertIn("application/json", ctype)
+        return json.loads(body)
+
     # ---- static surface -------------------------------------------------
 
     def test_index_served(self) -> None:
@@ -75,6 +91,10 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b'id="prophecy-search-input"', body)
         self.assertIn(b'id="prophecy-category-filter"', body)
         self.assertIn(b'id="prophecy-book-filter"', body)
+        self.assertIn(b'id="book-dropzone"', body)
+        self.assertIn(b'id="browse-books-btn"', body)
+        self.assertIn(b'id="book-file-input"', body)
+        self.assertIn(b'id="commentary-import-btn"', body)
 
     def test_pane_divider_accessibility_attributes(self) -> None:
         status, body, _ = self._get("/")
@@ -257,6 +277,12 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"target-paragraph", body)
         self.assertIn(b"reader-page-break", body)
         self.assertIn(b"reader-page-label", body)
+        # Dropzone styling assertions
+        self.assertIn(b"dropzone", body)
+        self.assertIn(b"dropzone-inner", body)
+        self.assertIn(b"btn-browse", body)
+        self.assertIn(b"dropzone-status", body)
+        self.assertIn(b"visually-hidden", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -327,6 +353,10 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"initCommentaryWorkstation", body)
         self.assertIn(b"commentaryReaderZoomBtn", body)
         self.assertIn(b"reader-page-break", body)
+        # Dropzone JS assertions
+        self.assertIn(b"uploadBookFiles", body)
+        self.assertIn(b"initBookDropzone", body)
+        self.assertIn(b"bookDropzone", body)
 
     def test_traversal_blocked(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:
@@ -344,8 +374,12 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(data["prophetic_url"], "/api/prophetic")
         self.assertEqual(data["sanctuary_url"], "/api/sanctuary")
         self.assertEqual(data["commentary_url"], "/api/commentary")
+        self.assertEqual(data["import_books_url"], "/api/import-books")
         self.assertIn("verify_bundle_url", data)
         self.assertIn("egw_available", data)
+        self.assertIn("egw_stats", data)
+        self.assertIn("books_count", data["egw_stats"])
+        self.assertIn("paragraphs_count", data["egw_stats"])
         theme_ids = [t["id"] for t in data["themes"]]
         # Web-native themes are selectable (S4)...
         self.assertIn("sepia", theme_ids)
@@ -383,6 +417,13 @@ class WebServerTests(unittest.TestCase):
     def test_passage_multi_verse_range(self) -> None:
         data = self._get_json("/api/passage?ref=Genesis%201:1-3")
         self.assertEqual(len(data["verses"]), 3)
+
+    def test_passage_bare_book_name_defaults_to_chapter_one(self) -> None:
+        data = self._get_json("/api/passage?ref=Genesis")
+        self.assertEqual(data["ref"], "Genesis 1")
+        self.assertEqual(data["book_name"], "Genesis")
+        self.assertEqual(data["start_chapter"], 1)
+        self.assertEqual(len(data["verses"]), 31)
 
     def test_passage_bad_ref_is_400(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:
@@ -740,6 +781,72 @@ class WebServerTests(unittest.TestCase):
             self._get("/api/egw")
         self.assertEqual(ctx.exception.code, 404)
 
+    def test_import_books_status_endpoint(self) -> None:
+        data = self._get_json("/api/import-books")
+        self.assertEqual(data["status"], "ok")
+        self.assertIn("stats", data)
+        self.assertIn("available", data["stats"])
+        self.assertIn("books_count", data["stats"])
+        self.assertIn("paragraphs_count", data["stats"])
+
+    def test_import_books_post_raw_text(self) -> None:
+        raw_text = b"{TEST 1.1} Test book paragraph one.\n\n{TEST 1.2} Test book paragraph two."
+        data = self._post_json(
+            "/api/import-books?filename=sample_notes.txt",
+            data=raw_text,
+            headers={"Content-Type": "text/plain", "X-Filename": "sample_notes.txt"},
+        )
+        self.assertEqual(data["status"], "ok")
+        self.assertGreaterEqual(data["paragraphs_added"], 2)
+        self.assertIn("stats", data)
+        self.assertTrue(data["stats"]["available"])
+
+    def test_import_books_post_multipart(self) -> None:
+        boundary = "----WebKitFormBoundarySampleTest"
+        multipart_data = (
+            f"--{boundary}\r\n"
+            f'Content-Disposition: form-data; name="file"; filename="multi_test.txt"\r\n'
+            f"Content-Type: text/plain\r\n\r\n"
+            f"{{TEST 2.1}} Multipart uploaded paragraph text.\r\n"
+            f"--{boundary}--\r\n"
+        ).encode("utf-8")
+        data = self._post_json(
+            "/api/import-books",
+            data=multipart_data,
+            headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
+        )
+        self.assertEqual(data["status"], "ok")
+        self.assertGreaterEqual(data["paragraphs_added"], 1)
+
+    def test_import_books_empty_body_is_400(self) -> None:
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._post("/api/import-books", data=b"")
+        self.assertEqual(ctx.exception.code, 400)
+
+    def test_import_books_unsupported_format(self) -> None:
+        data = self._post_json(
+            "/api/import-books?filename=unsupported.xyz",
+            data=b"Random content",
+            headers={"Content-Type": "application/octet-stream"},
+        )
+        self.assertEqual(data["status"], "ok")
+        self.assertEqual(data["paragraphs_added"], 0)
+        self.assertTrue(any("Unsupported format" in r.get("error", "") for r in data["results"]))
+
+    def test_import_books_zip_slip_rejected(self) -> None:
+        import io
+        import zipfile
+        bio = io.BytesIO()
+        with zipfile.ZipFile(bio, "w") as zf:
+            zf.writestr("../../evil.txt", "malicious content")
+        data = self._post_json(
+            "/api/import-books?filename=bad.zip",
+            data=bio.getvalue(),
+            headers={"Content-Type": "application/zip"},
+        )
+        self.assertEqual(data["status"], "ok")
+        self.assertTrue(any("Dangerous path" in r.get("error", "") for r in data["results"]))
+
 
 class WebServerModuleTests(unittest.TestCase):
     """Checks that don't need a live server."""
@@ -808,9 +915,9 @@ class WebServerModuleTests(unittest.TestCase):
             return (l1 + 0.05) / (l2 + 0.05)
 
         themes_to_check = [
-            (r'\[data-theme="sepia"\]', "Sepia (Divinity Hall Desk)"),
+            (r'\[data-theme="sepia"\]', "Sepia (Study Room Desk)"),
             (r'\[data-theme="light"\]', "Light Paper"),
-            (r'\[data-theme="dark"\]', "Dark Walnut (Divinity Hall Night)"),
+            (r'\[data-theme="dark"\]', "Dark Walnut (Study Room Night)"),
         ]
 
         # AAA normal text threshold per WCAG 2.1 is 7.0:1

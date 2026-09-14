@@ -112,6 +112,13 @@ class TestBibleBooks(unittest.TestCase):
         self.assertEqual(parse_passage_ref("Psalm 23"), ("Ps", 23, None, None))
         self.assertEqual(parse_passage_ref("Genesis 1"), ("Gen", 1, None, None))
 
+        # Bare book name defaults to chapter 1
+        self.assertEqual(parse_passage_ref("Genesis"), ("Gen", 1, None, None))
+        self.assertEqual(parse_passage_ref("gen"), ("Gen", 1, None, None))
+        self.assertEqual(parse_passage_ref("John"), ("John", 1, None, None))
+        self.assertEqual(parse_passage_ref("1 Corinthians"), ("1Cor", 1, None, None))
+        self.assertEqual(parse_passage_ref("Revelation"), ("Rev", 1, None, None))
+
         # Offset verse suffix
         self.assertEqual(parse_passage_ref("Ps 51:0b"), ("Ps", 51, 0, 0))
 

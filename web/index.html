@@ -168,6 +168,7 @@
               <span id="commentary-passage-label" class="commentary-passage-label"></span>
             </div>
             <div class="commentary-toolbar-actions">
+              <button type="button" id="commentary-import-btn" class="btn-tool btn-commentary-import" title="Feed / Import Spirit of Prophecy books (.epub, .txt, .md, .json, .zip, .db)">+ Feed Books</button>
               <span id="commentary-count-badge" class="commentary-count-badge" aria-live="polite">0 entries</span>
               <button type="button" id="commentary-zoom-btn" class="btn-tool btn-commentary-zoom" title="Toggle full-width commentary view (or press 'z' / double-click tab)">⤢ Maximize</button>
             </div>
@@ -175,6 +176,9 @@
 
           <div id="commentary-empty-state" class="commentary-empty-state" hidden>
             <p class="tab-hint" id="commentary-empty-message">No direct Spirit of Prophecy correlations for this passage.</p>
+            <div class="commentary-empty-actions" id="commentary-empty-actions">
+              <button type="button" id="commentary-empty-import-btn" class="btn-tool btn-commentary-import">Feed / Import Books (.epub, .txt, .db)…</button>
+            </div>
           </div>
 
           <div id="commentary-chips-list" class="commentary-chips-list" role="list" aria-label="Commentary references">
@@ -299,7 +303,7 @@
             <div class="setting-row">
               <div class="setting-info">
                 <label for="theme-select" class="setting-label"><strong>Visual Theme</strong></label>
-                <span class="setting-sub">Select your preferred study substrate (Divinity Hall warm parchment, dark walnut, or classic palettes).</span>
+                <span class="setting-sub">Select your preferred study substrate (Study Room warm parchment, dark walnut, or classic palettes).</span>
               </div>
               <select id="theme-select" class="theme-select-input" aria-label="Visual theme"></select>
             </div>
@@ -356,6 +360,20 @@
             <p class="offline-hint">
               <em>Working offline?</em> You can safely skip this step now. All Scripture study, Strong's concordances, and original-language tools are fully active. You can download or import historical works at any time from Setup.
             </p>
+          </div>
+
+          <!-- Drag and drop book ingestion zone -->
+          <div class="dropzone" id="book-dropzone" tabindex="0" role="region" aria-label="Book dropzone">
+            <div class="dropzone-inner">
+              <span class="dropzone-icon" aria-hidden="true">&#128218;</span>
+              <div class="dropzone-content">
+                <strong class="dropzone-title">Drag &amp; drop books here to feed the library</strong>
+                <span class="dropzone-sub">Supports <code>.epub</code>, <code>.txt</code>, <code>.md</code>, <code>.json</code>, <code>.zip</code>, or <code>egw.db</code> database</span>
+              </div>
+              <button type="button" id="browse-books-btn" class="btn-tool btn-browse">Browse Files…</button>
+              <input type="file" id="book-file-input" class="visually-hidden" multiple accept=".epub,.txt,.md,.json,.zip,.db,.sqlite,.sqlite3" aria-label="Select book files to import">
+            </div>
+            <div id="dropzone-status" class="dropzone-status" aria-live="polite" hidden></div>
           </div>
         </section>
 

@@ -1,4 +1,4 @@
-# ADR-025: Visual Identity, "Divinity Hall Desk" Mental Anchor, and Anti-Slop Design Charter
+# ADR-025: Visual Identity, "Study Room Desk" Mental Anchor, and Anti-Slop Design Charter
 
 * **Status:** Accepted
 * **Date:** 2026-09-11
@@ -20,11 +20,11 @@ Bible study is serious, sustained contemplation of sacred literature. It require
 
 ## Decision
 
-We adopt the **"Divinity Hall Desk"** mental anchor, a warm organic substrate palette, ergonomic focus modes, and an explicit Anti-Slop Design Charter.
+We adopt the **"Study Room Desk"** mental anchor, a warm organic substrate palette, ergonomic focus modes, and an explicit Anti-Slop Design Charter.
 
 ### 1. The Mental Anchor
 
-> *"A brass desk lamp illuminating a solid oak library table in an old university divinity hall. Open parchment, parallel ancient texts, unhurried morning devotions, deep scholarly precision without coldness."*
+> *"A brass desk lamp illuminating a solid oak library table in an old university study room. Open parchment, parallel ancient texts, unhurried morning devotions, deep scholarly precision without coldness."*
 
 ### 2. Color Palette & Substrates
 

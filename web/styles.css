@@ -43,7 +43,7 @@
   --zebra-bg: rgba(44, 38, 33, 0.035);
 }
 
-/* ---- Colour tokens: SEPIA / DIVINITY HALL DESK (default, ADR-025) ---- */
+/* ---- Colour tokens: SEPIA / STUDY ROOM DESK (default, ADR-025) ---- */
 [data-theme="sepia"],
 :root {
   --bg: #e6dcce;        /* Darkened warm parchment substrate desk */
@@ -82,7 +82,7 @@
   --zebra-bg: rgba(0, 0, 0, 0.03);
 }
 
-/* ---- Colour tokens: DARK WALNUT (Divinity Hall Night, ADR-025) ---- */
+/* ---- Colour tokens: DARK WALNUT (Study Room Night, ADR-025) ---- */
 [data-theme="dark"] {
   --bg: #141211;
   --surface: #1a1816;
@@ -1021,6 +1021,108 @@ button:disabled { opacity: 0.45; cursor: default; }
 .offline-hint {
   color: var(--ink-muted);
   font-size: var(--type-xs);
+}
+
+/* Book Dropzone (Feed Books) */
+.dropzone {
+  margin-top: var(--space-3);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-m);
+  padding: var(--space-3);
+  background: var(--surface);
+  transition: border-color 150ms ease, background-color 150ms ease;
+  outline: none;
+  cursor: pointer;
+}
+
+.dropzone:hover,
+.dropzone:focus-visible {
+  border-color: var(--primary);
+}
+
+.dropzone.drag-over,
+#panel-commentary.drag-over-panel {
+  border-color: var(--secondary);
+  background: var(--surface-alt);
+}
+
+.dropzone-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.dropzone-icon {
+  font-size: var(--type-lg);
+  flex-shrink: 0;
+}
+
+.dropzone-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-grow: 1;
+}
+
+.dropzone-title {
+  font-size: var(--type-xs);
+  color: var(--ink);
+}
+
+.dropzone-sub {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+.btn-browse {
+  flex-shrink: 0;
+  font-size: var(--type-xs);
+  padding: 4px 10px;
+}
+
+.dropzone-status {
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-s);
+  font-size: var(--type-xs);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  white-space: pre-wrap;
+}
+
+.dropzone-status.status-loading {
+  color: var(--primary);
+}
+
+.dropzone-status.status-success {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.dropzone-status.status-error {
+  color: #a82020;
+  border-color: #a82020;
+}
+
+.commentary-empty-actions {
+  margin-top: var(--space-3);
+}
+
+.btn-commentary-import {
+  font-size: var(--type-xs);
+  padding: 2px 8px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 .resource-card {
@@ -2088,7 +2190,7 @@ button:disabled { opacity: 0.45; cursor: default; }
 
 /* ==========================================================================
    WP-032: Sanctuary Typology Blueprint Workstation
-   ADR-025: Divinity Hall Desk, Native SVG, Anti-Slop Charter
+   ADR-025: Study Room Desk, Native SVG, Anti-Slop Charter
    ========================================================================== */
 
 #panel-sanctuary {
@@ -2711,7 +2813,7 @@ button:disabled { opacity: 0.45; cursor: default; }
 
 /* ==========================================================================
    WP-033: Progressive Spirit of Prophecy Narrative Navigation & Reader
-   ADR-025: Divinity Hall Desk, Progressive Disclosure, Anti-Slop Charter
+   ADR-025: Study Room Desk, Progressive Disclosure, Anti-Slop Charter
    ========================================================================== */
 
 #panel-commentary {

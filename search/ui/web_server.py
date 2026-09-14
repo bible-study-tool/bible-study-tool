@@ -17,14 +17,21 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+from email.parser import BytesParser
+from email.policy import default
 import enum
 import json
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import shutil
+import sqlite3
+import tempfile
 from typing import Any, Callable, Iterable
 from urllib.parse import parse_qs, urlparse
+import zipfile
 
+from search.linking.egw_importer import BulkImporter
 from search.ui.study_service import StudyService
 from search.ui.themes import DEFAULT_THEME, THEMES
 
@@ -34,11 +41,11 @@ WEB_ROOT = get_web_dir()
 
 # Web-native themes beyond the TUI palettes: always present in the catalog so
 # the theme dropdown and persisted prefs can select them (sepia is the default
-# Divinity Hall Desk face per ADR-025; light is daytime paper; dark is walnut).
+# Study Room Desk face per ADR-025; light is daytime paper; dark is walnut).
 WEB_NATIVE_THEMES: dict[str, dict[str, str]] = {
     "sepia": {
         "id": "sepia",
-        "name": "Sepia (Divinity Hall Desk)",
+        "name": "Sepia (Study Room Desk)",
         "description": "Warm parchment substrate with deep indigo, gold, and olive accents.",
     },
     "light": {
@@ -48,7 +55,7 @@ WEB_NATIVE_THEMES: dict[str, dict[str, str]] = {
     },
     "dark": {
         "id": "dark",
-        "name": "Dark Walnut (Divinity Hall Night)",
+        "name": "Dark Walnut (Study Room Night)",
         "description": "Deep walnut charcoal substrate with warm parchment text.",
     },
 }
@@ -199,10 +206,23 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 self._api_sanctuary(query)
             elif path == "/api/commentary":
                 self._api_commentary(query)
+            elif path == "/api/import-books":
+                self._api_import_books_status()
             elif path.startswith("/api/"):
                 self._reply_error(HTTPStatus.NOT_FOUND, "unknown endpoint")
             else:
                 self._serve_static(path)
+
+        def do_POST(self) -> None:  # noqa: N802 (http.server naming)
+            parsed = urlparse(self.path)
+            path = parsed.path
+            query = parse_qs(parsed.query)
+            if path == "/api/import-books":
+                self._api_import_books(query)
+            elif path.startswith("/api/"):
+                self._reply_error(HTTPStatus.NOT_FOUND, "unknown endpoint")
+            else:
+                self._reply_error(HTTPStatus.METHOD_NOT_ALLOWED, "method not allowed")
 
         def _api_health(self) -> None:
             themes = [
@@ -212,10 +232,11 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
             # Web-native themes first so the default face ("sepia") is selectable.
             themes = list(WEB_NATIVE_THEMES.values()) + themes
             has_egw = study.egw_db is not None and study.egw_db.db_path.is_file()
+            egw_stats = study.get_egw_stats()
             self._reply_json(HTTPStatus.OK, {
                 "status": "ok",
                 "version": "0.1.0",
-                # The web face defaults to the Divinity Hall Desk sepia token set (ADR-025);
+                # The web face defaults to the Study Room Desk sepia token set (ADR-025);
                 # the TUI keeps its own DEFAULT_THEME (transparent) internally.
                 "default_theme": "sepia",
                 "themes": themes,
@@ -225,7 +246,9 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "sanctuary_url": "/api/sanctuary",
                 "commentary_url": "/api/commentary",
                 "verify_bundle_url": "/api/verify-bundle",
+                "import_books_url": "/api/import-books",
                 "egw_available": has_egw,
+                "egw_stats": egw_stats,
             })
 
         def _api_verify_bundle(self) -> None:
@@ -504,6 +527,192 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 return
 
             self._reply_error(HTTPStatus.BAD_REQUEST, "missing 'ref', 'token', or 'book'+'chapter' parameters")
+
+        def _api_import_books_status(self) -> None:
+            stats = study.get_egw_stats()
+            self._reply_json(HTTPStatus.OK, {
+                "status": "ok",
+                "stats": stats,
+            })
+
+        def _api_import_books(self, query: dict[str, list[str]]) -> None:
+            try:
+                content_length = int(self.headers.get("Content-Length", 0))
+            except ValueError:
+                self._reply_error(HTTPStatus.BAD_REQUEST, "invalid Content-Length header")
+                return
+
+            if content_length <= 0:
+                self._reply_error(HTTPStatus.BAD_REQUEST, "empty upload body")
+                return
+
+            # Reject files larger than 500 MB to protect memory
+            if content_length > 500 * 1024 * 1024:
+                self._reply_error(HTTPStatus.REQUEST_ENTITY_TOO_LARGE, "file exceeds maximum allowed size (500 MB)")
+                return
+
+            body = self.rfile.read(content_length)
+            content_type = self.headers.get("Content-Type", "")
+
+            uploaded_files: list[tuple[str, bytes]] = []
+
+            if "multipart/form-data" in content_type:
+                try:
+                    full_payload = b"Content-Type: " + content_type.encode("utf-8") + b"\r\n\r\n" + body
+                    msg = BytesParser(policy=default).parsebytes(full_payload)
+                    for part in msg.iter_parts():
+                        fname = part.get_filename()
+                        if fname:
+                            payload = part.get_payload(decode=True)
+                            if payload:
+                                uploaded_files.append((fname, payload))
+                except Exception as exc:
+                    self._reply_error(HTTPStatus.BAD_REQUEST, f"failed to parse multipart upload: {exc}")
+                    return
+            else:
+                # Direct binary upload with header or query param
+                fname = query.get("filename", [""])[0] or self.headers.get("X-Filename", "")
+                if not fname:
+                    cd = self.headers.get("Content-Disposition", "")
+                    if "filename=" in cd:
+                        fname = cd.split("filename=")[-1].strip('"\'; ')
+                if not fname:
+                    fname = "uploaded_book.epub"
+                uploaded_files.append((fname, body))
+
+            if not uploaded_files:
+                self._reply_error(HTTPStatus.BAD_REQUEST, "no valid files detected in upload")
+                return
+
+            results = []
+            total_paras_added = 0
+
+            with tempfile.TemporaryDirectory() as tmp_dir_str:
+                tmp_dir = Path(tmp_dir_str)
+                for raw_name, data in uploaded_files:
+                    fname = Path(raw_name).name
+                    ext = Path(fname).suffix.lower()
+
+                    if ext in (".db", ".sqlite", ".sqlite3") or fname == "egw.db":
+                        target_tmp = tmp_dir / fname
+                        target_tmp.write_bytes(data)
+                        try:
+                            test_conn = sqlite3.connect(str(target_tmp))
+                            cur = test_conn.execute(
+                                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('egw_paragraphs', 'egw_books');"
+                            )
+                            has_table = cur.fetchone() is not None
+                            test_conn.close()
+                        except Exception as exc:
+                            results.append({"filename": fname, "status": "error", "error": f"Invalid SQLite file: {exc}"})
+                            continue
+
+                        if not has_table:
+                            results.append({
+                                "filename": fname,
+                                "status": "error",
+                                "error": "Missing egw_paragraphs table in uploaded SQLite database.",
+                            })
+                            continue
+
+                        # Atomically replace egw.db
+                        study.replace_egw_db(target_tmp)
+                        stats = study.get_egw_stats()
+                        results.append({
+                            "filename": fname,
+                            "status": "ok",
+                            "type": "database",
+                            "total_paragraphs": stats["paragraphs_count"],
+                            "total_books": stats["books_count"],
+                        })
+
+                    elif ext == ".zip":
+                        zip_file_path = tmp_dir / fname
+                        zip_file_path.write_bytes(data)
+                        extract_dir = tmp_dir / f"extracted_{fname}"
+                        extract_dir.mkdir(exist_ok=True)
+                        try:
+                            with zipfile.ZipFile(zip_file_path, "r") as zf:
+                                for member in zf.infolist():
+                                    target_p = (extract_dir / member.filename).resolve()
+                                    if not str(target_p).startswith(str(extract_dir.resolve())):
+                                        raise ValueError(f"Dangerous path in archive: {member.filename}")
+                                zf.extractall(extract_dir)
+                        except Exception as exc:
+                            results.append({"filename": fname, "status": "error", "error": f"Invalid ZIP archive: {exc}"})
+                            continue
+
+                        # Check if a .db is inside the zip
+                        db_files = list(extract_dir.glob("**/*.db")) + list(extract_dir.glob("**/*.sqlite*"))
+                        db_imported = False
+                        if db_files:
+                            best_db = db_files[0]
+                            try:
+                                test_conn = sqlite3.connect(str(best_db))
+                                cur = test_conn.execute(
+                                    "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('egw_paragraphs', 'egw_books');"
+                                )
+                                has_table = cur.fetchone() is not None
+                                test_conn.close()
+                            except Exception:
+                                has_table = False
+                            if has_table:
+                                study.replace_egw_db(best_db)
+                                stats = study.get_egw_stats()
+                                results.append({
+                                    "filename": fname,
+                                    "status": "ok",
+                                    "type": "database_from_zip",
+                                    "total_paragraphs": stats["paragraphs_count"],
+                                    "total_books": stats["books_count"],
+                                })
+                                db_imported = True
+
+                        if not db_imported:
+                            egw_inst = study.ensure_egw_db()
+                            importer = BulkImporter(egw_inst)
+                            imported_counts = importer.import_directory(extract_dir, recursive=True)
+                            added = sum(max(0, c) for c in imported_counts.values())
+                            total_paras_added += added
+                            results.append({
+                                "filename": fname,
+                                "status": "ok",
+                                "type": "zip_archive",
+                                "files_imported": len(imported_counts),
+                                "paragraphs_added": added,
+                            })
+
+                    elif ext in (".epub", ".txt", ".md", ".json"):
+                        target_tmp = tmp_dir / fname
+                        target_tmp.write_bytes(data)
+                        egw_inst = study.ensure_egw_db()
+                        importer = BulkImporter(egw_inst)
+                        try:
+                            added = importer.import_file(target_tmp)
+                            total_paras_added += max(0, added)
+                            results.append({
+                                "filename": fname,
+                                "status": "ok",
+                                "type": ext.lstrip("."),
+                                "paragraphs_added": added,
+                            })
+                        except Exception as exc:
+                            results.append({"filename": fname, "status": "error", "error": str(exc)})
+                    else:
+                        results.append({
+                            "filename": fname,
+                            "status": "error",
+                            "error": f"Unsupported format '{ext}'. Expected .epub, .txt, .md, .json, .zip, or .db",
+                        })
+
+            study.reload_egw_db()
+            final_stats = study.get_egw_stats()
+            self._reply_json(HTTPStatus.OK, {
+                "status": "ok",
+                "results": results,
+                "paragraphs_added": total_paras_added,
+                "stats": final_stats,
+            })
 
     return StudyHandler
 

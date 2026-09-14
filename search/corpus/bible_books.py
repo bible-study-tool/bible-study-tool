@@ -309,4 +309,11 @@ def parse_passage_ref(raw: str) -> tuple[str, int, Optional[int], Optional[int]]
             return osis, 1, num, num
         return osis, num, None, None
 
+    # 3. Bare book name or abbreviation (e.g. 'Genesis', 'Gen', '1 Corinthians', 'Rev') -> default to chapter 1
+    try:
+        osis = resolve_book_code(cleaned)
+        return osis, 1, None, None
+    except ValueError:
+        pass
+
     raise ValueError(f"Cannot parse biblical passage reference from '{raw}'")

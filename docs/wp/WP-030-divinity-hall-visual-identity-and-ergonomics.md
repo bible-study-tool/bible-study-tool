@@ -1,4 +1,4 @@
-# WP-030: Divinity Hall Visual Identity & Workspace Ergonomics
+# WP-030: Study Room Visual Identity & Workspace Ergonomics
 
 status: done
 scope: Pillar D (GUI / UX) — Foundation layout, draggable split pane, focus modes, warm sepia design tokens, typography, and progressive disclosure primitives.
@@ -6,7 +6,7 @@ priority: high
 
 ## Objective
 
-Transform the local web interface into the "Divinity Hall Desk" environment defined in ADR-025: implement the draggable 65/35 split, the `f` Scripture Focus Mode, the `z` / `Shift + F` panel zoom, tab double-click maximize, distinct typographic tokens, and collapsible morphology controls.
+Transform the local web interface into the "Study Room Desk" environment defined in ADR-025: implement the draggable 65/35 split, the `f` Scripture Focus Mode, the `z` / `Shift + F` panel zoom, tab double-click maximize, distinct typographic tokens, and collapsible morphology controls.
 
 ## Inputs (read these first)
 - `docs/decisions/ADR-025-visual-identity-and-anti-slop-design-charter.md`
