@@ -48,6 +48,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **A9. Original-language text corpus** — Masoretic Hebrew, LXX Greek as structured data
 - `[x]` **A11. Sanctuary Typology Blueprint & Chronological Plan of Salvation** — deterministic sanctuary typology schema (`data/sanctuary_schema.json`) mapping compartments (Courtyard, Holy Place, Most Holy Place), furniture, services (daily/yearly), and spiritual realities (Justification, Sanctification, Judgment/Vindication); interactive vector blueprint workstation with hotspot inspection, chronological "Plan of Salvation" slider (AD 31 Cross → Heavenly Inauguration → 1844 Judgment), in-text verse badges, and inspector banner — WP-032, ADR-025, FB #24
 - `[x]` **A12. Progressive Spirit of Prophecy Narrative Navigation & Chapter Reader** — progressive disclosure commentary hierarchy from compact, single-line reference chips with teaser previews to full-chapter contextual reading drawers with automatic target paragraph centering, physical pagination fidelity breaks matching printed pages, sequential chapter traversal (‹ Prev / Next ›), and panel zoom (`z`) — WP-033, ADR-025
+- `[ ]` **A13. Treasury of Scripture Knowledge (TSK) Whole-Bible Cross-References** — ingest ~340,000 scripture-interpreting-scripture cross-reference pairs across all 66 books and 31,102 verses into `data/bible.db`, unlocking instant reciprocal navigation, vote-ranked relevance, and candidate reference generation for future chapter curation — ADR-026, WP-035, WP-036
 
 ### B. Macula / Linguistic Data Integration
 - `[x]` **B0. WordGraph foundation** (ADR-010) — lemma-centric lexical knowledge graph, complete for whole-book Genesis (`lexicons/wordgraph-genesis.json`); the substrate that Macula integration will enrich (WP-010 draft engine consumes it)
@@ -89,6 +90,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **G3. Index caching / incremental rebuilds** — avoid full rebuilds as corpus grows
 - `[ ]` **G4. Performance at scale** — benchmark FTS5 + embeddings on large corpus
 - `[x]` **G5. Packaging / install** + session-portability infra (AGENTS.md charter, .opencode/ reviewer agent + /verify command, scripts/status.py briefing, docs/decisions/ ADRs, docs/wp/ work packages, docs/WORKFLOW.md) — `pyproject.toml` (deps pinned, namespace packages, pytest config); editable install verified; documented run-from-repo-root workflow
+- `[ ]` **G6. Developer Ergonomics & Single-Command Bootstrapping** — root `./bootstrap.sh` entrypoint, automated raw source fetching and database hydration (`--data`), stale editable install finder auto-refresh and detection, and isolated clean-clone validation — WP-034
 
 ### S. Source Agreement Layer *(new — cross-source comparison as first-class data)*
 - `[x]` **S1. Fact model + source adapters** — typed facts (`verse_text`, `word_strongs`, `lexicon_gloss`) extracted from each pinned source (KJV-osis, OSHB, strongs-lexicon, TBESH/TBESG); adapter counts reconcile with sources
@@ -102,6 +104,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **H3. Contributor docs** — onboarding guide, entry-authoring quickstart
 - `[ ]` **H4. Code of conduct** — community/curation emphasis
 - `[ ]` **H5. Release & versioning** — tagged releases, changelog
+- `[ ]` **H6. Verifiable Curation Manifest & Velocity Dashboard** — terminal `status: approved` lifecycle state, cryptographic `data/curation-manifest.json` auditing human review, and real-time curation frontier breakdown in `scripts/status.py` — WP-037
 
 ### P. Public Distribution *(new — making the Word accessible to everyone)*
 > *"What's the point of having the word and not sharing it?"*
