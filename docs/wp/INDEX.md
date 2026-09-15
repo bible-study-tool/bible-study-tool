@@ -44,7 +44,7 @@ entries `draft` -> `review`.
 | [WP-031](WP-031-master-prophetic-table-and-original-language-nuances.md) | Pillar B, C | Master Prophetic Key Table & Original-Language Theological Nuances (plain-English stems, aggregated prophetic lexicon) | done |
 | [WP-032](WP-032-sanctuary-typology-blueprint-and-plan-of-salvation.md) | Pillar A, D | Sanctuary Typology Blueprint & Chronological Plan of Salvation (FB #24 spatial/chronological roadmap) | done |
 | [WP-033](WP-033-progressive-spirit-of-prophecy-chapter-reader.md) | Pillar A, D | Progressive Spirit of Prophecy Narrative Navigation & Chapter Reader (compact chips → full contextual reader) | done |
-| [WP-034](WP-034-developer-ergonomics-and-bootstrap-hardening.md) | Pillar G (G5) | Developer Ergonomics & One-Command Bootstrapping (root ./bootstrap.sh, --data hydration, stale finder guard) | open |
+| [WP-034](WP-034-developer-ergonomics-and-bootstrap-hardening.md) | Pillar G (G5) | Developer Ergonomics & One-Command Bootstrapping (root ./bootstrap.sh, --data hydration, stale finder guard) | done |
 | [WP-035](WP-035-treasury-of-scripture-knowledge-tsk-integration.md) | Pillar A, C | Treasury of Scripture Knowledge (TSK) Ingestion Engine (~340k whole-Bible cross-references in SQLite) | open |
 | [WP-036](WP-036-interactive-whole-bible-cross-reference-workstation.md) | Pillar D (UX) | Interactive Whole-Bible Cross-Reference Workstation UI (Web & TUI ranked xref chips, preview tooltips) | open |
 | [WP-037](WP-037-curation-manifest-and-velocity-dashboard.md) | Pillar A, F, H | Curation Velocity Dashboard & Verifiable Terminal Manifest (status: approved, curation-manifest.json) | open |

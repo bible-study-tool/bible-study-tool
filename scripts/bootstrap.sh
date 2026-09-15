@@ -19,6 +19,7 @@ cd "$REPO_ROOT"
 
 WANT_ML=false
 WANT_DIST=false
+WANT_DATA=false
 RUN_VERIFY=false
 
 for arg in "$@"; do
@@ -29,27 +30,33 @@ for arg in "$@"; do
     --dist)
       WANT_DIST=true
       ;;
-    --all)
+    --data|--fetch-data)
+      WANT_DATA=true
+      ;;
+    --all|--all-in-one)
       WANT_ML=true
       WANT_DIST=true
+      WANT_DATA=true
+      RUN_VERIFY=true
       ;;
     --verify)
       RUN_VERIFY=true
       ;;
     -h|--help)
-      echo "Usage: $0 [--ml] [--dist] [--all] [--verify]"
+      echo "Usage: $0 [--ml] [--dist] [--data] [--verify] [--all-in-one]"
       echo
       echo "Options:"
+      echo "  --data     Fetch pinned raw sources and hydrate SQLite databases (bible.db, macula.db)"
       echo "  --ml       Install optional machine-learning dependencies (sentence-transformers)"
       echo "  --dist     Install standalone packaging tools (pyinstaller)"
-      echo "  --all      Install all optional dependency groups (ml + dist)"
       echo "  --verify   Run full verification suite (scripts/verify_all.sh) after bootstrap"
+      echo "  --all-in-one  Full bootstrap: install all extras, fetch data, hydrate DBs, and verify"
       echo "  -h, --help Show this help message"
       exit 0
       ;;
     *)
       echo "Unknown option: $arg" >&2
-      echo "Usage: $0 [--ml] [--dist] [--all] [--verify]" >&2
+      echo "Usage: $0 [--ml] [--dist] [--data] [--verify] [--all-in-one]" >&2
       exit 2
       ;;
   esac
@@ -117,7 +124,37 @@ else
 fi
 
 echo "Verifying environment..."
-"$VENV_PYTHON" -c "import yaml, numpy, pytest, search; print('✔ Core dependencies and namespace packages successfully verified.')"
+"$VENV_PYTHON" -c "import yaml, numpy, pytest, textual, search, search.resource; print('✔ Core dependencies, TUI, and namespace packages successfully verified.')"
+
+if [[ "$WANT_DATA" == true ]]; then
+  echo
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "Fetching pinned sources & hydrating databases..."
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  DATA_DIR="$REPO_ROOT/data"
+  if [[ ! -f "$DATA_DIR/KJV-osis.json" || ! -f "$DATA_DIR/macula-greek/27-revelation.xml" ]]; then
+    echo "1. Fetching and verifying pinned sources (scripts/fetch_sources.sh)..."
+    bash "$REPO_ROOT/scripts/fetch_sources.sh"
+  else
+    echo "1. Pinned raw sources already present."
+  fi
+
+  if [[ ! -f "$DATA_DIR/bible.db" ]]; then
+    echo "2. Compiling data/bible.db (KJV + ASV/BSB/YLT translations)..."
+    "$VENV_PYTHON" -m search.corpus.extract_kjv --compile
+    "$VENV_PYTHON" -m search.corpus.extract_translations
+  else
+    echo "2. data/bible.db already present."
+  fi
+
+  if [[ ! -f "$DATA_DIR/macula.db" ]]; then
+    echo "3. Compiling data/macula.db (Macula Hebrew + Greek)..."
+    "$VENV_PYTHON" -m search.macula.build_db --repo "$REPO_ROOT"
+  else
+    echo "3. data/macula.db already present."
+  fi
+  echo "✔ Database hydration complete."
+fi
 
 if [[ "$RUN_VERIFY" == true ]]; then
   echo

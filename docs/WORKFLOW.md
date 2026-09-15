@@ -32,7 +32,7 @@ Two file classes rule everything else:
 
 ```bash
 # On a fresh clone or updated branch, initialize dependencies & environment:
-./scripts/bootstrap.sh
+./bootstrap.sh --data
 
 # Ground truth: branch, tree state, roadmap status:
 python scripts/status.py

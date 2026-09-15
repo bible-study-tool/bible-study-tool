@@ -45,11 +45,33 @@ if [[ -z "$PYTHON" ]]; then
   else
     echo "ERROR: Python test dependencies not found (pytest, PyYAML, numpy)." >&2
     echo "Please initialize your environment with:" >&2
-    echo "    ./scripts/bootstrap.sh" >&2
+    echo "    ./bootstrap.sh" >&2
     echo "Or activate your virtual environment:" >&2
     echo "    source .venv/bin/activate" >&2
     exit 1
   fi
+fi
+
+# Pre-flight: Check for stale editable install / unresolvable search namespace modules
+check_search_modules() {
+  "$1" -c "import search, search.resource, search.linking, search.validation, search.corpus, search.ui" >/dev/null 2>&1
+}
+
+if ! check_search_modules "$PYTHON"; then
+  echo "Notice: Core 'search' namespace modules could not be imported cleanly." >&2
+  echo "Your editable installation may be stale. Attempting auto-refresh..." >&2
+  if command -v uv >/dev/null 2>&1; then
+    uv pip install --python "$PYTHON" --no-deps -q -e . >/dev/null 2>&1 || true
+  else
+    "$PYTHON" -m pip install --no-deps -q -e . >/dev/null 2>&1 || true
+  fi
+  if ! check_search_modules "$PYTHON"; then
+    echo "ERROR: Unable to import core search modules." >&2
+    echo "Please refresh your environment with:" >&2
+    echo "    ./bootstrap.sh" >&2
+    exit 1
+  fi
+  echo "✔ Editable install refreshed successfully."
 fi
 
 run_step() { # run_step <label> <command...>

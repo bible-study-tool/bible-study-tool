@@ -90,8 +90,8 @@ bible-study-tool/
 git clone <repo-url>
 cd bible-study-tool
 
-# Automated environment setup (creates .venv, installs dependencies):
-./scripts/bootstrap.sh
+# One-command automated setup (creates .venv, installs deps, fetches pinned sources, hydrates DBs & verifies):
+./bootstrap.sh --data --verify
 ```
 
 ### 2. Launch the Interactive Study Workstation
