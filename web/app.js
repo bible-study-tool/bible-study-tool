@@ -23,6 +23,23 @@ const els = {
   statusRight: $("#status-right"),
   translationsPanel: $("#panel-translations"),
   languagesPanel: $("#panel-languages"),
+  xrefsPanel: $("#panel-xrefs"),
+  tabXrefs: document.querySelector("button.tab[data-tab='xrefs']"),
+  xrefsVerseSelect: $("#xrefs-verse-select"),
+  xrefsSearchInput: $("#xrefs-search-input"),
+  xrefsVoteFilter: $("#xrefs-vote-filter"),
+  xrefsResetBtn: $("#xrefs-reset-btn"),
+  xrefsCountBadge: $("#xrefs-count-badge"),
+  xrefsZoomBtn: $("#xrefs-zoom-btn"),
+  xrefsWorkspace: $("#xrefs-workspace"),
+  xrefsCuratedSection: $("#xrefs-curated-section"),
+  xrefsCuratedList: $("#xrefs-curated-list"),
+  xrefsCuratedCount: $("#xrefs-curated-count"),
+  xrefsCanonicalSection: $("#xrefs-canonical-section"),
+  xrefsCanonicalList: $("#xrefs-canonical-list"),
+  xrefsCanonicalCount: $("#xrefs-canonical-count"),
+  xrefsEmptyState: $("#xrefs-empty-state"),
+  xrefsEmptyMessage: $("#xrefs-empty-message"),
   prophecyPanel: $("#panel-prophecy"),
   tabProphecy: document.querySelector("button.tab[data-tab='prophecy']"),
   prophecySearchInput: $("#prophecy-search-input"),
@@ -468,6 +485,27 @@ function renderVerse(v) {
     item.appendChild(sBadgesSpan);
   }
 
+  // Canonical & Curated cross-reference badge (WP-036)
+  const totalXrefs = (v.cross_references ? v.cross_references.length : 0) + (v.curated_xrefs ? v.curated_xrefs.length : 0);
+  if (totalXrefs > 0) {
+    const xBadge = document.createElement("button");
+    xBadge.type = "button";
+    xBadge.className = "verse-xref-badge";
+    xBadge.dataset.verse = String(v.verse);
+    xBadge.title = `${totalXrefs} Cross-reference${totalXrefs === 1 ? "" : "s"} (TSK + Curated) — Click to inspect`;
+    xBadge.setAttribute("aria-label", `Cross references for verse ${v.verse}: ${totalXrefs}`);
+    xBadge.innerHTML = `<span class="badge-icon" aria-hidden="true">⇄</span><span class="badge-count">${totalXrefs}</span>`;
+    xBadge.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (els.main && els.main.classList.contains("focus-mode")) {
+        toggleFocusMode(false);
+      }
+      switchTab("xrefs");
+      selectVerseXrefs(v.verse);
+    });
+    item.appendChild(xBadge);
+  }
+
   return item;
 }
 
@@ -492,6 +530,7 @@ function renderPassage(p) {
   for (const v of p.verses) els.verses.appendChild(renderVerse(v));
   renderTranslations(p);
   renderLanguages(p);
+  renderCrossReferences(p);
   els.hint.textContent = "";
   els.statusLeft.textContent = `Studying ${p.ref}`;
   els.input.value = p.ref;
@@ -1682,13 +1721,15 @@ function initFocusAndZoomModes() {
       return;
     }
 
-    // Side tab shortcuts: '1' - '6'
+    // Side tab shortcuts: 'x' for Cross-Refs, plus updated tab numbers
+    if (e.key === "x" || e.key === "X") { e.preventDefault(); switchTab("xrefs"); return; }
     if (e.key === "1") { e.preventDefault(); switchTab("translations"); return; }
     if (e.key === "2") { e.preventDefault(); switchTab("languages"); return; }
-    if (e.key === "3") { e.preventDefault(); switchTab("prophecy"); return; }
-    if (e.key === "4") { e.preventDefault(); switchTab("sanctuary"); return; }
-    if (e.key === "5") { e.preventDefault(); switchTab("commentary"); return; }
-    if (e.key === "6") { e.preventDefault(); switchTab("notes"); return; }
+    if (e.key === "3") { e.preventDefault(); switchTab("xrefs"); return; }
+    if (e.key === "4") { e.preventDefault(); switchTab("prophecy"); return; }
+    if (e.key === "5") { e.preventDefault(); switchTab("sanctuary"); return; }
+    if (e.key === "6") { e.preventDefault(); switchTab("commentary"); return; }
+    if (e.key === "7") { e.preventDefault(); switchTab("notes"); return; }
 
     // Help modal: '?'
     if (e.key === "?") {
@@ -2890,6 +2931,224 @@ function initCommentaryWorkstation() {
   }
 }
 
+/* ---- Cross-References & TSK Workstation (WP-036) ---- */
+
+let activeXrefsVerse = "";
+
+function initCrossReferencesWorkstation() {
+  if (els.xrefsVerseSelect) {
+    els.xrefsVerseSelect.addEventListener("change", () => {
+      activeXrefsVerse = els.xrefsVerseSelect.value;
+      filterAndRenderCrossReferences();
+    });
+  }
+  if (els.xrefsSearchInput) {
+    els.xrefsSearchInput.addEventListener("input", () => {
+      filterAndRenderCrossReferences();
+    });
+  }
+  if (els.xrefsVoteFilter) {
+    els.xrefsVoteFilter.addEventListener("change", () => {
+      filterAndRenderCrossReferences();
+    });
+  }
+  if (els.xrefsResetBtn) {
+    els.xrefsResetBtn.addEventListener("click", () => {
+      if (els.xrefsSearchInput) els.xrefsSearchInput.value = "";
+      if (els.xrefsVoteFilter) els.xrefsVoteFilter.value = "0";
+      if (els.xrefsVerseSelect) {
+        els.xrefsVerseSelect.value = "";
+        activeXrefsVerse = "";
+      }
+      filterAndRenderCrossReferences();
+    });
+  }
+  if (els.xrefsZoomBtn) {
+    els.xrefsZoomBtn.addEventListener("click", () => {
+      toggleSideZoom();
+    });
+  }
+  if (els.xrefsWorkspace) {
+    els.xrefsWorkspace.addEventListener("click", (e) => {
+      const chip = e.target.closest(".xref-target-chip");
+      if (!chip) return;
+      e.stopPropagation();
+      const nav = chip.dataset.nav;
+      if (!nav) return;
+      if (els.main && els.main.classList.contains("focus-mode")) {
+        toggleFocusMode(false);
+      }
+      if (chip.dataset.isEgw === "true" || /^[A-Z0-9]+\.\d+/.test(nav)) {
+        openCommentaryChapterByToken(nav);
+      } else {
+        navigate(nav);
+      }
+    });
+  }
+}
+
+function selectVerseXrefs(verseNum) {
+  activeXrefsVerse = String(verseNum || "");
+  if (els.xrefsVerseSelect) {
+    els.xrefsVerseSelect.value = activeXrefsVerse;
+  }
+  filterAndRenderCrossReferences();
+  if (els.tabXrefs) {
+    switchTab("xrefs");
+  }
+}
+
+function renderCrossReferences(passage) {
+  if (!els.xrefsPanel) return;
+
+  // Populate verse select dropdown
+  if (els.xrefsVerseSelect) {
+    const prevVal = activeXrefsVerse;
+    els.xrefsVerseSelect.innerHTML = `<option value="">All Verses in Passage (${escapeHtml(passage.ref)})</option>`;
+    if (passage.verses) {
+      for (const v of passage.verses) {
+        const opt = document.createElement("option");
+        opt.value = String(v.verse);
+        const count = (v.cross_references ? v.cross_references.length : 0) + (v.curated_xrefs ? v.curated_xrefs.length : 0);
+        opt.textContent = `Verse ${v.verse}${count > 0 ? ` (${count})` : ""}`;
+        els.xrefsVerseSelect.appendChild(opt);
+      }
+    }
+    // Retain selection if valid
+    const exists = passage.verses && passage.verses.some((v) => String(v.verse) === prevVal);
+    if (exists) {
+      els.xrefsVerseSelect.value = prevVal;
+      activeXrefsVerse = prevVal;
+    } else {
+      els.xrefsVerseSelect.value = "";
+      activeXrefsVerse = "";
+    }
+  }
+
+  filterAndRenderCrossReferences();
+}
+
+function filterAndRenderCrossReferences() {
+  if (!currentPassage || !currentPassage.verses) return;
+
+  const q = (els.xrefsSearchInput ? els.xrefsSearchInput.value : "").trim().toLowerCase();
+  const minVotes = els.xrefsVoteFilter ? parseInt(els.xrefsVoteFilter.value, 10) || 0 : 0;
+  const selectedVerse = activeXrefsVerse;
+
+  const targetVerses = selectedVerse
+    ? currentPassage.verses.filter((v) => String(v.verse) === selectedVerse)
+    : currentPassage.verses;
+
+  const allCurated = [];
+  const allCanonical = [];
+
+  for (const v of targetVerses) {
+    if (v.curated_xrefs) {
+      for (const cx of v.curated_xrefs) {
+        allCurated.push({ ...cx, from_verse: v.verse });
+      }
+    }
+    if (v.cross_references) {
+      for (const rx of v.cross_references) {
+        allCanonical.push({ ...rx, from_verse: v.verse });
+      }
+    }
+  }
+
+  // Filter curated
+  const filteredCurated = allCurated.filter((cx) => {
+    if (!q) return true;
+    const hay = `${cx.display_target} ${cx.type_label} ${cx.note || ""} ${cx.target}`.toLowerCase();
+    return hay.includes(q);
+  });
+
+  // Filter canonical
+  const filteredCanonical = allCanonical.filter((rx) => {
+    if (rx.votes < minVotes) return false;
+    if (!q) return true;
+    const hay = `${rx.to_ref} ${rx.preview_text || ""}`.toLowerCase();
+    return hay.includes(q);
+  });
+
+  // Render Curated (Layer A)
+  if (els.xrefsCuratedList && els.xrefsCuratedSection) {
+    els.xrefsCuratedList.innerHTML = "";
+    if (filteredCurated.length > 0) {
+      els.xrefsCuratedSection.hidden = false;
+      if (els.xrefsCuratedCount) els.xrefsCuratedCount.textContent = `(${filteredCurated.length})`;
+      for (const cx of filteredCurated) {
+        const card = document.createElement("div");
+        card.className = "xref-card xref-curated-card";
+        const isMulti = !selectedVerse && currentPassage.verses.length > 1;
+        const isEgw = cx.type === "xref/spirit-prophecy" || /^[A-Z0-9]+\.\d+/.test(cx.nav_ref || cx.target);
+
+        card.innerHTML = `
+          <div class="xref-card-header">
+            ${isMulti ? `<span class="xref-card-verse">v. ${cx.from_verse}</span>` : ""}
+            <span class="xref-card-tag">${escapeHtml(cx.type_label || "Thematic Link")}</span>
+            <button type="button" class="xref-target-chip" data-nav="${escapeHtml(cx.nav_ref || cx.target)}" ${isEgw ? 'data-is-egw="true"' : ""} title="Jump to ${escapeHtml(cx.display_target)}">
+              <span>📖</span>
+              <span>${escapeHtml(cx.display_target)}</span>
+            </button>
+          </div>
+          ${cx.note ? `<div class="xref-card-note">${escapeHtml(cx.note)}</div>` : ""}
+        `;
+
+        els.xrefsCuratedList.appendChild(card);
+      }
+    } else {
+      els.xrefsCuratedSection.hidden = true;
+    }
+  }
+
+  // Render Canonical (Layer B - TSK)
+  if (els.xrefsCanonicalList && els.xrefsCanonicalSection) {
+    els.xrefsCanonicalList.innerHTML = "";
+    if (filteredCanonical.length > 0) {
+      els.xrefsCanonicalSection.hidden = false;
+      if (els.xrefsCanonicalCount) els.xrefsCanonicalCount.textContent = `(${filteredCanonical.length})`;
+      for (const rx of filteredCanonical) {
+        const card = document.createElement("div");
+        card.className = "xref-card xref-canonical-card";
+        const isMulti = !selectedVerse && currentPassage.verses.length > 1;
+
+        card.innerHTML = `
+          <div class="xref-card-header">
+            ${isMulti ? `<span class="xref-card-verse">v. ${rx.from_verse}</span>` : ""}
+            <button type="button" class="xref-target-chip" data-nav="${escapeHtml(rx.to_ref)}" title="Jump to ${escapeHtml(rx.to_ref)}">
+              <span>➔</span>
+              <span>${escapeHtml(rx.to_ref)}</span>
+            </button>
+            <span class="xref-votes-pill" title="${rx.votes} cross-reference citations">★ ${rx.votes}</span>
+          </div>
+          ${rx.preview_text ? `<div class="xref-snippet">${escapeHtml(rx.preview_text)}</div>` : ""}
+        `;
+
+        els.xrefsCanonicalList.appendChild(card);
+      }
+    } else {
+      els.xrefsCanonicalSection.hidden = true;
+    }
+  }
+
+  // Update total count badge & empty state
+  const totalShown = filteredCurated.length + filteredCanonical.length;
+  if (els.xrefsCountBadge) {
+    els.xrefsCountBadge.textContent = `${totalShown} reference${totalShown === 1 ? "" : "s"}`;
+  }
+
+  if (els.xrefsEmptyState) {
+    els.xrefsEmptyState.hidden = totalShown > 0;
+    if (els.xrefsEmptyMessage) {
+      if (q || minVotes > 0) {
+        els.xrefsEmptyMessage.textContent = "No cross references match the active filters.";
+      } else {
+        els.xrefsEmptyMessage.textContent = "No cross references available for this passage.";
+      }
+    }
+  }
+}
+
 initPaneResizer();
 initFocusAndZoomModes();
 initAutoUpdate();
@@ -2898,6 +3157,7 @@ initSettingsModal();
 initProphecyWorkstation();
 initSanctuaryWorkstation();
 initCommentaryWorkstation();
+initCrossReferencesWorkstation();
 initBookDropzone();
 let setupCompleted = false;
 try {

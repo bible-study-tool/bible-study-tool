@@ -219,6 +219,7 @@ class HelpModal(ModalScreen[None]):
 | **`t`** | Cycle color themes (Transparent, Dracula, Catppuccin, etc.) |
 | **`f`** | Toggle Focus Mode (full-width Scripture reader) |
 | **`1 - 5`** | Jump directly to Inspector tabs (Syntax, Lexicon, EGW, Parallel, Search) |
+| **`6` / `x`** | Jump to Cross-References (Layer A Curated + Layer B TSK) |
 | **`Tab`** | Toggle focus between Reader and Inspector panes |
 | **`?`** | Open this help screen |
 | **`q`** | Quit application |
@@ -266,6 +267,8 @@ class BibleStudyApp(App):
         Binding("3", "tab_commentary", "3:EGW", show=False),
         Binding("4", "tab_parallel", "4:Parallel", show=False),
         Binding("5", "tab_search", "5:Search", show=False),
+        Binding("6", "tab_xrefs", "6:XRefs", show=False),
+        Binding("x", "tab_xrefs", "XRefs", show=True),
         Binding("question_mark", "show_help", "Help", show=True),
     ]
 
@@ -286,7 +289,7 @@ class BibleStudyApp(App):
         self.show_parallel: bool = False
         self.focus_mode: bool = False
         self.verse_widgets: List[VerseWidget] = []
-        self._dirty_tabs: set[str] = {"tab-syntax", "tab-lexicon", "tab-commentary", "tab-parallel"}
+        self._dirty_tabs: set[str] = {"tab-syntax", "tab-lexicon", "tab-commentary", "tab-parallel", "tab-xrefs"}
         self._active_egw_citation: Optional[dict[str, Any]] = None
 
     def compose(self) -> ComposeResult:
@@ -311,6 +314,9 @@ class BibleStudyApp(App):
                     with TabPane("5: Search Findings", id="tab-search"):
                         with VerticalScroll(id="search-content"):
                             yield Static(id="search-body")
+                    with TabPane("6: Cross-Refs", id="tab-xrefs"):
+                        with VerticalScroll(id="xrefs-content"):
+                            yield Static(id="xrefs-body")
         yield Footer()
 
     def on_mount(self) -> None:
@@ -380,7 +386,7 @@ class BibleStudyApp(App):
 
         self._update_selection_visuals()
         self._scroll_to_selected()
-        self._dirty_tabs = {"tab-syntax", "tab-lexicon", "tab-commentary", "tab-parallel"}
+        self._dirty_tabs = {"tab-syntax", "tab-lexicon", "tab-commentary", "tab-parallel", "tab-xrefs"}
         self._render_active_tab()
 
     def _update_selection_visuals(self, previous_idx: Optional[int] = None) -> None:
@@ -441,6 +447,9 @@ class BibleStudyApp(App):
         elif active_tab == "tab-parallel":
             self._update_parallel_viewport()
             self._dirty_tabs.discard("tab-parallel")
+        elif active_tab == "tab-xrefs":
+            self._update_xrefs_viewport()
+            self._dirty_tabs.discard("tab-xrefs")
 
     def _update_commentary(self) -> None:
         """Backward-compatible commentary update: marks commentary dirty and renders if active."""
@@ -569,16 +578,71 @@ class BibleStudyApp(App):
         parallel_body.update(rendered)
         self.query_one("#parallel-content", VerticalScroll).scroll_home(animate=False)
 
+    def _render_xrefs_content(self, v: VerseStudy) -> str:
+        """Format cross-references for active verse (Layer A curated + Layer B TSK)."""
+        lines: list[str] = []
+        pin_tag = " [PINNED]" if self.pinned_verse_idx is not None else ""
+        lines.append(f"[bold cyan]CROSS-REFERENCES — {v.osis}{pin_tag}[/bold cyan]\n")
+
+        has_content = False
+
+        # 1. Layer A: Curated Thematic & Theological Connections
+        if v.curated_xrefs:
+            has_content = True
+            lines.append(f"[bold yellow]THEMATIC & THEOLOGICAL CONNECTIONS (Layer A — {len(v.curated_xrefs)} entries):[/bold yellow]")
+            for cx in v.curated_xrefs:
+                type_lbl = cx.get("type_label") or "Cross Reference"
+                disp = cx.get("display_target") or cx.get("target") or ""
+                lines.append(f"  [bold green]• {escape(type_lbl)}:[/bold green] [bold white]{escape(disp)}[/bold white]")
+                note = cx.get("note")
+                if note:
+                    lines.append(f"    [dim]{escape(note)}[/dim]")
+            lines.append("")
+
+        # 2. Layer B: Treasury of Scripture Knowledge (TSK)
+        if v.cross_references:
+            has_content = True
+            lines.append(f"[bold yellow]TREASURY OF SCRIPTURE KNOWLEDGE (Layer B — {len(v.cross_references)} citations):[/bold yellow]")
+            for rx in v.cross_references:
+                to_ref = rx.get("to_ref", "")
+                votes = rx.get("votes", 0)
+                preview = rx.get("preview_text", "")
+                lines.append(f"  [bold cyan]{escape(to_ref)}[/bold cyan] [dim](★ {votes})[/dim]")
+                if preview:
+                    lines.append(f"    [dim italic]{escape(preview)}[/dim italic]")
+            lines.append("")
+
+        if not has_content:
+            lines.append("[dim]No cross references available for this verse.[/dim]\n")
+
+        lines.append("[dim]────────────────────────────────────────[/dim]")
+        lines.append("[dim]Press \\[x\\] again to jump directly to the top cross-reference.[/dim]")
+        return "\n".join(lines)
+
+    def _update_xrefs_viewport(self) -> None:
+        """Update Cross-References Tab."""
+        v = self._get_inspected_verse()
+        xrefs_body = self.query_one("#xrefs-body", Static)
+        if not v:
+            xrefs_body.update("[dim]No verse selected.[/dim]")
+            return
+
+        rendered = self._render_xrefs_content(v)
+        xrefs_body.update(rendered)
+        self.query_one("#xrefs-content", VerticalScroll).scroll_home(animate=False)
+
     def _update_inspector(self, force_all: bool = False) -> None:
         """Update inspector views: marks tabs dirty and updates viewports without DOM thrashing."""
-        self._dirty_tabs.update({"tab-syntax", "tab-lexicon", "tab-parallel"})
+        self._dirty_tabs.update({"tab-syntax", "tab-lexicon", "tab-parallel", "tab-xrefs"})
         if force_all:
             self._update_syntax_viewport()
             self._update_lexicon_viewport()
             self._update_parallel_viewport()
+            self._update_xrefs_viewport()
             self._dirty_tabs.discard("tab-syntax")
             self._dirty_tabs.discard("tab-lexicon")
             self._dirty_tabs.discard("tab-parallel")
+            self._dirty_tabs.discard("tab-xrefs")
         else:
             self._render_active_tab()
 
@@ -1044,6 +1108,31 @@ class BibleStudyApp(App):
 
     def action_tab_search(self) -> None:
         self._switch_tab("tab-search")
+
+    def action_tab_xrefs(self) -> None:
+        tabs = self.query_one("#inspector-tabs", TabbedContent)
+        if tabs.active == "tab-xrefs":
+            v = self._get_inspected_verse()
+            if v and v.curated_xrefs:
+                top_cx = v.curated_xrefs[0]
+                top_nav = top_cx.get("nav_ref") or top_cx.get("target")
+                if top_nav:
+                    from search.linking.egw import is_egw_token
+                    if is_egw_token(top_nav):
+                        self.notify(f"Opening commentary: {top_nav}", markup=False)
+                        self.load_egw_citation_async(top_nav)
+                        self.action_tab_commentary()
+                        return
+                    self.notify(f"Navigating to thematic link: {top_nav}", markup=False)
+                    self.load_passage_async(top_nav)
+                    return
+            elif v and v.cross_references:
+                top_ref = v.cross_references[0].get("to_ref")
+                if top_ref:
+                    self.notify(f"Navigating to cross-reference: {top_ref}", markup=False)
+                    self.load_passage_async(top_ref)
+                    return
+        self._switch_tab("tab-xrefs")
 
     def action_show_help(self) -> None:
         self.push_screen(HelpModal())

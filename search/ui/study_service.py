@@ -54,7 +54,8 @@ from search.corpus.sanctuary import (
     get_sanctuary_engine,
 )
 from search.linking.egw import EgwDB, DEFAULT_EGW_DB, is_egw_token, normalize_token
-from search.resource import data_path, get_lexicons_dir, lexicon_path
+from search.linking.loader import _parse_frontmatter
+from search.resource import data_path, get_lexicons_dir, get_repo_root, lexicon_path
 
 from rich.markup import escape
 
@@ -223,6 +224,7 @@ class VerseStudy:
     prophetic_symbols: list[AnnotatedPropheticSymbol] = field(default_factory=list)
     sanctuary_stations: list[AnnotatedSanctuaryStation] = field(default_factory=list)
     cross_references: list[dict[str, Any]] = field(default_factory=list)
+    curated_xrefs: list[dict[str, Any]] = field(default_factory=list)
 
 
 
@@ -333,6 +335,7 @@ class StudyService:
         self._word_cache: dict[str, WordStudyResult] = {}
         self._verse_frame_cache: dict[str, dict[str, Any]] = {}
         self._verse_nuance_cache: dict[str, list[GrammarNuance]] = {}
+        self._curated_xrefs_cache: dict[str, list[dict[str, Any]]] = {}
         self._lock = threading.RLock()
 
     def _load_tbes_file(self, path: Path) -> tuple[dict[str, str], dict[str, list[dict[str, Any]]]]:
@@ -469,6 +472,7 @@ class StudyService:
                     if self.bible_db
                     else []
                 )
+                v_curated = self.get_curated_cross_references(verse_id)
 
                 verse_studies.append(
                     VerseStudy(
@@ -488,6 +492,7 @@ class StudyService:
                         prophetic_symbols=v_prophetic,
                         sanctuary_stations=v_sanctuary,
                         cross_references=v_xrefs,
+                        curated_xrefs=v_curated,
                     )
                 )
 
@@ -1108,6 +1113,138 @@ class StudyService:
         if not self.bible_db:
             return []
         return self.bible_db.get_cross_references(verse_ref, limit=limit, min_votes=min_votes)
+
+    @staticmethod
+    def _format_curated_target(target: str) -> tuple[str, str]:
+        """Format curated target string into human display title and navigable reference."""
+        t = target.replace("-kjv", "").replace("-hebrew", "").replace("-lxx", "")
+        egw_map = {
+            "pat": ("Patriarchs and Prophets", "PP"),
+            "des": ("The Desire of Ages", "DA"),
+            "gc": ("The Great Controversy", "GC"),
+            "aa": ("The Acts of the Apostles", "AA"),
+            "pk": ("Prophets and Kings", "PK"),
+            "sc": ("Steps to Christ", "SC"),
+            "col": ("Christ's Object Lessons", "COL"),
+            "mb": ("Thoughts from the Mount of Blessing", "MB"),
+        }
+        parts = t.split("-")
+        if parts[0] in egw_map and len(parts) >= 2:
+            title, code = egw_map[parts[0]]
+            loc = ".".join(parts[1:])
+            return f"{title} {loc}", f"{code}.{loc}"
+
+        m = re.match(r"^([1-3]?[a-z]+)-(\d+)-(\d+)(?:-(\d+))?$", t)
+        if m:
+            b_raw, ch, v1, v2 = m.group(1), m.group(2), m.group(3), m.group(4)
+            try:
+                osis = resolve_book_code(b_raw)
+                name = BIBLE_BOOKS[osis].name if osis in BIBLE_BOOKS else osis
+                if v2:
+                    return f"{name} {ch}:{v1}–{v2}", f"{osis} {ch}:{v1}"
+                return f"{name} {ch}:{v1}", f"{osis} {ch}:{v1}"
+            except ValueError:
+                pass
+
+        return target, target
+
+    @staticmethod
+    def _format_xref_type_label(xref_type: str) -> str:
+        """Format raw YAML xref type into clean human label."""
+        labels = {
+            "xref/fulfillment": "Prophetic Fulfillment",
+            "xref/theme": "Thematic Link",
+            "xref/parallel": "Parallel Passage",
+            "xref/spirit-prophecy": "Spirit of Prophecy",
+            "xref/typology": "Sanctuary / Typology",
+        }
+        return labels.get(xref_type, "Cross Reference")
+
+    def get_curated_cross_references(self, verse_ref: str) -> list[dict[str, Any]]:
+        """Retrieve curated thematic/theological cross references (Layer A) from materials/bible/."""
+        if not verse_ref:
+            return []
+        try:
+            osis, ch, v1, _ = parse_passage_ref(verse_ref)
+        except ValueError:
+            return []
+        v_num = v1 if v1 is not None else 1
+        canonical_id = f"{osis}.{ch}.{v_num}"
+
+        with self._lock:
+            if canonical_id in self._curated_xrefs_cache:
+                return self._curated_xrefs_cache[canonical_id]
+
+        book_info = BIBLE_BOOKS.get(osis)
+        if not book_info:
+            return []
+        division = "ot" if book_info.testament == "OT" else "nt"
+        book_folder = book_info.name.lower().replace(" ", "-")
+
+        root = Path(get_repo_root())
+        ch_folder = f"{ch:02d}"
+        target_dir = root / "materials" / "bible" / division / book_folder / ch_folder
+        if not target_dir.is_dir():
+            with self._lock:
+                self._curated_xrefs_cache[canonical_id] = []
+            return []
+
+        prefix = f"{osis.lower()}-{ch}-{v_num}-"
+        match_file = next(
+            (p for p in target_dir.glob("*.md") if p.name.lower().startswith(prefix)),
+            None,
+        )
+        if not match_file or not match_file.is_file():
+            with self._lock:
+                self._curated_xrefs_cache[canonical_id] = []
+            return []
+
+        try:
+            content = match_file.read_text(encoding="utf-8")
+            fm, _ = _parse_frontmatter(content)
+            raw_xrefs = fm.get("cross_references", [])
+            results: list[dict[str, Any]] = []
+            for rx in raw_xrefs:
+                if isinstance(rx, dict):
+                    t_val = rx.get("target", "")
+                    display_t, nav_t = self._format_curated_target(t_val)
+                    results.append({
+                        "type": rx.get("type", "xref/general"),
+                        "type_label": self._format_xref_type_label(rx.get("type", "")),
+                        "target": t_val,
+                        "display_target": display_t,
+                        "nav_ref": nav_t,
+                        "note": rx.get("note", ""),
+                    })
+            with self._lock:
+                self._curated_xrefs_cache[canonical_id] = results
+            return results
+        except Exception:
+            return []
+
+    def get_cross_reference_bundle(
+        self,
+        verse_ref: str,
+        limit: int = 25,
+        min_votes: int = 0,
+    ) -> dict[str, Any]:
+        """Fetch unified cross-reference bundle containing Layer A (curated) and Layer B (TSK)."""
+        try:
+            osis, ch, v1, _ = parse_passage_ref(verse_ref)
+            v_num = v1 if v1 is not None else 1
+            canonical_ref = f"{osis}.{ch}.{v_num}"
+        except ValueError:
+            canonical_ref = verse_ref
+
+        curated = self.get_curated_cross_references(verse_ref)
+        canonical = self.get_verse_cross_references(verse_ref, limit=limit, min_votes=min_votes)
+        return {
+            "verse": canonical_ref,
+            "curated": curated,
+            "canonical": canonical,
+            "count_curated": len(curated),
+            "count_canonical": len(canonical),
+        }
 
     def ensure_egw_db(self) -> EgwDB:
         """Ensure an active EgwDB instance is connected, initializing the database if needed."""

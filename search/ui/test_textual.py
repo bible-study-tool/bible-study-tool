@@ -281,6 +281,9 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             app.action_tab_syntax()
             self.assertEqual(tabs.active, "tab-syntax")
 
+            app.action_tab_xrefs()
+            self.assertEqual(tabs.active, "tab-xrefs")
+
             # Execute search
             worker = app.execute_search_async("sanctuary")
             await worker.wait()
@@ -577,6 +580,36 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
             app.action_tab_search()
             await pilot.pause()
             self.assertEqual(tabs.active, "tab-search")
+
+    async def test_tab_xrefs_rendering_and_navigation(self):
+        """Verify Tab 6 (Cross-Refs) displays Layer A curated and Layer B TSK references."""
+        app = BibleStudyApp(initial_ref="Gen 1:1-3")
+        async with app.run_test() as pilot:
+            await _wait_until_ready(app, pilot)
+            tabs = app.query_one("#inspector-tabs", TabbedContent)
+
+            # Switch to tab-xrefs via key '6' or 'x' action
+            app.action_tab_xrefs()
+            await pilot.pause()
+            self.assertEqual(tabs.active, "tab-xrefs")
+            self.assertNotIn("tab-xrefs", app._dirty_tabs)
+
+            xrefs_body = app.query_one("#xrefs-body", Static)
+            body_text = _extract_text(xrefs_body)
+            self.assertIn("CROSS-REFERENCES", body_text)
+            self.assertIn("TREASURY OF SCRIPTURE KNOWLEDGE", body_text)
+
+            # Stepping verse marks inactive tab-xrefs dirty
+            app.action_tab_syntax()
+            await pilot.pause()
+            app.action_next_verse()
+            await pilot.pause()
+            self.assertIn("tab-xrefs", app._dirty_tabs)
+
+            # Switching back re-renders and marks clean
+            app.action_tab_xrefs()
+            await pilot.pause()
+            self.assertNotIn("tab-xrefs", app._dirty_tabs)
 
     async def test_reader_pane_discourse_badges(self):
         """Verify verse widget in reader pane displays discourse logic badges."""

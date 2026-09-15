@@ -216,6 +216,31 @@ class WebServerTests(unittest.TestCase):
         self.assertIn('id="commentary-next-ch-btn"', html)
         self.assertIn('id="commentary-reader-zoom-btn"', html)
 
+    def test_cross_references_workstation_dom_integration(self) -> None:
+        status, body, _ = self._get("/")
+        self.assertEqual(status, 200)
+        html = body.decode("utf-8")
+        # Tab and panel (with ARIA relationship attributes)
+        self.assertIn('id="tab-xrefs"', html)
+        self.assertIn('aria-controls="panel-xrefs"', html)
+        self.assertIn('id="panel-xrefs"', html)
+        self.assertIn('aria-labelledby="tab-xrefs"', html)
+        # Toolbar controls
+        self.assertIn('id="xrefs-verse-select"', html)
+        self.assertIn('id="xrefs-search-input"', html)
+        self.assertIn('id="xrefs-vote-filter"', html)
+        self.assertIn('id="xrefs-reset-btn"', html)
+        self.assertIn('id="xrefs-count-badge"', html)
+        self.assertIn('id="xrefs-zoom-btn"', html)
+        # Workstation sections
+        self.assertIn('id="xrefs-curated-section"', html)
+        self.assertIn('id="xrefs-curated-list"', html)
+        self.assertIn('id="xrefs-canonical-section"', html)
+        self.assertIn('id="xrefs-canonical-list"', html)
+        self.assertIn('id="xrefs-empty-state"', html)
+        # Shortcuts guide updated with x key
+        self.assertIn("Cross-Refs", html)
+
     def test_head_request_supported(self) -> None:
         req = urllib.request.Request(self.base + "/", method="HEAD")
         with urllib.request.urlopen(req, timeout=15) as res:
@@ -288,6 +313,15 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"target-paragraph", body)
         self.assertIn(b"reader-page-break", body)
         self.assertIn(b"reader-page-label", body)
+        # Cross-References & TSK styling assertions (WP-036)
+        self.assertIn(b"verse-xref-badge", body)
+        self.assertIn(b"xrefs-toolbar", body)
+        self.assertIn(b"xrefs-workspace", body)
+        self.assertIn(b"xref-card", body)
+        self.assertIn(b"xref-curated-card", body)
+        self.assertIn(b"xref-canonical-card", body)
+        self.assertIn(b"xref-target-chip", body)
+        self.assertIn(b"xref-votes-pill", body)
         # Dropzone styling assertions
         self.assertIn(b"dropzone", body)
         self.assertIn(b"dropzone-inner", body)
@@ -396,6 +430,18 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"createStrongsTag", body)
         self.assertIn(b"settingsBookDropzone", body)
         self.assertIn(b"settingsImportStatus", body)
+        # Cross-References JS assertions (WP-036)
+        self.assertIn(b"renderCrossReferences", body)
+        self.assertIn(b"selectVerseXrefs", body)
+        self.assertIn(b"initCrossReferencesWorkstation", body)
+        self.assertIn(b"filterAndRenderCrossReferences", body)
+        self.assertIn(b"verse-xref-badge", body)
+        # EGW routing uses the correct function (not the removed openCommentaryToken)
+        self.assertIn(b"openCommentaryChapterByToken", body)
+        self.assertNotIn(b"openCommentaryToken(", body)
+        # Event delegation on workspace container (not per-card listeners)
+        self.assertIn(b"xrefsWorkspace", body)
+        self.assertIn(b"data-is-egw", body)
 
     def test_traversal_blocked(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:
@@ -413,6 +459,7 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(data["prophetic_url"], "/api/prophetic")
         self.assertEqual(data["sanctuary_url"], "/api/sanctuary")
         self.assertEqual(data["commentary_url"], "/api/commentary")
+        self.assertEqual(data["xrefs_url"], "/api/xrefs")
         self.assertEqual(data["import_books_url"], "/api/import-books")
         self.assertIn("verify_bundle_url", data)
         self.assertIn("egw_available", data)
@@ -919,6 +966,49 @@ class WebServerTests(unittest.TestCase):
         )
         self.assertEqual(data["status"], "ok")
         self.assertTrue(any("Dangerous path" in r.get("error", "") for r in data["results"]))
+
+    def test_xrefs_endpoint_valid_verse(self) -> None:
+        data = self._get_json("/api/xrefs?verse=Gen%201:1&limit=10")
+        self.assertEqual(data["verse"], "Gen.1.1")
+        self.assertIn("curated", data)
+        self.assertIn("canonical", data)
+        self.assertGreaterEqual(data["count_canonical"], 1)
+        canonical = data["canonical"]
+        self.assertLessEqual(len(canonical), 10)
+        c0 = canonical[0]
+        self.assertIn("to_verse", c0)
+        self.assertIn("to_ref", c0)
+        self.assertIn("votes", c0)
+        self.assertIn("preview", c0)
+        self.assertIn("preview_text", c0)
+        self.assertGreaterEqual(c0["votes"], 1)
+
+    def test_xrefs_endpoint_missing_param_is_400(self) -> None:
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._get("/api/xrefs")
+        self.assertEqual(ctx.exception.code, 400)
+
+    def test_xrefs_endpoint_with_min_votes(self) -> None:
+        data = self._get_json("/api/xrefs?verse=Gen%201:1&min_votes=50")
+        self.assertEqual(data["verse"], "Gen.1.1")
+        for item in data["canonical"]:
+            self.assertGreaterEqual(item["votes"], 50)
+
+    def test_xrefs_endpoint_with_limit(self) -> None:
+        data = self._get_json("/api/xrefs?verse=Gen%201:1&limit=3")
+        self.assertLessEqual(len(data["canonical"]), 3)
+
+    def test_passage_endpoint_cross_references_payload(self) -> None:
+        data = self._get_json("/api/passage?ref=Genesis%201:1-2&eager=1")
+        self.assertIn("verses", data)
+        v0 = data["verses"][0]
+        self.assertIn("cross_references", v0)
+        self.assertIn("curated_xrefs", v0)
+        self.assertGreaterEqual(len(v0["cross_references"]), 1)
+        top_xref = v0["cross_references"][0]
+        self.assertIn("to_ref", top_xref)
+        self.assertIn("votes", top_xref)
+        self.assertIn("preview_text", top_xref)
 
 
 class WebServerModuleTests(unittest.TestCase):

@@ -53,6 +53,7 @@
         <div class="tab-list" role="tablist" aria-label="Study panels">
           <button class="tab" role="tab" aria-selected="true" data-tab="translations" title="Translations (double-click to maximize)">Translations</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="languages" title="Languages (double-click to maximize)">Languages</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="xrefs" id="tab-xrefs" aria-controls="panel-xrefs" title="Cross References &amp; Treasury of Scripture Knowledge (double-click to maximize)">Cross-Refs</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="prophecy" title="Prophetic Lexicon (double-click to maximize)">Prophecy</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="sanctuary" title="Sanctuary Blueprint (double-click to maximize)">Sanctuary</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="commentary" id="tab-commentary" title="Spirit of Prophecy Commentary (double-click to maximize)">Commentary</button>
@@ -66,6 +67,58 @@
       </section>
       <section class="tab-body" id="panel-languages" role="tabpanel" tabindex="-1" hidden>
         <p class="tab-hint">Original-language framing (Hebrew / Greek) lands here in a later phase.</p>
+      </section>
+      <section class="tab-body" id="panel-xrefs" role="tabpanel" aria-labelledby="tab-xrefs" tabindex="-1" hidden>
+        <div class="xrefs-toolbar">
+          <div class="xrefs-verse-picker">
+            <select id="xrefs-verse-select" class="xrefs-select" aria-label="Select verse for cross references">
+              <option value="">All Verses in Passage</option>
+            </select>
+          </div>
+          <div class="xrefs-search-box">
+            <input type="search" id="xrefs-search-input" class="xrefs-search-input" placeholder="Filter references by book, ref, or snippet..." aria-label="Filter cross references">
+          </div>
+          <div class="xrefs-filters">
+            <select id="xrefs-vote-filter" class="xrefs-select" aria-label="Filter by vote relevance">
+              <option value="0">All Votes</option>
+              <option value="5">5+ Votes</option>
+              <option value="10">10+ Votes</option>
+              <option value="25">25+ Votes</option>
+              <option value="50">50+ Votes</option>
+            </select>
+            <button type="button" id="xrefs-reset-btn" class="btn btn-secondary btn-xrefs-reset" title="Reset cross-reference filters">Reset</button>
+          </div>
+          <div class="xrefs-meta">
+            <span id="xrefs-count-badge" class="xrefs-count-badge" aria-live="polite">0 references</span>
+            <button type="button" id="xrefs-zoom-btn" class="btn-xrefs-zoom" title="Double click tab or press z to maximize" aria-label="Maximize panel">⤢</button>
+          </div>
+        </div>
+
+        <div class="xrefs-workspace" id="xrefs-workspace">
+          <!-- Layer A: Curated Theological & Thematic Links -->
+          <div class="xrefs-section" id="xrefs-curated-section">
+            <h3 class="xrefs-section-title">
+              <span class="xrefs-section-badge-a">Layer A</span>
+              Thematic &amp; Theological Connections
+              <span class="xrefs-section-count" id="xrefs-curated-count"></span>
+            </h3>
+            <div class="xrefs-cards-list" id="xrefs-curated-list"></div>
+          </div>
+
+          <!-- Layer B: Treasury of Scripture Knowledge -->
+          <div class="xrefs-section" id="xrefs-canonical-section">
+            <h3 class="xrefs-section-title">
+              <span class="xrefs-section-badge-b">Layer B</span>
+              Treasury of Scripture Knowledge (TSK)
+              <span class="xrefs-section-count" id="xrefs-canonical-count"></span>
+            </h3>
+            <div class="xrefs-cards-list" id="xrefs-canonical-list"></div>
+          </div>
+
+          <div class="xrefs-empty-state" id="xrefs-empty-state" hidden>
+            <p class="tab-hint" id="xrefs-empty-message">No cross references found matching the active filters.</p>
+          </div>
+        </div>
       </section>
       <section class="tab-body" id="panel-prophecy" role="tabpanel" tabindex="-1" hidden>
         <div class="prophecy-toolbar">
@@ -538,7 +591,8 @@
             <tr><td><kbd>j</kbd> / <kbd>k</kbd> or <kbd>&darr;</kbd> / <kbd>&uarr;</kbd></td><td>Move to next / previous verse</td></tr>
             <tr><td><kbd>Space</kbd> / <kbd>Enter</kbd></td><td>Pin / inspect selected verse</td></tr>
             <tr><td><kbd>g</kbd> or <kbd>/</kbd> or <kbd>Ctrl+P</kbd></td><td>Jump to passage / focus search</td></tr>
-            <tr><td><kbd>1</kbd> &ndash; <kbd>6</kbd></td><td>Switch side tabs (1: Translations, 2: Languages, 3: Prophecy, 4: Sanctuary, 5: Commentary, 6: Notes)</td></tr>
+            <tr><td><kbd>1</kbd> &ndash; <kbd>7</kbd></td><td>Switch side tabs (1: Translations, 2: Languages, 3: Cross-Refs, 4: Prophecy, 5: Sanctuary, 6: Commentary, 7: Notes)</td></tr>
+            <tr><td><kbd>x</kbd></td><td>Jump to Cross-References workstation</td></tr>
             <tr><td><kbd>f</kbd></td><td>Toggle Scripture Focus Mode (full-width text)</td></tr>
             <tr><td><kbd>z</kbd> / <kbd>Shift+F</kbd></td><td>Toggle Panel Zoom (maximize active pane)</td></tr>
             <tr><td><kbd>s</kbd></td><td>Toggle inline Strong's concordance numbers</td></tr>

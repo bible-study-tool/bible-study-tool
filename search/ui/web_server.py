@@ -114,6 +114,8 @@ def _verse_payload(verse: Any) -> dict[str, Any]:
         payload["sanctuary_stations"] = _jsonable(verse.sanctuary_stations)
     if getattr(verse, "cross_references", None):
         payload["cross_references"] = _jsonable(verse.cross_references)
+    if getattr(verse, "curated_xrefs", None):
+        payload["curated_xrefs"] = _jsonable(verse.curated_xrefs)
     return payload
 
 
@@ -216,6 +218,8 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 self._api_sanctuary(query)
             elif path == "/api/commentary":
                 self._api_commentary(query)
+            elif path == "/api/xrefs":
+                self._api_xrefs(query)
             elif path == "/api/import-books":
                 self._api_import_books_status()
             elif path.startswith("/api/"):
@@ -255,6 +259,7 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "prophetic_url": "/api/prophetic",
                 "sanctuary_url": "/api/sanctuary",
                 "commentary_url": "/api/commentary",
+                "xrefs_url": "/api/xrefs",
                 "verify_bundle_url": "/api/verify-bundle",
                 "import_books_url": "/api/import-books",
                 "egw_available": has_egw,
@@ -537,6 +542,29 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 return
 
             self._reply_error(HTTPStatus.BAD_REQUEST, "missing 'ref', 'token', or 'book'+'chapter' parameters")
+
+        def _api_xrefs(self, query: dict[str, list[str]]) -> None:
+            raw_ref = query.get("verse", [None])[0] or query.get("ref", [None])[0]
+            if not raw_ref or not raw_ref.strip():
+                self._reply_error(HTTPStatus.BAD_REQUEST, "missing 'verse' or 'ref' query parameter")
+                return
+
+            limit_raw = query.get("limit", ["25"])[0]
+            try:
+                limit = max(1, min(100, int(limit_raw)))
+            except ValueError:
+                limit = 25
+
+            min_votes_raw = query.get("min_votes", ["0"])[0]
+            try:
+                min_votes = max(0, int(min_votes_raw))
+            except ValueError:
+                min_votes = 0
+
+            bundle = study.get_cross_reference_bundle(
+                raw_ref.strip(), limit=limit, min_votes=min_votes
+            )
+            self._reply_json(HTTPStatus.OK, _jsonable(bundle))
 
         def _api_import_books_status(self) -> None:
             stats = study.get_egw_stats()

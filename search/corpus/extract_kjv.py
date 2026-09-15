@@ -622,10 +622,13 @@ class BibleDB:
             for r in rows:
                 to_ref = r["to_verse"]
                 preview_ref = to_ref.split("-")[0]
+                prev_text = preview_map.get(preview_ref, "")
                 results.append({
                     "to_verse": to_ref,
+                    "to_ref": to_ref,
                     "votes": r["votes"],
-                    "preview": preview_map.get(preview_ref, ""),
+                    "preview": prev_text,
+                    "preview_text": prev_text,
                 })
             return results
         except sqlite3.OperationalError:
