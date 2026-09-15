@@ -92,9 +92,16 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b'id="prophecy-category-filter"', body)
         self.assertIn(b'id="prophecy-book-filter"', body)
         self.assertIn(b'id="book-dropzone"', body)
-        self.assertIn(b'id="browse-books-btn"', body)
         self.assertIn(b'id="book-file-input"', body)
         self.assertIn(b'id="commentary-import-btn"', body)
+        self.assertIn(b'id="settings-modal"', body)
+        self.assertIn(b'id="shortcuts-modal"', body)
+        self.assertIn(b'id="settings-theme-select"', body)
+        self.assertIn(b'id="settings-zebra-toggle"', body)
+        self.assertIn(b'id="settings-strongs-toggle"', body)
+        self.assertIn(b'id="open-shortcuts-btn"', body)
+        self.assertIn(b'id="launch-wizard-btn"', body)
+        self.assertIn(b"shortcuts-table", body)
 
     def test_pane_divider_accessibility_attributes(self) -> None:
         status, body, _ = self._get("/")
@@ -286,6 +293,12 @@ class WebServerTests(unittest.TestCase):
         # Organic texture tokens (whisper-subtle desk and paper grain)
         self.assertIn(b"--desk-grain", body)
         self.assertIn(b"--paper-grain", body)
+        # Settings and Shortcuts modals styling
+        self.assertIn(b"settings-dialog", body)
+        self.assertIn(b"shortcuts-dialog", body)
+        self.assertIn(b"shortcuts-table", body)
+        self.assertIn(b"selected-verse", body)
+        self.assertIn(b"hide-strongs", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -293,6 +306,13 @@ class WebServerTests(unittest.TestCase):
         self.assertIn("javascript", ctype)
         self.assertIn(b"verifyBundle", body)
         self.assertIn(b"openWizard", body)
+        self.assertIn(b"initSettingsModal", body)
+        self.assertIn(b"openSettings", body)
+        self.assertIn(b"openShortcuts", body)
+        self.assertIn(b"selectNextVerse", body)
+        self.assertIn(b"selectPrevVerse", body)
+        self.assertIn(b"toggleStrongTags", body)
+        self.assertIn(b"cycleTheme", body)
         self.assertIn(b"initPaneResizer", body)
         self.assertIn(b"initFocusAndZoomModes", body)
         self.assertIn(b"initZebraShading", body)
@@ -343,6 +363,8 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"updateSanctuaryInContext", body)
         self.assertIn(b"currentSanctuaryPassageRef", body)
         self.assertIn(b"sanctuaryRequestId", body)
+        self.assertIn(b"prevPassageRef", body)
+        self.assertIn(b"nextPassageRef", body)
         self.assertIn(b"clearSanctuaryInContext", body)
         # Commentary JS assertions (WP-033 Phase 1 & 4)
         self.assertIn(b"commentaryPanel", body)
@@ -416,6 +438,12 @@ class WebServerTests(unittest.TestCase):
         self.assertIn("text", verse)
         self.assertEqual(verse["chapter"], 1)
         self.assertTrue(verse["text"].strip())
+        self.assertIsNone(data.get("prev_ref"))
+        self.assertEqual(data.get("next_ref"), "Gen 2")
+
+        data2 = self._get_json("/api/passage?ref=Genesis%202")
+        self.assertEqual(data2.get("prev_ref"), "Gen 1")
+        self.assertEqual(data2.get("next_ref"), "Gen 3")
 
     def test_passage_multi_verse_range(self) -> None:
         data = self._get_json("/api/passage?ref=Genesis%201:1-3")

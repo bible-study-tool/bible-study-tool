@@ -66,7 +66,8 @@ WEB_NATIVE_THEMES: dict[str, dict[str, str]] = {
 # render it against the local egw.db, but the web API stays copyright-light
 # (ADR-002/023) and its frontend does not render EGW yet.
 _PASSAGE_FIELDS = ("ref", "book_code", "book_name", "start_chapter",
-                   "start_verse", "end_chapter", "end_verse", "verses")
+                   "start_verse", "end_chapter", "end_verse", "verses",
+                   "prev_ref", "next_ref")
 
 
 def _jsonable(value: Any) -> Any:

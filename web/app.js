@@ -88,6 +88,18 @@ const els = {
   dropzoneStatus: $("#dropzone-status"),
   wizardSteps: document.querySelectorAll(".wizard-step"),
   stepIndicators: document.querySelectorAll(".step-indicator"),
+  settingsModal: $("#settings-modal"),
+  settingsCloseBtn: $("#settings-close-btn"),
+  settingsDoneBtn: $("#settings-done-btn"),
+  settingsThemeSelect: $("#settings-theme-select"),
+  settingsZebraToggle: $("#settings-zebra-toggle"),
+  settingsStrongsToggle: $("#settings-strongs-toggle"),
+  settingsAutoUpdateToggle: $("#settings-auto-update-toggle"),
+  openShortcutsBtn: $("#open-shortcuts-btn"),
+  launchWizardBtn: $("#launch-wizard-btn"),
+  shortcutsModal: $("#shortcuts-modal"),
+  shortcutsCloseBtn: $("#shortcuts-close-btn"),
+  shortcutsDoneBtn: $("#shortcuts-done-btn"),
 };
 
 /* ---- Theme management (design tokens via [data-theme], ADR-024 §4) ---- */
@@ -96,6 +108,10 @@ let themeCatalog = [];
 let currentWizardStep = 1;
 let egwAvailable = false;
 let egwStats = null;
+let currentPassage = null;
+let prevPassageRef = null;
+let nextPassageRef = null;
+let selectedVerseIdx = -1;
 
 async function loadThemes() {
   const data = await api("/api/health");
@@ -118,6 +134,15 @@ async function loadThemes() {
       els.theme.appendChild(opt);
     }
   }
+  if (els.settingsThemeSelect) {
+    els.settingsThemeSelect.innerHTML = "";
+    for (const t of themeCatalog) {
+      const opt = document.createElement("option");
+      opt.value = t.id;
+      opt.textContent = t.name;
+      els.settingsThemeSelect.appendChild(opt);
+    }
+  }
   if (!saved) {
     // Respect the OS preference on first visit; prefs win afterwards.
     setTheme(matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : defaultTheme);
@@ -133,7 +158,10 @@ function setTheme(id) {
     localStorage.setItem("abst.theme", id);
   } catch (_) {}
   if (els.theme) els.theme.value = id;
-  els.statusRight.textContent = `theme: ${id}`;
+  if (els.settingsThemeSelect) els.settingsThemeSelect.value = id;
+  const themeObj = themeCatalog.find((t) => t.id === id);
+  const themeLabel = themeObj ? themeObj.name : (id.charAt(0).toUpperCase() + id.slice(1));
+  if (els.statusRight) els.statusRight.textContent = `${themeLabel} · Press '?' for shortcuts`;
 }
 
 /* ---- tiny fetch helper ---- */
@@ -408,6 +436,18 @@ function renderVerse(v) {
 }
 
 function renderPassage(p) {
+  currentPassage = p;
+  selectedVerseIdx = -1;
+  prevPassageRef = p.prev_ref || null;
+  nextPassageRef = p.next_ref || null;
+  if (els.prev) {
+    els.prev.disabled = !prevPassageRef;
+    els.prev.title = prevPassageRef ? `Previous chapter: ${prevPassageRef} (shortcut: [ or h)` : "Beginning of Bible";
+  }
+  if (els.next) {
+    els.next.disabled = !nextPassageRef;
+    els.next.title = nextPassageRef ? `Next chapter: ${nextPassageRef} (shortcut: ] or l)` : "End of Bible";
+  }
   els.title.textContent = p.ref;
   els.subtitle.textContent =
     `${p.book_name} — ${p.start_chapter}:${p.start_verse}–${p.end_chapter}:${p.end_verse}` +
@@ -417,7 +457,7 @@ function renderPassage(p) {
   renderTranslations(p);
   renderLanguages(p);
   els.hint.textContent = "";
-  els.statusLeft.textContent = p.ref;
+  els.statusLeft.textContent = `Studying ${p.ref}`;
   els.input.value = p.ref;
 }
 
@@ -512,12 +552,15 @@ function renderLanguages(pass) {
   const sections = versesWithNuances.map((v) => {
     const nuances = v.verbal_nuances || [];
 
-    const cards = nuances.map((n) => `
+    const cards = nuances.map((n) => {
+      const gloss = n.gloss || n.plain_summary || n.lemma || "";
+      const original = n.text || n.lemma || "";
+      return `
       <details class="disclosure-card morph-card" data-strongs="${escapeHtml(n.strongs)}" data-verse="${v.verse}">
         <summary class="disclosure-summary">
           <span class="disclosure-arrow" aria-hidden="true">▸</span>
-          <span class="morph-surface">${escapeHtml(n.text || n.lemma)}</span>
-          <span class="morph-lemma">(${escapeHtml(n.lemma)})</span>
+          <span class="morph-surface">${escapeHtml(gloss)}</span>
+          <span class="morph-lemma">(${escapeHtml(original)})</span>
           <span class="morph-stem-badge">${escapeHtml(n.stem_or_tense)}</span>
           <span class="morph-strongs-badge">${escapeHtml(n.strongs)}</span>
         </summary>
@@ -538,7 +581,8 @@ function renderLanguages(pass) {
           </div>
         </div>
       </details>
-    `).join("");
+    `;
+    }).join("");
 
     return `
       <div class="verse-language-group">
@@ -908,6 +952,185 @@ function initZebraShading() {
   });
 }
 
+/* ---- Workspace Settings & Shortcuts Modal ---- */
+
+function initSettingsModal() {
+  if (els.openWizardBtn) {
+    els.openWizardBtn.addEventListener("click", () => openSettings());
+  }
+  if (els.settingsCloseBtn) {
+    els.settingsCloseBtn.addEventListener("click", () => closeSettings());
+  }
+  if (els.settingsDoneBtn) {
+    els.settingsDoneBtn.addEventListener("click", () => closeSettings());
+  }
+  if (els.settingsThemeSelect) {
+    els.settingsThemeSelect.addEventListener("change", () => setTheme(els.settingsThemeSelect.value));
+  }
+  if (els.settingsZebraToggle && els.verses) {
+    let savedZebra = null;
+    try {
+      savedZebra = localStorage.getItem("abst.zebra_shading");
+    } catch (_) {}
+    const isZebra = savedZebra === "true";
+    els.settingsZebraToggle.checked = isZebra;
+    els.settingsZebraToggle.addEventListener("change", () => {
+      const enabled = els.settingsZebraToggle.checked;
+      if (els.zebraToggle) els.zebraToggle.checked = enabled;
+      els.verses.classList.toggle("zebra-shading", enabled);
+      try {
+        localStorage.setItem("abst.zebra_shading", String(enabled));
+      } catch (_) {}
+    });
+  }
+  if (els.settingsStrongsToggle && els.verses) {
+    let savedStrongs = null;
+    try {
+      savedStrongs = localStorage.getItem("abst.show_strongs");
+    } catch (_) {}
+    const showStrongs = savedStrongs !== "false";
+    els.settingsStrongsToggle.checked = showStrongs;
+    els.verses.classList.toggle("hide-strongs", !showStrongs);
+    els.settingsStrongsToggle.addEventListener("change", () => {
+      const enabled = els.settingsStrongsToggle.checked;
+      els.verses.classList.toggle("hide-strongs", !enabled);
+      try {
+        localStorage.setItem("abst.show_strongs", String(enabled));
+      } catch (_) {}
+    });
+  }
+  if (els.settingsAutoUpdateToggle && els.autoUpdateToggle) {
+    els.settingsAutoUpdateToggle.checked = els.autoUpdateToggle.checked;
+    els.settingsAutoUpdateToggle.addEventListener("change", () => {
+      els.autoUpdateToggle.checked = els.settingsAutoUpdateToggle.checked;
+    });
+    els.autoUpdateToggle.addEventListener("change", () => {
+      els.settingsAutoUpdateToggle.checked = els.autoUpdateToggle.checked;
+    });
+  }
+  if (els.launchWizardBtn) {
+    els.launchWizardBtn.addEventListener("click", () => {
+      closeSettings();
+      openWizard(1);
+    });
+  }
+  if (els.openShortcutsBtn) {
+    els.openShortcutsBtn.addEventListener("click", () => {
+      openShortcuts();
+    });
+  }
+  if (els.shortcutsCloseBtn) {
+    els.shortcutsCloseBtn.addEventListener("click", () => closeShortcuts());
+  }
+  if (els.shortcutsDoneBtn) {
+    els.shortcutsDoneBtn.addEventListener("click", () => closeShortcuts());
+  }
+}
+
+function openSettings() {
+  if (els.settingsModal && typeof els.settingsModal.showModal === "function") {
+    if (!els.settingsModal.open) {
+      els.settingsModal.showModal();
+    }
+  }
+}
+
+function closeSettings() {
+  if (els.settingsModal && els.settingsModal.open) {
+    els.settingsModal.close();
+  }
+}
+
+function openShortcuts() {
+  if (els.shortcutsModal && typeof els.shortcutsModal.showModal === "function") {
+    if (!els.shortcutsModal.open) {
+      els.shortcutsModal.showModal();
+    }
+  }
+}
+
+function closeShortcuts() {
+  if (els.shortcutsModal && els.shortcutsModal.open) {
+    els.shortcutsModal.close();
+  }
+}
+
+/* ---- Keyboard Navigation & Verse Selection ---- */
+
+function selectNextVerse() {
+  if (!els.verses) return;
+  const verses = els.verses.querySelectorAll(".verse-item");
+  if (!verses.length) return;
+  selectedVerseIdx = Math.min(verses.length - 1, selectedVerseIdx + 1);
+  updateVerseSelection(verses);
+}
+
+function selectPrevVerse() {
+  if (!els.verses) return;
+  const verses = els.verses.querySelectorAll(".verse-item");
+  if (!verses.length) return;
+  selectedVerseIdx = Math.max(0, selectedVerseIdx - 1);
+  updateVerseSelection(verses);
+}
+
+function updateVerseSelection(verses) {
+  verses.forEach((v, idx) => {
+    if (idx === selectedVerseIdx) {
+      v.classList.add("selected-verse");
+      v.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      v.setAttribute("aria-selected", "true");
+    } else {
+      v.classList.remove("selected-verse");
+      v.removeAttribute("aria-selected");
+    }
+  });
+}
+
+function togglePinSelectedVerse() {
+  if (!els.verses || selectedVerseIdx < 0) return;
+  const verses = els.verses.querySelectorAll(".verse-item");
+  if (selectedVerseIdx >= verses.length) return;
+  const selectedEl = verses[selectedVerseIdx];
+  const strongsTag = selectedEl.querySelector(".strongs-tag");
+  const isTransTab = els.translationsPanel && !els.translationsPanel.hidden;
+  const strongsVisible = !els.verses.classList.contains("hide-strongs");
+
+  if (isTransTab || !strongsVisible || !strongsTag) {
+    switchTab("translations");
+    if (els.translationsPanel) {
+      const cards = els.translationsPanel.querySelectorAll("details.translation-card");
+      if (cards[selectedVerseIdx]) {
+        cards[selectedVerseIdx].open = !cards[selectedVerseIdx].open;
+        cards[selectedVerseIdx].scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+  } else {
+    strongsTag.click();
+  }
+}
+
+function toggleStrongTags() {
+  if (!els.verses) return;
+  const isHidden = els.verses.classList.toggle("hide-strongs");
+  if (els.settingsStrongsToggle) {
+    els.settingsStrongsToggle.checked = !isHidden;
+  }
+  try {
+    localStorage.setItem("abst.show_strongs", String(!isHidden));
+  } catch (_) {}
+}
+
+function cycleTheme() {
+  if (!themeCatalog || !themeCatalog.length) return;
+  const currentTheme = document.documentElement.dataset.theme || "sepia";
+  const curIdx = themeCatalog.findIndex((t) => t.id === currentTheme);
+  const nextIdx = (curIdx + 1) % themeCatalog.length;
+  const nextTheme = themeCatalog[nextIdx];
+  if (nextTheme) {
+    setTheme(nextTheme.id);
+  }
+}
+
 /* ---- Split Pane Resizer (ADR-025 / WP-030 Phase 1) ---- */
 
 const DEFAULT_SPLIT = 65;
@@ -1024,7 +1247,7 @@ function isInputFocused() {
 
 function restoreStatusBar() {
   if (els.statusLeft && els.title) {
-    els.statusLeft.textContent = els.title.textContent || "";
+    els.statusLeft.textContent = els.title.textContent ? `Studying ${els.title.textContent}` : "";
   }
 }
 
@@ -1115,8 +1338,42 @@ function initFocusAndZoomModes() {
 
   // Global keyboard shortcut dispatcher with input focus guard
   window.addEventListener("keydown", (e) => {
-    // If wizard modal is open, do not intercept single-key navigation
-    if (els.wizardModal && els.wizardModal.open) return;
+    // Shortcuts modal open: Escape, '?', or 'q' closes it
+    if (els.shortcutsModal && els.shortcutsModal.open) {
+      if (e.key === "Escape" || e.key === "?" || e.key === "q" || e.key === "Q") {
+        e.preventDefault();
+        closeShortcuts();
+      }
+      return;
+    }
+
+    // Settings modal open: Escape closes it
+    if (els.settingsModal && els.settingsModal.open) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeSettings();
+      }
+      return;
+    }
+
+    // Wizard modal open: Escape closes it
+    if (els.wizardModal && els.wizardModal.open) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeWizard();
+      }
+      return;
+    }
+
+    // Ctrl+P / Cmd+P: Jump to passage (handled even when input is focused to prevent browser print dialog)
+    if ((e.ctrlKey || e.metaKey) && (e.key === "p" || e.key === "P")) {
+      e.preventDefault();
+      if (els.input) {
+        els.input.focus();
+        els.input.select();
+      }
+      return;
+    }
 
     // Guard: ignore single-key shortcuts while typing in editable elements
     if (isInputFocused()) {
@@ -1126,8 +1383,89 @@ function initFocusAndZoomModes() {
       return;
     }
 
-    // Ignore if browser modifier keys (Ctrl/Meta/Alt) are held
+    // Ignore other modifier key combinations
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+    // Jump to passage / search: 'g' or '/'
+    if (e.key === "g" || e.key === "G" || e.key === "/") {
+      e.preventDefault();
+      if (els.input) {
+        els.input.focus();
+        els.input.select();
+      }
+      return;
+    }
+
+    // Previous Chapter: 'h', 'p', '[', 'ArrowLeft'
+    if (e.key === "h" || e.key === "H" || e.key === "p" || e.key === "P" || e.key === "[" || e.key === "ArrowLeft") {
+      if (prevPassageRef) {
+        e.preventDefault();
+        navigate(prevPassageRef);
+      }
+      return;
+    }
+
+    // Next Chapter: 'l', 'n', ']', 'ArrowRight'
+    if (e.key === "l" || e.key === "L" || e.key === "n" || e.key === "N" || e.key === "]" || e.key === "ArrowRight") {
+      if (nextPassageRef) {
+        e.preventDefault();
+        navigate(nextPassageRef);
+      }
+      return;
+    }
+
+    // Next Verse: 'j', 'ArrowDown'
+    if (e.key === "j" || e.key === "J" || e.key === "ArrowDown") {
+      e.preventDefault();
+      selectNextVerse();
+      return;
+    }
+
+    // Previous Verse: 'k', 'ArrowUp'
+    if (e.key === "k" || e.key === "K" || e.key === "ArrowUp") {
+      e.preventDefault();
+      selectPrevVerse();
+      return;
+    }
+
+    // Pin / Inspect selected verse: Space or Enter
+    if (e.key === " " || e.key === "Enter") {
+      if (selectedVerseIdx >= 0) {
+        e.preventDefault();
+        togglePinSelectedVerse();
+        return;
+      }
+    }
+
+    // Toggle Strong's tags: 's'
+    if (e.key === "s" || e.key === "S") {
+      e.preventDefault();
+      toggleStrongTags();
+      return;
+    }
+
+    // Toggle Parallel Translations: 'v'
+    if (e.key === "v" || e.key === "V") {
+      e.preventDefault();
+      switchTab("translations");
+      const toggleBtn = els.translationsPanel ? els.translationsPanel.querySelector("#toggle-all-translations") : null;
+      if (toggleBtn) toggleBtn.click();
+      return;
+    }
+
+    // Cycle Theme: 't'
+    if (e.key === "t" || e.key === "T") {
+      e.preventDefault();
+      cycleTheme();
+      return;
+    }
+
+    // Commentary tab: 'c'
+    if (e.key === "c" || e.key === "C") {
+      e.preventDefault();
+      switchTab("commentary");
+      return;
+    }
 
     // 'f' or 'F' without Shift: toggle Scripture Focus Mode
     if (!e.shiftKey && (e.key === "f" || e.key === "F")) {
@@ -1151,6 +1489,21 @@ function initFocusAndZoomModes() {
       } else {
         toggleFocusMode(true);
       }
+      return;
+    }
+
+    // Side tab shortcuts: '1' - '6'
+    if (e.key === "1") { e.preventDefault(); switchTab("translations"); return; }
+    if (e.key === "2") { e.preventDefault(); switchTab("languages"); return; }
+    if (e.key === "3") { e.preventDefault(); switchTab("prophecy"); return; }
+    if (e.key === "4") { e.preventDefault(); switchTab("sanctuary"); return; }
+    if (e.key === "5") { e.preventDefault(); switchTab("commentary"); return; }
+    if (e.key === "6") { e.preventDefault(); switchTab("notes"); return; }
+
+    // Help modal: '?'
+    if (e.key === "?") {
+      e.preventDefault();
+      openShortcuts();
       return;
     }
 
@@ -1190,8 +1543,16 @@ els.form.addEventListener("submit", (e) => {
 
 if (els.theme) els.theme.addEventListener("change", () => setTheme(els.theme.value));
 
-els.prev.disabled = true; // wired when the API exposes next/prev (Phase 0 +)
-els.next.disabled = true;
+if (els.prev) {
+  els.prev.addEventListener("click", () => {
+    if (prevPassageRef) navigate(prevPassageRef);
+  });
+}
+if (els.next) {
+  els.next.addEventListener("click", () => {
+    if (nextPassageRef) navigate(nextPassageRef);
+  });
+}
 
 function switchTab(tabName) {
   for (const t of els.tabs) {
@@ -1206,15 +1567,6 @@ for (const tab of els.tabs) {
   tab.addEventListener("click", () => switchTab(tab.dataset.tab));
 }
 
-if (els.openWizardBtn) {
-  els.openWizardBtn.addEventListener("click", () => {
-    let completed = false;
-    try {
-      completed = localStorage.getItem("abst.setup_completed") === "true";
-    } catch (_) {}
-    openWizard(completed ? 2 : 1);
-  });
-}
 if (els.wizardCloseBtn) els.wizardCloseBtn.addEventListener("click", closeWizard);
 if (els.wizardSkipBtn) els.wizardSkipBtn.addEventListener("click", completeWizard);
 if (els.wizardFinishBtn) els.wizardFinishBtn.addEventListener("click", completeWizard);
@@ -2352,6 +2704,7 @@ initPaneResizer();
 initFocusAndZoomModes();
 initAutoUpdate();
 initZebraShading();
+initSettingsModal();
 initProphecyWorkstation();
 initSanctuaryWorkstation();
 initCommentaryWorkstation();

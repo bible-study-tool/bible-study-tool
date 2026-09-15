@@ -237,6 +237,8 @@ class PassageStudy:
     verses: list[VerseStudy]
     egw_correlations: list[dict[str, Any]] = field(default_factory=list)
     argument_flow: list[ArgumentFlowStep] = field(default_factory=list)
+    prev_ref: str | None = None
+    next_ref: str | None = None
 
 
 @dataclass
@@ -489,7 +491,7 @@ class StudyService:
             if v1 is None and v2 is None:
                 canonical_ref = f"{book_name} {s_ch}"
 
-            return PassageStudy(
+            study = PassageStudy(
                 ref=canonical_ref,
                 book_code=book_code,
                 book_name=book_name,
@@ -501,6 +503,9 @@ class StudyService:
                 egw_correlations=egw_correlations,
                 argument_flow=argument_flow,
             )
+            study.prev_ref = self.prev_passage(study)
+            study.next_ref = self.next_passage(study)
+            return study
 
     def ensure_verse_frames(self, verse: VerseStudy) -> None:
         """Populate semantic frames, verbal nuances, and original language text on-demand if missing."""

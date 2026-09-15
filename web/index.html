@@ -9,9 +9,8 @@
 </head>
 <body>
   <header class="app-header">
-    <div class="brand" aria-label="Adventist Bible Study Tool">
-      <span class="brand-mark">ABST</span>
-      <span class="brand-title">Adventist Bible Study</span>
+    <div class="brand" aria-label="Bible Study Tool">
+      <span class="brand-title">Bible Study Tool</span>
     </div>
 
     <form id="ref-form" class="ref-form" role="search" aria-label="Go to a scripture reference">
@@ -221,9 +220,8 @@
     <div class="wizard-content">
       <header class="wizard-header">
         <div class="wizard-brand">
-          <span class="wizard-mark">ABST</span>
           <div>
-            <h2 id="wizard-title" class="wizard-title">Welcome to Adventist Bible Study</h2>
+            <h2 id="wizard-title" class="wizard-title">Welcome to Bible Study Tool</h2>
             <p class="wizard-subtitle">Offline-First Scripture &amp; Original Language Study Workstation</p>
           </div>
         </div>
@@ -416,6 +414,123 @@
           <button id="wizard-next-btn" type="button" class="btn-wizard-primary">Next &rarr;</button>
           <button id="wizard-finish-btn" type="button" class="btn-wizard-primary" hidden>Finish &amp; Open the Word</button>
         </div>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Workspace Settings Modal (Separated from First-Run Onboarding) -->
+  <dialog id="settings-modal" class="settings-dialog" aria-labelledby="settings-title">
+    <div class="settings-content">
+      <header class="settings-header">
+        <h2 id="settings-title" class="settings-title">Workspace Settings &amp; Preferences</h2>
+        <button id="settings-close-btn" class="modal-close-btn" aria-label="Close settings" title="Close (Esc)">&times;</button>
+      </header>
+
+      <div class="settings-body">
+        <section class="settings-section">
+          <h3 class="settings-section-title">Visual Appearance</h3>
+          <div class="setting-card">
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="settings-theme-select" class="setting-label"><strong>Visual Theme</strong></label>
+                <span class="setting-sub">Select your preferred study substrate (Study Room warm parchment, dark walnut, or classic palettes).</span>
+              </div>
+              <select id="settings-theme-select" class="theme-select-input" aria-label="Visual theme"></select>
+            </div>
+          </div>
+
+          <div class="setting-card">
+            <label class="toggle-control" for="settings-zebra-toggle">
+              <input type="checkbox" id="settings-zebra-toggle">
+              <div class="toggle-track"><span class="toggle-thumb"></span></div>
+              <div class="toggle-label">
+                <strong>Alternating Verse Shading (Zebra)</strong>
+                <span class="toggle-sub">Subtle alternating background shading on consecutive verses for reading tracking.</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="setting-card">
+            <label class="toggle-control" for="settings-strongs-toggle">
+              <input type="checkbox" id="settings-strongs-toggle" checked>
+              <div class="toggle-track"><span class="toggle-thumb"></span></div>
+              <div class="toggle-label">
+                <strong>Show Strong's Concordance Numbers</strong>
+                <span class="toggle-sub">Display clickable Strong's Hebrew and Greek tags inline with scripture verses (shortcut: <kbd>s</kbd>).</span>
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h3 class="settings-section-title">Network &amp; Privacy</h3>
+          <div class="setting-card">
+            <label class="toggle-control" for="settings-auto-update-toggle">
+              <input type="checkbox" id="settings-auto-update-toggle" checked>
+              <div class="toggle-track"><span class="toggle-thumb"></span></div>
+              <div class="toggle-label">
+                <strong>Check for Application Updates</strong>
+                <span class="toggle-sub">Periodically checks GitLab Releases for new versions and critical bug fixes.</span>
+              </div>
+            </label>
+            <div class="privacy-callout">
+              <div class="privacy-badge">&#128274; Zero-Telemetry Guarantee</div>
+              <p>When update checking is active, the application only queries the public GitLab release tag. <strong>No identifiers, no IP logging, no queries, and no personal telemetry are ever transmitted.</strong></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h3 class="settings-section-title">Setup &amp; Shortcuts</h3>
+          <div class="settings-action-row">
+            <button type="button" id="open-shortcuts-btn" class="btn-tool">Keyboard Shortcuts (<kbd>?</kbd>)</button>
+            <button type="button" id="launch-wizard-btn" class="btn-tool">Launch Setup &amp; Verification Wizard…</button>
+          </div>
+        </section>
+      </div>
+
+      <footer class="settings-footer">
+        <button id="settings-done-btn" type="button" class="btn-tool btn-settings-done">Done</button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Keyboard Shortcuts Cheatsheet Modal -->
+  <dialog id="shortcuts-modal" class="shortcuts-dialog" aria-labelledby="shortcuts-title">
+    <div class="shortcuts-content">
+      <header class="shortcuts-header">
+        <h2 id="shortcuts-title" class="shortcuts-title">Keyboard Shortcuts</h2>
+        <button id="shortcuts-close-btn" class="modal-close-btn" aria-label="Close shortcuts" title="Close (Esc)">&times;</button>
+      </header>
+
+      <div class="shortcuts-body">
+        <table class="shortcuts-table" role="table" aria-label="Keyboard Shortcuts">
+          <thead>
+            <tr>
+              <th scope="col">Key</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><kbd>h</kbd> / <kbd>l</kbd> or <kbd>[</kbd> / <kbd>]</kbd> or <kbd>&larr;</kbd> / <kbd>&rarr;</kbd></td><td>Previous / Next chapter</td></tr>
+            <tr><td><kbd>j</kbd> / <kbd>k</kbd> or <kbd>&darr;</kbd> / <kbd>&uarr;</kbd></td><td>Move to next / previous verse</td></tr>
+            <tr><td><kbd>Space</kbd> / <kbd>Enter</kbd></td><td>Pin / inspect selected verse</td></tr>
+            <tr><td><kbd>g</kbd> or <kbd>/</kbd> or <kbd>Ctrl+P</kbd></td><td>Jump to passage / focus search</td></tr>
+            <tr><td><kbd>1</kbd> &ndash; <kbd>6</kbd></td><td>Switch side tabs (1: Translations, 2: Languages, 3: Prophecy, 4: Sanctuary, 5: Commentary, 6: Notes)</td></tr>
+            <tr><td><kbd>f</kbd></td><td>Toggle Scripture Focus Mode (full-width text)</td></tr>
+            <tr><td><kbd>z</kbd> / <kbd>Shift+F</kbd></td><td>Toggle Panel Zoom (maximize active pane)</td></tr>
+            <tr><td><kbd>s</kbd></td><td>Toggle inline Strong's concordance numbers</td></tr>
+            <tr><td><kbd>v</kbd></td><td>Toggle parallel translations</td></tr>
+            <tr><td><kbd>c</kbd></td><td>Open Spirit of Prophecy commentary</td></tr>
+            <tr><td><kbd>t</kbd></td><td>Cycle visual theme (Sepia, Light, Dark)</td></tr>
+            <tr><td><kbd>?</kbd></td><td>Open this keyboard shortcuts guide</td></tr>
+            <tr><td><kbd>Esc</kbd></td><td>Exit focus/zoom mode, dismiss card, close dialog</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="shortcuts-footer">
+        <button id="shortcuts-done-btn" type="button" class="btn-tool btn-shortcuts-done">Close</button>
       </footer>
     </div>
   </dialog>
