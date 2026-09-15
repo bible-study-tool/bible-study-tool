@@ -117,8 +117,10 @@ if [[ ! -f "$DATA_SRC/bible.db" ]]; then
   echo "2. data/bible.db not found; compiling from pinned sources..."
   "$PYTHON" -m search.corpus.extract_kjv --compile
   "$PYTHON" -m search.corpus.extract_translations
+  "$PYTHON" -m search.corpus.extract_tsk
 else
-  echo "2. Found data/bible.db."
+  echo "2. Found data/bible.db; ensuring TSK cross references..."
+  "$PYTHON" -m search.corpus.extract_tsk
 fi
 
 if [[ ! -f "$DATA_SRC/macula.db" ]]; then
@@ -147,12 +149,18 @@ for db_name in ['bible.db', 'macula.db']:
     con.execute(f"VACUUM INTO '{dst_escaped}'")
     con.close()
 
-    # Verify compacted integrity
+    # Verify compacted integrity and ensure WAL mode is set before manifest generation
     chk_con = sqlite3.connect(dst)
+    chk_con.execute("PRAGMA journal_mode = WAL;")
+    chk_con.execute("PRAGMA wal_checkpoint(TRUNCATE);")
     res = chk_con.execute('PRAGMA quick_check;').fetchall()
     assert res == [('ok',)], f'Integrity check failed for {dst}: {res}'
     chk_con.close()
-print('   ✔ SQLite databases vacuumed and verified.')
+    for suffix in ('-wal', '-shm'):
+        p = dst + suffix
+        if os.path.exists(p):
+            os.remove(p)
+print('   ✔ SQLite databases vacuumed, WAL-initialized, and verified.')
 PYEOF
 
 # 5. Copy canonical derived lexicons

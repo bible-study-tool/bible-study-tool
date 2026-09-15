@@ -222,6 +222,7 @@ class VerseStudy:
     ot_citations: list[OTCitation] = field(default_factory=list)
     prophetic_symbols: list[AnnotatedPropheticSymbol] = field(default_factory=list)
     sanctuary_stations: list[AnnotatedSanctuaryStation] = field(default_factory=list)
+    cross_references: list[dict[str, Any]] = field(default_factory=list)
 
 
 
@@ -463,6 +464,11 @@ class StudyService:
                 v_sanctuary = sanct_engine.get_annotated_stations_for_verse(
                     vr.get("osis", book_code), vr["chapter"], vr["verse"]
                 )
+                v_xrefs = (
+                    self.bible_db.get_cross_references(verse_id, limit=20)
+                    if self.bible_db
+                    else []
+                )
 
                 verse_studies.append(
                     VerseStudy(
@@ -481,6 +487,7 @@ class StudyService:
                         ot_citations=v_citations,
                         prophetic_symbols=v_prophetic,
                         sanctuary_stations=v_sanctuary,
+                        cross_references=v_xrefs,
                     )
                 )
 
@@ -1090,6 +1097,17 @@ class StudyService:
         engine = self.get_sanctuary_engine()
         stations = engine.get_annotated_stations_for_passage(ref)
         return [s.to_dict() for s in stations]
+
+    def get_verse_cross_references(
+        self,
+        verse_ref: str,
+        limit: int = 25,
+        min_votes: int = 0,
+    ) -> list[dict[str, Any]]:
+        """Retrieve ranked Treasury of Scripture Knowledge (TSK) cross references for a verse."""
+        if not self.bible_db:
+            return []
+        return self.bible_db.get_cross_references(verse_ref, limit=limit, min_votes=min_votes)
 
     def ensure_egw_db(self) -> EgwDB:
         """Ensure an active EgwDB instance is connected, initializing the database if needed."""

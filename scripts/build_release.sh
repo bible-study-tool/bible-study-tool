@@ -219,6 +219,14 @@ if [[ "$BUILD_DATA" = true ]]; then
 fi
 echo "✔ Smoke tests passed successfully."
 
+# Re-verify staging integrity post-smoke test
+echo "--- 7b. Verifying staging integrity post-smoke test ---"
+(
+  cd "$STAGE_DIR"
+  sha256sum --quiet -c SHA256SUMS
+)
+echo "✔ Release staging integrity unchanged by smoke tests."
+
 # 8. Create release archive
 echo
 echo "--- 8. Creating release archive ---"
@@ -229,6 +237,22 @@ TAR_SIZE="$(ls -lh "$ARCHIVE_TAR" | awk '{print $5}')"
 echo "✔ Release archive: $ARCHIVE_TAR ($TAR_SIZE)"
 echo "  SHA-256: $(cat "${ARCHIVE_TAR}.sha256")"
 
+# 8b. Verify packaged archive ground truth (ADR-024)
+echo
+echo "--- 8b. Verifying packaged archive ground truth ---"
+SCRATCH="$(mktemp -d)"
+trap 'rm -rf "$SCRATCH"' EXIT
+tar -xzf "$ARCHIVE_TAR" -C "$SCRATCH"
+echo "   Checking release-wide SHA256SUMS inside packaged tar.gz..."
+(cd "$SCRATCH/$STAGE_NAME" && sha256sum --quiet -c SHA256SUMS)
+if [[ -f "$SCRATCH/$STAGE_NAME/data/SHA256SUMS" ]]; then
+  echo "   Checking sidecar data/SHA256SUMS inside packaged tar.gz..."
+  (cd "$SCRATCH/$STAGE_NAME/data" && sha256sum --quiet -c SHA256SUMS)
+fi
+rm -rf "$SCRATCH"
+trap - EXIT
+echo "✔ Packaged archive verified against internal manifests."
+
 if [[ "$CREATE_ZIP" = true ]]; then
   command -v zip >/dev/null 2>&1 || { echo "ERROR: 'zip' utility is required for --zip" >&2; exit 1; }
   ARCHIVE_ZIP="$DIST_DIR/${STAGE_NAME}.zip"
@@ -237,6 +261,17 @@ if [[ "$CREATE_ZIP" = true ]]; then
   ZIP_SIZE="$(ls -lh "$ARCHIVE_ZIP" | awk '{print $5}')"
   echo "✔ Zip archive:     $ARCHIVE_ZIP ($ZIP_SIZE)"
   echo "  SHA-256: $(cat "${ARCHIVE_ZIP}.sha256")"
+
+  SCRATCH_ZIP="$(mktemp -d)"
+  trap 'rm -rf "$SCRATCH_ZIP"' EXIT
+  unzip -q "$ARCHIVE_ZIP" -d "$SCRATCH_ZIP"
+  (cd "$SCRATCH_ZIP/$STAGE_NAME" && sha256sum --quiet -c SHA256SUMS)
+  if [[ -f "$SCRATCH_ZIP/$STAGE_NAME/data/SHA256SUMS" ]]; then
+    (cd "$SCRATCH_ZIP/$STAGE_NAME/data" && sha256sum --quiet -c SHA256SUMS)
+  fi
+  rm -rf "$SCRATCH_ZIP"
+  trap - EXIT
+  echo "✔ Packaged zip archive verified against internal manifests."
 fi
 
 # 9. Extract release notes

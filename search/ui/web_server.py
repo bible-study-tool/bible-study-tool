@@ -112,6 +112,8 @@ def _verse_payload(verse: Any) -> dict[str, Any]:
         payload["prophetic_symbols"] = _jsonable(verse.prophetic_symbols)
     if getattr(verse, "sanctuary_stations", None):
         payload["sanctuary_stations"] = _jsonable(verse.sanctuary_stations)
+    if getattr(verse, "cross_references", None):
+        payload["cross_references"] = _jsonable(verse.cross_references)
     return payload
 
 

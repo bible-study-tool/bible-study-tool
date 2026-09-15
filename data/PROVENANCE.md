@@ -249,6 +249,22 @@ ec310d091ebb4e16bc4e474514cead4d7e616ab76f5178eba6cf1c301591fed1  macula-greek/1
 44371e641abe0296f77e04e2c10b6e71f935d24652327d25cb1762b784e84571  macula-greek/27-revelation.xml
 ```
 
+### 7. OpenBible.info / Treasury of Scripture Knowledge (TSK) Cross-References — `cross-references.zip`
+
+| Field | Value |
+| --- | --- |
+| Upstream | <https://www.openbible.info/labs/cross-references/> |
+| Archive URL | <https://a.openbible.info/data/cross-references.zip> |
+| Pinned date | `2026-09-14` (archive timestamp `2026-09-14 06:17:25`) |
+| License | **CC BY 4.0** (Creative Commons Attribution 4.0 International) — OpenBible.info. The underlying Treasury of Scripture Knowledge (1836, 1900) is public domain. |
+| Feeds | `data/bible.db` (`cross_references` table: ~344,800 canonical reciprocal edges across all 66 books and 31,102 verses) via `python -m search.corpus.extract_tsk`. |
+
+SHA-256:
+
+```
+30379be544785f4c2cdf8eba0d83d10dedc04a6903b5dcd0d91d670e90619d6d  cross-references.zip
+```
+
 ## Generated artifacts (for offline drift detection)
 
 The committed artifacts regenerate byte-identically from the pinned sources

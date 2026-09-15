@@ -89,5 +89,7 @@ are **not owned by this project** and are **not redistributed here**:
   **Open Scriptures Hebrew Bible Project** (https://hb.openscriptures.org);
   WLC text therein is public domain (Groves Center).
 
+* **Cross-reference source data** (`data/cross-references.zip`, gitignored, fetched on demand via `scripts/fetch_sources.sh`): Treasury of Scripture Knowledge (1836/1900, public domain) compiled and normalized by OpenBible.info (**CC BY 4.0** — data by www.openbible.info; credit OpenBible.info with a link to https://www.openbible.info/labs/cross-references/). Pinned with SHA-256 in `data/PROVENANCE.md` and compiled into `data/bible.db`.
+
 This policy keeps the project a reference and an engine, not a republisher, and
 keeps the material it hosts within clearly-clean territory.

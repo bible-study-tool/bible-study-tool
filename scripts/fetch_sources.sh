@@ -29,6 +29,7 @@ OSHB_URL="https://github.com/openscriptures/morphhb/releases/download/${OSHB_PIN
 STEPBIBLE_PIN="efe428a0047bf7b9c3ce2624f60c252c6e435945"
 TBESH_URL="https://raw.githubusercontent.com/STEPBible/STEPBible-Data/${STEPBIBLE_PIN}/Lexicons/TBESH%20-%20Translators%20Brief%20lexicon%20of%20Extended%20Strongs%20for%20Hebrew%20-%20STEPBible.org%20CC%20BY.txt"
 TBESG_URL="https://raw.githubusercontent.com/STEPBible/STEPBible-Data/${STEPBIBLE_PIN}/Lexicons/TBESG%20-%20Translators%20Brief%20lexicon%20of%20Extended%20Strongs%20for%20Greek%20-%20STEPBible.org%20CC%20BY.txt"
+TSK_URL="https://a.openbible.info/data/cross-references.zip"
 
 # --- verification (shared by both modes) -------------------------------------
 verify() {
@@ -180,6 +181,9 @@ if [[ ! -f "$DATA/macula-greek/27-revelation.xml" ]]; then
 else
   echo "[skip] macula-greek/*.xml (all 27 NT books) already present"
 fi
+
+# --- 7. OpenBible / Treasury of Scripture Knowledge (TSK) Cross References ---
+fetch "$TSK_URL" "$DATA/cross-references.zip"
 
 # --- verification ------------------------------------------------------------
 verify

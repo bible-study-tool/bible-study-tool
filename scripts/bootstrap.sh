@@ -140,11 +140,13 @@ if [[ "$WANT_DATA" == true ]]; then
   fi
 
   if [[ ! -f "$DATA_DIR/bible.db" ]]; then
-    echo "2. Compiling data/bible.db (KJV + ASV/BSB/YLT translations)..."
+    echo "2. Compiling data/bible.db (KJV + ASV/BSB/YLT translations + TSK cross-references)..."
     "$VENV_PYTHON" -m search.corpus.extract_kjv --compile
     "$VENV_PYTHON" -m search.corpus.extract_translations
+    "$VENV_PYTHON" -m search.corpus.extract_tsk
   else
-    echo "2. data/bible.db already present."
+    echo "2. data/bible.db already present; ensuring TSK cross references..."
+    "$VENV_PYTHON" -m search.corpus.extract_tsk
   fi
 
   if [[ ! -f "$DATA_DIR/macula.db" ]]; then

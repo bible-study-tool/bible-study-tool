@@ -560,6 +560,77 @@ class BibleDB:
 
         return result
 
+    def get_cross_references(
+        self,
+        verse_ref: str,
+        limit: int = 25,
+        min_votes: int = 0,
+    ) -> list[dict[str, Any]]:
+        """Fetch ranked Treasury of Scripture Knowledge (TSK) cross references for a verse.
+
+        Returns list of dicts: {"to_verse": str, "votes": int, "preview": str}.
+        """
+        if not self.exists():
+            return []
+        try:
+            osis, ch, v1, _ = parse_passage_ref(verse_ref)
+        except ValueError:
+            return []
+        v_num = v1 if v1 is not None else 1
+        v_id = f"{osis}.{ch}.{v_num}"
+
+        try:
+            cur = self.conn.execute(
+                """
+                SELECT to_verse, votes
+                FROM cross_references
+                WHERE from_verse = ? AND votes >= ?
+                ORDER BY votes DESC
+                LIMIT ?;
+                """,
+                (v_id, min_votes, limit),
+            )
+            rows = cur.fetchall()
+            if not rows:
+                return []
+
+            # Batch fetch preview texts for all candidates in a single roundtrip
+            preview_coords: list[tuple[str, int, int]] = []
+            for r in rows:
+                parts = r["to_verse"].split("-")[0].split(".")
+                if len(parts) == 3:
+                    try:
+                        preview_coords.append((parts[0], int(parts[1]), int(parts[2])))
+                    except ValueError:
+                        pass
+
+            preview_map: dict[str, str] = {}
+            if preview_coords:
+                placeholders = ", ".join("(?, ?, ?)" for _ in preview_coords)
+                params: list[Any] = [val for coord in preview_coords for val in coord]
+                try:
+                    p_cur = self.conn.execute(
+                        f"SELECT osis, chapter, verse, clean_text FROM verses WHERE (osis, chapter, verse) IN (VALUES {placeholders});",
+                        params,
+                    )
+                    for prow in p_cur.fetchall():
+                        preview_map[f"{prow['osis']}.{prow['chapter']}.{prow['verse']}"] = prow["clean_text"]
+                except sqlite3.OperationalError:
+                    pass
+
+            results: list[dict[str, Any]] = []
+            for r in rows:
+                to_ref = r["to_verse"]
+                preview_ref = to_ref.split("-")[0]
+                results.append({
+                    "to_verse": to_ref,
+                    "votes": r["votes"],
+                    "preview": preview_map.get(preview_ref, ""),
+                })
+            return results
+        except sqlite3.OperationalError:
+            return []
+
     def ingest_translation(
         self,
         translation_id: str,

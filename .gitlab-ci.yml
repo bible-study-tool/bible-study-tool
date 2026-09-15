@@ -86,13 +86,6 @@ build-standalone-release:
   rules:
     - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/
     - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE_BUILD == "true"
-  cache:
-    key: "bible-release-data-v1"
-    paths:
-      - data/bible.db
-      - data/macula.db
-      - data/macula-hebrew/
-      - data/macula-greek/
   before_script:
     - apt-get update && apt-get install -y --no-install-recommends git curl binutils && rm -rf /var/lib/apt/lists/*
     - python3 -m pip install --upgrade pip setuptools wheel
@@ -124,6 +117,7 @@ create-gitlab-release:
     - echo "Publishing GitLab Release for $CI_COMMIT_TAG via glab CLI..."
     - |
       glab auth login --job-token "$CI_JOB_TOKEN" --hostname "$CI_SERVER_HOST" || true
+      glab release delete "$CI_COMMIT_TAG" -y || true
       glab release create "$CI_COMMIT_TAG" \
         --name "Release $CI_COMMIT_TAG" \
         --notes-file dist/RELEASE_NOTES.md \
