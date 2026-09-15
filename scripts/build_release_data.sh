@@ -101,9 +101,16 @@ echo "=============================================================="
 echo "Adventist Bible Study Tool — Release Data Bundler (ADR-024)"
 echo "=============================================================="
 
-# 1. Verify raw source provenance pins
-echo "1. Checking source data provenance..."
-"$REPO_ROOT/scripts/fetch_sources.sh" --check
+# 1. Verify raw source provenance pins (or fetch if needed and databases missing)
+if [[ -f "$DATA_SRC/KJV-osis.json" ]]; then
+  echo "1. Checking source data provenance..."
+  "$REPO_ROOT/scripts/fetch_sources.sh" --check
+elif [[ ! -f "$DATA_SRC/bible.db" || ! -f "$DATA_SRC/macula.db" ]]; then
+  echo "1. Source databases not present; fetching and verifying pinned sources..."
+  "$REPO_ROOT/scripts/fetch_sources.sh"
+else
+  echo "1. Source databases present (skipping raw source check since sources are gitignored)."
+fi
 
 # 2. Verify source databases exist (or build them)
 if [[ ! -f "$DATA_SRC/bible.db" ]]; then

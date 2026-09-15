@@ -106,7 +106,8 @@ esac
 ARCH_NAME="$(uname -m)"
 PLATFORM_TAG="${OS_NAME}-${ARCH_NAME}"
 DIST_DIR="$REPO_ROOT/dist"
-STAGE_NAME="bible-study-${VERSION}-${PLATFORM_TAG}"
+ARCHIVE_TAG="${CI_COMMIT_TAG:-$VERSION}"
+STAGE_NAME="bible-study-${ARCHIVE_TAG}-${PLATFORM_TAG}"
 STAGE_DIR="$DIST_DIR/$STAGE_NAME"
 
 echo "Target Platform: $PLATFORM_TAG"
@@ -237,6 +238,11 @@ if [[ "$CREATE_ZIP" = true ]]; then
   echo "✔ Zip archive:     $ARCHIVE_ZIP ($ZIP_SIZE)"
   echo "  SHA-256: $(cat "${ARCHIVE_ZIP}.sha256")"
 fi
+
+# 9. Extract release notes
+echo
+echo "--- 9. Extracting release notes ---"
+"$PYTHON" "$REPO_ROOT/scripts/extract_release_notes.py" "$ARCHIVE_TAG" --out "$DIST_DIR/RELEASE_NOTES.md"
 
 echo
 echo "=============================================================="

@@ -75,24 +75,77 @@ validate-audit:
     - python -m search.validation.audit --repo .
   # Broader dead-reference audit over related[]/semantic_links/links files.
 
-# ---- STAGE 3: standalone release build -----------------------------------
-# Triggered on Git tags (e.g. v0.1.0) or web pipeline runs with RELEASE_BUILD=true.
-# Installs pyinstaller, runs scripts/build_release.sh, and exposes standalone
-# distribution artifacts for GitLab Releases.
+# ---- STAGE 3: standalone release build & publishing ---------------------
+# Triggered on Git tags (e.g. v0.1.1-alpha) or web pipeline runs with RELEASE_BUILD=true.
+# Builds the zero-Python standalone binary, packages sidecar databases and lexicons,
+# uploads immutable artifacts to the GitLab Generic Package Registry, and publishes
+# the formal release on GitLab under Deployments > Releases.
+
 build-standalone-release:
   stage: release
   rules:
     - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/
     - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE_BUILD == "true"
+  cache:
+    key: "bible-release-data-v1"
+    paths:
+      - data/bible.db
+      - data/macula.db
+      - data/macula-hebrew/
+      - data/macula-greek/
   before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git curl && rm -rf /var/lib/apt/lists/*
     - pip install --quiet --upgrade pip
     - pip install --quiet -e '.[test,dist]'
   script:
     - bash scripts/build_release.sh --skip-tests
+    - |
+      # Upload release archives to GitLab Generic Package Registry
+      if [ -n "${CI_COMMIT_TAG:-}" ]; then
+        PACKAGE_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/bible-study/${CI_COMMIT_TAG}"
+        for f in dist/*.tar.gz dist/*.tar.gz.sha256; do
+          [ -f "$f" ] || continue
+          fname=$(basename "$f")
+          echo "Uploading $fname to GitLab Package Registry: $PACKAGE_URL/$fname"
+          curl --fail --show-error --silent --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "$f" "${PACKAGE_URL}/${fname}"
+        done
+      else
+        echo "No CI_COMMIT_TAG set; skipping Generic Package Registry upload."
+      fi
+    - echo "BUILD_JOB_ID=$CI_JOB_ID" >> build.env
   artifacts:
     name: "bible-study-${CI_COMMIT_TAG:-snapshot}-linux"
     paths:
       - dist/*.tar.gz
       - dist/*.tar.gz.sha256
+      - dist/RELEASE_NOTES.md
       - dist/bible-study-*/SHA256SUMS
+    reports:
+      dotenv: build.env
     expire_in: 30 days
+
+create-gitlab-release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - job: build-standalone-release
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/
+  script:
+    - echo "Publishing GitLab Release for $CI_COMMIT_TAG"
+  release:
+    name: 'Release $CI_COMMIT_TAG'
+    tag_name: '$CI_COMMIT_TAG'
+    description: './dist/RELEASE_NOTES.md'
+    assets:
+      links:
+        - name: 'bible-study-${CI_COMMIT_TAG}-linux-x86_64.tar.gz'
+          url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/bible-study/${CI_COMMIT_TAG}/bible-study-${CI_COMMIT_TAG}-linux-x86_64.tar.gz'
+          link_type: 'package'
+        - name: 'bible-study-${CI_COMMIT_TAG}-linux-x86_64.tar.gz.sha256'
+          url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/bible-study/${CI_COMMIT_TAG}/bible-study-${CI_COMMIT_TAG}-linux-x86_64.tar.gz.sha256'
+          link_type: 'other'
+        - name: 'Job Artifacts Archive'
+          url: '${CI_PROJECT_URL}/-/jobs/${BUILD_JOB_ID}/artifacts/download'
+          link_type: 'other'

@@ -63,6 +63,73 @@ class GitlabCIConfigTests(unittest.TestCase):
         self.assertEqual(job["stage"], "release")
         self.assertIn("artifacts", job)
         self.assertTrue(any("dist/*.tar.gz" in p for p in job["artifacts"]["paths"]))
+        self.assertIn("reports", job["artifacts"])
+        self.assertIn("dotenv", job["artifacts"]["reports"])
+
+        # Verify automated release publisher job
+        self.assertIn("create-gitlab-release", data)
+        rel_job = data["create-gitlab-release"]
+        self.assertEqual(rel_job["stage"], "release")
+        self.assertEqual(rel_job["image"], "registry.gitlab.com/gitlab-org/release-cli:latest")
+        self.assertIn("needs", rel_job)
+        self.assertIn("release", rel_job)
+        rel_block = rel_job["release"]
+        self.assertEqual(rel_block["tag_name"], "$CI_COMMIT_TAG")
+        self.assertEqual(rel_block["description"], "./dist/RELEASE_NOTES.md")
+        self.assertIn("assets", rel_block)
+        self.assertIn("links", rel_block["assets"])
+        links = rel_block["assets"]["links"]
+        self.assertTrue(any("packages/generic/bible-study" in l.get("url", "") for l in links))
+
+
+class ReleaseNotesExtractorTests(unittest.TestCase):
+    """Test behavior of scripts/extract_release_notes.py."""
+
+    def test_extract_release_notes_cli(self):
+        repo_root = get_repo_root()
+        script = repo_root / "scripts" / "extract_release_notes.py"
+        res = subprocess.run(
+            ["python", str(script), "v0.1.1-alpha"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.assertIn("Study Room Visual Identity", res.stdout)
+        self.assertIn("Master Historicist Prophetic Lexicon", res.stdout)
+        self.assertIn("Sanctuary Typology Blueprint", res.stdout)
+
+    def test_extract_release_notes_fallback(self):
+        repo_root = get_repo_root()
+        script = repo_root / "scripts" / "extract_release_notes.py"
+        res = subprocess.run(
+            ["python", str(script), "v99.99.99-unknown"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.assertIn("Release v99.99.99-unknown", res.stdout)
+        self.assertIn("Automated release build", res.stdout)
+
+    def test_extract_release_notes_collision_avoidance(self):
+        import importlib.util
+        repo_root = get_repo_root()
+        script_path = repo_root / "scripts" / "extract_release_notes.py"
+        spec = importlib.util.spec_from_file_location("extract_release_notes", script_path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+
+        synthetic_changelog = """# Changelog
+
+## [0.1.10] - 2026-10-01
+Notes for version 0.1.10.
+
+## [0.1.1] - 2026-09-15
+Notes for version 0.1.1.
+"""
+        notes_0110 = mod.extract_notes_from_changelog(synthetic_changelog, "0.1.10")
+        notes_011 = mod.extract_notes_from_changelog(synthetic_changelog, "0.1.1")
+        self.assertEqual(notes_0110, "Notes for version 0.1.10.")
+        self.assertEqual(notes_011, "Notes for version 0.1.1.")
 
 
 if __name__ == "__main__":
