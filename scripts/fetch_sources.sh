@@ -24,7 +24,8 @@ SCROLLMAPPER_URL="https://raw.githubusercontent.com/scrollmapper/bible_databases
 SCROLLMAPPER_ASV_URL="https://raw.githubusercontent.com/scrollmapper/bible_databases/${SCROLLMAPPER_PIN}/sources/en/ASV/ASV.json"
 SCROLLMAPPER_BSB_URL="https://raw.githubusercontent.com/scrollmapper/bible_databases/${SCROLLMAPPER_PIN}/sources/en/BSB/BSB.json"
 SCROLLMAPPER_YLT_URL="https://raw.githubusercontent.com/scrollmapper/bible_databases/${SCROLLMAPPER_PIN}/sources/en/YLT/YLT.json"
-OSHB_URL="https://github.com/openscriptures/morphhb/archive/refs/tags/v.2.2.zip"
+OSHB_PIN="v.2.2"
+OSHB_URL="https://github.com/openscriptures/morphhb/releases/download/${OSHB_PIN}/OSHB-${OSHB_PIN}.zip"
 STEPBIBLE_PIN="efe428a0047bf7b9c3ce2624f60c252c6e435945"
 TBESH_URL="https://raw.githubusercontent.com/STEPBible/STEPBible-Data/${STEPBIBLE_PIN}/Lexicons/TBESH%20-%20Translators%20Brief%20lexicon%20of%20Extended%20Strongs%20for%20Hebrew%20-%20STEPBible.org%20CC%20BY.txt"
 TBESG_URL="https://raw.githubusercontent.com/STEPBible/STEPBible-Data/${STEPBIBLE_PIN}/Lexicons/TBESG%20-%20Translators%20Brief%20lexicon%20of%20Extended%20Strongs%20for%20Greek%20-%20STEPBible.org%20CC%20BY.txt"
@@ -47,9 +48,8 @@ verify() {
     echo "ERROR: checksum mismatch — a source changed (upstream or local edit)." >&2
     echo "Fix: re-verify the upstream source, update the pin + SHA-256 in" >&2
     echo "data/PROVENANCE.md (see its Policy section), then MR the change." >&2
-    echo "Note: GitHub archive zips are generated on the fly and may change bytes" >&2
-    echo "without any upstream commit — re-check the 8674/5624 content fingerprint" >&2
-    echo "in PROVENANCE.md before assuming the source itself changed." >&2
+    echo "Note: Release assets (releases/download/) are immutable, but GitHub repo" >&2
+    echo "archive zips (/archive/) are generated dynamically and may drift." >&2
     exit 1
   fi
 }
