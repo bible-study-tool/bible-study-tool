@@ -306,7 +306,10 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"prev-btn", body)
         self.assertIn(b"verse-original-text", body)
         self.assertIn(b"lexicon-card", body)
+        self.assertIn(b"lexicon-def-row", body)
         self.assertIn(b"morph-occurrences", body)
+        self.assertIn(b"import-status", body)
+        self.assertIn(b"import-progress-fill", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")

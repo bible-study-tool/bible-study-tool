@@ -326,7 +326,8 @@ function toggleProphecyInlineCard(verseItem, v, sym, badgeBtn) {
 }
 
 function createStrongsTag(rawCode, verseNum) {
-  const normCode = rawCode.startsWith("H") || rawCode.startsWith("G") ? rawCode : `H${rawCode}`;
+  const codeStr = String(rawCode || "").trim().toUpperCase();
+  const normCode = codeStr.startsWith("H") || codeStr.startsWith("G") ? codeStr : `H${codeStr}`;
   const sup = document.createElement("sup");
   sup.className = "strongs strongs-tag";
   sup.textContent = `${normCode}`;
@@ -634,7 +635,7 @@ function renderLanguages(pass) {
       if (lex.definition) {
         const defFirst = lex.definition.split("\n")[0] || "";
         bodyHtml += `
-          <div class="lexicon-def-row" style="margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px solid var(--border);">
+          <div class="lexicon-def-row">
             <div class="detail-item"><span class="detail-key">Definition:</span> <span class="detail-val">${escapeHtml(defFirst)}</span></div>
             ${lex.kjv_renderings ? `<div class="detail-item"><span class="detail-key">KJV Renderings:</span> <em class="detail-val">${escapeHtml(lex.kjv_renderings)}</em></div>` : ""}
           </div>
@@ -888,6 +889,10 @@ async function uploadBookFiles(files) {
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
+    const pct = Math.round(((i + 1) / files.length) * 100);
+    if (els.settingsImportProgressFill) {
+      els.settingsImportProgressFill.style.width = `${pct}%`;
+    }
     setStatus("status-loading", `Ingesting ${file.name} (${i + 1}/${files.length})…`);
     try {
       const res = await fetch(`/api/import-books?filename=${encodeURIComponent(file.name)}`, {
@@ -919,6 +924,9 @@ async function uploadBookFiles(files) {
   if (hasErrors) {
     setStatus("status-error", `Import encountered issues:\n${errorMsgs.join("\n")}`);
   } else {
+    if (els.settingsImportProgressFill) {
+      els.settingsImportProgressFill.style.width = "100%";
+    }
     const addedText = totalAdded > 0 ? ` (${totalAdded.toLocaleString()} paragraphs added)` : "";
     setStatus("status-success", `Successfully ingested book library${addedText} ✔`);
   }

@@ -96,7 +96,7 @@ def _jsonable(value: Any) -> Any:
     raise TypeError(f"cannot serialize {type(value).__name__} to JSON")
 
 
-def _verse_payload(study: StudyService | None, verse: Any) -> dict[str, Any]:
+def _verse_payload(verse: Any) -> dict[str, Any]:
     """Wire payload for a single verse: text, translations, Strong's list, prophetic symbols."""
     payload = {
         "osis": verse.osis,
@@ -128,7 +128,7 @@ def _passage_payload(passage: Any, eager_frames: bool, study: StudyService | Non
     Argument flow is cheap and useful; include when present.
     """
     data = {name: getattr(passage, name) for name in _PASSAGE_FIELDS}
-    data["verses"] = [_verse_payload(study, v) for v in passage.verses]
+    data["verses"] = [_verse_payload(v) for v in passage.verses]
     if getattr(passage, "argument_flow", None):
         data["argument_flow"] = _jsonable(passage.argument_flow)
     if eager_frames:
