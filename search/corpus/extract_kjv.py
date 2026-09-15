@@ -745,3 +745,51 @@ def compile_bible_db(
         print(f"  - Verses: {counts['verses']}")
 
     return target_db
+
+
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Compile whole-Bible KJV into normalized SQLite database."
+    )
+    parser.add_argument(
+        "--compile",
+        "-c",
+        action="store_true",
+        help="Compile KJV database from KJV-osis.json",
+    )
+    parser.add_argument(
+        "--repo",
+        default=".",
+        help="Path to repository root (default: current directory)",
+    )
+    parser.add_argument(
+        "--json",
+        default=DEFAULT_KJV_JSON,
+        help=f"Path to KJV OSIS JSON source (default: {DEFAULT_KJV_JSON})",
+    )
+    parser.add_argument(
+        "--db",
+        default=DEFAULT_BIBLE_DB,
+        help=f"Path to output SQLite database (default: {DEFAULT_BIBLE_DB})",
+    )
+    parser.add_argument(
+        "--force",
+        "-f",
+        action="store_true",
+        help="Force recompilation even if database exists",
+    )
+    args = parser.parse_args(argv)
+
+    compile_bible_db(
+        json_path=args.json,
+        db_path=args.db,
+        repo_root=args.repo,
+        force=args.force or args.compile,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

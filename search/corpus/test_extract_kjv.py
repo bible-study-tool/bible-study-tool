@@ -13,6 +13,7 @@ from search.corpus.extract_kjv import (
     clean_verse_text,
     compile_bible_db,
     extract_tokens,
+    main as extract_kjv_main,
 )
 import scripts.bible_lookup as bible_cli
 
@@ -195,6 +196,19 @@ class TestBibleDB(unittest.TestCase):
 
         rc = bible_cli.main(["--stats", "--db", str(self.db_path)])
         self.assertEqual(rc, 0)
+
+    def test_extract_kjv_cli_main(self):
+        if not Path(DEFAULT_KJV_JSON).is_file():
+            self.skipTest("KJV JSON source not present")
+        with tempfile.TemporaryDirectory() as td:
+            db_path = Path(td) / "test_bible.db"
+            rc = extract_kjv_main(["--compile", "--db", str(db_path), "--json", DEFAULT_KJV_JSON])
+            self.assertEqual(rc, 0)
+            db = BibleDB(db_path=db_path)
+            counts = db.count()
+            self.assertEqual(counts["verses"], 31102)
+            self.assertEqual(counts["books"], 66)
+            db.close()
 
 
 if __name__ == "__main__":
