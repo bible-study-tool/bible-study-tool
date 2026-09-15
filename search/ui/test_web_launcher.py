@@ -203,7 +203,7 @@ class WebLauncherE2ETests(unittest.TestCase):
             text=True,
             check=True,
         )
-        self.assertIn("0.1.0", res.stdout)
+        self.assertIn("0.1.1", res.stdout)
 
     def test_bible_study_module_read_json(self):
         res = subprocess.run(

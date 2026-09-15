@@ -407,7 +407,7 @@ class WebServerTests(unittest.TestCase):
     def test_health_ok(self) -> None:
         data = self._get_json("/api/health")
         self.assertEqual(data["status"], "ok")
-        self.assertEqual(data["version"], "0.1.0")
+        self.assertEqual(data["version"], "0.1.1")
         self.assertEqual(data["default_theme"], "sepia")
         self.assertEqual(data["nuance_url"], "/api/nuance")
         self.assertEqual(data["prophetic_url"], "/api/prophetic")

@@ -129,7 +129,7 @@ def build_web_parser(prog: str = "bible-study") -> argparse.ArgumentParser:
         prog=prog,
         description="Adventist Bible Study Tool — Local Web Workstation & Deterministic Study Platform (ADR-024)",
     )
-    parser.add_argument("--version", "-v", action="version", version="bible-study-tool 0.1.0")
+    parser.add_argument("--version", "-v", action="version", version="bible-study-tool 0.1.1")
 
     # Web server options
     parser.add_argument(

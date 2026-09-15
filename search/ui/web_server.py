@@ -243,7 +243,7 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
             egw_stats = study.get_egw_stats()
             self._reply_json(HTTPStatus.OK, {
                 "status": "ok",
-                "version": "0.1.0",
+                "version": "0.1.1",
                 # The web face defaults to the Study Room Desk sepia token set (ADR-025);
                 # the TUI keeps its own DEFAULT_THEME (transparent) internally.
                 "default_theme": "sepia",
