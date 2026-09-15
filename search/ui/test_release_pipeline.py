@@ -63,23 +63,18 @@ class GitlabCIConfigTests(unittest.TestCase):
         self.assertEqual(job["stage"], "release")
         self.assertIn("artifacts", job)
         self.assertTrue(any("dist/*.tar.gz" in p for p in job["artifacts"]["paths"]))
-        self.assertIn("reports", job["artifacts"])
-        self.assertIn("dotenv", job["artifacts"]["reports"])
 
-        # Verify automated release publisher job
+        # Verify automated release publisher job with glab CLI
         self.assertIn("create-gitlab-release", data)
         rel_job = data["create-gitlab-release"]
         self.assertEqual(rel_job["stage"], "release")
-        self.assertEqual(rel_job["image"], "registry.gitlab.com/gitlab-org/release-cli:latest")
+        self.assertEqual(rel_job["image"], "registry.gitlab.com/gitlab-org/cli:latest")
         self.assertIn("needs", rel_job)
-        self.assertIn("release", rel_job)
-        rel_block = rel_job["release"]
-        self.assertEqual(rel_block["tag_name"], "$CI_COMMIT_TAG")
-        self.assertEqual(rel_block["description"], "./dist/RELEASE_NOTES.md")
-        self.assertIn("assets", rel_block)
-        self.assertIn("links", rel_block["assets"])
-        links = rel_block["assets"]["links"]
-        self.assertTrue(any("packages/generic/bible-study" in l.get("url", "") for l in links))
+        self.assertEqual(rel_job["variables"].get("GLAB_ENABLE_CI_AUTOLOGIN"), "true")
+        script_text = " ".join(rel_job["script"])
+        self.assertIn("glab release create", script_text)
+        self.assertIn("--notes-file dist/RELEASE_NOTES.md", script_text)
+        self.assertIn("--use-package-registry", script_text)
 
 
 class ReleaseNotesExtractorTests(unittest.TestCase):

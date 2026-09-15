@@ -115,7 +115,7 @@ echo "Staging Dir:     $STAGE_DIR"
 echo "Python:          $("$PYTHON" --version 2>&1) ($PYTHON)"
 
 # Ensure PyInstaller is installed
-if ! "$PYTHON" -m PyInstaller --version >/dev/null 2>&1; then
+if ! "$PYTHON" -m PyInstaller --version >/dev/null 2>&1 && ! "$PYTHON" -m pyinstaller --version >/dev/null 2>&1 && ! command -v pyinstaller >/dev/null 2>&1; then
   echo "ERROR: PyInstaller is not installed in the target Python environment." >&2
   echo "Run ./scripts/bootstrap.sh --dist or uv pip install --python '$PYTHON' pyinstaller" >&2
   exit 1
