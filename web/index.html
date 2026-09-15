@@ -480,11 +480,33 @@
           </div>
         </section>
 
+        <section class="settings-section" id="settings-feed-books-section">
+          <h3 class="settings-section-title">Feed Books &amp; Commentary Library</h3>
+          <p class="setting-desc">Import historical commentary or study books into your offline library (supports <code>.epub</code>, <code>.txt</code>, <code>.md</code>, <code>.json</code>, <code>.zip</code>, or <code>egw.db</code>).</p>
+          <div class="dropzone" id="settings-book-dropzone" tabindex="0" role="region" aria-label="Settings Book dropzone">
+            <div class="dropzone-inner">
+              <span class="dropzone-icon" aria-hidden="true">&#128218;</span>
+              <div class="dropzone-content">
+                <strong class="dropzone-title">Drag &amp; drop books here to feed the library</strong>
+                <span class="dropzone-sub">Click to browse or drop files to import into local library</span>
+              </div>
+              <button type="button" id="settings-browse-books-btn" class="btn-tool">Browse Files…</button>
+              <input type="file" id="settings-book-file-input" multiple accept=".epub,.txt,.md,.json,.zip,.db" hidden>
+            </div>
+          </div>
+          <div id="settings-import-status" class="import-status" hidden>
+            <div class="import-progress-bar">
+              <div id="settings-import-progress-fill" class="import-progress-fill"></div>
+            </div>
+            <p id="settings-import-message" class="import-message"></p>
+          </div>
+        </section>
+
         <section class="settings-section">
           <h3 class="settings-section-title">Setup &amp; Shortcuts</h3>
           <div class="settings-action-row">
             <button type="button" id="open-shortcuts-btn" class="btn-tool">Keyboard Shortcuts (<kbd>?</kbd>)</button>
-            <button type="button" id="launch-wizard-btn" class="btn-tool">Launch Setup &amp; Verification Wizard…</button>
+            <button type="button" id="launch-wizard-btn" class="btn-tool">Launch Setup &amp; Verification Guide…</button>
           </div>
         </section>
       </div>

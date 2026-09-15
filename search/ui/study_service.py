@@ -720,6 +720,29 @@ class StudyService:
             self._word_cache[cache_key] = res
             return res
 
+    def get_verse_lexicon(self, verse: VerseStudy) -> list[dict[str, Any]]:
+        """Fetch concise lexical entries for all Strong's numbers in a verse."""
+        results: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for s_code in verse.strongs_list:
+            clean_code = _canonical_strongs(s_code)
+            if not clean_code or clean_code in seen:
+                continue
+            seen.add(clean_code)
+            w = self.lookup_word(clean_code, sample_limit=0)
+            if w:
+                results.append({
+                    "strongs_id": w.strongs_id,
+                    "language": w.language,
+                    "word": w.word,
+                    "translit": w.translit,
+                    "gloss": w.gloss,
+                    "occurrences_count": w.occurrences_count,
+                    "definition": w.definition,
+                    "kjv_renderings": w.kjv_renderings,
+                })
+        return results
+
     def search_unified(
         self,
         query: str,

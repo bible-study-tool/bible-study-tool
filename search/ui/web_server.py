@@ -96,7 +96,7 @@ def _jsonable(value: Any) -> Any:
     raise TypeError(f"cannot serialize {type(value).__name__} to JSON")
 
 
-def _verse_payload(study: StudyService, verse: Any) -> dict[str, Any]:
+def _verse_payload(study: StudyService | None, verse: Any) -> dict[str, Any]:
     """Wire payload for a single verse: text, translations, Strong's list, prophetic symbols."""
     payload = {
         "osis": verse.osis,
@@ -105,6 +105,8 @@ def _verse_payload(study: StudyService, verse: Any) -> dict[str, Any]:
         "text": verse.text,
         "translations": verse.translations,
         "strongs_list": verse.strongs_list,
+        "tokens": verse.tokens,
+        "original_text": verse.original_text,
     }
     if getattr(verse, "prophetic_symbols", None):
         payload["prophetic_symbols"] = _jsonable(verse.prophetic_symbols)
@@ -119,14 +121,14 @@ _EAGER_VERSE_FIELDS = ("semantic_frames", "verbal_nuances",
                        "discourse_markers", "ot_citations")
 
 
-def _passage_payload(passage: Any, eager_frames: bool) -> dict[str, Any]:
+def _passage_payload(passage: Any, eager_frames: bool, study: StudyService | None = None) -> dict[str, Any]:
     """Serialize a PassageStudy to the wire shape (omits heavy per-verse data).
 
     EGW correlations are deliberately excluded (copyright-light web API).
     Argument flow is cheap and useful; include when present.
     """
     data = {name: getattr(passage, name) for name in _PASSAGE_FIELDS}
-    data["verses"] = [_verse_payload(passage, v) for v in passage.verses]
+    data["verses"] = [_verse_payload(study, v) for v in passage.verses]
     if getattr(passage, "argument_flow", None):
         data["argument_flow"] = _jsonable(passage.argument_flow)
     if eager_frames:
@@ -134,10 +136,15 @@ def _passage_payload(passage: Any, eager_frames: bool) -> dict[str, Any]:
         # same order from the same source), so per-verse enrichment attaches
         # to the correct verse without a keyed lookup.
         for i, verse in enumerate(data["verses"]):
+            verse_obj = passage.verses[i]
             for field in _EAGER_VERSE_FIELDS:
-                value = getattr(passage.verses[i], field, None)
+                value = getattr(verse_obj, field, None)
                 if value:
                     verse[field] = _jsonable(value)
+            if study and hasattr(study, "get_verse_lexicon"):
+                lex = study.get_verse_lexicon(verse_obj)
+                if lex:
+                    verse["lexicon"] = _jsonable(lex)
     return data
 
 
@@ -287,7 +294,7 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                                   f"engine error: {exc}")
                 return
             try:
-                payload = _passage_payload(passage, eager)
+                payload = _passage_payload(passage, eager, study=study)
             except Exception as exc:  # e.g. _jsonable fail-fast (S1) -> clean 500
                 self._reply_error(HTTPStatus.INTERNAL_SERVER_ERROR,
                                   f"serialization error: {exc}")

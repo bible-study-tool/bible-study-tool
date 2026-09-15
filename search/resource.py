@@ -265,7 +265,11 @@ def verify_data_bundle(data_dir: Path | None = None) -> tuple[bool, list[str]]:
     root = (data_dir or get_data_dir()).resolve()
     sums_file = root / "SHA256SUMS"
     if not sums_file.is_file():
-        return False, [f"SHA256SUMS not found in data directory: {root}"]
+        dist_sums = root.parent / "dist" / "data" / "SHA256SUMS"
+        if dist_sums.is_file():
+            sums_file = dist_sums
+        else:
+            return False, [f"SHA256SUMS not found in data directory: {root}"]
 
     errors: list[str] = []
     lines = sums_file.read_text(encoding="utf-8").splitlines()

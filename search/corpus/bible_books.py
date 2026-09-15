@@ -136,12 +136,12 @@ BOOK_ALIASES: dict[str, str] = {
     "2 KINGS": "2Kgs", "2KINGS": "2Kgs", "2KGS": "2Kgs", "2KI": "2Kgs", "2K": "2Kgs",
     "II KINGS": "2Kgs", "IIKINGS": "2Kgs", "IIKGS": "2Kgs", "IIKI": "2Kgs",
     "SECOND KINGS": "2Kgs", "2ND KINGS": "2Kgs",
-    "1 CHRONICLES": "1Chr", "1CHRONICLES": "1Chr", "1CHR": "1Chr", "1CH": "1Chr",
-    "I CHRONICLES": "1Chr", "ICHRONICLES": "1Chr", "ICHR": "1Chr", "ICH": "1Chr",
-    "FIRST CHRONICLES": "1Chr", "1ST CHRONICLES": "1Chr",
-    "2 CHRONICLES": "2Chr", "2CHRONICLES": "2Chr", "2CHR": "2Chr", "2CH": "2Chr",
-    "II CHRONICLES": "2Chr", "IICHRONICLES": "2Chr", "IICHR": "2Chr", "IICH": "2Chr",
-    "SECOND CHRONICLES": "2Chr", "2ND CHRONICLES": "2Chr",
+    "1 CHRONICLES": "1Chr", "1CHRONICLES": "1Chr", "1 CHRON": "1Chr", "1CHRON": "1Chr", "1CHR": "1Chr", "1CH": "1Chr",
+    "I CHRONICLES": "1Chr", "ICHRONICLES": "1Chr", "I CHRON": "1Chr", "ICHRON": "1Chr", "ICHR": "1Chr", "ICH": "1Chr",
+    "FIRST CHRONICLES": "1Chr", "1ST CHRONICLES": "1Chr", "1ST CHRON": "1Chr",
+    "2 CHRONICLES": "2Chr", "2CHRONICLES": "2Chr", "2 CHRON": "2Chr", "2CHRON": "2Chr", "2CHR": "2Chr", "2CH": "2Chr",
+    "II CHRONICLES": "2Chr", "IICHRONICLES": "2Chr", "II CHRON": "2Chr", "IICHRON": "2Chr", "IICHR": "2Chr", "IICH": "2Chr",
+    "SECOND CHRONICLES": "2Chr", "2ND CHRONICLES": "2Chr", "2ND CHRON": "2Chr",
     "EZRA": "Ezra", "EZR": "Ezra",
     "NEHEMIAH": "Neh", "NEH": "Neh", "NE": "Neh",
     "ESTHER": "Esth", "ESTH": "Esth", "EST": "Esth", "ES": "Esth",
@@ -217,7 +217,7 @@ BOOK_ALIASES: dict[str, str] = {
     "III JOHN": "3John", "IIIJOHN": "3John", "IIIJN": "3John", "IIIJO": "3John",
     "THIRD JOHN": "3John", "3RD JOHN": "3John",
     "JUDE": "Jude", "JUD": "Jude", "JD": "Jude",
-    "REVELATION": "Rev", "REV": "Rev", "RE": "Rev", "REVELATION OF JOHN": "Rev", "APOCALYPSE": "Rev", "APOC": "Rev",
+    "REVELATION": "Rev", "REVELATIONS": "Rev", "THE REVELATION": "Rev", "REV": "Rev", "RE": "Rev", "REVELATION OF JOHN": "Rev", "APOCALYPSE": "Rev", "APOC": "Rev",
 }
 
 
@@ -231,7 +231,7 @@ def resolve_book_code(query: str) -> str:
       'Revelation of John' -> 'Rev'
       'Ps' -> 'Ps'
     """
-    clean = query.strip()
+    clean = query.strip().rstrip(".").strip()
     # Normalize Roman numerals with spaces: 'I Cor' -> '1 Cor'
     clean_upper = clean.upper()
     if clean_upper in BOOK_ALIASES:

@@ -95,6 +95,12 @@ const els = {
   settingsZebraToggle: $("#settings-zebra-toggle"),
   settingsStrongsToggle: $("#settings-strongs-toggle"),
   settingsAutoUpdateToggle: $("#settings-auto-update-toggle"),
+  settingsBookDropzone: $("#settings-book-dropzone"),
+  settingsBrowseBooksBtn: $("#settings-browse-books-btn"),
+  settingsBookFileInput: $("#settings-book-file-input"),
+  settingsImportStatus: $("#settings-import-status"),
+  settingsImportProgressFill: $("#settings-import-progress-fill"),
+  settingsImportMessage: $("#settings-import-message"),
   openShortcutsBtn: $("#open-shortcuts-btn"),
   launchWizardBtn: $("#launch-wizard-btn"),
   shortcutsModal: $("#shortcuts-modal"),
@@ -319,6 +325,43 @@ function toggleProphecyInlineCard(verseItem, v, sym, badgeBtn) {
   verseItem.appendChild(card);
 }
 
+function createStrongsTag(rawCode, verseNum) {
+  const normCode = rawCode.startsWith("H") || rawCode.startsWith("G") ? rawCode : `H${rawCode}`;
+  const sup = document.createElement("sup");
+  sup.className = "strongs strongs-tag";
+  sup.textContent = `${normCode}`;
+  sup.setAttribute("role", "button");
+  sup.setAttribute("tabindex", "0");
+  const labelText = `Inspect original-language nuances for ${normCode} (Verse ${verseNum})`;
+  sup.title = labelText;
+  sup.setAttribute("aria-label", labelText);
+  const openNuance = () => {
+    switchTab("languages");
+    if (els.languagesPanel) {
+      const targetCard = els.languagesPanel.querySelector(`details.morph-card[data-verse="${verseNum}"][data-strongs="${normCode}"]`) ||
+                         els.languagesPanel.querySelector(`details.lexicon-card[data-verse="${verseNum}"][data-strongs="${normCode}"]`) ||
+                         els.languagesPanel.querySelector(`details[data-strongs="${normCode}"]`) ||
+                         els.languagesPanel.querySelector(`.verse-language-group[data-verse="${verseNum}"]`);
+      if (targetCard) {
+        if (typeof targetCard.open !== "undefined") targetCard.open = true;
+        targetCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+  };
+  sup.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openNuance();
+  });
+  sup.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      e.stopPropagation();
+      openNuance();
+    }
+  });
+  return sup;
+}
+
 function renderVerse(v) {
   const item = document.createElement("div");
   item.className = "verse-item";
@@ -327,43 +370,35 @@ function renderVerse(v) {
   num.className = "verse-num";
   num.textContent = `${v.verse}`;
   item.appendChild(num);
+
   const textSpan = document.createElement("span");
   textSpan.className = "verse-text";
-  textSpan.textContent = v.text;
-  item.appendChild(textSpan);
-  // Lightweight Strong's markers show only when we have them (cursor: pointer).
-  if (v.strongs_list && v.strongs_list.length) {
-    const sup = document.createElement("sup");
-    sup.className = "strongs strongs-tag";
-    const rawCode = String(v.strongs_list[0]);
-    const normCode = rawCode.startsWith("H") || rawCode.startsWith("G") ? rawCode : `H${rawCode}`;
-    sup.textContent = ` ${normCode}`;
-    sup.setAttribute("role", "button");
-    sup.setAttribute("tabindex", "0");
-    const labelText = `Inspect original-language nuances for ${normCode} (Verse ${v.verse})`;
-    sup.title = labelText;
-    sup.setAttribute("aria-label", labelText);
-    const openNuance = () => {
-      switchTab("languages");
-      if (els.languagesPanel) {
-        const targetCard = els.languagesPanel.querySelector(`details.morph-card[data-verse="${v.verse}"][data-strongs="${normCode}"]`) ||
-                           els.languagesPanel.querySelector(`details.morph-card[data-strongs="${normCode}"]`) ||
-                           els.languagesPanel.querySelector(`details.morph-card[data-verse="${v.verse}"]`);
-        if (targetCard) {
-          targetCard.open = true;
-          targetCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  if (v.tokens && v.tokens.length > 0) {
+    v.tokens.forEach((tok, tIdx) => {
+      const tokSpan = document.createElement("span");
+      tokSpan.className = "token-wrap";
+      tokSpan.appendChild(document.createTextNode(tok.text || ""));
+      if (tok.strongs && tok.strongs.length > 0) {
+        for (const s of tok.strongs) {
+          tokSpan.appendChild(document.createTextNode(" "));
+          tokSpan.appendChild(createStrongsTag(s, v.verse));
         }
       }
-    };
-    sup.addEventListener("click", openNuance);
-    sup.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        openNuance();
+      if (tIdx < v.tokens.length - 1) {
+        tokSpan.appendChild(document.createTextNode(" "));
       }
+      textSpan.appendChild(tokSpan);
     });
-    item.appendChild(sup);
+  } else {
+    textSpan.textContent = v.text;
+    if (v.strongs_list && v.strongs_list.length) {
+      for (const s of v.strongs_list) {
+        textSpan.appendChild(document.createTextNode(" "));
+        textSpan.appendChild(createStrongsTag(s, v.verse));
+      }
+    }
   }
+  item.appendChild(textSpan);
 
   // Canonical prophetic symbol badges
   if (v.prophetic_symbols && v.prophetic_symbols.length > 0) {
@@ -528,75 +563,153 @@ function renderTranslations(pass) {
 
 function renderLanguages(pass) {
   if (!els.languagesPanel) return;
-  const versesWithNuances = pass.verses.filter(
-    (v) => v.verbal_nuances && v.verbal_nuances.length > 0
+  const versesWithLang = pass.verses.filter(
+    (v) => (v.lexicon && v.lexicon.length > 0) ||
+           (v.verbal_nuances && v.verbal_nuances.length > 0) ||
+           (v.original_text && v.original_text.trim().length > 0) ||
+           (v.strongs_list && v.strongs_list.length > 0)
   );
 
-  if (!versesWithNuances.length) {
+  if (!versesWithLang.length) {
     els.languagesPanel.innerHTML = `
       <div class="panel-toolbar">
         <span>Original Languages</span>
       </div>
-      <p class="tab-hint">No verbal nuances or morphological entries indexed for ${escapeHtml(pass.ref)}.</p>
+      <p class="tab-hint">No original-language morphological entries indexed for ${escapeHtml(pass.ref)}.</p>
     `;
     return;
   }
 
   const toolbar = `
     <div class="panel-toolbar">
-      <span>Original Languages · ${versesWithNuances.length} verse${versesWithNuances.length === 1 ? "" : "s"}</span>
+      <span>Original Languages &amp; Concordance · ${versesWithLang.length} verse${versesWithLang.length === 1 ? "" : "s"}</span>
       <button type="button" class="btn-disclosure-toggle" id="toggle-all-languages">Expand All</button>
     </div>
   `;
 
-  const sections = versesWithNuances.map((v) => {
+  const sections = versesWithLang.map((v) => {
     const nuances = v.verbal_nuances || [];
+    const lexiconList = v.lexicon || [];
+    const nuancesByCode = new Map();
+    nuances.forEach((n) => {
+      if (n.strongs) nuancesByCode.set(n.strongs.toUpperCase(), n);
+    });
 
-    const cards = nuances.map((n) => {
-      const gloss = n.gloss || n.plain_summary || n.lemma || "";
-      const original = n.text || n.lemma || "";
-      return `
-      <details class="disclosure-card morph-card" data-strongs="${escapeHtml(n.strongs)}" data-verse="${v.verse}">
-        <summary class="disclosure-summary">
-          <span class="disclosure-arrow" aria-hidden="true">▸</span>
-          <span class="morph-surface">${escapeHtml(gloss)}</span>
-          <span class="morph-lemma">(${escapeHtml(original)})</span>
-          <span class="morph-stem-badge">${escapeHtml(n.stem_or_tense)}</span>
-          <span class="morph-strongs-badge">${escapeHtml(n.strongs)}</span>
-        </summary>
-        <div class="disclosure-body">
+    const renderedCodes = new Set();
+    const cards = [];
+
+    // 1. Render lexicon entries (covering all Strong's numbers with enriched definitions)
+    lexiconList.forEach((lex) => {
+      const code = (lex.strongs_id || "").toUpperCase();
+      renderedCodes.add(code);
+      const nuance = nuancesByCode.get(code);
+
+      const gloss = lex.gloss || (nuance && (nuance.gloss || nuance.plain_summary)) || lex.word || "";
+      const origWord = lex.word || (nuance && (nuance.text || nuance.lemma)) || "";
+      const translit = lex.translit ? ` — ${lex.translit}` : "";
+      const occ = lex.occurrences_count ? `<span class="morph-occurrences">${lex.occurrences_count}× in KJV</span>` : "";
+
+      const stemBadge = nuance ? `<span class="morph-stem-badge">${escapeHtml(nuance.stem_or_tense)}</span>` : "";
+      const strongsBadge = `<span class="morph-strongs-badge">${escapeHtml(code || "—")}</span>`;
+
+      let bodyHtml = "";
+      if (nuance) {
+        bodyHtml += `
           <div class="morph-summary-row">
-            <span class="morph-plain-summary">${escapeHtml(n.plain_summary)}</span>
+            <span class="morph-plain-summary">${escapeHtml(nuance.plain_summary)}</span>
           </div>
-          ${n.theological_nuance ? `
+          ${nuance.theological_nuance ? `
           <div class="morph-theological-card">
             <strong class="theological-label">Theological Nuance</strong>
-            <p class="theological-text">${escapeHtml(n.theological_nuance)}</p>
+            <p class="theological-text">${escapeHtml(nuance.theological_nuance)}</p>
           </div>` : ""}
           <div class="morph-details-grid">
-            <div class="detail-item"><span class="detail-key">Aspect:</span> <span class="detail-val">${escapeHtml(n.aspect_meaning || "—")}</span></div>
-            <div class="detail-item"><span class="detail-key">Voice:</span> <span class="detail-val">${escapeHtml(n.voice || "—")}</span></div>
-            <div class="detail-item"><span class="detail-key">Code:</span> <code class="detail-code">${escapeHtml(n.morph_code)}</code></div>
-            <div class="detail-item"><span class="detail-key">Gloss:</span> <em class="detail-val">${escapeHtml(n.gloss || "—")}</em></div>
+            <div class="detail-item"><span class="detail-key">Aspect:</span> <span class="detail-val">${escapeHtml(nuance.aspect_meaning || "—")}</span></div>
+            <div class="detail-item"><span class="detail-key">Voice:</span> <span class="detail-val">${escapeHtml(nuance.voice || "—")}</span></div>
+            <div class="detail-item"><span class="detail-key">Stem:</span> <span class="detail-val">${escapeHtml(nuance.stem_or_tense || "—")}</span></div>
+            <div class="detail-item"><span class="detail-key">Code:</span> <code class="detail-code">${escapeHtml(nuance.morph_code || "—")}</code></div>
           </div>
-        </div>
-      </details>
-    `;
-    }).join("");
+        `;
+      }
+      if (lex.definition) {
+        const defFirst = lex.definition.split("\n")[0] || "";
+        bodyHtml += `
+          <div class="lexicon-def-row" style="margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px solid var(--border);">
+            <div class="detail-item"><span class="detail-key">Definition:</span> <span class="detail-val">${escapeHtml(defFirst)}</span></div>
+            ${lex.kjv_renderings ? `<div class="detail-item"><span class="detail-key">KJV Renderings:</span> <em class="detail-val">${escapeHtml(lex.kjv_renderings)}</em></div>` : ""}
+          </div>
+        `;
+      }
+
+      cards.push(`
+        <details class="disclosure-card morph-card" data-strongs="${escapeHtml(code)}" data-verse="${v.verse}">
+          <summary class="disclosure-summary">
+            <span class="disclosure-arrow" aria-hidden="true">▸</span>
+            <span class="morph-surface">${escapeHtml(gloss)}</span>
+            <span class="morph-lemma">(${escapeHtml(origWord)}${escapeHtml(translit)})</span>
+            ${stemBadge}
+            ${strongsBadge}
+            ${occ}
+          </summary>
+          <div class="disclosure-body">
+            ${bodyHtml}
+          </div>
+        </details>
+      `);
+    });
+
+    // 2. Any additional verbal nuances not matched in lexiconList
+    nuances.forEach((n) => {
+      const code = (n.strongs || "").toUpperCase();
+      if (renderedCodes.has(code)) return;
+      renderedCodes.add(code);
+      const gloss = n.gloss || n.plain_summary || n.lemma || "";
+      const original = n.text || n.lemma || "";
+      cards.push(`
+        <details class="disclosure-card morph-card" data-strongs="${escapeHtml(n.strongs)}" data-verse="${v.verse}">
+          <summary class="disclosure-summary">
+            <span class="disclosure-arrow" aria-hidden="true">▸</span>
+            <span class="morph-surface">${escapeHtml(gloss)}</span>
+            <span class="morph-lemma">(${escapeHtml(original)})</span>
+            <span class="morph-stem-badge">${escapeHtml(n.stem_or_tense)}</span>
+            <span class="morph-strongs-badge">${escapeHtml(n.strongs)}</span>
+          </summary>
+          <div class="disclosure-body">
+            <div class="morph-summary-row">
+              <span class="morph-plain-summary">${escapeHtml(n.plain_summary)}</span>
+            </div>
+            ${n.theological_nuance ? `
+            <div class="morph-theological-card">
+              <strong class="theological-label">Theological Nuance</strong>
+              <p class="theological-text">${escapeHtml(n.theological_nuance)}</p>
+            </div>` : ""}
+            <div class="morph-details-grid">
+              <div class="detail-item"><span class="detail-key">Aspect:</span> <span class="detail-val">${escapeHtml(n.aspect_meaning || "—")}</span></div>
+              <div class="detail-item"><span class="detail-key">Voice:</span> <span class="detail-val">${escapeHtml(n.voice || "—")}</span></div>
+              <div class="detail-item"><span class="detail-key">Code:</span> <code class="detail-code">${escapeHtml(n.morph_code)}</code></div>
+              <div class="detail-item"><span class="detail-key">Gloss:</span> <em class="detail-val">${escapeHtml(n.gloss || "—")}</em></div>
+            </div>
+          </div>
+        </details>
+      `);
+    });
+
+    const origBanner = v.original_text ? `<div class="verse-original-text" dir="auto">${escapeHtml(v.original_text)}</div>` : "";
 
     return `
-      <div class="verse-language-group">
+      <div class="verse-language-group" data-verse="${v.verse}">
         <div class="verse-language-header">
           <span class="verse-num">${v.verse}</span>
           <span class="verse-language-snippet">${escapeHtml(v.text.slice(0, 50))}${v.text.length > 50 ? "…" : ""}</span>
         </div>
-        ${cards}
+        ${origBanner}
+        ${cards.join("")}
       </div>
     `;
   }).join("");
 
   els.languagesPanel.innerHTML = toolbar + sections;
-  bindMasterToggle(els.languagesPanel, "#toggle-all-languages", "details.morph-card");
+  bindMasterToggle(els.languagesPanel, "#toggle-all-languages", "details.disclosure-card");
 }
 
 function showError(message) {
@@ -754,11 +867,20 @@ function completeWizard() {
 
 async function uploadBookFiles(files) {
   if (!files || files.length === 0) return;
-  if (!els.dropzoneStatus) return;
+  const statusEls = [els.dropzoneStatus, els.settingsImportStatus].filter(Boolean);
+  const msgEls = [els.dropzoneStatus, els.settingsImportMessage].filter(Boolean);
 
-  els.dropzoneStatus.hidden = false;
-  els.dropzoneStatus.className = "dropzone-status status-loading";
-  els.dropzoneStatus.textContent = `Feeding ${files.length} book file${files.length > 1 ? "s" : ""} into library…`;
+  const setStatus = (stateClass, text) => {
+    statusEls.forEach((el) => {
+      el.hidden = false;
+      el.className = el.id === "settings-import-status" ? `import-status ${stateClass}` : `dropzone-status ${stateClass}`;
+    });
+    msgEls.forEach((el) => {
+      el.textContent = text;
+    });
+  };
+
+  setStatus("status-loading", `Feeding ${files.length} book file${files.length > 1 ? "s" : ""} into library…`);
 
   let totalAdded = 0;
   let hasErrors = false;
@@ -766,7 +888,7 @@ async function uploadBookFiles(files) {
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    els.dropzoneStatus.textContent = `Ingesting ${file.name} (${i + 1}/${files.length})…`;
+    setStatus("status-loading", `Ingesting ${file.name} (${i + 1}/${files.length})…`);
     try {
       const res = await fetch(`/api/import-books?filename=${encodeURIComponent(file.name)}`, {
         method: "POST",
@@ -795,12 +917,10 @@ async function uploadBookFiles(files) {
   }
 
   if (hasErrors) {
-    els.dropzoneStatus.className = "dropzone-status status-error";
-    els.dropzoneStatus.textContent = `Import encountered issues:\n${errorMsgs.join("\n")}`;
+    setStatus("status-error", `Import encountered issues:\n${errorMsgs.join("\n")}`);
   } else {
-    els.dropzoneStatus.className = "dropzone-status status-success";
     const addedText = totalAdded > 0 ? ` (${totalAdded.toLocaleString()} paragraphs added)` : "";
-    els.dropzoneStatus.textContent = `Successfully ingested book library${addedText} ✔`;
+    setStatus("status-success", `Successfully ingested book library${addedText} ✔`);
   }
 
   if (egwStats && typeof egwStats.available === "boolean") {
@@ -870,6 +990,64 @@ function initBookDropzone() {
     });
   }
 
+  // Settings Modal Book Dropzone
+  const setDropzone = els.settingsBookDropzone;
+  const setFileInput = els.settingsBookFileInput;
+  const setBrowseBtn = els.settingsBrowseBooksBtn;
+
+  if (setBrowseBtn && setFileInput) {
+    setBrowseBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setFileInput.click();
+    });
+  }
+
+  if (setDropzone && setFileInput) {
+    setDropzone.addEventListener("click", (e) => {
+      if (e.target.closest("#settings-import-status") || e.target.closest("button")) return;
+      setFileInput.click();
+    });
+
+    setDropzone.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setFileInput.click();
+      }
+    });
+
+    setFileInput.addEventListener("change", () => {
+      if (setFileInput.files && setFileInput.files.length > 0) {
+        uploadBookFiles(Array.from(setFileInput.files));
+        setFileInput.value = "";
+      }
+    });
+
+    ["dragenter", "dragover"].forEach((eventName) => {
+      setDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDropzone.classList.add("drag-over");
+      });
+    });
+
+    ["dragleave", "dragend"].forEach((eventName) => {
+      setDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDropzone.classList.remove("drag-over");
+      });
+    });
+
+    setDropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDropzone.classList.remove("drag-over");
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        uploadBookFiles(Array.from(e.dataTransfer.files));
+      }
+    });
+  }
+
   // Allow dropping book files onto the commentary panel directly
   const commentaryPanel = els.commentaryPanel;
   if (commentaryPanel) {
@@ -894,21 +1072,25 @@ function initBookDropzone() {
         e.preventDefault();
         e.stopPropagation();
         commentaryPanel.classList.remove("drag-over-panel");
-        openWizard(3);
+        openSettings();
+        const feedSec = document.getElementById("settings-feed-books-section");
+        if (feedSec) feedSec.scrollIntoView({ behavior: "smooth", block: "start" });
         uploadBookFiles(Array.from(e.dataTransfer.files));
       }
     });
   }
 
+  const openSettingsFeed = () => {
+    openSettings();
+    const feedSec = document.getElementById("settings-feed-books-section");
+    if (feedSec) feedSec.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   if (els.commentaryImportBtn) {
-    els.commentaryImportBtn.addEventListener("click", () => {
-      openWizard(3);
-    });
+    els.commentaryImportBtn.addEventListener("click", openSettingsFeed);
   }
   if (els.commentaryEmptyImportBtn) {
-    els.commentaryEmptyImportBtn.addEventListener("click", () => {
-      openWizard(3);
-    });
+    els.commentaryEmptyImportBtn.addEventListener("click", openSettingsFeed);
   }
 }
 

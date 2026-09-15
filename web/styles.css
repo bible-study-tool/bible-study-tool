@@ -348,6 +348,25 @@ button:disabled { opacity: 0.45; cursor: default; }
 #go-btn { background: var(--primary); color: var(--surface); border-color: var(--primary); }
 #go-btn:hover { filter: brightness(1.08); }
 
+#prev-btn,
+#next-btn {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  min-width: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+#prev-btn:hover:not(:disabled),
+#next-btn:hover:not(:disabled) {
+  background: var(--surface-alt);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
 .header-controls {
   display: flex;
   align-items: center;
@@ -1457,6 +1476,7 @@ kbd {
 }
 
 .disclosure-card {
+  flex-shrink: 0;
   margin: var(--space-2) var(--space-3);
   border: 1px solid var(--border);
   border-radius: var(--radius-m);
@@ -1574,12 +1594,32 @@ kbd {
 }
 
 /* Original Language / Morphology Cards */
-.morph-card {
+.morph-card,
+.lexicon-card {
   border-left: 3px solid var(--accent);
+  flex-shrink: 0;
 }
 
 .verse-language-group {
+  flex-shrink: 0;
   margin-bottom: var(--space-3);
+}
+
+.verse-original-text {
+  font-family: var(--font-reading);
+  font-size: var(--type-md);
+  color: var(--primary);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-alt);
+  border-radius: var(--radius-s);
+  margin: var(--space-2) var(--space-3);
+  line-height: 1.8;
+}
+
+.morph-occurrences {
+  font-size: var(--type-xs);
+  color: var(--ink-muted);
+  margin-left: auto;
 }
 
 .verse-language-header {

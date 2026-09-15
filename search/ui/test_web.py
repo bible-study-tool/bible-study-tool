@@ -98,6 +98,10 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b'id="shortcuts-modal"', body)
         self.assertIn(b'id="settings-theme-select"', body)
         self.assertIn(b'id="settings-zebra-toggle"', body)
+        self.assertIn(b'id="settings-book-dropzone"', body)
+        self.assertIn(b'id="settings-browse-books-btn"', body)
+        self.assertIn(b'id="settings-book-file-input"', body)
+        self.assertIn(b'id="settings-import-status"', body)
         self.assertIn(b'id="settings-strongs-toggle"', body)
         self.assertIn(b'id="open-shortcuts-btn"', body)
         self.assertIn(b'id="launch-wizard-btn"', body)
@@ -299,6 +303,10 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"shortcuts-table", body)
         self.assertIn(b"selected-verse", body)
         self.assertIn(b"hide-strongs", body)
+        self.assertIn(b"prev-btn", body)
+        self.assertIn(b"verse-original-text", body)
+        self.assertIn(b"lexicon-card", body)
+        self.assertIn(b"morph-occurrences", body)
 
     def test_appjs_served(self) -> None:
         status, body, ctype = self._get("/app.js")
@@ -382,6 +390,9 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b"uploadBookFiles", body)
         self.assertIn(b"initBookDropzone", body)
         self.assertIn(b"bookDropzone", body)
+        self.assertIn(b"createStrongsTag", body)
+        self.assertIn(b"settingsBookDropzone", body)
+        self.assertIn(b"settingsImportStatus", body)
 
     def test_traversal_blocked(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:
@@ -455,6 +466,34 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(data["book_name"], "Genesis")
         self.assertEqual(data["start_chapter"], 1)
         self.assertEqual(len(data["verses"]), 31)
+
+        data_rev = self._get_json("/api/passage?ref=Revelations")
+        self.assertEqual(data_rev["ref"], "Revelation 1")
+        self.assertEqual(data_rev["book_name"], "Revelation")
+        self.assertEqual(data_rev["start_chapter"], 1)
+
+        data_chron = self._get_json("/api/passage?ref=1%20Chron.")
+        self.assertEqual(data_chron["ref"], "1 Chronicles 1")
+        self.assertEqual(data_chron["book_name"], "1 Chronicles")
+        self.assertEqual(data_chron["start_chapter"], 1)
+
+        data_gen_dot = self._get_json("/api/passage?ref=Gen.")
+        self.assertEqual(data_gen_dot["ref"], "Genesis 1")
+
+    def test_passage_eager_tokens_and_lexicon(self) -> None:
+        data = self._get_json("/api/passage?ref=Genesis%201:1&eager=1")
+        v = data["verses"][0]
+        self.assertIn("tokens", v)
+        self.assertIsInstance(v["tokens"], list)
+        self.assertTrue(len(v["tokens"]) > 0)
+        self.assertIn("original_text", v)
+        self.assertTrue(v["original_text"])
+        self.assertIn("lexicon", v)
+        self.assertIsInstance(v["lexicon"], list)
+        self.assertTrue(len(v["lexicon"]) > 0)
+        lex_item = v["lexicon"][0]
+        self.assertIn("strongs_id", lex_item)
+        self.assertIn("gloss", lex_item)
 
     def test_passage_bad_ref_is_400(self) -> None:
         with self.assertRaises(urllib.error.HTTPError) as ctx:
