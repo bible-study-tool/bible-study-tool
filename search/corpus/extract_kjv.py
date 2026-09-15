@@ -150,6 +150,13 @@ CREATE TABLE IF NOT EXISTS translation_verses (
     text TEXT NOT NULL,
     PRIMARY KEY (translation_id, verse_id)
 );
+
+CREATE TABLE IF NOT EXISTS cross_references (
+    from_verse TEXT NOT NULL,
+    to_verse TEXT NOT NULL,
+    votes INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (from_verse, to_verse)
+);
 """
 
 _INDICES_SCHEMA = """
@@ -157,6 +164,8 @@ CREATE INDEX IF NOT EXISTS idx_verses_osis_ch ON verses(osis, chapter, verse);
 CREATE INDEX IF NOT EXISTS idx_verses_osis ON verses(osis);
 CREATE INDEX IF NOT EXISTS idx_trans_verses_verse ON translation_verses(verse_id);
 CREATE INDEX IF NOT EXISTS idx_trans_verses_ch ON translation_verses(translation_id, osis, chapter);
+CREATE INDEX IF NOT EXISTS idx_xrefs_from ON cross_references(from_verse, votes DESC);
+CREATE INDEX IF NOT EXISTS idx_xrefs_to ON cross_references(to_verse);
 """
 
 _FTS_SCHEMA = """

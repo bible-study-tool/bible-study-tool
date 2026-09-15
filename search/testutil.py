@@ -113,6 +113,11 @@ def ensure_test_databases(repo: str | Path | None = None) -> None:
                     "INSERT OR REPLACE INTO translation_verses VALUES (?, ?, ?, ?, ?, ?)",
                     ((tv["translation_id"], tv["verse_id"], tv["osis"], tv["chapter"], tv["verse"], tv["text"]) for tv in pkg["bible"]["translation_verses"]),
                 )
+                if pkg["bible"].get("cross_references"):
+                    bdb.conn.executemany(
+                        "INSERT OR REPLACE INTO cross_references (from_verse, to_verse, votes) VALUES (?, ?, ?)",
+                        ((x["from_verse"], x["to_verse"], x["votes"]) for x in pkg["bible"]["cross_references"]),
+                    )
         finally:
             bdb.close()
 

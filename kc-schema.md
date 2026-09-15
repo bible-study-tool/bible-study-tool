@@ -22,7 +22,7 @@ source: source/bible | source/ellen-white | source/commentary | ...
 language: hebrew | greek | aramaic | english
 translation: kjv | nkjv | esv | niv | csb | nlt | lxx | masoretic
 level: intro | intermediate | advanced
-status: draft | review | final | needs-update
+status: draft | review | approved | final | needs-update
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 related:

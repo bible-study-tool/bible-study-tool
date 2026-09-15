@@ -54,12 +54,12 @@ REQUIRED_FIELDS = {
     "book": "biblical book or category",
     "source": "source attribution",
     "tags": "must include one material/ tag and one book/ or theme/ tag",
-    "status": "draft, review, or final",
+    "status": "draft, review, approved, final, or needs-update",
     "language": "language of the content",
 }
 
 # type: must be a material/ value. status/level bare value sets.
-_STATUS_BARE = {"draft", "review", "final", "needs-update"}
+_STATUS_BARE = {"draft", "review", "approved", "final", "needs-update"}
 _LEVEL_BARE = {"intro", "intermediate", "advanced"}
 _LANGS = {"hebrew", "greek", "aramaic", "english"}
 # ISO-8601 date (YYYY-MM-DD), per kc-schema.md.

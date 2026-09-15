@@ -47,7 +47,7 @@ entries `draft` -> `review`.
 | [WP-034](WP-034-developer-ergonomics-and-bootstrap-hardening.md) | Pillar G (G5) | Developer Ergonomics & One-Command Bootstrapping (root ./bootstrap.sh, --data hydration, stale finder guard) | done |
 | [WP-035](WP-035-treasury-of-scripture-knowledge-tsk-integration.md) | Pillar A, C | Treasury of Scripture Knowledge (TSK) Ingestion Engine (~340k whole-Bible cross-references in SQLite) | done |
 | [WP-036](WP-036-interactive-whole-bible-cross-reference-workstation.md) | Pillar D (UX) | Interactive Whole-Bible Cross-Reference Workstation UI (Web & TUI ranked xref chips, preview tooltips) | done |
-| [WP-037](WP-037-curation-manifest-and-velocity-dashboard.md) | Pillar A, F, H | Curation Velocity Dashboard & Verifiable Terminal Manifest (status: approved, curation-manifest.json) | open |
+| [WP-037](WP-037-curation-manifest-and-velocity-dashboard.md) | Pillar A, F, H | Curation Velocity Dashboard & Verifiable Terminal Manifest (status: approved, curation-manifest.json) | done |
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1

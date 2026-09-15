@@ -1,7 +1,7 @@
 {
   "$schema": "taxonomy/v1",
-  "version": "1.0.0",
-  "last_updated": "2026-08-23",
+  "version": "1.1.0",
+  "last_updated": "2026-09-15",
   "categories": {
     "material": {
       "description": "Type of material",
@@ -220,10 +220,11 @@
       ]
     },
     "status": {
-      "description": "Entry status",
+      "description": "Entry lifecycle status: draft (machine-generated, unverified), review (under active theological inspection), approved (formally sealed by human review), final (legacy alias for approved), needs-update (requires revision)",
       "values": [
         "status/draft",
         "status/review",
+        "status/approved",
         "status/final",
         "status/needs-update"
       ]

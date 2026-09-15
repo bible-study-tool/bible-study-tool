@@ -100,7 +100,11 @@ run_step "F2 Strong's validator" "$PYTHON" -m search.validation.strongs --repo .
 run_step "F3 cross-ref validator" "$PYTHON" -m search.validation.xrefs  --repo .
 run_step "F4 dead-ref audit"     "$PYTHON" -m search.validation.audit   --repo .
 
-# --- 3. raw-source checksums (only when the sources are present) -------------
+# --- 3. F5 curation manifest integrity gate ----------------------------------
+run_step "F5 curation manifest integrity (approved entries sealed)" \
+  "$PYTHON" -m search.corpus.curation_manifest --check
+
+# --- 4. raw-source checksums (only when the sources are present) -------------
 if [[ -f data/KJV-osis.json ]]; then
   run_step "Raw source checksums (fetch_sources.sh --check)" \
     bash scripts/fetch_sources.sh --check

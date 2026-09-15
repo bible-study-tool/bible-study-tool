@@ -19,6 +19,8 @@ import json
 import re
 import subprocess
 import sys
+from collections import defaultdict
+from datetime import date, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -79,6 +81,85 @@ def work_packages() -> list[tuple[str, str, str]]:
     return out
 
 
+def curation_frontier() -> dict:
+    """Scan materials/bible/ and return curation status metrics.
+
+    Returns a dict with keys:
+        total, approved, review, draft, pending_scaffolding,
+        by_book (dict: book_key -> {approved, review, draft}),
+        velocity_7d, velocity_30d (entries promoted to approved in last N days),
+        next_chapter (first chapter with review entries, for focus recommendation).
+    """
+    materials_dir = ROOT / "materials" / "bible"
+    if not materials_dir.is_dir():
+        return {"error": f"materials/bible/ not found at {materials_dir}"}
+
+    _STATUS_RE = re.compile(r"^status:\s*(\S+)", re.MULTILINE)
+    _UPDATED_RE = re.compile(r"^updated:\s*(\d{4}-\d{2}-\d{2})", re.MULTILINE)
+    _BOOK_RE = re.compile(r"^book:\s*(\S+)", re.MULTILINE)
+    _PASSAGE_RE = re.compile(r"^passage:\s*\"?([^\"]+)\"?", re.MULTILINE)
+
+    totals: dict[str, int] = defaultdict(int)
+    by_book: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    velocity_7d = 0
+    velocity_30d = 0
+    today = date.today()
+    cutoff_7 = today - timedelta(days=7)
+    cutoff_30 = today - timedelta(days=30)
+    next_review_chapter: str | None = None
+
+    for md_path in sorted(materials_dir.rglob("*.md")):
+        raw = md_path.read_text(encoding="utf-8")
+        sm = _STATUS_RE.search(raw)
+        if not sm:
+            totals["pending_scaffolding"] += 1
+            continue
+
+        status = sm.group(1).strip().lower()
+        # Normalise legacy "final" → treat as approved for counting
+        if status == "final":
+            status = "approved"
+
+        bm = _BOOK_RE.search(raw)
+        book_key = bm.group(1).strip() if bm else "unknown"
+
+        totals[status] += 1
+        totals["total"] += 1
+        by_book[book_key][status] += 1
+
+        if status == "approved":
+            um = _UPDATED_RE.search(raw)
+            if um:
+                try:
+                    updated = date.fromisoformat(um.group(1))
+                    if updated >= cutoff_7:
+                        velocity_7d += 1
+                    if updated >= cutoff_30:
+                        velocity_30d += 1
+                except ValueError:
+                    pass
+
+        if status == "review" and next_review_chapter is None:
+            pm = _PASSAGE_RE.search(raw)
+            if pm:
+                passage = pm.group(1).strip()
+                # Extract chapter from "Book Chapter:Verse"
+                parts = passage.rsplit(":", 1)
+                next_review_chapter = parts[0] if parts else passage
+
+    return {
+        "total": totals.get("total", 0),
+        "approved": totals.get("approved", 0),
+        "review": totals.get("review", 0),
+        "draft": totals.get("draft", 0),
+        "pending_scaffolding": totals.get("pending_scaffolding", 0),
+        "by_book": {k: dict(v) for k, v in by_book.items()},
+        "velocity_7d": velocity_7d,
+        "velocity_30d": velocity_30d,
+        "next_chapter": next_review_chapter,
+    }
+
+
 def test_count() -> str:
     import importlib.util
 
@@ -126,6 +207,42 @@ def main() -> int:
         print(f"  {name}: {done}/{total}")
         if first_open and done < total:
             print(f"      next: {first_open}")
+
+    # --- Curation Frontier ---
+    print("\n--- curation frontier ---")
+    cf = curation_frontier()
+    if "error" in cf:
+        print(f"  {cf['error']}")
+    else:
+        total = cf["total"]
+        approved = cf["approved"]
+        review = cf["review"]
+        draft = cf["draft"]
+        pending = cf["pending_scaffolding"]
+        pct_approved = f"{approved / total * 100:.1f}%" if total else "0.0%"
+        pct_review = f"{review / total * 100:.1f}%" if total else "0.0%"
+        print(f"  Total entries : {total}")
+        print(f"  Approved      : {approved:>5}  ({pct_approved})")
+        print(f"  In Review     : {review:>5}  ({pct_review})")
+        print(f"  Draft         : {draft:>5}")
+        print(f"  Unscaffolded  : {pending:>5}")
+        print(f"  Velocity 7d   : {cf['velocity_7d']} entries promoted to approved")
+        print(f"  Velocity 30d  : {cf['velocity_30d']} entries promoted to approved")
+        if cf["next_chapter"]:
+            print(f"  Next focus    : {cf['next_chapter']}  ← first chapter with review entries")
+        # Book-level breakdown (only books with non-draft activity)
+        active_books = {
+            b: counts for b, counts in cf["by_book"].items()
+            if counts.get("approved", 0) + counts.get("review", 0) > 0
+        }
+        if active_books:
+            print("  Book progress (approved / review / draft):")
+            for book_key, counts in sorted(active_books.items()):
+                short = book_key.replace("book/", "")
+                a = counts.get("approved", 0)
+                r = counts.get("review", 0)
+                d = counts.get("draft", 0)
+                print(f"    {short:<22} approved={a}  review={r}  draft={d}")
 
     print("\n--- generated artifacts (PROVENANCE inventory) ---")
     for name in provenance_artifacts():

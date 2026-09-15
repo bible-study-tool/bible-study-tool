@@ -104,7 +104,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **H3. Contributor docs** — onboarding guide, entry-authoring quickstart
 - `[ ]` **H4. Code of conduct** — community/curation emphasis
 - `[ ]` **H5. Release & versioning** — tagged releases, changelog
-- `[ ]` **H6. Verifiable Curation Manifest & Velocity Dashboard** — terminal `status: approved` lifecycle state, cryptographic `data/curation-manifest.json` auditing human review, and real-time curation frontier breakdown in `scripts/status.py` — WP-037
+- `[x]` **H6. Verifiable Curation Manifest & Velocity Dashboard** — terminal `status: approved` lifecycle state, cryptographic `data/curation-manifest.json` auditing human review, and real-time curation frontier breakdown in `scripts/status.py` — WP-037
 
 ### P. Public Distribution *(new — making the Word accessible to everyone)*
 > *"What's the point of having the word and not sharing it?"*
