@@ -477,11 +477,34 @@ class WebServerTests(unittest.TestCase):
             self.assertIn(tid, theme_ids)
 
     def test_verify_bundle_endpoint(self) -> None:
-        data = self._get_json("/api/verify-bundle")
+        # Fast path (?deep=0) keeps this suite quick; the deep default is
+        # asserted separately below.
+        data = self._get_json("/api/verify-bundle?deep=0")
         self.assertIn("status", data)
         self.assertIn("valid", data)
+        self.assertFalse(data["deep"])
         self.assertIn("errors", data)
         self.assertIn("data_dir", data)
+
+    def test_verify_bundle_endpoint_defaults_to_deep(self) -> None:
+        """User-facing verification runs the AUTHORITATIVE deep content check.
+
+        The fast structural check would report valid on cell-level tampering
+        (the exact regression class ADR-027 exists to catch), so the default
+        must be the deep hash.
+        """
+        from unittest.mock import patch
+        with patch("search.ui.web_server.verify_data_bundle", return_value=(True, [])) as m:
+            data = self._get_json("/api/verify-bundle")
+            m.assert_called_once_with(deep=True)
+            self.assertTrue(data["deep"])
+
+    def test_verify_bundle_endpoint_deep_override(self) -> None:
+        from unittest.mock import patch
+        with patch("search.ui.web_server.verify_data_bundle", return_value=(True, [])) as m:
+            data = self._get_json("/api/verify-bundle?deep=0")
+            m.assert_called_once_with(deep=False)
+            self.assertFalse(data["deep"])
 
     def test_verify_bundle_endpoint_exception_handled(self) -> None:
         from unittest.mock import patch

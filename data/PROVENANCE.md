@@ -543,8 +543,9 @@ scripts/build_release_data.sh --check dist/data
    toolchains.
 4. **Runtime Verification:** `search.resource.verify_data_bundle()` validates the sidecar directory
    in two layers (ADR-027): Layer 1 verifies DBs against `INTEGRITY.json` by canonical content hash
-   (`deep=True` full row hash for CI/manual gates, `deep=False` schema shape + row counts for the
-   interactive `/api/verify-bundle` endpoint), Layer 2 verifies JSON artifacts against `SHA256SUMS`.
+   (`deep=True` full row hash — the default for the user-facing `/api/verify-bundle` endpoint and for
+   CI/manual gates; `deep=False` schema shape + row counts reserved for lightweight surfaces),
+   Layer 2 verifies JSON artifacts against `SHA256SUMS`.
    CI gate F6 (`scripts/verify_all.sh`) runs the deep content check on every change.
 5. **Copyright Boundary:** `data/egw.db` is strictly excluded from release bundles per ADR-002,
    ADR-023, and ADR-024. Only public-domain and CC0/openly-licensed biblical and linguistic resources

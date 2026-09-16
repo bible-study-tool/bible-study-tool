@@ -35,8 +35,8 @@ Schema objects and rows outside the canonical table set **raise** (fail fast, pe
 
 ### 2. Two Verification Modes
 
-* **`deep=True`** (default): full per-row content hash — the authoritative CI/manual gate. ~24 s on whole-Bible data.
-* **`deep=False`**: schema shape + row counts only — sub-second, used by the interactive `/api/verify-bundle` endpoint. The shape gate (rejecting unrecognized tables/views/triggers) runs in **both** modes; it is cheap and guards the fast path against silent divergence.
+* **`deep=True`** (default): full per-row content hash — the authoritative CI/manual gate and the **user-facing `/api/verify-bundle` endpoint** (backing the settings-panel "Verify data bundle" button; a user-initiated action can afford the ~25 s run, and the fast check would report valid on cell-level tampering — defeating user-facing verification). `?deep=0` opts into the fast path for lightweight callers.
+* **`deep=False`**: schema shape + row counts only — sub-second; reserved for lightweight per-request surfaces (currently unused by the UI, still unit-tested). The shape gate (rejecting unrecognized tables/views/triggers) runs in **both** modes; it is cheap and guards the fast path against silent divergence.
 
 ### 3. Manifest Layout
 

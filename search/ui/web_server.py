@@ -205,7 +205,7 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
             if path == "/api/health":
                 self._api_health()
             elif path == "/api/verify-bundle":
-                self._api_verify_bundle()
+                self._api_verify_bundle(query)
             elif path == "/api/passage":
                 self._api_passage(query)
             elif path == "/api/translations":
@@ -266,13 +266,21 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "egw_stats": egw_stats,
             })
 
-        def _api_verify_bundle(self) -> None:
+        def _api_verify_bundle(self, query: dict[str, list[str]]) -> None:
+            # This endpoint backs the user-initiated "Verify data bundle"
+            # action in the settings panel, so it runs the AUTHORITATIVE deep
+            # content check by default (~25-30 s on whole-Bible data): the fast
+            # structural check would report valid on cell-level tampering,
+            # which defeats the purpose of user-facing verification (ADR-027).
+            # `?deep=0` opts into the fast path for lightweight callers.
+            deep = query.get("deep", ["1"])[0].strip().lower() not in ("0", "false", "no")
             try:
-                is_valid, errors = verify_data_bundle()
+                is_valid, errors = verify_data_bundle(deep=deep)
             except Exception as exc:
                 self._reply_json(HTTPStatus.OK, {
                     "status": "error",
                     "valid": False,
+                    "deep": deep,
                     "errors": [f"Bundle verification failed: {exc}"],
                     "data_dir": str(get_data_dir()),
                 })
@@ -280,6 +288,7 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
             self._reply_json(HTTPStatus.OK, {
                 "status": "ok" if is_valid else "error",
                 "valid": is_valid,
+                "deep": deep,
                 "errors": errors,
                 "data_dir": str(get_data_dir()),
             })

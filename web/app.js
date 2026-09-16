@@ -844,7 +844,7 @@ async function verifyBundle() {
   if (!els.verifyStatusIcon || !els.verifyStatusText) return;
   els.verifyStatusIcon.className = "verify-icon status-pending";
   els.verifyStatusIcon.innerHTML = "&#9679;";
-  els.verifyStatusText.textContent = "Verifying sidecar data bundle (SHA256SUMS)…";
+  els.verifyStatusText.textContent = "Verifying database content and lexicons… (full content check, ~30 seconds)";
   if (els.verifyErrorBox) {
     els.verifyErrorBox.hidden = true;
     els.verifyErrorBox.textContent = "";
