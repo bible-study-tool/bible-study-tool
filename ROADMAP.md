@@ -153,6 +153,14 @@ separate skill.
    `search/validation/xrefs.py` — ✅ (malformed=error, forward-ref=warning)
 4. **F4 — Broken-link / dead-reference audit**
    `search/validation/audit.py` — ✅ (related/semantic_links/links-file/index)
+5. **F6 — SQLite content-level integrity** (ADR-027): `data/INTEGRITY.json`
+   content hash vs canonical projection (deep ~24s / fast shape+counts);
+   `search/validation/db_integrity.py` and `scripts/integrity_drift_battery.py` — ✅.
+6. **F6.x — Source-DB read hygiene** (ADR-027 §5): all runtime/verification
+   reads sidecar-free (`search.dbaccess.connect_db_reader`; `mode=ro&immutable=1`
+   when WAL is checkpointed, WAL-aware otherwise); writers checkpoint on close —
+   completed in two commits after review found four runtime read paths still
+   opening DBs read-write (21dab18 + 697542e) — ✅.
 
 All four exit non-zero on errors and are wired to run as commands (ready for
 CI, see G1). The Strong's source of truth is gmlewis/bible-codes
