@@ -23,6 +23,7 @@ import textwrap
 from pathlib import Path
 from typing import Any, Iterable
 
+from search.dbaccess import connect_db_reader
 from search.resource import data_path, get_repo_root
 
 # Default database location inside gitignored data/ directory
@@ -265,6 +266,7 @@ class EgwDB:
             self.db_path = data_path(p)
 
         self._conn: sqlite3.Connection | None = None
+        self._readonly_conn: sqlite3.Connection | None = None
 
     @property
     def conn(self) -> sqlite3.Connection:
@@ -280,10 +282,50 @@ class EgwDB:
             self._conn.execute("PRAGMA recursive_triggers = ON;")
         return self._conn
 
+    @property
+    def readonly_conn(self) -> sqlite3.Connection:
+        """Sidecar-free read-only connection for runtime queries (ADR-027).
+
+        The write-capable ``conn`` (used by init/ingest) must not be opened
+        at runtime: it opens the source database read-write in WAL mode --
+        a needless write-capable handle on immutable source data and the
+        cause of -wal/-shm sidecar litter. This connection assumes the
+        source is checkpointed and write-free while open.
+
+        If this process has already written through ``conn`` (init/ingest),
+        reads go through the writer connection: immutable reads ignore
+        uncheckpointed WAL frames and would return stale data.
+        """
+        if self._conn is not None:
+            return self._conn
+        if self._readonly_conn is None:
+            self._readonly_conn = connect_db_reader(
+                self.db_path,
+                row_factory=sqlite3.Row,
+                check_same_thread=False,
+            )
+        return self._readonly_conn
+
     def close(self) -> None:
         if self._conn is not None:
+            self._checkpoint()
             self._conn.close()
             self._conn = None
+        if self._readonly_conn is not None:
+            self._readonly_conn.close()
+            self._readonly_conn = None
+
+    def _checkpoint(self) -> None:
+        """Fold WAL frames into the main file on close (ADR-027 §5).
+
+        Without this, a write session (e.g. ``/api/import-books``) leaves a
+        large ``-wal`` sidecar behind, and any reader that opens the file
+        afterwards would have to fall back to a WAL-aware connection.
+        """
+        try:
+            self._conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+        except sqlite3.Error:
+            pass
 
     def __enter__(self) -> EgwDB:
         return self
@@ -303,23 +345,20 @@ class EgwDB:
         self._has_tables = True
 
     def exists(self) -> bool:
-        """True if the database file exists on disk and has tables."""
+        """True if the database file exists on disk and has tables.
+
+        Pure read (ADR-027): the opportunistic CREATE INDEX self-heal was
+        removed -- source databases are built deterministically and are
+        never mutated at runtime (Non-negotiable 3).
+        """
         if not self.db_path.exists():
             return False
         if getattr(self, "_has_tables", None) is None:
             try:
-                cur = self.conn.execute(
+                cur = self.readonly_conn.execute(
                     "SELECT name FROM sqlite_master WHERE type='table' AND name='egw_paragraphs';"
                 )
                 self._has_tables = cur.fetchone() is not None
-                if self._has_tables:
-                    try:
-                        self.conn.execute(
-                            "CREATE INDEX IF NOT EXISTS idx_egw_book_chapter ON egw_paragraphs(book_code, chapter_num, page, paragraph);"
-                        )
-                        self.conn.commit()
-                    except sqlite3.Error:
-                        pass
             except sqlite3.Error:
                 return False
         return self._has_tables
@@ -436,7 +475,7 @@ class EgwDB:
             canonical_id, _, _, _ = normalize_token(token)
         except ValueError:
             return False
-        cur = self.conn.execute("SELECT 1 FROM egw_paragraphs WHERE id = ? LIMIT 1;", (canonical_id,))
+        cur = self.readonly_conn.execute("SELECT 1 FROM egw_paragraphs WHERE id = ? LIMIT 1;", (canonical_id,))
         return cur.fetchone() is not None
 
     def get_paragraph(self, token: str) -> dict[str, Any] | None:
@@ -448,7 +487,7 @@ class EgwDB:
         except ValueError:
             return None
 
-        cur = self.conn.execute(
+        cur = self.readonly_conn.execute(
             "SELECT * FROM egw_paragraphs WHERE id = ?;", (canonical_id,)
         )
         row = cur.fetchone()
@@ -459,7 +498,7 @@ class EgwDB:
         if not self.exists():
             return []
         b_code = book_code.strip().upper()
-        cur = self.conn.execute(
+        cur = self.readonly_conn.execute(
             "SELECT * FROM egw_paragraphs WHERE book_code = ? AND page = ? ORDER BY paragraph ASC;",
             (b_code, page),
         )
@@ -474,7 +513,7 @@ class EgwDB:
             ch_num = int(chapter_num)
         except (ValueError, TypeError):
             return []
-        cur = self.conn.execute(
+        cur = self.readonly_conn.execute(
             "SELECT * FROM egw_paragraphs WHERE book_code = ? AND chapter_num = ? ORDER BY page ASC, paragraph ASC;",
             (b_code, ch_num),
         )
@@ -489,7 +528,7 @@ class EgwDB:
             ch_num = int(chapter_num)
         except (ValueError, TypeError):
             return None
-        cur = self.conn.execute(
+        cur = self.readonly_conn.execute(
             """
             SELECT book_code, book_title, chapter_num, chapter_title,
                    MIN(page) as start_page, MAX(page) as end_page,
@@ -615,7 +654,7 @@ class EgwDB:
             ORDER BY rank
             LIMIT ?;
             """
-            return self.conn.execute(sql, params)
+            return self.readonly_conn.execute(sql, params)
 
         try:
             cur = _execute_search(clean_q)
@@ -633,7 +672,7 @@ class EgwDB:
         """Return total paragraph count."""
         if not self.exists():
             return 0
-        cur = self.conn.execute("SELECT COUNT(*) FROM egw_paragraphs;")
+        cur = self.readonly_conn.execute("SELECT COUNT(*) FROM egw_paragraphs;")
         row = cur.fetchone()
         return row[0] if row else 0
 

@@ -40,6 +40,8 @@ import sys
 from pathlib import Path
 from typing import Any, Iterable
 
+from search.dbaccess import connect_db_reader
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_DB_PATH = REPO_ROOT / "data" / "bible.db"
 DEFAULT_MACULA_PATH = REPO_ROOT / "data" / "macula.db"
@@ -209,7 +211,7 @@ def compute_db_content_hash(db_path: str | Path, expected_tables: list[str]) -> 
     if not db_path.is_file():
         raise FileNotFoundError(f"Database not found: {db_path}")
 
-    conn = sqlite3.connect(str(db_path))
+    conn = connect_db_reader(db_path)
     try:
         errors, census_str = _schema_census(conn, expected_tables)
         if errors:
@@ -244,7 +246,7 @@ def compute_db_content_hash(db_path: str | Path, expected_tables: list[str]) -> 
 
 def _shape_errors(db_path: str | Path, expected_tables: list[str]) -> list[str]:
     """Run only the (cheap) schema-shape gate. Returns error strings ([] == valid)."""
-    conn = sqlite3.connect(str(db_path))
+    conn = connect_db_reader(db_path)
     try:
         errors, _census = _schema_census(conn, expected_tables)
         return errors
@@ -254,7 +256,7 @@ def _shape_errors(db_path: str | Path, expected_tables: list[str]) -> list[str]:
 
 def table_row_counts(db_path: str | Path, expected_tables: list[str]) -> dict[str, int]:
     """Return row counts for the canonical tables (fast integrity signal)."""
-    conn = sqlite3.connect(str(db_path))
+    conn = connect_db_reader(db_path)
     try:
         return {t: conn.execute(f"SELECT count(*) FROM {t}").fetchone()[0] for t in expected_tables}
     finally:

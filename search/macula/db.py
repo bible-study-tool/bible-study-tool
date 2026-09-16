@@ -21,6 +21,7 @@ import re
 import sqlite3
 from typing import Any, Iterable
 
+from search.dbaccess import connect_db_reader
 from search.resource import data_path, get_repo_root
 
 DEFAULT_MACULA_DB = "data/macula.db"
@@ -113,6 +114,7 @@ class MaculaSqliteDB:
             self.db_path = data_path(p)
 
         self._conn: sqlite3.Connection | None = None
+        self._readonly_conn: sqlite3.Connection | None = None
         self._has_tables: bool | None = None
 
     @property
@@ -127,10 +129,45 @@ class MaculaSqliteDB:
             self._conn.execute("PRAGMA busy_timeout = 5000;")
         return self._conn
 
+    @property
+    def readonly_conn(self) -> sqlite3.Connection:
+        """Sidecar-free read-only connection for runtime queries (ADR-027).
+
+        The write-capable ``conn`` (used by the builders) must not be opened
+        at runtime: it opens the source database read-write in WAL mode,
+        which is both a needless write-capable handle on immutable source
+        data and the cause of -wal/-shm sidecar litter. This connection
+        assumes the source is checkpointed and write-free while open.
+
+        If this process has already written through ``conn`` (build/ingest),
+        reads go through the writer connection: immutable reads ignore
+        uncheckpointed WAL frames and would return stale data.
+        """
+        if self._conn is not None:
+            return self._conn
+        if self._readonly_conn is None:
+            self._readonly_conn = connect_db_reader(
+                self.db_path,
+                row_factory=sqlite3.Row,
+                check_same_thread=False,
+            )
+        return self._readonly_conn
+
     def close(self) -> None:
         if self._conn is not None:
+            self._checkpoint()
             self._conn.close()
             self._conn = None
+        if self._readonly_conn is not None:
+            self._readonly_conn.close()
+            self._readonly_conn = None
+
+    def _checkpoint(self) -> None:
+        """Fold WAL frames into the main file on close (ADR-027 §5)."""
+        try:
+            self._conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+        except sqlite3.Error:
+            pass
 
     def __enter__(self) -> MaculaSqliteDB:
         return self
@@ -168,7 +205,7 @@ class MaculaSqliteDB:
             return False
         if self._has_tables is None:
             try:
-                cur = self.conn.execute(
+                cur = self.readonly_conn.execute(
                     "SELECT name FROM sqlite_master WHERE type='table' AND name='verses';"
                 )
                 self._has_tables = cur.fetchone() is not None
@@ -306,7 +343,7 @@ class MaculaSqliteDB:
         if not norm_s:
             norm_s = raw
 
-        cur = self.conn.execute(
+        cur = self.readonly_conn.execute(
             "SELECT * FROM strongs_crosswalk WHERE strongs = ?;", (norm_s,)
         )
         row = cur.fetchone()
@@ -334,19 +371,19 @@ class MaculaSqliteDB:
         if not norm_ref:
             return None
 
-        v_cur = self.conn.execute("SELECT * FROM verses WHERE id = ?;", (norm_ref,))
+        v_cur = self.readonly_conn.execute("SELECT * FROM verses WHERE id = ?;", (norm_ref,))
         v_row = v_cur.fetchone()
         if not v_row:
             return None
 
         # Fetch clauses
-        c_cur = self.conn.execute(
+        c_cur = self.readonly_conn.execute(
             "SELECT * FROM clauses WHERE verse_id = ? ORDER BY clause_num ASC;", (norm_ref,)
         )
         clause_rows = c_cur.fetchall()
 
         # Fetch constituents
-        const_cur = self.conn.execute(
+        const_cur = self.readonly_conn.execute(
             "SELECT * FROM constituents WHERE verse_id = ? ORDER BY clause_id, constituent_num ASC;",
             (norm_ref,),
         )
@@ -364,7 +401,7 @@ class MaculaSqliteDB:
             const_map[r["id"]] = c_dict
 
         # Fetch tokens
-        t_cur = self.conn.execute(
+        t_cur = self.readonly_conn.execute(
             "SELECT * FROM tokens WHERE verse_id = ? ORDER BY constituent_id, token_num ASC;",
             (norm_ref,),
         )
@@ -425,7 +462,7 @@ class MaculaSqliteDB:
         placeholders = ",".join("?" * len(unique_norm_refs))
 
         # 1. Fetch verses
-        v_cur = self.conn.execute(
+        v_cur = self.readonly_conn.execute(
             f"SELECT * FROM verses WHERE id IN ({placeholders});",
             unique_norm_refs,
         )
@@ -437,14 +474,14 @@ class MaculaSqliteDB:
         v_placeholders = ",".join("?" * len(found_verse_ids))
 
         # 2. Fetch clauses
-        c_cur = self.conn.execute(
+        c_cur = self.readonly_conn.execute(
             f"SELECT * FROM clauses WHERE verse_id IN ({v_placeholders}) ORDER BY verse_id, clause_num ASC;",
             found_verse_ids,
         )
         clause_rows = c_cur.fetchall()
 
         # 3. Fetch constituents
-        const_cur = self.conn.execute(
+        const_cur = self.readonly_conn.execute(
             f"SELECT * FROM constituents WHERE verse_id IN ({v_placeholders}) ORDER BY clause_id, constituent_num ASC;",
             found_verse_ids,
         )
@@ -462,7 +499,7 @@ class MaculaSqliteDB:
             const_map[r["id"]] = c_dict
 
         # 4. Fetch tokens
-        t_cur = self.conn.execute(
+        t_cur = self.readonly_conn.execute(
             f"SELECT * FROM tokens WHERE verse_id IN ({v_placeholders}) ORDER BY constituent_id, token_num ASC;",
             found_verse_ids,
         )
@@ -519,7 +556,7 @@ class MaculaSqliteDB:
         if not norm_g.startswith("G") and norm_g.isdigit():
             norm_g = f"G{int(norm_g)}"
 
-        cur = self.conn.execute(
+        cur = self.readonly_conn.execute(
             """
             SELECT strongs, lemmas_json, glosses_json, json_extract(lxx_json, '$.' || ?) AS match_json
             FROM strongs_crosswalk
@@ -546,7 +583,7 @@ class MaculaSqliteDB:
         if not self.exists():
             return []
         clean_d = domain_code.strip().zfill(3)
-        cur = self.conn.execute(
+        cur = self.readonly_conn.execute(
             """
             SELECT sc.strongs, sc.lemmas_json, sc.glosses_json
             FROM strongs_crosswalk sc, json_each(sc.core_domains_json) je
@@ -619,12 +656,12 @@ class MaculaSqliteDB:
         """Return counts of all entities in database."""
         if not self.exists():
             return {}
-        v_cnt = self.conn.execute("SELECT COUNT(*) FROM verses;").fetchone()[0]
-        cl_cnt = self.conn.execute("SELECT COUNT(*) FROM clauses;").fetchone()[0]
-        c_cnt = self.conn.execute("SELECT COUNT(*) FROM constituents;").fetchone()[0]
-        t_cnt = self.conn.execute("SELECT COUNT(*) FROM tokens;").fetchone()[0]
-        s_cnt = self.conn.execute("SELECT COUNT(*) FROM strongs_crosswalk;").fetchone()[0]
-        ch_cnt = self.conn.execute(
+        v_cnt = self.readonly_conn.execute("SELECT COUNT(*) FROM verses;").fetchone()[0]
+        cl_cnt = self.readonly_conn.execute("SELECT COUNT(*) FROM clauses;").fetchone()[0]
+        c_cnt = self.readonly_conn.execute("SELECT COUNT(*) FROM constituents;").fetchone()[0]
+        t_cnt = self.readonly_conn.execute("SELECT COUNT(*) FROM tokens;").fetchone()[0]
+        s_cnt = self.readonly_conn.execute("SELECT COUNT(*) FROM strongs_crosswalk;").fetchone()[0]
+        ch_cnt = self.readonly_conn.execute(
             "SELECT COUNT(*) FROM (SELECT DISTINCT book_code, chapter FROM verses);"
         ).fetchone()[0]
         return {

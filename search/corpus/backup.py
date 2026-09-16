@@ -19,6 +19,7 @@ import tarfile
 import tempfile
 from typing import Any
 
+from search.dbaccess import connect_db_reader
 from search.resource import get_repo_root
 
 REPO_ROOT = get_repo_root()
@@ -67,7 +68,7 @@ def inspect_sqlite_db(db_path: Path) -> dict[str, Any]:
         return stats
     conn = None
     try:
-        conn = sqlite3.connect(f"file:{db_path.resolve()}?mode=ro", uri=True)
+        conn = connect_db_reader(db_path)
         cursor = conn.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
         tables = [row[0] for row in cursor.fetchall()]
