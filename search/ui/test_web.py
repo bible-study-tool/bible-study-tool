@@ -512,6 +512,7 @@ class WebServerTests(unittest.TestCase):
             data = self._get_json("/api/verify-bundle")
             self.assertEqual(data["status"], "error")
             self.assertFalse(data["valid"])
+            self.assertTrue(data["deep"], "error body must report the verification mode used")
             self.assertTrue(any("Access denied" in err for err in data["errors"]))
 
     def test_passage_returns_verses(self) -> None:

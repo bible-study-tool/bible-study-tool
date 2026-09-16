@@ -64,5 +64,5 @@ Committed to the repo. Generated/verified by `python -m search.validation.db_int
 * **Positive:** Verification now proves *content* equality — a rebuilt bundle on any toolchain passes if and only if it carries the same canonical rows and schema.
 * **Positive:** The stale-code regression class (2,541-row drift) is caught deterministically by CI gate F6, not discovered by users.
 * **Neutral:** Adds `data/INTEGRITY.json` (small JSON) as a committed generated artifact; regenerated whenever the DB build changes (`build_release_data.sh` step 6a).
-* **Neutral:** Deep verification is ~24 s — acceptable for CI/manual gates; interactive UI uses the sub-second fast path.
+* **Neutral:** Deep verification is ~24 s — acceptable for CI/manual gates and for the user-facing `/api/verify-bundle` endpoint (a user-initiated action; the fast check would report valid on cell-level tampering). The `?deep=0` fast path is reserved for future lightweight per-request surfaces.
 * **Negative:** `data/SHA256SUMS` no longer byte-documents the DBs in isolation; the content manifest is the authority and must be regenerated in lockstep with DB rebuilds (guarded by release self-check step 7).
