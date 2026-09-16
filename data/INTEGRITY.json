@@ -1,0 +1,41 @@
+{
+  "$schema": "data/integrity/v1",
+  "databases": {
+    "bible.db": {
+      "canonical_tables": [
+        "books",
+        "translations",
+        "verses",
+        "translation_verses",
+        "cross_references"
+      ],
+      "content_sha256": "e51f97596c75fc8ace3a44740e705197bf452ec6e97d420eeff53593429a7105",
+      "row_counts": {
+        "books": 66,
+        "cross_references": 344799,
+        "translation_verses": 124408,
+        "translations": 4,
+        "verses": 31102
+      }
+    },
+    "macula.db": {
+      "canonical_tables": [
+        "verses",
+        "clauses",
+        "constituents",
+        "tokens",
+        "strongs_crosswalk"
+      ],
+      "content_sha256": "80f6c84f974626e4ea0d34e2a8bef92876ce359120aefb579cbd34dbb5b207b5",
+      "row_counts": {
+        "clauses": 131765,
+        "constituents": 338218,
+        "strongs_crosswalk": 13538,
+        "tokens": 815870,
+        "verses": 31149
+      }
+    }
+  },
+  "description": "Content-level SHA-256 hashes of SQLite data bundles. SQLite files are not byte-reproducible across toolchains; these hashes pin the logical content (schemas + every row, canonically serialized) so identical data verifies on any machine.",
+  "generated_by": "search.validation.db_integrity"
+}

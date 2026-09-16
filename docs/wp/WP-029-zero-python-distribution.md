@@ -107,7 +107,7 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 ### Phase 2 — Data Bundling Strategy & Provenance
 - [x] Define a `data/` sidecar bundle layout: `bible.db`, `macula.db`, `lexicons/` (all pre-built and gitignored raw → committed derived)
 - [x] Write `scripts/build_release_data.sh` — builds all databases from pinned sources and packages them into `dist/data/`
-- [x] **Define release-bundle provenance explicitly (ADR-006):** each release publishes a `SHA256SUMS` file covering every file in the release artifact (binary + data); record the release data bundle's SHA-256 in `data/PROVENANCE.md`; the installer verifies the data bundle hash before first run and on updates
+- [x] **Define release-bundle provenance explicitly (ADR-006/027):** SQLite DBs are verified by canonical **content** hash (`data/INTEGRITY.json`, ADR-027) — not bytes, which are not reproducible across toolchains — and JSON artifacts by byte `SHA256SUMS`; record the release data bundle's hashes in `data/PROVENANCE.md`; the installer verifies the data bundle before first run and on updates
 - [x] Resolve and record the bundled-vs-sidecar split as a decision (this WP chooses sidecar; document why in ADR-024 consequences)
 
 ### Phase 3 — Launcher, Spec & Build Pipeline
@@ -122,7 +122,7 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 ### Phase 4 — User-Facing Installer Experience & Setup Wizard
 - [x] `docs/INSTALL.md` — one-page illustrated guide: "Download → Open → Start studying" (no terminal, no chmod, no Windows Terminal note needed — the browser is the surface)
 - [x] First-run welcome setup wizard (inside the web app itself):
-  - Step 1: Data bundle verification (hash check against `SHA256SUMS`; `bible.db`, `macula.db`, `lexicons/`)
+  - Step 1: Data bundle verification (content-level for `bible.db`/`macula.db` via `INTEGRITY.json` per ADR-027; byte-level for `lexicons/` via `SHA256SUMS`)
   - Step 2: Auto-update preferences toggle (enabled by default; wording explicit that only a version check is sent — no telemetry, per ADR-023)
   - Step 3: Spirit of Prophecy (EGW) public-domain content (10 historical works). If online: "Download with one click". If offline: "Skip for now — you can download anytime later from Settings/Menu when connected."
   - Step 4: External resources link card: prominent link out to [egwwritings.org](https://m.egwwritings.org/) for the complete, copyrighted Spirit of Prophecy research library.
@@ -141,7 +141,7 @@ Simpler to maintain than a frozen binary but still requires some terminal intera
 - Release data bundle hash is verified before first run and on updates; bundle SHA-256 recorded in `data/PROVENANCE.md` (ADR-006).
 - The frozen engine binary passes test suite verification (`AdventistBibleStudy --test`).
 - `data/egw.db` is NOT pre-bundled (copyright clean); one-click download of public domain works is offered post-install alongside official egwwritings.org links.
-- Release artifact = binary + sidecar `data/`: binary < 80 MB compressed; data bundle ~500 MB with documented `SHA256SUMS`.
+- Release artifact = binary + sidecar `data/`: binary < 80 MB compressed; data bundle ~500 MB with documented integrity manifests (`INTEGRITY.json` content + `SHA256SUMS` bytes, ADR-027).
 - TUI mode (`--tui` / `textual-web`) still launches and passes smoke tests from the same release.
 - GitLab CI builds artifacts automatically on `v*` tags.
 - **Signing decision made and recorded** (Windows SmartScreen + macOS Gatekeeper) — cost/process accepted or explicitly deferred with a documented risk note.

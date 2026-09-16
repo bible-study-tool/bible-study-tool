@@ -104,6 +104,13 @@ run_step "F4 dead-ref audit"     "$PYTHON" -m search.validation.audit   --repo .
 run_step "F5 curation manifest integrity (approved entries sealed)" \
   "$PYTHON" -m search.corpus.curation_manifest --check
 
+# --- 3b. F6 SQLite content-integrity gate (ADR-027) ------------------------
+# SQLite DBs are verified by canonical content hash (INTEGRITY.json), not raw
+# bytes, since .db files are not byte-reproducible across toolchains. JSON
+# artifacts remain byte-verified via SHA256SUMS in the test suite.
+run_step "F6 SQLite content integrity (bible.db, macula.db)" \
+  "$PYTHON" -m search.validation.db_integrity --check
+
 # --- 4. raw-source checksums (only when the sources are present) -------------
 if [[ -f data/KJV-osis.json ]]; then
   run_step "Raw source checksums (fetch_sources.sh --check)" \

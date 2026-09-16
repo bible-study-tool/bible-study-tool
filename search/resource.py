@@ -250,30 +250,75 @@ def resource_path(rel_path: str | Path) -> Path:
     return cand_bundle
 
 
-def verify_data_bundle(data_dir: Path | None = None) -> tuple[bool, list[str]]:
-    """Verify cryptographic integrity of the sidecar data bundle against SHA256SUMS.
+def verify_data_bundle(
+    data_dir: Path | None = None,
+    deep: bool = False,
+) -> tuple[bool, list[str]]:
+    """Verify integrity of the sidecar data bundle.
 
-    Checks bible.db, macula.db, and lexicons/ relative to the data directory.
+    Two complementary layers (ADR-027):
+      1. Content-level: SQLite DBs (bible.db, macula.db) are verified against
+         data/INTEGRITY.json by canonical content hash (schema + every row),
+         NOT raw bytes. SQLite files are not byte-reproducible across
+         toolchains, so content hashing is the only honest cross-machine check.
+      2. Byte-level: JSON artifacts (lexicons, schemas) are byte-deterministic
+         and verified against data/SHA256SUMS as before.
 
     Args:
         data_dir: Path to the data directory (defaults to get_data_dir()).
+        deep: When True, run the full per-row content hash (~24s on whole-Bible
+            data). When False (default), run fast structural checks (schema
+            shape + row counts) only — suitable for interactive per-request UI
+            verification. The deep hash is the authoritative CI/manual gate.
 
     Returns:
-        A tuple (is_valid, errors) where is_valid is True if all files match,
+        A tuple (is_valid, errors) where is_valid is True if all checks pass,
         and errors is a list of descriptive error strings.
     """
     root = (data_dir or get_data_dir()).resolve()
+    errors: list[str] = []
+
+    # --- Layer 1: content-level verification of SQLite DBs -------------------
+    integrity_file = root / "INTEGRITY.json"
+    if integrity_file.is_file():
+        try:
+            from search.validation.db_integrity import check_manifest
+
+            is_ok, db_errors = check_manifest(
+                bible_path=root / "bible.db",
+                macula_path=root / "macula.db",
+                manifest_path=integrity_file,
+                deep=deep,
+            )
+            errors.extend(db_errors)
+        except Exception as exc:  # pragma: no cover - defensive
+            errors.append(f"Content integrity check errored: {exc}")
+    else:
+        # No content manifest: fall back to byte-level for the DBs (release
+        # bundles predating INTEGRITY.json, or tests). This is the legacy
+        # degraded path; the manifest is canonical going forward. Not an error
+        # when SHA256SUMS covers the bundle.
+        integrity_file = None
+
+    # --- Layer 2: byte-level verification of JSON artifacts -------------------
     sums_file = root / "SHA256SUMS"
     if not sums_file.is_file():
         dist_sums = root.parent / "dist" / "data" / "SHA256SUMS"
         if dist_sums.is_file():
             sums_file = dist_sums
         else:
-            return False, [f"SHA256SUMS not found in data directory: {root}"]
+            errors.append(f"SHA256SUMS not found in data directory: {root}")
+            return len(errors) == 0, errors
 
-    errors: list[str] = []
     lines = sums_file.read_text(encoding="utf-8").splitlines()
     checked_count = 0
+
+    # SQLite DBs are verified by content in Layer 1 (if INTEGRITY.json exists);
+    # skip their byte entries in SHA256SUMS to avoid duplicate/conflicting checks.
+    content_checked_dbs = {
+        "bible.db",
+        "macula.db",
+    } if integrity_file is not None else set()
 
     for line in lines:
         line = line.strip()
@@ -292,6 +337,12 @@ def verify_data_bundle(data_dir: Path | None = None) -> tuple[bool, list[str]]:
         # Strip coreutils binary indicator (*) and normalize path separators
         clean_rel = raw_path.lstrip("*").strip().replace("\\", "/")
         rel_obj = Path(clean_rel)
+
+        # Skip SQLite DBs already verified by content integrity (Layer 1).
+        if rel_obj.name in content_checked_dbs:
+            checked_count += 1
+            continue
+
         if rel_obj.is_absolute() or ".." in rel_obj.parts:
             errors.append(f"Invalid path traversal in SHA256SUMS: {raw_path!r}")
             continue

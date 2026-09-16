@@ -172,9 +172,14 @@ echo "--- 5. Generating release integrity manifest ---"
 (
   cd "$STAGE_DIR"
   export LC_ALL=C
-  find . -type f ! -name "SHA256SUMS" | sort | sed 's|^\./||' | xargs sha256sum > SHA256SUMS
+  # SQLite DBs are verified by CONTENT (data/INTEGRITY.json, ADR-027),
+  # not bytes — .db files are not byte-reproducible across toolchains. Exclude
+  # them from the release-wide byte manifest; step 8b runs the content check.
+  find . -type f \( -name "*.db" -o -name "INTEGRITY.json" \) -prune -o \
+    -type f ! -name "SHA256SUMS" -print | sort | sed 's|^\./||' \
+    | xargs sha256sum > SHA256SUMS
 )
-echo "✔ Generated $STAGE_DIR/SHA256SUMS ($(wc -l < "$STAGE_DIR/SHA256SUMS") entries)."
+echo "✔ Generated $STAGE_DIR/SHA256SUMS ($(wc -l < "$STAGE_DIR/SHA256SUMS") entries; SQLite DBs handled by content manifest)."
 
 # 6. Verify release staging self-integrity
 echo
@@ -249,6 +254,16 @@ if [[ -f "$SCRATCH/$STAGE_NAME/data/SHA256SUMS" ]]; then
   echo "   Checking sidecar data/SHA256SUMS inside packaged tar.gz..."
   (cd "$SCRATCH/$STAGE_NAME/data" && sha256sum --quiet -c SHA256SUMS)
 fi
+if [[ -f "$SCRATCH/$STAGE_NAME/data/INTEGRITY.json" ]]; then
+  echo "   Checking SQLite content integrity inside packaged tar.gz..."
+  "$PYTHON" -m search.validation.db_integrity --check \
+    --bible-db "$SCRATCH/$STAGE_NAME/data/bible.db" \
+    --macula-db "$SCRATCH/$STAGE_NAME/data/macula.db" \
+    --manifest "$SCRATCH/$STAGE_NAME/data/INTEGRITY.json"
+elif [[ -f "$SCRATCH/$STAGE_NAME/data/bible.db" || -f "$SCRATCH/$STAGE_NAME/data/macula.db" ]]; then
+  echo "ERROR: package contains SQLite DBs but no INTEGRITY.json content manifest." >&2
+  exit 1
+fi
 rm -rf "$SCRATCH"
 trap - EXIT
 echo "✔ Packaged archive verified against internal manifests."
@@ -268,6 +283,15 @@ if [[ "$CREATE_ZIP" = true ]]; then
   (cd "$SCRATCH_ZIP/$STAGE_NAME" && sha256sum --quiet -c SHA256SUMS)
   if [[ -f "$SCRATCH_ZIP/$STAGE_NAME/data/SHA256SUMS" ]]; then
     (cd "$SCRATCH_ZIP/$STAGE_NAME/data" && sha256sum --quiet -c SHA256SUMS)
+  fi
+  if [[ -f "$SCRATCH_ZIP/$STAGE_NAME/data/INTEGRITY.json" ]]; then
+    "$PYTHON" -m search.validation.db_integrity --check \
+      --bible-db "$SCRATCH_ZIP/$STAGE_NAME/data/bible.db" \
+      --macula-db "$SCRATCH_ZIP/$STAGE_NAME/data/macula.db" \
+      --manifest "$SCRATCH_ZIP/$STAGE_NAME/data/INTEGRITY.json"
+  elif [[ -f "$SCRATCH_ZIP/$STAGE_NAME/data/bible.db" || -f "$SCRATCH_ZIP/$STAGE_NAME/data/macula.db" ]]; then
+    echo "ERROR: zip package contains SQLite DBs but no INTEGRITY.json content manifest." >&2
+    exit 1
   fi
   rm -rf "$SCRATCH_ZIP"
   trap - EXIT

@@ -415,6 +415,15 @@ The Macula Hebrew linguistic and syntactic artifact (ADR-012) regenerates byte-i
 63ca95993aab448ea1f7f549d849da70040812069aca6bbd5dd4154f6984930f  ../lexicons/macula-genesis.json
 ```
 
+The SQLite content-integrity manifest (ADR-027) regenerates deterministically
+from `data/bible.db` and `data/macula.db` (content hash, not bytes; see the
+Release Data Bundle Provenance section below):
+
+```
+  INTEGRITY.json content_sha256 for bible.db:  e51f97596c75fc8ace3a44740e705197bf452ec6e97d420eeff53593429a7105
+  INTEGRITY.json content_sha256 for macula.db: 80f6c84f974626e4ea0d34e2a8bef92876ce359120aefb579cbd34dbb5b207b5
+```
+
 ## Source edition caveats (discovered by the corpus fidelity tests)
 
 1. **Gen 1:2 comma variant** — scrollmapper KJV-osis reads "without form and
@@ -493,7 +502,8 @@ Generated via `scripts/build_release_data.sh`:
 dist/data/
 ├── bible.db             # Whole-Bible SQLite (31,102 verses: KJV + BSB/ASV/YLT + Strong's + FTS5)
 ├── macula.db            # Linguistic SQLite (Hebrew OT + Greek NT syntax & discourse trees)
-├── SHA256SUMS           # Cryptographic SHA-256 manifest over every file in the bundle
+├── INTEGRITY.json       # Content-level manifest (ADR-027): canonical content hash per SQLite DB
+├── SHA256SUMS           # Byte-level SHA-256 manifest over all JSON artifacts in the bundle
 └── lexicons/            # Canonical derived JSON lexicons (57 files)
     ├── strongs-lexicon.json
     ├── strongs-list.json
@@ -511,7 +521,7 @@ scripts/build_release_data.sh
 # Build sidecar directory only (without creating archive)
 scripts/build_release_data.sh --no-archive
 
-# Verify sidecar bundle integrity against SHA256SUMS manifest
+# Verify sidecar bundle integrity (JSON byte manifest + SQLite content manifest)
 scripts/build_release_data.sh --check dist/data
 ```
 
@@ -519,13 +529,24 @@ scripts/build_release_data.sh --check dist/data
 
 1. **Deterministic Compilation:** Both SQLite databases (`bible.db` and `macula.db`) are compiled
    strictly from the pinned upstream sources and canonical lexicons listed above, then compacted
-   using SQLite `VACUUM INTO` and validated with `PRAGMA quick_check`.
-2. **Manifest Generation:** `SHA256SUMS` is computed directly inside the bundle folder across
-   `bible.db`, `macula.db`, and `lexicons/*.json`.
-3. **Runtime Verification:** At application startup or during the first-run setup wizard
-   (WP-029 Phase 4), `search.resource.verify_data_bundle()` validates the sidecar directory against
-   `SHA256SUMS` to detect any data corruption or tampering.
-4. **Copyright Boundary:** `data/egw.db` is strictly excluded from release bundles per ADR-002,
+   using SQLite `VACUUM INTO`. The databases are **not** byte-reproducible across toolchains
+   (SQLite versions, VACUUM behavior, insertion order all affect raw bytes), so they are verified
+   by **content**, not bytes (ADR-027).
+2. **Content Manifest (ADR-027, Option B):** `data/INTEGRITY.json` records a canonical content hash
+   per database — SHA-256 over the schema census (all `sqlite_master` objects; FTS5 shadow tables
+   and maintenance triggers derived from actual virtual-table linkage) plus every canonical-table
+   row serialized deterministically in `PRIMARY KEY` order. Regenerated with
+   `python -m search.validation.db_integrity --generate`.
+3. **Byte Manifest:** `SHA256SUMS` covers only the byte-deterministic JSON artifacts
+   (`lexicons/*.json`, schema files). SQLite DBs are **excluded** — their integrity is governed by
+   `INTEGRITY.json` only; keeping stale byte pins would false-fail honest rebuilds on other
+   toolchains.
+4. **Runtime Verification:** `search.resource.verify_data_bundle()` validates the sidecar directory
+   in two layers (ADR-027): Layer 1 verifies DBs against `INTEGRITY.json` by canonical content hash
+   (`deep=True` full row hash for CI/manual gates, `deep=False` schema shape + row counts for the
+   interactive `/api/verify-bundle` endpoint), Layer 2 verifies JSON artifacts against `SHA256SUMS`.
+   CI gate F6 (`scripts/verify_all.sh`) runs the deep content check on every change.
+5. **Copyright Boundary:** `data/egw.db` is strictly excluded from release bundles per ADR-002,
    ADR-023, and ADR-024. Only public-domain and CC0/openly-licensed biblical and linguistic resources
    are distributed in release bundles.
 

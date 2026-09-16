@@ -32,6 +32,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-024](ADR-024-gui-first-architecture-tui-as-mode.md) | GUI-First Architecture — Local Web UI as Primary Face, TUI as a Mode (Pillar D/P) | Accepted |
 | [ADR-025](ADR-025-visual-identity-and-anti-slop-design-charter.md) | Visual Identity, "Study Room Desk" Mental Anchor, and Anti-Slop Design Charter | Accepted |
 | [ADR-026](ADR-026-treasury-of-scripture-knowledge-cross-references.md) | Treasury of Scripture Knowledge (TSK) Cross-Reference Integration & Whole-Bible Hyperlinking | Accepted |
+| [ADR-027](ADR-027-content-level-sqlite-integrity.md) | Content-Level Integrity Verification for SQLite Data Bundles (`INTEGRITY.json`, Option B) | Accepted |
 
 
 ## When to write one

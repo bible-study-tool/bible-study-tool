@@ -92,6 +92,19 @@ if [[ "$CHECK_ONLY" = true ]]; then
     exit 1
   fi
   (cd "$TARGET" && sha256sum --quiet -c SHA256SUMS)
+  # Content-level DB check (ADR-027): SHA256SUMS covers JSON artifacts only.
+  # DBs must verify against INTEGRITY.json when present, and their absence is
+  # an error when the DBs are still sitting in the bundle.
+  if [[ -f "$TARGET/INTEGRITY.json" ]]; then
+    "$PYTHON" -m search.validation.db_integrity --check \
+      --bible-db "$TARGET/bible.db" \
+      --macula-db "$TARGET/macula.db" \
+      --manifest "$TARGET/INTEGRITY.json" \
+      || { echo "ERROR: SQLite content integrity check failed." >&2; exit 1; }
+  elif [[ -f "$TARGET/bible.db" || -f "$TARGET/macula.db" ]]; then
+    echo "ERROR: $TARGET contains SQLite DBs but no INTEGRITY.json content manifest." >&2
+    exit 1
+  fi
   echo "✔ Data bundle integrity verified successfully."
   exit 0
 fi
@@ -185,8 +198,29 @@ if [[ -e "$OUT_DIR/egw.db" ]]; then
   exit 1
 fi
 
-# 6. Compute cryptographic SHA256SUMS manifest
-echo "6. Generating SHA256SUMS manifest..."
+# 6. Generate content-level integrity manifest + byte SHA256SUMS manifest
+echo "6. Generating integrity manifests..."
+# 6a. Content-level manifest (ADR-027): SQLite DBs are verified by
+#     canonical content hash (schema + rows), not raw bytes — SQLite files are
+#     not byte-reproducible across toolchains. JSON artifacts remain byte-pinned.
+HAVE_DB=false
+if [[ -f "$OUT_DIR/bible.db" || -f "$OUT_DIR/macula.db" ]]; then
+  HAVE_DB=true
+  if [[ ! -f "$OUT_DIR/bible.db" || ! -f "$OUT_DIR/macula.db" ]]; then
+    echo "ERROR: incomplete SQLite bundle in $OUT_DIR (one of bible.db/macula.db missing)." >&2
+    exit 1
+  fi
+  "$PYTHON" -m search.validation.db_integrity --generate \
+    --bible-db "$OUT_DIR/bible.db" \
+    --macula-db "$OUT_DIR/macula.db" \
+    --manifest "$OUT_DIR/INTEGRITY.json"
+fi
+if [[ "$HAVE_DB" = true && ! -f "$OUT_DIR/INTEGRITY.json" ]]; then
+  echo "ERROR: SQLite DBs present but content manifest INTEGRITY.json not generated." >&2
+  exit 1
+fi
+
+# 6b. Byte manifest for JSON artifacts only (DBs covered by INTEGRITY.json).
 (
   cd "$OUT_DIR"
   export LC_ALL=C
@@ -197,12 +231,22 @@ echo "6. Generating SHA256SUMS manifest..."
   if [[ -f sanctuary_schema.json ]]; then
     EXTRA_FILES+=(sanctuary_schema.json)
   fi
-  sha256sum bible.db macula.db lexicons/*.json "${EXTRA_FILES[@]}" > SHA256SUMS
+  sha256sum lexicons/*.json "${EXTRA_FILES[@]}" > SHA256SUMS
 )
-echo "   ✔ Manifest created: $OUT_DIR/SHA256SUMS ($(wc -l < "$OUT_DIR/SHA256SUMS") entries)."
+echo "   ✔ Content manifest + byte manifest created."
 
-# 7. Internal verification of the generated manifest
-echo "7. Self-verifying data bundle against manifest..."
+# 7. Internal verification of the generated manifests
+echo "7. Self-verifying data bundle against manifests..."
+if [[ -f "$OUT_DIR/INTEGRITY.json" ]]; then
+  "$PYTHON" -m search.validation.db_integrity --check \
+    --bible-db "$OUT_DIR/bible.db" \
+    --macula-db "$OUT_DIR/macula.db" \
+    --manifest "$OUT_DIR/INTEGRITY.json" \
+    || { echo "ERROR: content integrity self-check failed." >&2; exit 1; }
+elif [[ -f "$OUT_DIR/bible.db" || -f "$OUT_DIR/macula.db" ]]; then
+  echo "ERROR: SQLite DBs present but INTEGRITY.json missing; cannot verify content." >&2
+  exit 1
+fi
 (
   cd "$OUT_DIR"
   sha256sum --quiet -c SHA256SUMS
