@@ -11,6 +11,7 @@ Pins two properties of ``search.dbaccess.connect_db_reader``:
 
 from __future__ import annotations
 
+import shutil
 import sqlite3
 import unittest
 from pathlib import Path
@@ -127,6 +128,111 @@ class WriterCheckpointTests(unittest.TestCase):
                 self.assertEqual(reader.get_paragraph("PP.57.1")["text"], "one")
             finally:
                 reader.close()
+
+
+class ConsumerSidecarTests(unittest.TestCase):
+    """Runtime read methods of the DB classes must not litter sidecars (F5)."""
+
+    def _assert_reads_leave_sidecars_untouched(self, tmp: Path, exercise) -> None:
+        before = _sidecars_in(tmp)
+        exercise()
+        self.assertEqual(_sidecars_in(tmp), before, "read path created sidecars")
+
+    def test_egw_read_methods_create_no_sidecars(self) -> None:
+        from search.linking.egw import EgwDB
+
+        with TemporaryDirectory() as td:
+            tmp = Path(td)
+            db_path = tmp / "egw.db"
+            writer = EgwDB(db_path, repo_root=tmp)
+            writer.insert_paragraphs_batch(
+                [
+                    {"id": "PP.56.9", "book_code": "PP", "page": 56, "paragraph": 9, "text": "prev"},
+                    {"id": "PP.57.1", "book_code": "PP", "page": 57, "paragraph": 1, "text": "one"},
+                    {"id": "PP.58.1", "book_code": "PP", "page": 58, "paragraph": 1, "text": "next"},
+                ]
+            )
+            writer.close()
+            for sc in _sidecars_in(tmp):  # normalise to the shipped-clean invariant
+                (tmp / sc).unlink()
+
+            reader = EgwDB(db_path, repo_root=tmp)
+            try:
+                self._assert_reads_leave_sidecars_untouched(
+                    tmp,
+                    lambda: (
+                        reader.exists(),
+                        reader.count(),
+                        reader.get_paragraph("PP.57.1"),
+                        reader.get_page("PP", 57),
+                        reader.get_chapter("PP", 57),
+                        reader.get_chapter_info("PP", 57),
+                        reader.get_chapter_for_token("PP.57.1"),
+                        reader.get_adjacent_chapters("PP", 57),
+                        reader.search("one"),
+                    ),
+                )
+            finally:
+                reader.close()
+
+    def test_macula_read_methods_create_no_sidecars(self) -> None:
+        from search.macula.db import MaculaSqliteDB
+
+        source = Path(__file__).resolve().parents[1] / "data" / "macula.db"
+        if not source.is_file():
+            self.skipTest("data/macula.db not present")
+        with TemporaryDirectory() as td:
+            tmp = Path(td)
+            db_path = tmp / "macula.db"
+            shutil.copyfile(source, db_path)
+
+            reader = MaculaSqliteDB(db_path, repo_root=tmp)
+            try:
+                self._assert_reads_leave_sidecars_untouched(
+                    tmp,
+                    lambda: (
+                        reader.exists(),
+                        reader.counts,
+                        reader.lookup_strongs("H7225"),
+                        reader.lookup_verse("Gen.1.1"),
+                        reader.search_by_domain("168"),
+                        reader.search_by_role("subject", limit=10),
+                    ),
+                )
+            finally:
+                reader.close()
+
+    def test_bible_read_methods_create_no_sidecars(self) -> None:
+        from search.corpus.extract_kjv import BibleDB
+
+        source = Path(__file__).resolve().parents[1] / "data" / "bible.db"
+        if not source.is_file():
+            self.skipTest("data/bible.db not present")
+        with TemporaryDirectory() as td:
+            tmp = Path(td)
+            db_path = tmp / "bible.db"
+            shutil.copyfile(source, db_path)
+
+            reader = BibleDB(db_path, repo_root=tmp)
+            try:
+                self._assert_reads_leave_sidecars_untouched(
+                    tmp,
+                    lambda: (
+                        reader.exists(),
+                        reader.count(),
+                        reader.get_verse("Gen.1.1"),
+                        reader.get_passage("Gen.1"),
+                        reader.search("beginning"),
+                        reader.find_by_strongs("H7225"),
+                        reader.list_translations(),
+                    ),
+                )
+            finally:
+                reader.close()
+
+
+def _sidecars_in(directory: Path) -> list[str]:
+    return sorted(p.name for p in directory.glob("*.db-*"))
 
 
 if __name__ == "__main__":

@@ -547,10 +547,11 @@ scripts/build_release_data.sh --check dist/data
    CI/manual gates; `deep=False` schema shape + row counts reserved for lightweight surfaces),
    Layer 2 verifies JSON artifacts against `SHA256SUMS`.
    CI gate F6 (`scripts/verify_all.sh`) runs the deep content check on every change.
-   All source-DB reads (verification and runtime) use `search.dbaccess.connect_db_reader`:
+   All source-DB **reads** (verification and runtime) use `search.dbaccess.connect_db_reader`:
    `mode=ro&immutable=1` when the WAL is checkpointed (sidecar-free), WAL-aware otherwise
    (ADR-027 §5) — so reads never create `-wal`/`-shm` litter and the hash covers what
-   readers actually see.
+   readers actually see. Writers (builds, corpus ingest, `/api/import-books`) open
+   read-write as required and checkpoint on close.
 5. **Copyright Boundary:** `data/egw.db` is strictly excluded from release bundles per ADR-002,
    ADR-023, and ADR-024. Only public-domain and CC0/openly-licensed biblical and linguistic resources
    are distributed in release bundles.

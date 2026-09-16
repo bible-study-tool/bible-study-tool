@@ -65,18 +65,18 @@ Committed to the repo. Generated/verified by `python -m search.validation.db_int
 
 The shipped `data/*.db` files are WAL-mode and fully checkpointed by the builders (`journal_mode=WAL` + `wal_checkpoint(TRUNCATE)`; see `scripts/build_release_data.sh`). Reading them with a `mode=ro` URI is a trap: it materializes `-wal`/`-shm` sidecars next to the source file, and fails outright on first read when no `-shm` exists.
 
-**Decision.** All verification and runtime reads go through `search.dbaccess.connect_db_reader(path)`, which:
+**Decision.** All verification and runtime **reads** go through `search.dbaccess.connect_db_reader(path)`, which:
 
 1. opens with `mode=ro&immutable=1` when **no hot WAL** exists (the steady state, and every shipped file) — no locks, no sidecar creation; and
-2. falls back to a WAL-aware connection when **uncheckpointed WAL frames** exist (`-wal` non-empty). `immutable=1` ignores WAL frames — the schema itself lives in them, so an immutable-only read of a hot WAL fails or sees stale content. This fallback is what makes the content hash equal to what any other reader sees, which is the whole point of the gate.
+2. falls back to a WAL-aware connection when **uncheckpointed WAL frames** exist (`-wal` non-empty). `immutable=1` ignores WAL frames — the schema itself lives in them, so an immutable-only read of a hot WAL fails or sees stale content. This fallback is what makes the content hash equal to what any other reader sees, which is the whole point of the gate. The fallback is write-capable at the SQLite level, so `PRAGMA query_only = ON` enforces the read-only contract on both branches.
 
-The same logic justifies the writer shortcut in `MACULA`/`EgwDB.readonly_conn`: an instance that has written in-process reads through its writer connection rather than an immutable handle. Verified by `search/test_dbaccess.py` (sidecar-free reads, hot-WAL visibility, WAL-aware hashing).
+**Scope.** Reads are sidecar-free: a reader never creates `-wal`/`-shm`. Explicit **writers** (builds, corpus ingest, `/api/import-books`) still open read-write, as they must, and checkpoint (`wal_checkpoint(TRUNCATE)`) on close so no hot WAL is left behind — a 0-byte `-wal` plus `-shm` can legitimately persist while a long-lived writer connection stays open. The same logic justifies the writer shortcut in `MACULA`/`EgwDB`/`BibleDB.readonly_conn`: an instance that has written in-process reads through its writer connection rather than an immutable handle, which also covers build-then-read within one process. Verified by `search/test_dbaccess.py` (sidecar-free reads, hot-WAL visibility, WAL-aware hashing, checkpoint-on-close, and a consumer test per DB class that exercises the real read methods).
 
 ## Consequences
 
 * **Positive:** Verification now proves *content* equality — a rebuilt bundle on any toolchain passes if and only if it carries the same canonical rows and schema.
 * **Positive:** The stale-code regression class (2,541-row drift) is caught deterministically by CI gate F6, not discovered by users.
-* **Positive:** Source DBs are never opened read-write at runtime and no longer accumulate `-wal`/`-shm` sidecars; the content hash covers WAL frames, i.e. exactly what readers see (see §5).
+* **Positive:** Runtime reads never open source DBs read-write and never create `-wal`/`-shm` sidecars; writers (builds, ingest, `/api/import-books`) checkpoint on close, and the content hash covers WAL frames, i.e. exactly what readers see (see §5).
 * **Neutral:** Adds `data/INTEGRITY.json` (small JSON) as a committed generated artifact; regenerated whenever the DB build changes (`build_release_data.sh` step 6a).
 * **Neutral:** Deep verification is ~24 s — acceptable for CI/manual gates and for the user-facing `/api/verify-bundle` endpoint (a user-initiated action; the fast check would report valid on cell-level tampering). The `?deep=0` fast path is reserved for future lightweight per-request surfaces.
 * **Negative:** `data/SHA256SUMS` no longer byte-documents the DBs in isolation; the content manifest is the authority and must be regenerated in lockstep with DB rebuilds (guarded by release self-check step 7).

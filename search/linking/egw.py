@@ -287,14 +287,17 @@ class EgwDB:
         """Sidecar-free read-only connection for runtime queries (ADR-027).
 
         The write-capable ``conn`` (used by init/ingest) must not be opened
-        at runtime: it opens the source database read-write in WAL mode --
-        a needless write-capable handle on immutable source data and the
-        cause of -wal/-shm sidecar litter. This connection assumes the
-        source is checkpointed and write-free while open.
+        for reads: opening it enables WAL on a read-write handle, which is a
+        needless write-capable handle on source data and the cause of
+        ``-wal``/``-shm`` sidecar litter. Reads go through
+        :func:`search.dbaccess.connect_db_reader`: ``mode=ro&immutable=1``
+        when the file is checkpointed, WAL-aware when it is not.
 
         If this process has already written through ``conn`` (init/ingest),
         reads go through the writer connection: immutable reads ignore
-        uncheckpointed WAL frames and would return stale data.
+        uncheckpointed WAL frames and would return stale data. A connection
+        cached while the file was cold likewise does not see another
+        process's frames until they are checkpointed.
         """
         if self._conn is not None:
             return self._conn
@@ -321,11 +324,15 @@ class EgwDB:
         Without this, a write session (e.g. ``/api/import-books``) leaves a
         large ``-wal`` sidecar behind, and any reader that opens the file
         afterwards would have to fall back to a WAL-aware connection.
+        A busy checkpoint is benign (the WAL-aware reader fallback keeps
+        readers correct); other SQLite errors are real failures and raise.
         """
         try:
             self._conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
-        except sqlite3.Error:
-            pass
+        except sqlite3.OperationalError as exc:
+            if "busy" in str(exc).lower() or "locked" in str(exc).lower():
+                return
+            raise
 
     def __enter__(self) -> EgwDB:
         return self
@@ -597,7 +604,7 @@ class EgwDB:
         except (ValueError, TypeError):
             return None, None
 
-        prev_row = self.conn.execute(
+        prev_row = self.readonly_conn.execute(
             """
             SELECT chapter_num, chapter_title
             FROM egw_paragraphs
@@ -607,7 +614,7 @@ class EgwDB:
             (b_code, ch_num),
         ).fetchone()
 
-        next_row = self.conn.execute(
+        next_row = self.readonly_conn.execute(
             """
             SELECT chapter_num, chapter_title
             FROM egw_paragraphs

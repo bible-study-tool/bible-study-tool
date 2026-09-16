@@ -224,7 +224,7 @@ def main(argv: list[str] | None = None) -> int:
             total = db.count()
             print(f"EGW Database: {db.db_path}")
             print(f"Total paragraphs: {total}")
-            cur = db.conn.execute(
+            cur = db.readonly_conn.execute(
                 "SELECT book_code, book_title, COUNT(*) as cnt FROM egw_paragraphs GROUP BY book_code ORDER BY cnt DESC;"
             )
             for row in cur.fetchall():

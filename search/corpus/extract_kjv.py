@@ -28,6 +28,7 @@ from search.corpus.bible_books import (
     parse_passage_ref,
     resolve_book_code,
 )
+from search.dbaccess import connect_db_reader
 from search.resource import data_path, get_repo_root
 
 DEFAULT_KJV_JSON = "data/KJV-osis.json"
@@ -210,6 +211,7 @@ class BibleDB:
             self.db_path = data_path(p)
 
         self._conn: Optional[sqlite3.Connection] = None
+        self._readonly_conn: Optional[sqlite3.Connection] = None
 
     @property
     def conn(self) -> sqlite3.Connection:
@@ -221,6 +223,30 @@ class BibleDB:
             self._conn.execute("PRAGMA journal_mode = WAL;")
             self._ensure_translation_tables()
         return self._conn
+
+    @property
+    def readonly_conn(self) -> sqlite3.Connection:
+        """Sidecar-free read-only connection for runtime queries (ADR-027 §5).
+
+        ``conn`` is builder/ingest-only: opening it runs
+        ``_ensure_translation_tables()`` (a write) and enables WAL on a
+        read-write handle, so runtime reads through it both mutate source
+        data and litter ``-wal``/``-shm`` sidecars. Reads go through
+        :func:`search.dbaccess.connect_db_reader` instead.
+
+        If this process has already written through ``conn``, reads go
+        through it: immutable reads ignore uncheckpointed WAL frames and
+        would return stale data.
+        """
+        if self._conn is not None:
+            return self._conn
+        if self._readonly_conn is None:
+            self._readonly_conn = connect_db_reader(
+                self.db_path,
+                row_factory=sqlite3.Row,
+                check_same_thread=False,
+            )
+        return self._readonly_conn
 
     def exists(self) -> bool:
         return self.db_path.is_file() and self.db_path.stat().st_size > 0
@@ -244,8 +270,25 @@ class BibleDB:
 
     def close(self) -> None:
         if self._conn is not None:
+            self._checkpoint()
             self._conn.close()
             self._conn = None
+        if self._readonly_conn is not None:
+            self._readonly_conn.close()
+            self._readonly_conn = None
+
+    def _checkpoint(self) -> None:
+        """Fold WAL frames into the main file on close (ADR-027 §5).
+
+        A busy checkpoint is benign (the WAL-aware reader fallback keeps
+        readers correct); other SQLite errors are real failures and raise.
+        """
+        try:
+            self._conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+        except sqlite3.OperationalError as exc:
+            if "busy" in str(exc).lower() or "locked" in str(exc).lower():
+                return
+            raise
 
     def __enter__(self) -> BibleDB:
         return self
@@ -258,9 +301,9 @@ class BibleDB:
         if not self.exists():
             return {"books": 0, "verses": 0}
         try:
-            with self.conn:
-                b_cnt = self.conn.execute("SELECT COUNT(*) FROM books;").fetchone()[0]
-                v_cnt = self.conn.execute("SELECT COUNT(*) FROM verses;").fetchone()[0]
+            with self.readonly_conn:
+                b_cnt = self.readonly_conn.execute("SELECT COUNT(*) FROM books;").fetchone()[0]
+                v_cnt = self.readonly_conn.execute("SELECT COUNT(*) FROM verses;").fetchone()[0]
                 return {"books": b_cnt, "verses": v_cnt}
         except sqlite3.OperationalError:
             return {"books": 0, "verses": 0}
@@ -275,7 +318,7 @@ class BibleDB:
             return None
 
         v_num = v1 if v1 is not None else 1
-        cur = self.conn.execute(
+        cur = self.readonly_conn.execute(
             """
             SELECT v.*, b.name as book_name, b.testament
             FROM verses v
@@ -300,7 +343,7 @@ class BibleDB:
 
         if v1 is None and v2 is None:
             # Whole chapter
-            cur = self.conn.execute(
+            cur = self.readonly_conn.execute(
                 """
                 SELECT v.*, b.name as book_name, b.testament
                 FROM verses v
@@ -311,7 +354,7 @@ class BibleDB:
                 (osis, ch),
             )
         else:
-            cur = self.conn.execute(
+            cur = self.readonly_conn.execute(
                 """
                 SELECT v.*, b.name as book_name, b.testament
                 FROM verses v
@@ -364,7 +407,7 @@ class BibleDB:
         sql += " ORDER BY rank ASC LIMIT ?;"
         params.append(limit)
 
-        cur = self.conn.execute(sql, params)
+        cur = self.readonly_conn.execute(sql, params)
         return [self._format_verse_row(r) for r in cur.fetchall()]
 
     def find_by_strongs(self, strongs_code: str, limit: int = 50) -> list[dict[str, Any]]:
@@ -377,7 +420,7 @@ class BibleDB:
         prefix = (m.group(1) or "H").upper()
         clean_s = f"{prefix}{int(m.group(2))}"
         search_pattern = f'%"{clean_s}"%'
-        cur = self.conn.execute(
+        cur = self.readonly_conn.execute(
             """
             SELECT v.*, b.name as book_name, b.testament
             FROM verses v
@@ -433,8 +476,8 @@ class BibleDB:
         if not self.exists():
             return []
         try:
-            with self.conn:
-                cur = self.conn.execute(
+            with self.readonly_conn:
+                cur = self.readonly_conn.execute(
                     "SELECT id, name, year, license, is_default FROM translations ORDER BY is_default DESC, year ASC, id ASC;"
                 )
                 return [dict(r) for r in cur.fetchall()]
@@ -465,7 +508,7 @@ class BibleDB:
         # 1. Fetch KJV clean_text from primary verses table if requested and present
         if wanted_kjv:
             try:
-                cur_kjv = self.conn.execute(
+                cur_kjv = self.readonly_conn.execute(
                     "SELECT clean_text FROM verses WHERE osis = ? AND chapter = ? AND verse = ?;",
                     (osis, ch, v_num),
                 )
@@ -485,11 +528,11 @@ class BibleDB:
                         f"SELECT translation_id, text FROM translation_verses "
                         f"WHERE verse_id = ? AND translation_id IN ({placeholders});"
                     )
-                    cur = self.conn.execute(sql, [v_id] + wanted)
+                    cur = self.readonly_conn.execute(sql, [v_id] + wanted)
                     for r in cur.fetchall():
                         result[r["translation_id"]] = r["text"]
             else:
-                cur = self.conn.execute(
+                cur = self.readonly_conn.execute(
                     "SELECT translation_id, text FROM translation_verses WHERE verse_id = ?;",
                     (v_id,),
                 )
@@ -523,7 +566,7 @@ class BibleDB:
         # 1. Fetch KJV verses if requested and present
         if wanted_kjv:
             try:
-                cur_kjv = self.conn.execute(
+                cur_kjv = self.readonly_conn.execute(
                     "SELECT verse, clean_text FROM verses WHERE osis = ? AND chapter = ? ORDER BY verse ASC;",
                     (norm_osis, chapter),
                 )
@@ -546,7 +589,7 @@ class BibleDB:
                         f"WHERE osis = ? AND chapter = ? AND translation_id IN ({placeholders}) "
                         f"ORDER BY verse ASC, translation_id ASC;"
                     )
-                    cur = self.conn.execute(sql, [norm_osis, chapter] + wanted)
+                    cur = self.readonly_conn.execute(sql, [norm_osis, chapter] + wanted)
                     for r in cur.fetchall():
                         v_num = r["verse"]
                         if v_num not in result:
@@ -558,7 +601,7 @@ class BibleDB:
                     "WHERE osis = ? AND chapter = ? "
                     "ORDER BY verse ASC, translation_id ASC;"
                 )
-                cur = self.conn.execute(sql, (norm_osis, chapter))
+                cur = self.readonly_conn.execute(sql, (norm_osis, chapter))
                 for r in cur.fetchall():
                     v_num = r["verse"]
                     if v_num not in result:
@@ -589,7 +632,7 @@ class BibleDB:
         v_id = f"{osis}.{ch}.{v_num}"
 
         try:
-            cur = self.conn.execute(
+            cur = self.readonly_conn.execute(
                 """
                 SELECT to_verse, votes
                 FROM cross_references
@@ -618,7 +661,7 @@ class BibleDB:
                 placeholders = ", ".join("(?, ?, ?)" for _ in preview_coords)
                 params: list[Any] = [val for coord in preview_coords for val in coord]
                 try:
-                    p_cur = self.conn.execute(
+                    p_cur = self.readonly_conn.execute(
                         f"SELECT osis, chapter, verse, clean_text FROM verses WHERE (osis, chapter, verse) IN (VALUES {placeholders});",
                         params,
                     )

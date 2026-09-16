@@ -320,7 +320,7 @@ def discover_translation_equivalence_candidates(
     else:
         # If no filter provided, inspect crosswalk from database
         if database.is_sqlite and getattr(database, "_sqlite", None) and database._sqlite.exists():
-            cur = database._sqlite.conn.execute("SELECT strongs FROM strongs_crosswalk ORDER BY occurrences DESC;")
+            cur = database._sqlite.readonly_conn.execute("SELECT strongs FROM strongs_crosswalk ORDER BY occurrences DESC;")
             h_codes = [r[0] for r in cur.fetchall()]
         elif getattr(database, "_crosswalk", None):
             h_codes = sorted(

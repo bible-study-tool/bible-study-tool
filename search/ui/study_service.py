@@ -682,7 +682,7 @@ class StudyService:
             if occ_count == 0 and self.bible_db:
                 try:
                     search_pat = f'%"{canonical_id}"%'
-                    cur = self.bible_db.conn.execute(
+                    cur = self.bible_db.readonly_conn.execute(
                         "SELECT COUNT(*) FROM verses WHERE strongs_json LIKE ?;",
                         (search_pat,),
                     )
@@ -1310,7 +1310,7 @@ class StudyService:
                 }
             try:
                 total_paragraphs = self.egw_db.count()
-                cur = self.egw_db.conn.execute("SELECT COUNT(DISTINCT book_code) FROM egw_paragraphs;")
+                cur = self.egw_db.readonly_conn.execute("SELECT COUNT(DISTINCT book_code) FROM egw_paragraphs;")
                 row = cur.fetchone()
                 books_count = row[0] if row else 0
                 return {

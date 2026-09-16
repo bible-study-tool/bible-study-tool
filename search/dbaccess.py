@@ -17,7 +17,8 @@ Strategy (``connect_db_reader``):
    also what any other reader would see. This matters for correctness, not
    just convenience: verification must hash what readers actually see.
 
-Callers must only issue reads through the returned connection.
+Callers must only issue reads through the returned connection; this is
+enforced with ``PRAGMA query_only = ON`` on both branches.
 """
 from __future__ import annotations
 
@@ -49,6 +50,10 @@ def connect_db_reader(
             uri=True,
             check_same_thread=check_same_thread,
         )
+    # Enforce the read-only contract on both branches: the WAL-aware fallback
+    # is write-capable at the SQLite level, and source DBs must never be
+    # mutated (Non-negotiable 3). Writes then raise ``SQLITE_READONLY``.
+    conn.execute("PRAGMA query_only = ON;")
     if row_factory is not None:
         conn.row_factory = row_factory
     return conn

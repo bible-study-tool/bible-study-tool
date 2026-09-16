@@ -134,14 +134,17 @@ class MaculaSqliteDB:
         """Sidecar-free read-only connection for runtime queries (ADR-027).
 
         The write-capable ``conn`` (used by the builders) must not be opened
-        at runtime: it opens the source database read-write in WAL mode,
-        which is both a needless write-capable handle on immutable source
-        data and the cause of -wal/-shm sidecar litter. This connection
-        assumes the source is checkpointed and write-free while open.
+        for reads: opening it enables WAL on a read-write handle, which is a
+        needless write-capable handle on source data and the cause of
+        ``-wal``/``-shm`` sidecar litter. Reads go through
+        :func:`search.dbaccess.connect_db_reader`: ``mode=ro&immutable=1``
+        when the file is checkpointed, WAL-aware when it is not.
 
         If this process has already written through ``conn`` (build/ingest),
         reads go through the writer connection: immutable reads ignore
-        uncheckpointed WAL frames and would return stale data.
+        uncheckpointed WAL frames and would return stale data. A connection
+        cached while the file was cold likewise does not see another
+        process's frames until they are checkpointed.
         """
         if self._conn is not None:
             return self._conn
@@ -163,11 +166,17 @@ class MaculaSqliteDB:
             self._readonly_conn = None
 
     def _checkpoint(self) -> None:
-        """Fold WAL frames into the main file on close (ADR-027 §5)."""
+        """Fold WAL frames into the main file on close (ADR-027 §5).
+
+        A busy checkpoint is benign (the WAL-aware reader fallback keeps
+        readers correct); other SQLite errors are real failures and raise.
+        """
         try:
             self._conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
-        except sqlite3.Error:
-            pass
+        except sqlite3.OperationalError as exc:
+            if "busy" in str(exc).lower() or "locked" in str(exc).lower():
+                return
+            raise
 
     def __enter__(self) -> MaculaSqliteDB:
         return self
@@ -636,7 +645,7 @@ class MaculaSqliteDB:
         query += " ORDER BY v.book_code, v.chapter, v.verse, cl.clause_num, c.constituent_num LIMIT ?;"
         params.append(limit)
 
-        cur = self.conn.execute(query, params)
+        cur = self.readonly_conn.execute(query, params)
         results = []
         for r in cur.fetchall():
             results.append({
