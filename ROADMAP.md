@@ -61,7 +61,8 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **C1. True semantic embeddings** — enable multilingual-e5 by default when corpus is large enough
 - `[ ]` **C2. Hybrid search** — FTS5 BM25 + embeddings, combined ranker
 - `[ ]` **C3. Cross-language semantic search** — search in one language, find linked content in others
-- `[ ]` **C4. Faceted/filtered querying** — by book/theme/translation/language/status; clean query API
+- `[x]` **C4. Faceted/filtered querying** — by book/theme/translation/language/status; clean query API
+  (Phase 1 shipped: `search/corpus/query.py` + CLI flags + `/api/c4-query` endpoint; `search/test_query.py`, 9 tests)
 - `[ ]` **C5. Validate & expand discovery layer** — more curated links → stronger candidate signal
 - `[x]` **C6. Master Prophetic Key Table & Symbol Chaining** — deterministic historicist prophetic symbol dataset (`data/prophetic_lexicon.json`), real-time search/filter table UI, and in-context Scripture chaining linking apocalyptic symbols (Daniel 7, Revelation 12) directly to their defining Old Testament keys and historical consensus citations — WP-031, ADR-025
 
@@ -190,7 +191,7 @@ scrollmapper/bible_databases (MIT) additionally serves A6 (translations).
 14. **C1 — True semantic embeddings**
 15. **C2 — Hybrid search**
 16. **C3 — Cross-language semantic search**
-17. **C4 — Faceted/filtered querying**
+17. **C4 — Faceted/filtered querying** — ✅ Phase 1 done (`query(facets, text, limit)`, CLI `--theme/--translation/--language/--status/--text`, `/api/c4-query`)
 
 ### Phase 6 — Review Workflow & AI Assistant
 18. **E2 — AI-suggestion review tooling** (promotion UX)

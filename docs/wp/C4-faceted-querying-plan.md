@@ -1,6 +1,6 @@
 # C4 — Faceted/Filtered Querying (implementation plan)
 
-Status: **proposed — pending approval**
+Status: **approved — Phase 1 shipped**
 
 See `ROADMAP.md` C4: *"Faceted/filtered querying — by book/theme/translation/language/status; clean query API."*
 This is a structural plan only; no content generation, no dependencies, no changes to the deterministic core.
@@ -69,7 +69,8 @@ Deliver a single, clean, reusable query API for the curated corpus supporting fr
    (empty for Genesis — no Greek Genesis entries exist).
 3. `query({"theme": ["theme/grace"]})` intersects correctly;
    `query({"text": "grace"}, {"theme": ["theme/grace"]})` returns grace-themed entries mentioning "grace".
-4. `query({"status": ["status/review"]})` returns exactly the 157 review entries (no more, no fewer).
+4. `query({"status": ["status/review"]}, limit=10_000)` returns exactly the 157 review entries
+   (no more, no fewer); default page size of 50 applies to calls without an explicit limit.
 5. `query({"status": ["status/review"]})` creates **no** `data/*-wal`/`-shm` (sidecar-free guarantee).
 6. CLI `bible-study search --book=book/genesis --theme=theme/grace` returns the same result set as the API for those facets.
 7. Zero new dependencies (lockfile unchanged).
