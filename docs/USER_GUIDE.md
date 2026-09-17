@@ -28,11 +28,13 @@ You **do not need to be a programmer**, understand Python, or have any previous 
 
 ### For Non-Technical Users: Standalone App (Zero Python Required)
 
-For general readers, students, and teachers, getting started takes less than a minute with no installation commands or programming tools needed:
+For general readers, students, and teachers on Linux, getting started takes less than a minute with zero installation commands or programming tools needed:
 
-1. **Download** the release package for your operating system (Windows, macOS, or Linux) from the project releases.
-2. **Double-click** the application (`bible-study.exe` on Windows, `bible-study` on macOS/Linux).
+1. **Download** the standalone package (`bible-study-linux-x86_64.tar.gz`) from the [Releases Page](https://gitlab.com/adventist-bible-study/bible-study-tool/-/releases).
+2. **Double-click** or run `./bible-study`.
 3. Your default web browser immediately opens your local study desk at `http://localhost:8000`.
+
+*(Note: Standalone installers for Windows and macOS are currently in active packaging; Windows and macOS users can run immediately in 2 minutes using the Python setup described below and in [INSTALL.md](INSTALL.md).)*
 
 On your very first launch, the built-in **Setup Wizard** automatically verifies the cryptographic integrity of your Scripture databases and lexicons (via `data/INTEGRITY.json`), helps you pick your preferred visual reading theme, and introduces key workstation features.
 

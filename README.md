@@ -96,13 +96,13 @@ bible-study-tool/
 
 ### For Non-Technical Users (Standalone App — Zero Python Required)
 
-For personal devotions, sermon preparation, and group Bible study, you do not need Git, Python, or terminal experience:
+For personal devotions, sermon preparation, and group Bible study, a standalone, zero-Python distribution is available:
 
-1. **Download**: Grab the standalone release package for your operating system (Windows, macOS, or Linux) from the [Releases Page](https://gitlab.com/adventist-bible-study/bible-study-tool/-/releases). Detailed platform steps are in the [Installation Guide](docs/INSTALL.md).
-2. **Launch**: Double-click `bible-study.exe` (Windows) or `bible-study` (macOS / Linux).
+1. **Download**: Grab the standalone release package (`bible-study-linux-x86_64.tar.gz`) from the [Releases Page](https://gitlab.com/adventist-bible-study/bible-study-tool/-/releases). *(Note: Windows and macOS standalone packages are currently in active packaging; Windows and macOS users can run immediately in 2 minutes via the standard setup below.)*
+2. **Launch**: Run `./bible-study` (or double-click the binary).
 3. **Study**: Your default web browser immediately opens to your local study desk at `http://localhost:8000`.
 
-The built-in First-Run Setup Wizard automatically verifies cryptographic database integrity, configures offline privacy settings, and greets you with the text of Scripture.
+The built-in First-Run Setup Wizard automatically verifies cryptographic database integrity, configures offline privacy settings, and greets you with the text of Scripture. For detailed platform instructions, see the [Installation Guide](docs/INSTALL.md).
 
 ---
 

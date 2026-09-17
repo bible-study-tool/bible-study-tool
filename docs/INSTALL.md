@@ -14,37 +14,16 @@
 └──────────────────────┘     └──────────────────────┘     └──────────────────────┘
 ```
 
-You **do not need** Python, Git, Docker, or any developer tools installed. Everything you need—Scripture text (66 books), original Hebrew and Greek morphological databases, Strong's lexicons, prophetic key tables, and the local study engine—is pre-packaged and ready to run.
+You **do not need** developer tools or programming experience to run the workstation. Everything you need—Scripture text (66 books), original Hebrew and Greek morphological databases, Strong's lexicons, prophetic key tables, and the local study engine—is included.
+
+> [!NOTE]
+> **Release Availability:** The pre-compiled standalone zero-Python package is **available now for Linux (x86_64)**. Standalone packages for Windows (`.zip` with `bible-study.exe`) and macOS (`.tar.gz`) are currently in active packaging. In the meantime, Windows and macOS users can run the full study workstation in under 2 minutes using Python 3.10+ as shown below.
 
 ---
 
 ## 📥 Platform Instructions
 
-### 🪟 Windows (10 & 11)
-
-1. **Download:** Grab `bible-study-windows-x86_64.zip` from the [Releases Page](https://gitlab.com/adventist-bible-study/bible-study-tool/-/releases).
-2. **Extract:** Right-click the `.zip` file and select **Extract All...** to extract the folder.
-3. **Open:** Double-click `bible-study.exe` inside the extracted folder.
-4. **Study:** Your default web browser will automatically open to `http://localhost:8000` with your study workstation.
-
-> [!NOTE]
-> **Windows SmartScreen Notice:** If Windows displays a "Windows protected your PC" prompt on first launch, click **More info** and then select **Run anyway**. This is standard for independent open-source software before code signing reputation is established.
-
----
-
-### 🍎 macOS (Apple Silicon & Intel)
-
-1. **Download:** Grab `bible-study-macos-arm64.tar.gz` (Apple Silicon M1/M2/M3/M4) or `bible-study-macos-x86_64.tar.gz` (Intel) from the [Releases Page](https://gitlab.com/adventist-bible-study/bible-study-tool/-/releases).
-2. **Extract:** Double-click the downloaded `.tar.gz` archive to extract it.
-3. **Open:** Double-click `bible-study`.
-4. **Study:** Your default browser opens automatically to your study desk at `http://localhost:8000`.
-
-> [!NOTE]
-> **macOS Gatekeeper Notice:** If macOS warns that the developer cannot be verified, right-click (or Control-click) `bible-study`, select **Open**, and click **Open** in the dialog.
-
----
-
-### 🐧 Linux (x86_64)
+### 🐧 Linux (x86_64) — Standalone Package (Available Now)
 
 1. **Download:** Grab `bible-study-linux-x86_64.tar.gz` from the [Releases Page](https://gitlab.com/adventist-bible-study/bible-study-tool/-/releases).
 2. **Extract:** Extract the archive:
@@ -58,6 +37,47 @@ You **do not need** Python, Git, Docker, or any developer tools installed. Every
    ```
    *(Or double-click the `bible-study` binary in your desktop file manager.)*
 4. **Study:** Your default browser opens to your study desk at `http://localhost:8000`.
+
+---
+
+### 🪟 Windows (10 & 11) — Quickstart (Standalone Package in Active Packaging)
+
+Standalone packaging for Windows (`bible-study.exe`) is currently being integrated into our multi-platform build pipeline. Windows users can run the complete study workstation today in two minutes:
+
+1. **Install Python:** Ensure [Python 3.10+](https://www.python.org/downloads/) is installed (check "Add Python to PATH" during installation).
+2. **Open PowerShell & Run:**
+   ```powershell
+   git clone https://gitlab.com/adventist-bible-study/bible-study-tool.git
+   cd bible-study-tool
+   python -m venv .venv
+   .venv\Scripts\activate
+   pip install -e .
+   python -m search.ui.web
+   ```
+3. **Study:** Your browser immediately opens to `http://localhost:8000`.
+
+> [!NOTE]
+> Once the Windows standalone build is finalized, pre-compiled `.zip` packages with `bible-study.exe` will be published directly to GitLab Releases.
+
+---
+
+### 🍎 macOS (Apple Silicon & Intel) — Quickstart (Standalone Package in Active Packaging)
+
+Standalone packaging for macOS is currently being integrated into our multi-platform build pipeline. macOS users can run the complete study workstation today in two minutes:
+
+1. **Open Terminal & Run:**
+   ```bash
+   git clone https://gitlab.com/adventist-bible-study/bible-study-tool.git
+   cd bible-study-tool
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -e .
+   python -m search.ui.web
+   ```
+2. **Study:** Your browser immediately opens to `http://localhost:8000`.
+
+> [!NOTE]
+> Once the macOS standalone build is finalized, pre-compiled `.tar.gz` packages for Apple Silicon and Intel will be published directly to GitLab Releases.
 
 ---
 
