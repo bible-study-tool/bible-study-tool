@@ -3,18 +3,23 @@
 from __future__ import annotations
 
 from pathlib import Path
+import shutil
 import subprocess
+import sys
 import unittest
 import yaml
 
 from search.resource import get_repo_root
 
 BUILD_RELEASE_SCRIPT = get_repo_root() / "scripts" / "build_release.sh"
+BUILD_RELEASE_PY = get_repo_root() / "scripts" / "build_release.py"
+BUILD_RELEASE_DATA_PY = get_repo_root() / "scripts" / "build_release_data.py"
 
 
 class ReleasePipelineScriptTests(unittest.TestCase):
-    """Test CLI flags and behaviors of scripts/build_release.sh."""
+    """Test CLI flags and behaviors of scripts/build_release.sh and scripts/build_release.py."""
 
+    @unittest.skipUnless(shutil.which("bash"), "bash executable not available")
     def test_build_release_syntax(self):
         res = subprocess.run(
             ["bash", "-n", str(BUILD_RELEASE_SCRIPT)],
@@ -23,6 +28,7 @@ class ReleasePipelineScriptTests(unittest.TestCase):
         )
         self.assertEqual(res.returncode, 0, f"bash -n failed: {res.stderr}")
 
+    @unittest.skipUnless(shutil.which("bash"), "bash executable not available")
     def test_build_release_help(self):
         res = subprocess.run(
             ["bash", str(BUILD_RELEASE_SCRIPT), "--help"],
@@ -36,6 +42,7 @@ class ReleasePipelineScriptTests(unittest.TestCase):
         self.assertIn("--zip", res.stdout)
         self.assertIn("--clean", res.stdout)
 
+    @unittest.skipUnless(shutil.which("bash"), "bash executable not available")
     def test_build_release_invalid_arg(self):
         res = subprocess.run(
             ["bash", str(BUILD_RELEASE_SCRIPT), "--invalid-flag"],
@@ -44,6 +51,40 @@ class ReleasePipelineScriptTests(unittest.TestCase):
         )
         self.assertEqual(res.returncode, 2)
         self.assertIn("Unknown option", res.stderr)
+
+    def test_build_release_py_help(self):
+        res = subprocess.run(
+            [sys.executable, str(BUILD_RELEASE_PY), "--help"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.assertIn("Release Build Pipeline", res.stdout)
+        self.assertIn("--skip-tests", res.stdout)
+        self.assertIn("--no-data", res.stdout)
+        self.assertIn("--zip", res.stdout)
+        self.assertIn("--clean", res.stdout)
+
+    def test_build_release_py_invalid_arg(self):
+        res = subprocess.run(
+            [sys.executable, str(BUILD_RELEASE_PY), "--invalid-flag"],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(res.returncode, 2)
+        self.assertIn("Unknown option", res.stderr)
+
+    def test_build_release_data_py_help(self):
+        res = subprocess.run(
+            [sys.executable, str(BUILD_RELEASE_DATA_PY), "--help"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.assertIn("Release Data Bundler", res.stdout)
+        self.assertIn("--no-archive", res.stdout)
+        self.assertIn("--zip", res.stdout)
+        self.assertIn("--check", res.stdout)
 
 
 class GitlabCIConfigTests(unittest.TestCase):
@@ -65,6 +106,7 @@ class GitlabCIConfigTests(unittest.TestCase):
         self.assertEqual(job["stage"], "release")
         self.assertIn("artifacts", job)
         self.assertTrue(any("dist/*.tar.gz" in p for p in job["artifacts"]["paths"]))
+        self.assertTrue(any("scripts/build_release.py" in s for s in job["script"]))
 
         # Verify Windows and macOS multi-platform build jobs
         self.assertIn("build-standalone-windows", data)
@@ -72,12 +114,15 @@ class GitlabCIConfigTests(unittest.TestCase):
         self.assertEqual(win_job["stage"], "release")
         self.assertTrue(win_job.get("allow_failure"))
         self.assertTrue(any("dist/*.zip" in p for p in win_job["artifacts"]["paths"]))
+        self.assertTrue(any("scripts/build_release.py" in s for s in win_job["script"]))
 
         self.assertIn("build-standalone-macos", data)
         mac_job = data["build-standalone-macos"]
         self.assertEqual(mac_job["stage"], "release")
+        self.assertEqual(mac_job["tags"], ["macos"])
         self.assertTrue(mac_job.get("allow_failure"))
         self.assertTrue(any("dist/*.tar.gz" in p for p in mac_job["artifacts"]["paths"]))
+        self.assertTrue(any("scripts/build_release.py" in s for s in mac_job["script"]))
 
         # Verify automated release publisher job with glab CLI
         self.assertIn("create-gitlab-release", data)
