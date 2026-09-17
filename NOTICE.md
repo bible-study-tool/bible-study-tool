@@ -89,7 +89,14 @@ are **not owned by this project** and are **not redistributed here**:
   **Open Scriptures Hebrew Bible Project** (https://hb.openscriptures.org);
   WLC text therein is public domain (Groves Center).
 
+* **Original-language syntax & morphology databases** (`data/macula.db`): derived from
+  Clear-Bible Macula Hebrew and Macula Greek datasets (**CC BY 4.0** — Clear-Bible /
+  Jonathan Robie, Michael Paul Palmer). Syntax trees, linguistic participant frames,
+  and morphological glosses are compiled into `data/macula.db` (ADR-014, ADR-015, ADR-020).
+
 * **Cross-reference source data** (`data/cross-references.zip`, gitignored, fetched on demand via `scripts/fetch_sources.sh`): Treasury of Scripture Knowledge (1836/1900, public domain) compiled and normalized by OpenBible.info (**CC BY 4.0** — data by www.openbible.info; credit OpenBible.info with a link to https://www.openbible.info/labs/cross-references/). Pinned with SHA-256 in `data/PROVENANCE.md` and compiled into `data/bible.db`.
+
+* **Cryptographic & Sidecar-Free Integrity (ADR-025, ADR-027)**: All derived SQLite databases (`data/bible.db`, `data/macula.db`) are verified at both file-level (SHA-256 in `data/PROVENANCE.md`) and content-level (table row counts and key fingerprints in `data/INTEGRITY.json`). All read operations are strictly sidecar-free, leaving zero temporary SQLite `-wal` or `-shm` files on disk.
 
 This policy keeps the project a reference and an engine, not a republisher, and
 keeps the material it hosts within clearly-clean territory.

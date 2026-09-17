@@ -1,6 +1,6 @@
 # How to Study the Bible Deeply
 
-*A Beginner's Guide to Biblical Exegesis — for Anyone Who Wants to Know What God Is Actually Saying*
+*A Practical Guide to Biblical Exegesis & the Historical-Grammatical Method — for Anyone Who Wants to Know What God Is Saying*
 
 ---
 
@@ -14,248 +14,242 @@
 
 ## Who This Guide Is For
 
-This guide is for you — whether you have been reading the Bible for forty years or whether you are opening it for the very first time. You do not need a seminary degree, a knowledge of Hebrew or Greek, or any other special qualification. What God requires is a willing, honest heart. What this guide gives you is a structured method to bring that willing heart to the text with confidence.
+This guide is for you — whether you have been reading the Bible for decades or whether you are opening it for the very first time. You do not need a seminary degree, formal knowledge of Hebrew or Greek, or programming skills. What God requires is a humble, honest, and receptive heart. What this guide gives you is a sound, structured method to explore the Scriptures with confidence.
 
-Think of it this way: a craftsman needs both the right material *and* the right tools. The Bible is the material. Principled study methods are the tools. This guide teaches you the tools.
+Think of it this way: a craftsman needs both the right material *and* the right tools. The Bible is the living material; principled study methods are the tools. This guide teaches you the tools.
 
-> **Doctrinal Basis:** The study methods described here follow the **Historical-Grammatical Method** as codified in the Seventh-day Adventist Church's official statement *"Methods of Bible Study"*, approved by the General Conference Annual Council in 1986 (available at adventist.org/methodsofbiblestudy and through the Biblical Research Institute, adventistbiblicalresearch.org). This method is also developed at length in *Biblical Hermeneutics: An Adventist Approach* (BRI, 2021). It stands in contrast to the historical-critical method, which is formally rejected by the church because it subordinates Scripture to human reason and secular presuppositions.
+> **Doctrinal Basis:** The study methods described here follow the **Historical-Grammatical Method** as codified in the Seventh-day Adventist Church's official statement *"Methods of Bible Study"*, approved by the General Conference Annual Council in 1986 (available at [adventist.org/methodsofbiblestudy](https://www.adventist.org/documents/methods-of-bible-study/) and through the [Biblical Research Institute](https://www.adventistbiblicalresearch.org)). This method is developed at length in *Biblical Hermeneutics: An Adventist Approach* (BRI, 2021). It stands in deliberate contrast to the historical-critical method, which subordinates Scripture to human reason, philosophical skepticism, and secular presuppositions.
 
 ---
 
 ## Part 1 — The Starting Posture
 
-Before you open the text, open yourself. Biblical study is not like reading a history book or a technical manual. It is a conversation. God is the author. You are the reader. And He intends to speak.
+Before you open the text, open your heart. Biblical study is not like reading a secular history book or a technical manual. It is a divine conversation. God is the author, you are the reader, and the Holy Spirit is the interpreter.
 
 ### 1.1 Pray Before You Read
-
-This is not optional. It is the most important step.
+This is the most critical step. Human intellect alone cannot comprehend spiritual realities.
 
 > *"If any of you lack wisdom, let him ask of God, that giveth to all men liberally, and upbraideth not; and it shall be given him."*  
 > — **James 1:5**
 
-Before you touch the text, ask the Holy Spirit to be your teacher. A simple, sincere sentence is enough: *"Lord, open my eyes to see wondrous things from your Word."* (Psalm 119:18)
+Before you touch the text, ask the Holy Spirit to teach you: *"Open thou mine eyes, that I may behold wondrous things out of thy law."* (Psalm 119:18).
 
-### 1.2 Come with Humility, Not Conclusions
+### 1.2 Come with Humility, Not Preconceived Conclusions
+One of the greatest hazards in Bible study is coming to the text with a predetermined conclusion and hunting for proof-texts to defend it. This is called **eisegesis** (reading *into* the text). The goal of faithful study is **exegesis** — drawing *out* of the text what God actually placed there.
 
-One of the greatest dangers in Bible study is coming to the text with the answer already in hand and then searching for verses to prove it. This is called **eisegesis** (reading *into* the text). The goal of honest study is **exegesis** — drawing *out* of the text what is already there.
-
-Ask not: *"Does this verse support what I believe?"*  
-Ask instead: *"What is God saying here, and am I willing to receive it?"*
+Ask not: *"Does this verse support my opinion?"*  
+Ask instead: *"What is God saying here, and am I willing to surrender to His will?"*
 
 ### 1.3 The Holy Spirit Is Your Primary Teacher
-
 > *"Howbeit when he, the Spirit of truth, is come, he will guide you into all truth."*  
 > — **John 16:13**
 
-No commentary, no app, and no human teacher — including this one — can replace the work of the Holy Spirit in your heart as you read. Use every resource available, but keep the Spirit at the center.
+No commentary, no digital workstation, and no human teacher can replace the inward work of the Holy Spirit. Use reliable reference tools, but keep Christ and His Spirit at the absolute center.
 
 ---
 
-## Part 2 — Five Foundational Principles
+## Part 2 — Six Foundational Principles
 
-These five principles are the bedrock of sound, honest biblical interpretation. They are not invented rules — they flow directly from the nature of Scripture itself.
+These six principles are the bedrock of sound biblical interpretation. They flow directly from the nature and unity of Scripture:
 
 ### Principle 1: Scripture Interprets Scripture (*Scriptura sui ipsius interpres*)
-
 > *"Comparing spiritual things with spiritual."*  
 > — **1 Corinthians 2:13**
 
-The Bible is its own best commentary. When a verse is difficult or unclear, the clearest guide is always another verse — not a tradition, not a church authority, not a personal feeling. Every major doctrine should be assembled from *multiple* clear passages, not from a single verse read in isolation.
+The Bible is its own best commentary. When a passage is difficult, the safest interpreter is always another passage of Scripture. Biblical doctrine must never be erected upon a single isolated verse; it must be established by the harmonious consensus of the whole canon.
 
-**Practical rule:** For any important teaching you want to understand, look for it stated *at least three different ways* in different parts of Scripture. If something is only stated once, in one place, handle it carefully and humbly.
+**Practical rule:** For any truth you want to understand, trace it through multiple passages in different parts of Scripture (the law, the prophets, the gospels, and the epistles).
 
 ### Principle 2: Context Is King
+A text torn from its context becomes a pretext. Every verse lives inside concentric layers of meaning:
 
-A text without a context is a pretext. Every verse lives inside:
-
-| Context Layer | What to ask |
+| Context Layer | What to Ask |
 |---|---|
-| **Immediate context** | What do the verses immediately before and after say? |
-| **Chapter context** | What is the argument or narrative of the whole chapter? |
-| **Book context** | What is the purpose and theme of this whole book? |
-| **Biblical context** | How does this verse fit the larger sweep of Scripture? |
-| **Historical context** | Who wrote this? To whom? When? What was their political, cultural, and geographical situation? |
+| **Immediate Context** | What do the verses directly preceding and following declare? |
+| **Chapter Context** | What is the overall argument or narrative arc of this chapter? |
+| **Book Context** | Why did the author write this entire book? To whom? Under what circumstances? |
+| **Biblical Context** | Where does this passage fit in the grand sweep of redemption history? |
+| **Historical & Cultural Context** | What was the political, cultural, linguistic, and geographical setting of the author and original audience? |
 
-The SDA *"Methods of Bible Study"* (1986) makes historical context a **required** element of the historical-grammatical method. Understanding the author's world — the ruling empire, the cultural practices, the geography of the land, the religious customs of the day — does not diminish Scripture. It is the lens the author assumed when writing. Ignoring it is like reading a letter without knowing who sent it or why.
+The SDA *"Methods of Bible Study"* (1986) establishes historical context as an essential pillar of biblical exegesis:
+- **Era:** Is this during the patriarchal period, the Exodus, the Davidic monarchy, the Babylonian exile, or the Roman occupation?
+- **Author's Situation:** What was Moses facing at Sinai? What was Paul experiencing when writing from a Roman prison cell?
+- **Audience:** Were they ancient nomadic Hebrews, diaspora Jews, or Gentile converts in pagan Corinth?
+- **Geography & Culture:** What did a "covenant" entail in the ancient Near East? What did "eating with sinners" signify in first-century Judea?
 
-A few practical questions to ask for every passage:
-- **Era:** Is this during the patriarchal period, the monarchy, the Exile, the Second Temple period, the Roman occupation?
-- **Author:** What was Moses's position? What was Paul's situation when he wrote this letter (he was often in chains)?
-- **Audience:** Who were they? Israelites fresh from Egypt? Diaspora Jews? Gentile converts in Corinth?
-- **Geography:** Where is this happening? The wilderness of Sinai, the Jordan River, Jerusalem under siege, Rome?
-- **Cultural practice:** What did a "covenant" mean in Abraham's culture? What did "eating with someone" mean in first-century Jewish life?
-
-> *Example:* Nicodemus coming to Jesus "by night" (John 3:2) is not just a time notation — it was culturally significant. Night visits by Pharisees avoided public scrutiny and social shame. Knowing this makes the narrative richer and Jesus's patient reception of him more striking.
-
-> *Example:* Jeremiah 29:11 ("For I know the plans I have for you...") is one of the most quoted verses in popular Christianity. But it was written to Israel being carried into Babylonian captivity — a specific promise to a specific nation at a specific crisis point. Understanding the context does not diminish the verse; it deepens it and prevents misapplication.
-
-> **Note on tool support:** Historical-geographical context is the one layer of the historical-grammatical method not yet fully integrated into this workstation. It is being planned (see [ADR-022](decisions/ADR-022-historical-grammatical-context-layer.md)). Until then, the best free resources are the [OpenBible.info Geography tool](https://www.openbible.info/geo/) and the [Biblical Research Institute](https://www.adventistbiblicalresearch.org) for cultural and theological background.
+> *Note on Workstation Roadmap:* Per [ADR-022](decisions/ADR-022-historical-grammatical-context-layer.md), historical-geographical data (STEPBible TIPNR + OpenBible.info Geography) is being phased into the workstation inspector to give instant access to cultural and geographical settings.
 
 ### Principle 3: The Christ-Centered Thread
-
 > *"And beginning at Moses and all the prophets, he expounded unto them in all the scriptures the things concerning himself."*  
 > — **Luke 24:27**
 
-The entire Bible — from Genesis to Revelation — tells one story, and that story is about Jesus Christ. The Old Testament prepares for Him. The New Testament reveals Him. When you study any passage, a key question is always: *How does this point to Jesus?*
-
-The Sanctuary is the master key: every piece of furniture, every offering, every feast, every priesthood ritual is a lesson about the plan of salvation, centered on the Messiah.
+The entire Bible tells one unified story: the redemption of humanity through Jesus Christ. The Old Testament foretells and typifies Him; the Gospels reveal Him in flesh; the Epistles explain His righteousness and intercession; Revelation unveils His ultimate triumph. In every study, ask: *How does this point to Christ and His saving grace?*
 
 ### Principle 4: The Sanctuary Blueprint
+> *"Thy way, O God, is in the sanctuary: who is so great a God as our God?"*  
+> — **Psalm 77:13**
 
-The earthly sanctuary Israel built in the wilderness (Exodus 25–40) was made according to a heavenly pattern (Hebrews 8:5). It is the visual theology of the whole Bible — a diagram of the plan of redemption:
+The earthly sanctuary built by Moses according to the heavenly pattern (Hebrews 8:5) is God's grand visual theology of the Plan of Salvation:
 
-| Sanctuary Element | Gospel Meaning |
-|---|---|
-| Gate (one entrance) | Jesus: "I am the way" (John 14:6) |
-| Altar of Burnt Offering | Calvary — the atonement |
-| Laver of Water | Cleansing — baptism, the Word |
-| Lampstand (seven lamps) | Holy Spirit, light of the world |
-| Table of Showbread | Christ, the Bread of Life |
-| Altar of Incense | Intercession and prayer |
-| Ark of the Covenant | God's throne; law and mercy meet |
+```
+┌───────────────────────────────┬───────────────────────────────┬───────────────────────────────┐
+│  1. THE COURTYARD             │  2. THE HOLY PLACE            │  3. THE MOST HOLY PLACE       │
+├───────────────────────────────┼───────────────────────────────┼───────────────────────────────┤
+│  • Altar of Burnt Offering    │  • Table of Shewbread         │  • Ark of the Covenant        │
+│    Calvary / Justification    │    Word of God / Living Bread │    God's Law / Foundation     │
+│  • Bronze Laver               │  • Seven-Branched Lampstand   │  • Mercy Seat                 │
+│    Regeneration / Baptism     │    Holy Spirit / Witness      │    Throne of Grace & Judgment │
+│                               │  • Altar of Incense           │                               │
+│                               │    Christ's Intercession      │                               │
+└───────────────────────────────┴───────────────────────────────┴───────────────────────────────┘
+```
 
-When you encounter a New Testament concept you do not understand — atonement, intercession, justification, sanctification — check the sanctuary. The object lesson is almost always there.
+The Sanctuary moves forward through four distinct prophetic phases:
+1. **Stage 1: The Cross (AD 31)** — *Justification*: The Lamb slain outside the camp.
+2. **Stage 2: Heavenly Intercession (AD 31–1844)** — *Sanctification*: Christ ministering in the Holy Place of the heavenly temple.
+3. **Stage 3: Investigative Judgment (1844–Close of Probation)** — *Cleansing of the Sanctuary*: Final Day of Atonement ministry in the Most Holy Place (Daniel 8:14, Leviticus 16, Revelation 14:6–7).
+4. **Stage 4: Consummation / New Earth** — *Eternal Restoration*: The sanctuary cleansed, sin eradicated, and God tabernacling forever with humanity (Revelation 21:3).
 
-### Principle 5: Original Language Concepts
+> *In the Workstation:* Open Tab 5 (**Sanctuary**) to interact with the vector floorplan and drag the 4-stage chronological Plan of Salvation slider.
 
-You do not need to learn Hebrew or Greek to benefit from original language study. But there are moments when the English translation cannot carry the full weight of what God said, and knowing a few key concepts unlocks entire passages.
+### Principle 5: Original-Language Nuances Made Plain
+Ancient biblical languages carry dimensions of theological meaning that English cannot always capture:
 
-**Hebrew verbal stems** tell you *how* an action happens:
-- **Qal** — simple, direct action ("he created," "he walked")
-- **Piel** — intensive or repeated action ("he thoroughly searched")
-- **Hiphil** — causative ("he caused to know," "he brought out")
-- **Hitpael** — reflexive or ongoing process ("he was continually sanctifying himself")
+- **Hebrew Verb Stems**:
+  - *Qal*: Simple, active reality ("He created").
+  - *Niphal*: Passive or reflexive action ("It was revealed").
+  - *Piel*: Intensive or transformative action (e.g. Genesis 2:3 — God actively *set apart and sanctified* the Sabbath day).
+  - *Hiphil*: Causative action (God *causes* righteousness to spring forth).
+  - *Hitpael*: Reflexive, habitual intimate communion (Enoch *walked habitually with God*).
+- **Greek Aspects & Voices**:
+  - *Aorist*: A decisive, completed historical fact (John 1:14 — "The Word *became* flesh").
+  - *Present*: Continuous, ongoing, moment-by-moment Christian walk.
+  - *Perfect*: An action completed in the past with enduring present results (Romans 1:1 — Paul *having been permanently set apart*).
+  - *Middle Voice*: Personal, affectionate participation (Ephesians 1:4 — God chose us *for Himself*).
 
-**Greek verb aspects** tell you *when* and *how* an action is viewed:
-- **Aorist** — a completed, decisive, point-in-time action ("He justified us" — done, finished, past)
-- **Present** — ongoing or habitual action ("he who *keeps on* sinning is of the devil" — 1 John 3:8)
-- **Perfect** — completed in the past with continuing results ("It is finished" — and remains finished)
-- **Middle Voice** — the subject acts for their own benefit or with personal interest
+> *In the Workstation:* Open Tab 2 (**Languages**) to see grammatical forms automatically decoded into plain English with theological significance explained.
 
-> *This tool handles all of this automatically. Press `s` on any highlighted word in the workstation to see the Strong's number, stem, aspect, and a plain-English theological explanation.*
+### Principle 6: Prophecy Interprets Prophecy (The Historicist Framework)
+Biblical prophecy in Daniel and Revelation is not left to private imagination. The Bible provides its own dictionary for apocalyptic symbols:
+- **Waters** = Multitudes, nations, and languages (Revelation 17:15).
+- **Beast** = Kingdom, empire, or political power (Daniel 7:23).
+- **Horn** = King, ruler, or governing subdivision (Daniel 8:21–22).
+- **Woman** = Church or religious body (Jeremiah 6:2, Ephesians 5:25, Revelation 12:1).
+- **Day in Prophetic Time** = One literal solar year (Numbers 14:34, Ezekiel 4:6).
+
+Historicist prophecy views apocalyptic timelines (the 1,260 days, the 2,300 days) as continuous historical chains unfolding from the prophet's day to the second coming of Jesus Christ.
+
+> *In the Workstation:* Open Tab 4 (**Prophecy**) to explore the Master Prophetic Key Table with 30+ verified symbols.
 
 ---
 
-## Part 3 — Four Practical Study Methods
+## Part 3 — Five Practical Study Methods
 
-These are methods anyone can use today, right now, with any Bible passage.
+### Method 1: Verse-by-Verse Inductive Reading
+Slow, contemplative study through an entire biblical book:
+1. Select a book (e.g., Gospel of John, Romans, or Genesis).
+2. Read a paragraph (3–7 verses) slowly.
+3. Ask three inductive questions:
+   - **Observation:** *What does the text actually say?* (Notice verbs, subjects, contrasts, connectors).
+   - **Interpretation:** *What did it mean to the original readers?* (Check context, cross-references, grammar).
+   - **Application:** *What is God asking of me today?* (One concrete spiritual response).
+4. Record your thoughts in a study journal.
 
-### Method 1: Verse-by-Verse Journey (Inductive Reading)
-
-This is the slow, careful reading of a book from beginning to end — the most important method for building a solid biblical foundation.
-
-**How to do it:**
-1. Choose one book (start with the Gospel of John or Romans).
-2. Read one paragraph (3–7 verses) slowly, out loud if possible.
-3. Ask three questions of each paragraph:
-   - **What does it say?** (Observation — list what you actually see)
-   - **What does it mean?** (Interpretation — consider context, grammar, cross-references)
-   - **What should I do?** (Application — one concrete personal response)
-4. Write your observations down. A cheap notebook works fine.
-5. Do not rush. One paragraph a day, consistently, will transform you.
-
-> *In the workstation:* Use the main verse view with parallel translations (`v`) open. Read each verse, then press `1`–`5` to inspect its lexical, grammatical, syntax, cross-reference, and Spirit of Prophecy dimensions.
+*In the Workstation:* Read in the Scripture pane. Toggle parallel translations (`v`) to compare KJV, ASV, BSB, and YLT side-by-side. Press `f` for distraction-free Focus Mode.
 
 ### Method 2: Word Study (Lexical Deep Dive)
+Trace a key theological term (*grace*, *covenant*, *righteousness*, *sabbath*):
+1. Locate the word in its biblical context.
+2. Identify the original Hebrew or Greek lemma and Strong's number.
+3. Trace how the same term is used across the author's other writings and throughout the biblical canon.
+4. Let Scripture define the word, avoiding anachronistic modern definitions.
 
-Choose one important word — *grace*, *righteousness*, *sanctify*, *covenant* — and trace it through Scripture.
+*In the Workstation:* Hover or click any word with Strong's tags (`s`). Open Tab 2 (**Languages**) for unabridged BDB and Abbott-Smith dictionary definitions, morphological breakdown, and theological glosses.
 
-**How to do it:**
-1. Find a key verse that uses the word.
-2. Note the original Hebrew or Greek word (the tool shows this automatically).
-3. Find every place that same original word appears in the same book, then in the Bible.
-4. Collect the definitions, compare the usages, and let the word define itself from context.
+### Method 3: Thematic Cross-Reference Chaining
+Trace a biblical doctrine from Genesis to Revelation:
+1. Start with an explicit anchor verse (e.g., Genesis 2:1–3 for the Sabbath).
+2. Follow cross-references to trace development: Creation → Law → Prophets → Christ → Epistles → New Earth.
+3. Observe how shadows in the Old Testament become substance in the New Testament.
 
-> *Example:* The Greek word **σῴζω** (*sōzō*, Strong's G4982), translated "save" or "saved," appears in Matthew 1:21, Romans 8:24, Ephesians 2:8, and many other places — each usage adding nuance. Is it past? Present? Future? The verb aspect in each case tells you.
+*In the Workstation:* Open Tab 3 (**Cross-Refs** / key `x`). Filter 345,000+ Treasury of Scripture Knowledge (TSK) links by keyword (e.g. type `"sabbath"`, `"covenant"`, `"remnant"`). Press `o` to leap directly to Old Testament anchor sources.
 
-> *In the workstation:* Press `s` to see Strong's data. Press `2` (Lexicon tab) for the full BDB/Abbott-Smith entry.
+### Method 4: Argument Flow & Discourse Analysis
+Trace the apostolic line of reasoning in the Epistles:
+1. Read an entire epistle chapter without stopping.
+2. Locate the central thesis (e.g. Romans 1:16–17 — righteousness by faith).
+3. Identify the logical connectors linking each proposition:
+   - `⟨Premise: γάρ⟩` (*gar* = "For / Because"): Grounds the statement in divine reality.
+   - `⟨Therefore: οὖν⟩` (*oun* = "Therefore"): Draws the practical moral conclusion.
+   - `⟨Purpose: ἵνα⟩` (*hina* = "In order that"): Reveals God's eternal intent.
+   - `⟨Contrast: ἀλλά⟩` (*alla* = "Yet / On the contrary"): Sets grace against human failure.
+4. Diagram the argument step by step.
 
-### Method 3: Thematic Chain Study
+*In the Workstation:* Notice the inline discourse badges in the reading pane. Tab 2 (**Languages**) displays the complete syntactic argument flow.
 
-Choose a doctrine or theme — the Sabbath, the sanctuary, the Second Coming, grace — and build a chain of every verse that addresses it across the whole Bible.
+### Method 5: Typological Sanctuary Study
+Connect earthly types to heavenly realities:
+1. Read the Old Testament sacrificial ritual (e.g., Leviticus 16).
+2. Look up the New Testament antitype (e.g., Hebrews 8–10).
+3. Connect the earthly furniture or offering to Christ's high-priestly ministry.
 
-**How to do it:**
-1. Begin with a clear "anchor verse" — the most explicit statement of the truth.
-2. Follow cross-references to related passages.
-3. Build a chain: Old Testament → New Testament, prophecy → fulfillment, shadow → substance.
-4. Note agreements, nuances, and the progressive unfolding of the doctrine.
-
-This method proves that biblical doctrines are not isolated — they are threads woven through the entire tapestry of Scripture.
-
-> *In the workstation:* Press `4` (Cross-Reference tab) on any verse to see related passages. Press `o` to jump directly to the Old Testament anchor behind any New Testament passage.
-
-### Method 4: Argument Flow Study (Discourse Analysis)
-
-The Epistles (especially Paul's letters) are sustained logical arguments, not collections of independent quotes. To understand them, you must follow the argument.
-
-**How to do it:**
-1. Read a whole chapter in one sitting — do not stop at every verse.
-2. Identify the main claim (the *thesis* — what is Paul trying to prove?).
-3. Identify the supporting reasons — words like **"for"** (γάρ), **"therefore"** (οὖν), **"because"**, **"in order that"** (ἵνα) signal the logical structure.
-4. Draw a simple diagram: Claim → Reason 1 → Reason 2 → Conclusion.
-
-> *Example — Romans 3:21–26:*  
-> **Thesis:** Righteousness of God is revealed apart from the Law.  
-> **Reason (γάρ):** All have sinned and fall short (v. 23).  
-> **Means:** Redemption through Christ Jesus (v. 24).  
-> **Purpose (ἵνα/εἰς):** That God might be just and the justifier (v. 26).
-
-> *In the workstation:* Press `3` (Syntax/Frames tab) on any verse to see the discourse markers — `<Reason: γάρ>`, `<Therefore: οὖν>`, `<Purpose: ἵνα>` — displayed visually with their plain-English translations.
+*In the Workstation:* Open Tab 5 (**Sanctuary**) to trace the stations on the vector blueprint and align them with the 4-stage Plan of Salvation slider.
 
 ---
 
 ## Part 4 — The Role of the Spirit of Prophecy
 
-Adventists understand that spiritual gifts, including the gift of prophecy, were not limited to the closing of the biblical canon (1 Corinthians 12:28; Revelation 12:17; 19:10). Ellen G. White's writings — collectively called the **Spirit of Prophecy** — serve as a lesser light pointing to the greater light of Scripture.
+Seventh-day Adventists recognize that spiritual gifts remain active in the Christian church until the return of Christ (1 Corinthians 12:28; Ephesians 4:11–13; Revelation 12:17; 19:10). The writings of Ellen G. White—collectively known as the **Spirit of Prophecy**—serve as an inspired "lesser light" pointing believers back to the "greater light" of the Holy Scriptures.
 
-> *"In ancient times God spoke to men by the mouth of prophets and apostles. In these days He speaks to them by the testimonies of His Spirit."*  
-> — **Testimonies for the Church, vol. 4, p. 148**
+> *"Little heed is given to the Bible, and the Lord has given a lesser light to lead men and women to the greater light."*  
+> — **Review and Herald, Jan. 20, 1903**
 
-**How to use Spirit of Prophecy in your study:**
-- Use it to *illuminate* Scripture, not to *replace* it. If a statement in Ellen White seems to contradict a clear biblical passage, return to the Bible first.
-- Use it as a commentary that brings spiritual insight and lived application.
-- It never adds new doctrine; it clarifies, applies, and illustrates existing biblical truth.
+**Guidelines for Using the Spirit of Prophecy in Bible Study:**
+- **Scripture Is the Supreme Standard:** The Bible alone is the foundation of all faith and doctrine. The Spirit of Prophecy does not introduce new doctrines; it clarifies, exalts, and applies biblical truth to daily life.
+- **Thematic Narrative Exegesis:** Use the *Conflict of the Ages* series (*Patriarchs and Prophets*, *Prophets and Kings*, *The Desire of Ages*, *Acts of the Apostles*, *The Great Controversy*) to understand the spiritual battles and covenant promises behind biblical history.
+- **Citation Integrity:** Always examine the full paragraph and chapter context of Ellen White's writings, rather than extracting isolated sentences.
 
-> *In the workstation:* Press `5` (Spirit of Prophecy tab) on any verse, or press `g` and type `DA 83.1` to jump directly to any passage in *The Desire of Ages*, *Patriarchs and Prophets*, *The Great Controversy*, or any other integrated volume. The tool surfaces the most theologically relevant paragraphs automatically.
+*In the Workstation:* Select any verse to see relevant Spirit of Prophecy paragraphs in Tab 6 (**Commentary** / key `c`). Press `g` to jump to any standard citation token (e.g. `DA 19.1`, `PP 44.1`, `GC 678.1`). Toggle the continuous chapter reader to follow complete narrative chapters with original book page indicators.
 
 ---
 
-## Part 5 — How This Tool Serves as Your Study Companion
+## Part 5 — Study Methods to Workstation Tools Mapping
 
-This table maps each study method to the specific features of the Adventist Bible Study Tool workstation:
-
-| Study Method | Workstation Feature | How to Activate |
-|---|---|---|
-| Verse-by-Verse reading | Main verse view | Just open the workstation (`python scripts/study.py tui`) |
-| Parallel translations | Multi-translation panel | Press `v` |
-| Word Study (Strong's) | Strong's toggle | Press `s` on highlighted word |
-| Word Study (full lexicon) | Lexicon tab | Press `2` |
-| Verbal stem explanation | Syntax tab | Press `3` |
-| Argument flow / discourse | Syntax / Frames tab | Press `3` |
-| Cross-reference chain | Cross-reference tab | Press `4` |
-| OT anchor jump | OT anchor | Press `o` |
-| Spirit of Prophecy | SoP tab | Press `5`, or `g` → type EGW reference |
-| Search a topic | Full-text search | Press `/` |
-| Jump to a passage | Goto modal | Press `g` |
-| Pin a verse for notes | Pin verse | Press `Space` or `Enter` |
-| Focus on one verse | Focus mode | Press `f` |
-| Navigate chapters | Chapter navigation | Press `h` (previous) or `l` (next) |
-| Adjust display | Theme cycling | Press `t` |
-| See all shortcuts | Help | Press `?` |
+| Biblical Study Method | Web Workstation Action (Primary) | Companion TUI Action |
+|:---|:---|:---|
+| **Verse-by-Verse Inductive Reading** | Left Reading Pane (`j` / `k` navigate) | Main Reading Pane (`j` / `k`) |
+| **Multi-Translation Comparison** | Tab 1 (`Translations`) or press `v` (stacked) | Tab 4 (`Parallel`) or press `v` |
+| **Hebrew & Greek Word Study** | Tab 2 (`Languages`) or click Strong's tag | Tab 2 (`Lexicon`) or press `s` |
+| **Verbal Stems & Theological Nuances** | Tab 2 (`Languages`) plain-English breakdown | Tab 1 (`Syntax`) |
+| **Argument Flow & Discourse Markers** | Inline badges (`⟨Premise: γάρ⟩`, `⟨Therefore: οὖν⟩`) | Tab 1 (`Syntax`) |
+| **Old Testament Citation Anchors** | Click badge or press `o` | Press `o` |
+| **Whole-Bible Cross-Reference Chains** | Tab 3 (`Cross-Refs` / `x`) with keyword search | Tab 6 (`XRefs` / `x`) |
+| **Historicist Prophetic Key Chains** | Tab 4 (`Prophecy`) Master Prophetic Key Table | In-text prophecy badges |
+| **Sanctuary Typology & Salvation Plan** | Tab 5 (`Sanctuary`) vector floorplan & slider | Sanctuary typology study |
+| **Spirit of Prophecy Commentary** | Tab 6 (`Commentary` / `c`) + chapter reader | Tab 3 (`Commentary` / `c`) |
+| **Jump to Passage / Citation Token** | Press `g` or `/` or `Ctrl+P` | Press `g` (e.g. `DA 19.1`) |
+| **Distraction-Free Devotional Reading** | Press `f` (Scripture Focus Mode) | Press `f` (Focus Mode) |
+| **Full-Width Research Panel Zoom** | Double-click tab or press `z` / `Shift+F` | Full-screen terminal mode |
+| **Personal Study Notes & Journaling** | Tab 7 (`Notes` / `7`) | Pin verse (`Space` / `Enter`) |
+| **Visual Reading Themes** | Press `t` (Sepia, Light Paper, Dark Walnut) | Press `t` (7 terminal palettes) |
+| **Keyboard Shortcuts Cheat Sheet** | Press `?` (Interactive Help modal) | Press `?` |
 
 ---
 
 ## Closing Encouragement
 
-The Bible was written for you. Not for scholars alone. Not for pastors alone. Not for people in the first century alone. God breathed His Word into human language so that any man, woman, or child who approaches it with a seeking heart can hear His voice.
+The Bible was breathed by God for you. Not for theologians alone. Not for pastors alone. Not for scholars alone. God committed His eternal Word to human language so that every seeking soul might hear His still, small voice.
 
-You will not understand everything the first time. That is normal. Biblical literacy is built slowly, verse by verse, over years of faithful reading. The goal is not to finish the Bible quickly — it is to know the God of the Bible more deeply.
+You will not understand every mystery on your first reading. That is completely natural. Biblical wisdom is cultivated day by day, verse by verse, through prayerful and obedient meditation.
 
 > *"Blessed is the man that walketh not in the counsel of the ungodly... But his delight is in the law of the Lord; and in his law doth he meditate day and night."*  
 > — **Psalm 1:1–2**
 
-Begin today. One verse. One question. One prayer. Let the Spirit do the rest.
+Begin today. Open the Word. Ask the Holy Spirit for wisdom. Let the living Scriptures speak!
 
 ---
 
-*For how to navigate this tool's interface, see the [User & Study Guide](USER_GUIDE.md). For technical details about the project's architecture, see the [README](../README.md).*
+### Helpful Companion Links
+- **[User & Study Guide (USER_GUIDE.md)](USER_GUIDE.md)**: Interface tour, keyboard shortcuts, and step-by-step walkthroughs.
+- **[Visual Tour (VISUAL_TOUR.md)](VISUAL_TOUR.md)**: Color screenshots of Focus Mode, Syntax inspector, Parallel translations, and the Sanctuary blueprint.
+- **[Installation Guide (INSTALL.md)](INSTALL.md)**: Quickstart instructions for running the workstation offline.
