@@ -64,6 +64,21 @@ class QueryFunctionTests(unittest.TestCase):
         for r in rows:
             self.assertEqual(r["status"], "review")
 
+    def test_cross_source_ranked(self) -> None:
+        rows = self.q.query(None, "grace", limit=10_000)
+        norms = [r.get("_norm") for r in rows]
+        # every result has an internal relevance score in [-1, 1]
+        self.assertTrue(norms)
+        self.assertTrue(all(-1.0 <= n <= 1.0 for n in norms if n is not None))
+        # ranked (text) results are in descending cross-source order
+        ranked = [n for n in norms if n >= 0]
+        self.assertEqual(ranked, sorted(ranked, reverse=True))
+        # results come from all three content stores
+        sources = {r.get("source") for r in rows}
+        self.assertIn("entry", sources)
+        self.assertIn("bible", sources)
+        self.assertIn("egw", sources)
+
     def test_no_sidecars_after_query(self) -> None:
         before = {}
         for p in ["data/bible.db", "data/egw.db", "data/macula.db"]:

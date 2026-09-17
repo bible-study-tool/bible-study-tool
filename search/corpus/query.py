@@ -106,12 +106,15 @@ def _clean_text(text: str) -> str:
 
 def _query_materials(con: sqlite3.Connection, facets: dict[str, list[str]], text: str | None) -> list[dict[str, Any]]:
     """Curated-corpus query: facets + optional FTS5 text, all scoped to materials."""
-    select = (
-        "SELECT e.id, e.passage, e.body, e.book, e.language, e.translation,"
-        " e.status,"
-        " (SELECT group_concat(tag, ',') FROM entry_tags WHERE entry_id = e.id) AS tags,"
-        " e.rowid AS rid"
-    )
+    select_cols = [
+        "e.id", "e.passage", "e.body", "e.book", "e.language", "e.translation",
+        "e.status",
+        "(SELECT group_concat(tag, ',') FROM entry_tags WHERE entry_id = e.id) AS tags",
+        "e.rowid AS rid",
+    ]
+    if text:
+        select_cols.append("bm25(entries_fts) AS rank")
+    select = "SELECT " + ", ".join(select_cols)
     from_clause = "FROM entries e"
     where: list[str] = []
     params: list[Any] = []
@@ -147,10 +150,14 @@ def _search_all_sources(
     stores. Bible results are additionally scoped by ``book``/``testament``
     facets where present (per plan: facets apply where structured data
     exists, absent never faked). EGW is searched by text only (no EGW book
-    facet in the taxonomy). Cross-source ranking is Phase 3; Phase 2 uses
-    per-source BM25 order.
+    facet in the taxonomy). Cross-source ranking (Phase 3) converts
+    SQLite FTS5 ``bm25`` (negative; more negative = more relevant) to
+    positive relevance, normalizes per source to [0, 1], sorts globally;
+    ``_norm`` is the internal relevance field (0-1; -1 unranked).
     """
     curated = _query_materials(con, facets, text or None)
+    for r in curated:
+        r["source"] = "entry"
     results: list[dict[str, Any]] = list(curated)
 
     ct = text.strip() if text else ""
@@ -188,7 +195,7 @@ def _search_all_sources(
                         "status": None,
                         "tags": [],
                         "source": "bible",
-                        "rank": hit.get("rank"),
+                        "rank": hit.get("rank") or 0.0,
                     }
                 )
     except sqlite3.Error:
@@ -211,14 +218,35 @@ def _search_all_sources(
                         "translation": None,
                         "status": None,
                         "tags": [],
-                        "source": "egw",
-                        "rank": hit.get("rank"),
+                "source": "egw",
+                "rank": hit.get("rank") or 0.0,
                     }
                 )
     except sqlite3.Error:
         pass
 
-    results.sort(key=lambda r: (r.get("rank") is None, r.get("rank") or 0.0))
+    # Cross-source ranking (Phase 3): SQLite FTS5 bm25 returns
+    # negative values where MORE NEGATIVE = MORE RELEVANT.
+    # Convert to positive relevance (``-rank``), normalize per
+    # source to [0, 1], then sort globally. Unranked results
+    # (facet-only, or curated with no FTS5 content) sort last.
+    # `_norm` is an internal relevance field (0-1; -1 unranked).
+    source_max: dict[str, float] = {}
+    for r in results:
+        rank = r.get("rank")
+        if isinstance(rank, (int, float)):
+            s = r.get("source", "entry")
+            rel = -rank
+            source_max[s] = max(source_max.get(s, 0.0), rel)
+    for r in results:
+        rank = r.get("rank")
+        mx = source_max.get(r.get("source", "entry"))
+        if mx is None or not isinstance(rank, (int, float)):
+            r["_norm"] = -1.0
+        else:
+            rel = -rank
+            r["_norm"] = (rel / mx) if mx > 0 else 0.0
+    results.sort(key=lambda r: r["_norm"], reverse=True)
     return results[:limit]
 
 
@@ -231,10 +259,10 @@ def query(
 
     Facets: dict of facet -> list of values; within a facet values
     are OR, across facets they AND/intersect. Pass ``text`` for
-    free-text search (all content stores, ranked by per-source
-    BM25) or ``None`` for facet-only. Facets always scope to the
-    curated corpus; free-text is searched across curated + bible
-    + EGW (Phase 2).
+    free-text search (all content stores, cross-source ranked by
+    normalized BM25) or ``None`` for facet-only. Facets always
+    scope to the curated corpus; free-text is searched across
+    curated + bible + EGW (Phase 2).
     """
     facets = facets or {}
     con = _build_index()

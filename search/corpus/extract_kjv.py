@@ -752,7 +752,7 @@ class BibleDB:
 
     @staticmethod
     def _format_verse_row(row: sqlite3.Row) -> dict[str, Any]:
-        return {
+        result = {
             "id": row["id"],
             "osis": row["osis"],
             "book_name": row["book_name"],
@@ -764,6 +764,9 @@ class BibleDB:
             "strongs": json.loads(row["strongs_json"]),
             "tokens": json.loads(row["tokens_json"]),
         }
+        if "rank" in row.keys():
+            result["rank"] = row["rank"]
+        return result
 
 
 def compile_bible_db(
