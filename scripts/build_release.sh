@@ -42,6 +42,7 @@ if [[ -z "$PYTHON" ]]; then
     PYTHON="python"
   fi
 fi
+export PYTHON
 
 VERSION="${VERSION:-}"
 if [[ -z "$VERSION" && -n "${CI_COMMIT_TAG:-}" ]]; then
@@ -102,6 +103,7 @@ echo "=============================================================="
 OS_NAME="$(uname -s | tr '[:upper:]' '[:lower:]')"
 case "$OS_NAME" in
   mingw*|msys*|cygwin*) OS_NAME="windows" ;;
+  darwin*) OS_NAME="macos" ;;
 esac
 ARCH_NAME="$(uname -m)"
 PLATFORM_TAG="${OS_NAME}-${ARCH_NAME}"

@@ -58,11 +58,26 @@ class GitlabCIConfigTests(unittest.TestCase):
 
         self.assertIn("stages", data)
         self.assertIn("release", data["stages"])
-        self.assertIn("build-standalone-release", data)
-        job = data["build-standalone-release"]
+
+        # Verify Linux standalone build job
+        self.assertIn("build-standalone-linux", data)
+        job = data["build-standalone-linux"]
         self.assertEqual(job["stage"], "release")
         self.assertIn("artifacts", job)
         self.assertTrue(any("dist/*.tar.gz" in p for p in job["artifacts"]["paths"]))
+
+        # Verify Windows and macOS multi-platform build jobs
+        self.assertIn("build-standalone-windows", data)
+        win_job = data["build-standalone-windows"]
+        self.assertEqual(win_job["stage"], "release")
+        self.assertTrue(win_job.get("allow_failure"))
+        self.assertTrue(any("dist/*.zip" in p for p in win_job["artifacts"]["paths"]))
+
+        self.assertIn("build-standalone-macos", data)
+        mac_job = data["build-standalone-macos"]
+        self.assertEqual(mac_job["stage"], "release")
+        self.assertTrue(mac_job.get("allow_failure"))
+        self.assertTrue(any("dist/*.tar.gz" in p for p in mac_job["artifacts"]["paths"]))
 
         # Verify automated release publisher job with glab CLI
         self.assertIn("create-gitlab-release", data)
@@ -70,6 +85,12 @@ class GitlabCIConfigTests(unittest.TestCase):
         self.assertEqual(rel_job["stage"], "release")
         self.assertEqual(rel_job["image"], "registry.gitlab.com/gitlab-org/cli:latest")
         self.assertIn("needs", rel_job)
+        needs_jobs = {item["job"]: item for item in rel_job["needs"]}
+        self.assertIn("build-standalone-linux", needs_jobs)
+        self.assertIn("build-standalone-windows", needs_jobs)
+        self.assertIn("build-standalone-macos", needs_jobs)
+        self.assertTrue(needs_jobs["build-standalone-windows"].get("optional"))
+        self.assertTrue(needs_jobs["build-standalone-macos"].get("optional"))
         self.assertEqual(rel_job["variables"].get("GLAB_ENABLE_CI_AUTOLOGIN"), "true")
         script_text = " ".join(rel_job["script"])
         self.assertIn("glab release create", script_text)

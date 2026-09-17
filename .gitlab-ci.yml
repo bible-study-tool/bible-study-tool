@@ -77,11 +77,11 @@ validate-audit:
 
 # ---- STAGE 3: standalone release build & publishing ---------------------
 # Triggered on Git tags (e.g. v0.1.1-alpha) or web pipeline runs with RELEASE_BUILD=true.
-# Builds the zero-Python standalone binary, packages sidecar databases and lexicons,
-# uploads immutable artifacts to the GitLab Generic Package Registry, and publishes
-# the formal release on GitLab under Deployments > Releases.
+# Builds zero-Python standalone distributions for Linux, Windows, and macOS, packages
+# sidecar databases and lexicons, uploads immutable artifacts to the GitLab Generic
+# Package Registry, and publishes the formal release on GitLab under Deployments > Releases.
 
-build-standalone-release:
+build-standalone-linux:
   stage: release
   rules:
     - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/
@@ -102,12 +102,62 @@ build-standalone-release:
       - dist/bible-study-*/SHA256SUMS
     expire_in: 30 days
 
+build-standalone-windows:
+  stage: release
+  tags:
+    - saas-windows-medium-amd64
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE_BUILD == "true"
+  allow_failure: true
+  before_script:
+    - python -m pip install --upgrade pip setuptools wheel
+    - python -m pip install -e '.[test]'
+    - python -m pip install pyinstaller
+  script:
+    - bash scripts/build_release.sh --skip-tests --zip
+  artifacts:
+    name: "bible-study-${CI_COMMIT_TAG:-snapshot}-windows"
+    paths:
+      - dist/*.zip
+      - dist/*.zip.sha256
+      - dist/bible-study-*/SHA256SUMS
+    expire_in: 30 days
+
+build-standalone-macos:
+  stage: release
+  tags:
+    - saas-macos-medium-m1
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE_BUILD == "true"
+  allow_failure: true
+  before_script:
+    - python3 -m pip install --upgrade pip setuptools wheel
+    - python3 -m pip install -e '.[test]'
+    - python3 -m pip install pyinstaller
+  script:
+    - bash scripts/build_release.sh --skip-tests
+  artifacts:
+    name: "bible-study-${CI_COMMIT_TAG:-snapshot}-macos"
+    paths:
+      - dist/*.tar.gz
+      - dist/*.tar.gz.sha256
+      - dist/bible-study-*/SHA256SUMS
+    expire_in: 30 days
+
 create-gitlab-release:
   stage: release
   image: registry.gitlab.com/gitlab-org/cli:latest
   needs:
-    - job: build-standalone-release
+    - job: build-standalone-linux
       artifacts: true
+    - job: build-standalone-windows
+      artifacts: true
+      optional: true
+    - job: build-standalone-macos
+      artifacts: true
+      optional: true
   rules:
     - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/
   variables:
@@ -118,8 +168,16 @@ create-gitlab-release:
     - |
       glab auth login --job-token "$CI_JOB_TOKEN" --hostname "$CI_SERVER_HOST" || true
       glab release delete "$CI_COMMIT_TAG" -y || true
+      set --
+      for f in dist/*.tar.gz dist/*.tar.gz.sha256 dist/*.zip dist/*.zip.sha256; do
+        [ -f "$f" ] && set -- "$@" "$f"
+      done
+      if [ "$#" -eq 0 ]; then
+        echo "ERROR: No release distribution packages found in dist/." >&2
+        exit 1
+      fi
       glab release create "$CI_COMMIT_TAG" \
         --name "Release $CI_COMMIT_TAG" \
         --notes-file dist/RELEASE_NOTES.md \
-        dist/*.tar.gz dist/*.tar.gz.sha256 \
+        "$@" \
         --use-package-registry
