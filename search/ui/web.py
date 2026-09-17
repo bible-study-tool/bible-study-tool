@@ -26,6 +26,7 @@ from search.ui.cli import (
     execute_subcommand,
     launch_interactive_tui,
 )
+from search.resource import __version__
 from search.ui.study_service import StudyService
 from search.ui.web_server import create_server
 
@@ -129,7 +130,7 @@ def build_web_parser(prog: str = "bible-study") -> argparse.ArgumentParser:
         prog=prog,
         description="Adventist Bible Study Tool — Local Web Workstation & Deterministic Study Platform (ADR-024)",
     )
-    parser.add_argument("--version", "-v", action="version", version="bible-study-tool 0.1.1")
+    parser.add_argument("--version", "-v", action="version", version=f"bible-study-tool {__version__}")
 
     # Web server options
     parser.add_argument(

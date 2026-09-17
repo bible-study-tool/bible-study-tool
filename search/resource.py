@@ -18,6 +18,8 @@ import os
 from pathlib import Path
 import sys
 
+__version__ = "0.1.2"
+
 
 def is_frozen() -> bool:
     """Return True if running in a frozen executable (e.g. PyInstaller or Nuitka)."""

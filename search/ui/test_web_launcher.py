@@ -13,6 +13,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from search.resource import __version__
 from search.ui.web import (
     _launch_browser_in_background,
     build_web_parser,
@@ -203,7 +204,7 @@ class WebLauncherE2ETests(unittest.TestCase):
             text=True,
             check=True,
         )
-        self.assertIn("0.1.1", res.stdout)
+        self.assertIn(__version__, res.stdout)
 
     def test_bible_study_module_read_json(self):
         res = subprocess.run(

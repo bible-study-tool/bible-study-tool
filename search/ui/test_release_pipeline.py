@@ -114,6 +114,19 @@ class ReleaseNotesExtractorTests(unittest.TestCase):
         self.assertIn("Master Historicist Prophetic Lexicon", res.stdout)
         self.assertIn("Sanctuary Typology Blueprint", res.stdout)
 
+    def test_extract_release_notes_cli_v012(self):
+        repo_root = get_repo_root()
+        script = repo_root / "scripts" / "extract_release_notes.py"
+        res = subprocess.run(
+            ["python", str(script), "v0.1.2-alpha"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.assertIn("Treasury of Scripture Knowledge", res.stdout)
+        self.assertIn("Cross-Source BM25 Search Engine", res.stdout)
+        self.assertIn("Two-Layer Cryptographic Data Integrity", res.stdout)
+
     def test_extract_release_notes_fallback(self):
         repo_root = get_repo_root()
         script = repo_root / "scripts" / "extract_release_notes.py"

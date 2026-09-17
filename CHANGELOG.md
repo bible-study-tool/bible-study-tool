@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.2-alpha] - 2026-09-17
+
+### Added
+- **Treasury of Scripture Knowledge (TSK) Whole-Bible Cross-References (ADR-026, WP-035, WP-036):**
+  - Interactive Cross-Refs tab in Web Workstation (keyboard shortcut `x`) with complete TUI Tab 6 parity.
+  - Ingested ~345,000 scripture-interpreting-scripture links spanning all 66 canonical books and 31,102 verses into `data/bible.db`.
+  - Two-layer cross-reference architecture:
+    - Layer A: Curated theological cross-references with SDA doctrinal tags, notes, and direct bidirectional links.
+    - Layer B: Whole-Bible TSK cross-references grouped by phrase/concept with live reciprocal lookups.
+  - Real-time keyword filter, directionality toggle, and one-click Scripture navigation.
+
+- **Unified Cross-Source BM25 Search Engine (C4 Phases 1–3, ADR-028):**
+  - High-performance BM25 ranking across three distinct corpuses: Curated theological entries, Bible Scripture verses (all translations), and Ellen G. White Spirit of Prophecy commentary.
+  - Faceted and filtered search API (`/api/search`) with score normalization, highlighted snippets, and multi-field relevance scoring.
+  - Sub-millisecond sidecar-free search execution without locking or external daemon dependencies.
+
+- **Curation Velocity Dashboard & Verifiable Terminal Manifest (WP-037):**
+  - Terminal-based progress manifest accessible via `python -m search.corpus.manifest` and `bible-study manifest`.
+  - Canonical coverage metrics, word counts, and verification seals across Old Testament, New Testament, and Spirit of Prophecy corpuses.
+
+- **Multi-Platform Standalone Release Packaging Pipeline (WP-029, ADR-024):**
+  - Automated GitLab CI release pipeline building standalone zero-Python distributions for:
+    - Linux x86_64 (`.tar.gz`)
+    - Windows x86_64 (`.zip` on SaaS runner)
+    - macOS Apple Silicon & Intel (`.tar.gz` on SaaS M1 runner)
+  - Portable release artifact publishing via GitLab CLI (`glab`) using POSIX positional parameters for Alpine Linux compatibility.
+
+### Changed & Fixed
+- **Two-Layer Cryptographic Data Integrity (ADR-027, WP-029):**
+  - Implemented semantic content-level SQLite verification (`data/INTEGRITY.json`) via `search.validation.db_integrity`.
+  - Solves SQLite byte-level reproducibility variance across OS toolchains while cryptographically guaranteeing table and row integrity.
+  - Rigorous sidecar-free read hygiene: enforced `query_only=ON`, `mode=ro`, and WAL-aware connection pooling to prevent unwanted `.db-shm` and `.db-wal` generation in user directories or read-only release mounts.
+- **Visual Tour & Documentation Modernization:**
+  - Added comprehensive Visual Tour gallery (`docs/VISUAL_TOUR.md`) featuring 12 high-resolution screenshots of the Study Room workstation and all 8 comprehension tools.
+  - Modernized `README.md`, `docs/USER_GUIDE.md`, `docs/INSTALL.md`, `CONTRIBUTION_STANDARDS.md`, `NOTICE.md`, and `docs/HOW_TO_STUDY_THE_BIBLE.md`.
+  - Updated audience terminology across all guides to welcoming, non-exclusionary language ("Non-technical users" / "Non-developers").
+
 ## [0.1.1-alpha] - 2026-09-15
 
 ### Added
@@ -85,4 +122,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - F1–F4 automated validators (schema, Strong's, cross-references, dead-link audit).
   - 645 automated unit and integration tests passing in CI.
 
-[0.1.0-alpha]: https://gitlab.com/adventist-bible-study/bible-study-tool/-/releases/v0.1.0-alpha
+[0.1.2-alpha]: https://gitlab.com/bible-study-tool/adventist-bible-study-tool/-/releases/v0.1.2-alpha
+[0.1.1-alpha]: https://gitlab.com/bible-study-tool/adventist-bible-study-tool/-/releases/v0.1.1-alpha
+[0.1.0-alpha]: https://gitlab.com/bible-study-tool/adventist-bible-study-tool/-/releases/v0.1.0-alpha
