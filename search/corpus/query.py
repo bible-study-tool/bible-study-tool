@@ -138,51 +138,86 @@ def _query_materials(con: sqlite3.Connection, facets: dict[str, list[str]], text
     return [dict(r) for r in con.execute(sql, params).fetchall()]
 
 
-def _merge_free_text(text: str, limit: int) -> list[dict[str, Any]]:
-    """Free-text across all content stores (bible + egw + curated entries)."""
-    results: list[dict[str, Any]] = []
-    con = _build_index()
-    results.extend(_query_materials(con, {}, text))
+def _search_all_sources(
+    con: sqlite3.Connection, facets: dict[str, list[str]], text: str | None, limit: int
+) -> list[dict[str, Any]]:
+    """Search all content stores (curated + bible + egw), merged by id.
+
+    Facets scope to the curated corpus; free-text is searched across all
+    stores. Bible results are additionally scoped by ``book``/``testament``
+    facets where present (per plan: facets apply where structured data
+    exists, absent never faked). EGW is searched by text only (no EGW book
+    facet in the taxonomy). Cross-source ranking is Phase 3; Phase 2 uses
+    per-source BM25 order.
+    """
+    curated = _query_materials(con, facets, text or None)
+    results: list[dict[str, Any]] = list(curated)
+
+    ct = text.strip() if text else ""
+    if not _clean_text(ct):
+        return results[:limit]
+
+    # Map facets to per-source params (book/testament -> BibleDB; rest curated).
+    book = testament = None
+    for facet, values in facets.items():
+        if not values:
+            continue
+        value = values[0].split("/", 1)[1] if "/" in values[0] else values[0]
+        if facet == "book":
+            book = value
+        elif facet == "testament":
+            testament = value.upper()
+
+    seen = {r["id"] for r in results}
+
     try:
         from search.corpus.extract_kjv import BibleDB
 
-        for hit in BibleDB().search(text):
-            results.append(
-                {
-                    "id": hit.get("osis"),
-                    "passage": hit.get("osis"),
-                    "body": hit.get("text") or hit.get("clean_text"),
-                    "book": hit.get("book_name"),
-                    "language": None,
-                    "translation": None,
-                    "status": None,
-                    "tags": [],
-                    "source": "bible",
-                    "rank": hit.get("rank"),
-                }
-            )
+        for hit in BibleDB().search(ct, book=book, testament=testament):
+            rid = hit.get("osis")
+            if rid and rid not in seen:
+                seen.add(rid)
+                results.append(
+                    {
+                        "id": rid,
+                        "passage": hit.get("osis"),
+                        "body": hit.get("text") or hit.get("clean_text"),
+                        "book": hit.get("book_name"),
+                        "language": None,
+                        "translation": None,
+                        "status": None,
+                        "tags": [],
+                        "source": "bible",
+                        "rank": hit.get("rank"),
+                    }
+                )
     except sqlite3.Error:
         pass
+
     try:
         from search.linking.egw import EgwDB
 
-        for hit in EgwDB().search(text):
-            results.append(
-                {
-                    "id": hit.get("id") or hit.get("canonical_id") or hit.get("token"),
-                    "passage": f"{hit.get('book_code', '')} {hit.get('page', '')}.{hit.get('paragraph', '')}".strip(),
-                    "body": hit.get("snippet") or hit.get("body"),
-                    "book": hit.get("book_title"),
-                    "language": "english",
-                    "translation": None,
-                    "status": None,
-                    "tags": [],
-                    "source": "egw",
-                    "rank": hit.get("rank"),
-                }
-            )
+        for hit in EgwDB().search(ct):
+            rid = hit.get("id") or hit.get("canonical_id") or hit.get("token")
+            if rid and rid not in seen:
+                seen.add(rid)
+                results.append(
+                    {
+                        "id": rid,
+                        "passage": rid,
+                        "body": hit.get("snippet") or hit.get("body"),
+                        "book": hit.get("book_title"),
+                        "language": "english",
+                        "translation": None,
+                        "status": None,
+                        "tags": [],
+                        "source": "egw",
+                        "rank": hit.get("rank"),
+                    }
+                )
     except sqlite3.Error:
         pass
+
     results.sort(key=lambda r: (r.get("rank") is None, r.get("rank") or 0.0))
     return results[:limit]
 
@@ -192,16 +227,15 @@ def query(
     text: str | None = None,
     limit: int = 50,
 ) -> list[dict[str, Any]]:
-    """Return curated entries matching ``facets`` and/or ``text``.
+    """Return entries matching ``facets`` and/or ``text``.
 
     Facets: dict of facet -> list of values; within a facet values
     are OR, across facets they AND/intersect. Pass ``text`` for
-    free-text search (all content stores, ranked) or ``None`` for
-    facet-only. Facets always scope to the curated corpus.
+    free-text search (all content stores, ranked by per-source
+    BM25) or ``None`` for facet-only. Facets always scope to the
+    curated corpus; free-text is searched across curated + bible
+    + EGW (Phase 2).
     """
     facets = facets or {}
-    if text and not facets:
-        return _merge_free_text(text, limit)
     con = _build_index()
-    rows = _query_materials(con, facets, text)
-    return rows[:limit]
+    return _search_all_sources(con, facets, text, limit)

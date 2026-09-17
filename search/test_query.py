@@ -49,9 +49,14 @@ class QueryFunctionTests(unittest.TestCase):
         rows = self.q.query({"theme": ["theme/grace"]}, text="grace")
         self.assertTrue(rows)
         for r in rows:
-            self.assertIn("theme/grace", r.get("tags", []))
             hay = f"{r.get('passage', '')} {r.get('body', '')}".lower()
             self.assertIn("grace", hay)
+        # Every curated entry (has tags/status) is theme/grace; bible/egw
+        # hits (no tags) are added for free-text but carry no curated facets.
+        themed = [r for r in rows if r.get("tags") or r.get("status")]
+        self.assertTrue(themed, "expected at least one curated result")
+        for r in themed:
+            self.assertIn("theme/grace", r.get("tags", []))
 
     def test_review_count_is_current(self) -> None:
         rows = self.q.query({"status": ["status/review"]}, None, 10_000)
@@ -123,7 +128,10 @@ class QueryCLITests(unittest.TestCase):
         data = __import__("json").loads(out)
         self.assertIn("results", data, f"unexpected CLI output: {out[:200]}")
         for r in data["results"]:
-            self.assertIn("theme/grace", r.get("tags", ""))
+            # Curated results carry theme/grace; bible/egw hits (no
+            # tags) are added for free-text but not facet-scoped.
+            if r.get("tags") or r.get("status"):
+                self.assertIn("theme/grace", r.get("tags", []))
         self.assertLessEqual(len(data["results"]), 5)
 
     def test_existing_search_unified_unchanged(self) -> None:
