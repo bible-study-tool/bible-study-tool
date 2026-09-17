@@ -1,30 +1,36 @@
 # Adventist Bible Study Tool
 
-An AI-assisted, deterministic knowledge base and interactive terminal workstation for in-depth Bible study and theological research, centered on Seventh-day Adventist beliefs and materials.
+A deterministic, offline-first theological research environment and interactive study workstation (Web GUI & Terminal TUI) for in-depth Bible study, centered on Seventh-day Adventist beliefs and materials.
 
-> 📖 **New to the tool or exploring Scripture?** Read the [User & Study Guide](docs/USER_GUIDE.md) for a friendly, step-by-step tutorial on navigating the workstation, studying original languages in plain English, and discovering Spirit of Prophecy insights — no technical background needed.
+> 📖 **Getting Started?**
+> - **Non-technical users**: Download the zero-Python standalone application for Windows, macOS, or Linux in the [Installation Guide](docs/INSTALL.md).
+> - **Screenshots & Gallery**: Take a look at the workstation in everyday use in the [Visual Tour](docs/VISUAL_TOUR.md).
+> - **Study Walkthroughs**: Read the [User & Study Guide](docs/USER_GUIDE.md) for step-by-step tutorials on studying original languages in plain English, navigating the sanctuary blueprint, and tracing prophetic keys.
 
 ## Vision & Guiding North Star
 
-A **NotebookLM-like** system built on Adventist theological texts — a structured, searchable library where the AI reads into everything related to your topic through referencing the knowledge base. The core is deterministic and works offline; AI is an optional, on-demand assistant for deeper study.
+A **NotebookLM-like** research desk built on Adventist theological texts — a structured, searchable library where every fact is pinned, verified, and reproducible. The core is deterministic and works 100% offline without cloud or AI dependencies; AI is an optional, on-demand assistant for research synthesis gated behind human review.
 
 > *"Everything this tool is is in the search and benefit of understanding the word of God better, and at a deeper level. To be able to truly understand what the Holy Spirit is trying to tell us."* (1 Cor 2:10–13)
 
 ## What Makes This Different
 
-1.  **Offline-first** — Core database and interactive workstation work 100% without AI or internet.
-2.  **Deterministic core** — Tags, cross-references, original-language concordances, and correlations are rule-based and reliable.
-3.  **Cross-language semantic linking** — Hebrew → Greek → English concept mapping backed by empirical Septuagint (LXX) translation equivalences.
-4.  **The 5 Biblical Comprehension Tools**:
-    *   **Plain-English Verbal Stems & Nuances**: Translates Hebrew stems (Qal, Niphal, Piel, Hiphil, Hitpael) and Greek verb aspects (Aorist, Middle Voice, Perfect Passive) into clear ministerial meaning.
-    *   **Pauline Argument Flow & Discourse Markers**: Visualizes the Holy Spirit's inspired logic (`⟨Premise: γάρ⟩`, `⟨Therefore: οὖν⟩`, `⟨Purpose: ἵνα⟩`).
-    *   **Scripture Interpreting Scripture (OT Citation Anchors)**: One-key jump (`o`) linking New Testament apostolic quotations to Old Testament Hebrew and Septuagint roots.
-    *   **Multi-Translation Parallel View**: Instant, zero-latency comparison of KJV, ASV, BSB, and YLT (press `v`).
-    *   **Spirit of Prophecy Integration & Continuous Page Reader**: Direct citation jumps (`g` ➔ `PP 44.1`, `DA 19.1`) and full chapter correlations.
-5.  **Unabridged Scholarly Lexicons** — Integrated Brown-Driver-Briggs (BDB) for Hebrew and Abbott-Smith for Greek, with Strong's senses and KJV translation renderings.
-6.  **AI transparency** — AI-generated content is explicitly marked `<!-- AI-GENERATED -->` and gated behind human review.
-7.  **Git-based collaboration** — Full version control with automated CI verification gates (F1–F4 validators).
-8.  **Adventist-focused** — Grounded in the sanctuary message, the Great Controversy theme, the seventh-day Sabbath, conditional immortality, and the Spirit of Prophecy.
+1.  **GUI-First & Zero-Python Standalone App (ADR-024, WP-029)** — Launches directly into a dedicated Study Room Desk web workstation (`http://localhost:8000`) with zero installation hurdles. A full-featured terminal TUI (`bible-study --tui`) is built-in for power users.
+2.  **100% Offline & Private** — All Scripture databases, lexicons, syntax trees, and commentary indexes run locally on-device. Zero telemetry, zero analytics, zero external network traffic during study.
+3.  **Deterministic Core & Two-Layer Integrity (ADR-027)** — Content-level canonical SHA-256 verification (`data/INTEGRITY.json`) ensures SQLite databases (`bible.db`, `macula.db`) are cryptographically verified across all platforms and toolchains.
+4.  **The 8 Biblical Comprehension & Research Tools**:
+    *   **Plain-English Verbal Stems & Nuances**: Automatically translates Hebrew verbal stems (Qal, Niphal, Piel, Hiphil, Hitpael) and Greek aspects/voices (Aorist, Middle Voice, Perfect Passive) into clear theological meaning.
+    *   **Pauline Argument Flow & Discourse Markers**: Visualizes apostolic logical argumentation (`⟨Premise: γάρ⟩`, `⟨Therefore: οὖν⟩`, `⟨Purpose: ἵνα⟩`, `⟨Contrast: ἀλλά⟩`).
+    *   **Scripture Interpreting Scripture (OT Citation Anchors)**: One-key jump (`o`) linking New Testament apostolic citations directly to Old Testament Hebrew and Septuagint source passages.
+    *   **Multi-Translation Parallel View**: Instant side-by-side or stacked comparison of KJV (1769 with Strong's tags), ASV (1901), BSB (2020), and YLT (1898).
+    *   **Treasury of Scripture Knowledge (TSK) Cross-References**: Over 344,000 vote-ranked, reciprocal scripture-interpreting-scripture cross-reference pairs across all 31,102 verses in `data/bible.db`.
+    *   **Interactive Sanctuary Typology Blueprint & Chronological Plan of Salvation**: Interactive vector floorplan (Courtyard, Holy Place, Most Holy Place) with a chronological timeline slider (AD 31 Cross → Heavenly Inauguration → 1844 Judgment → New Earth) and in-text station breadcrumbs.
+    *   **Master Prophetic Key Table & Apocalyptic Symbol Chaining**: Historicist apocalyptic symbol decoder (Daniel 7–12, Revelation) linking symbols directly to defining Old Testament keys and historical consensus citations.
+    *   **Spirit of Prophecy Progressive Chapter Reader**: In-browser reading drawer with physical printed pagination fidelity breaks, sequential chapter traversal (`‹ Prev / Next ›`), and direct citation navigation (`PP 44.1`, `DA 19.1`).
+5.  **Unabridged Scholarly Lexicons** — Integrated Brown-Driver-Briggs (BDB) for Hebrew and Abbott-Smith for Greek, with Strong's senses, STEPBible brief glosses (TBESH / TBESG), and King James translation renderings.
+6.  **Cross-Language Semantic Linking** — Hebrew → Greek → English concept mapping backed by empirical Septuagint (LXX) translation equivalences.
+7.  **AI Transparency** — AI-generated content is provisional, explicitly marked `<!-- AI-GENERATED -->`, and strictly gated behind human review before entering the knowledge base.
+8.  **Adventist Theological Grounding** — Rooted in the sanctuary doctrine, the Great Controversy thematic framework, the seventh-day Sabbath, conditional immortality, and the Spirit of Prophecy.
 
 ## Project Structure
 
@@ -54,23 +60,27 @@ bible-study-tool/
 │   ├── tbesg-glosses.json         # STEPBible brief Greek glosses
 │   ├── morphology-genesis*.json   # OSHB morphology layers (chapters 1–50)
 │   └── wordgraph-genesis.json     # WordGraph lexical knowledge graph (1,783 lexemes)
-├── data/                # Local SQLite databases (gitignored) & provenance
-│   ├── bible.db                   # Whole-Bible 66 books (31,102 verses) in KJV, ASV, BSB, YLT
-│   ├── macula.db                  # Macula Hebrew MT & Greek NT Lowfat syntax trees
+├── data/                # Local SQLite databases (gitignored) & integrity manifests
+│   ├── bible.db                   # Whole-Bible 66 books (31,102 verses) + ~345k TSK cross-references
+│   ├── macula.db                  # Macula Hebrew MT & Greek NT Lowfat syntax trees & crosswalks
 │   ├── egw.db                     # Local SQLite FTS5 database for Spirit of Prophecy
-│   └── PROVENANCE.md              # Checksums, pins, and reproduction instructions
+│   ├── INTEGRITY.json             # Canonical SQLite content-level SHA-256 hashes (ADR-027)
+│   └── PROVENANCE.md              # Upstream git pins, checksums, and reproduction instructions
+├── web/                 # Local Web Workstation (HTML5 / Vanilla JS / CSS3 Study Room Desk)
 ├── scripts/             # study.py, bootstrap.sh, fetch_sources.sh, verify_all.sh, status.py
-├── docs/                # Decisions (ADRs), work packages (WPs), USER_GUIDE.md
-│   ├── USER_GUIDE.md              # Friendly tutorial & study walkthrough for anyone
-│   ├── WORKFLOW.md                # Engineering workflow and session practices
-│   ├── decisions/                 # Architecture Decision Records (ADR-001..024)
-│   └── wp/                        # Work package specifications (WP-001..029)
-├── search/              # Python search, linking, corpus, UI & agreement layers
-│   ├── ui/              # Modern Textual study workstation, themes, and study shell
-│   ├── corpus/          # Genesis & NT builders, grammar nuances, discourse flow, citations
+├── docs/                # Decisions (ADRs), work packages (WPs), visual tour & guides
+│   ├── INSTALL.md                 # 3-step zero-Python standalone setup for Win/Mac/Linux
+│   ├── VISUAL_TOUR.md             # Workstation screenshots (Focus mode, syntax, sanctuary)
+│   ├── USER_GUIDE.md              # In-depth tutorial & study walkthroughs
+│   ├── WORKFLOW.md                # Engineering workflow, subagent review, and verification
+│   ├── decisions/                 # Architecture Decision Records (ADR-001..027)
+│   └── wp/                        # Work package specifications (WP-001..037)
+├── search/              # Core search, linguistic engine, corpus, UI & agreement layers
+│   ├── ui/              # Web GUI HTTP server, Textual TUI workstation, themes & shell
+│   ├── corpus/          # Faceted query engine (query.py), grammar nuances, discourse, citations
 │   ├── macula/          # Linguistic enrichment, syntax trees, LXX crosswalk
 │   ├── linking/         # Semantic linking pipeline (layers b & c) + JIT EGW engine
-│   ├── validation/      # F1-F4 data-integrity validators + lexicon builders
+│   ├── validation/      # F1-F4 schema & integrity validators, F6 SQLite content gate
 │   └── agreement/       # Source Agreement Layer (facts, comparison, ledger, apparatus)
 ├── .gitlab/             # Merge request template & CI configuration
 ├── CONTRIBUTION_STANDARDS.md
@@ -84,67 +94,68 @@ bible-study-tool/
 
 ## Quick Start
 
-### 1. Clone & Bootstrap
+### For Non-Technical Users (Standalone App — Zero Python Required)
+
+For personal devotions, sermon preparation, and group Bible study, you do not need Git, Python, or terminal experience:
+
+1. **Download**: Grab the standalone release package for your operating system (Windows, macOS, or Linux) from the [Releases Page](https://gitlab.com/adventist-bible-study/bible-study-tool/-/releases). Detailed platform steps are in the [Installation Guide](docs/INSTALL.md).
+2. **Launch**: Double-click `bible-study.exe` (Windows) or `bible-study` (macOS / Linux).
+3. **Study**: Your default web browser immediately opens to your local study desk at `http://localhost:8000`.
+
+The built-in First-Run Setup Wizard automatically verifies cryptographic database integrity, configures offline privacy settings, and greets you with the text of Scripture.
+
+---
+
+### For Developers & Power Users (Source & Terminal Setup)
+
+If you are developing features, curating the corpus, or studying directly in the terminal:
+
+#### 1. Clone & Bootstrap
 
 ```bash
-git clone <repo-url>
+git clone https://gitlab.com/adventist-bible-study/bible-study-tool.git
 cd bible-study-tool
 
-# One-command automated setup (creates .venv, installs deps, fetches pinned sources, hydrates DBs & verifies):
+# One-command automated setup (creates .venv, installs dependencies, hydrates SQLite databases, and verifies):
 ./bootstrap.sh --data --verify
 ```
 
-### 2. Launch the Interactive Study Workstation
-
-The primary way to study Scripture with this tool is through the modern terminal workstation:
+#### 2. Launch the Workstation
 
 ```bash
-# Open the interactive visual study workstation (default: Genesis 1)
-python scripts/study.py
+# Launch the primary Web Workstation (starts local server & opens http://localhost:8000):
+python -m search.ui.web
+# (or with the installed CLI binary: bible-study)
 
-# Or launch directly into any chapter:
+# Or launch the interactive Terminal User Interface (TUI companion):
+python scripts/study.py tui
 python scripts/study.py tui "John 1"
-python scripts/study.py tui "John 17"
 python scripts/study.py tui "Romans 1"
 ```
 
-Use `j` / `k` to move between verses, `h` / `l` to move between chapters, `1`–`5` to switch study inspector tabs, `v` to toggle parallel translations, `o` to jump between New Testament verses and their Old Testament quotation roots, `g` to jump to any passage or Spirit of Prophecy reference (e.g. `PP 44.1`), `t` to cycle themes, and `?` for interactive help.
+In the TUI, use `j` / `k` to move between verses, `h` / `l` for chapters, `1`–`5` for inspector tabs, `v` to toggle parallel translations, `o` for Old Testament quotation roots, `g` for passage or EGW token jumps (`PP 44.1`), `t` to cycle color themes, and `?` for interactive help.
 
-### 3. Study via the Command-Line Interface (CLI)
-
-If you prefer studying or searching directly in your terminal shell:
+#### 3. Faceted Search & CLI Research
 
 ```bash
-# Study a passage and print structured linguistic cards:
+# Unified cross-source faceted search (curated entries + Bible verses + Spirit of Prophecy):
+python scripts/study.py search "grace" --book genesis --theme theme/grace
+python scripts/study.py search "sanctuary" --in bible --limit 10
+
+# Passagewise linguistic inspection cards:
 python scripts/study.py study "John 1:1-5"
 
-# Look up an original language word (Strong's Hebrew or Greek):
+# Original-language lexicon lookups:
 python scripts/study.py word H7225
 python scripts/study.py word G3056
 
-# Launch the interactive terminal study shell:
+# Interactive study shell:
 python scripts/study.py shell
 ```
 
-### 4. Fetch Pinned Lexical Sources (Optional, for Generators)
+#### 4. Run Full Local Verification
 
-Download the pinned raw upstream sources (scrollmapper KJV OSIS, OSHB XML, gmlewis Strong's, STEPBible brief lexicons) for building lexical artifacts:
-
-```bash
-bash scripts/fetch_sources.sh
-```
-
-### 5. Initialize Spirit of Prophecy (EGW) Local Database
-
-Spirit of Prophecy writings are referenced via canonical pagination tokens (e.g. `egw:PP.57.1`) and stored in a local SQLite database (`data/egw.db`). Initialize the database and load seed passages:
-
-```bash
-python scripts/egw_lookup.py --init --seed-core
-```
-
-### 6. Run Full Local Verification
-
-Run the exact test suite and data-integrity validators that CI executes:
+Run the exact test suite, schema validators, and SQLite content integrity gates that CI executes:
 
 ```bash
 bash scripts/verify_all.sh
@@ -155,13 +166,14 @@ bash scripts/verify_all.sh
 A foundational architectural principle of this project is: **"Link out, don't redistribute"** ([NOTICE.md](NOTICE.md), [ADR-002](docs/decisions/ADR-002-licensing-and-content-sourcing.md), [ADR-011](docs/decisions/ADR-011-whole-book-scaffolding-and-jit-egw.md)). This keeps the Git repository 100% license-clean under MIT and CC BY 4.0 while enabling powerful, offline, full-text research.
 
 ### What is bundled in the repository:
-* **The Bible Text**: Whole-Bible 66 books (31,102 verses) stored in normalized local SQLite (`data/bible.db`) containing the King James Version (KJV 1769 with Strong's tags), Berean Standard Bible (BSB 2020), American Standard Version (ASV 1901), and Young's Literal Translation (YLT 1898).
+* **The Bible Text & TSK Cross-References**: Whole-Bible 66 books (31,102 verses) stored in normalized local SQLite (`data/bible.db`) containing KJV (1769 with Strong's tags), BSB (2020), ASV (1901), YLT (1898), and over 344,000 vote-ranked Treasury of Scripture Knowledge (TSK) cross-reference pairs.
 * **Curated Corpus Entries**:
   * **Old Testament**: All 1,533 verses of Genesis (`materials/bible/ot/genesis/{01..50}/`). Chapters 1–3 are fully human-curated (`status: review`); chapters 4–50 are generated as draft skeletons (`status: draft`) carrying deterministic WordGraph word-study blocks.
   * **New Testament**: Curated Gospel of John chapters 1 & 17 (77 verses, `status: review`) in `materials/bible/nt/john/{01,17}/` detailing Logos Christology, the incarnation tabernacle (*skēnoō*), the Lamb of God, Trinitarian oneness, and Christ's High Priestly prayer. All 27 New Testament books are supported by the deterministic NT generator (`search/corpus/build_nt.py`).
+* **Theological Schemas & Prophetic Keys**: Pinned historicist prophetic symbol database (`data/prophetic_lexicon.json`) and sanctuary typology blueprint (`data/sanctuary_schema.json`).
 * **Lexical Artifacts**: Full Strong's Hebrew & Greek lexicons (`lexicons/strongs-*.json`), unabridged Brown-Driver-Briggs (BDB) and Abbott-Smith definitions, STEPBible brief glosses (TBESH / TBESG), whole-book Hebrew morphology (`lexicons/morphology-genesis{1..50}.json`), and the Genesis WordGraph (`lexicons/wordgraph-genesis.json`).
 * **Linguistic Datasets (Macula)**: Integrated Clear-Bible Macula Hebrew (WLC) and Greek (Nestle 1904) Lowfat syntax trees, clause roles, and Louw-Nida semantic domains (`data/macula.db`).
-* **Source Agreement Layer**: The apparatus alignment (`correlations/apparatus-genesis{1..50}.json`) and agreement ledger (`correlations/agreement-ledger.json`).
+* **Integrity Manifest & Source Agreement**: Canonical SQLite content hashes in `data/INTEGRITY.json` (ADR-027), apparatus alignment (`correlations/apparatus-genesis{1..50}.json`), and agreement ledger (`correlations/agreement-ledger.json`).
 
 ### What is NOT bundled (and how to supply it):
 
@@ -185,7 +197,7 @@ A foundational architectural principle of this project is: **"Link out, don't re
      ```
   5. If you have exported EGW study text in JSON format (array of objects with `{"book_code": "PP", "page": 57, "paragraph": 1, "text": "...", "book_title": "Patriarchs and Prophets"}`), import it locally:
      ```bash
-     python scripts/egw_lookup.py --import-json /path/to/passages.json
+     python scripts/egw_lookup.py --ingest-json /path/to/passages.json
      ```
 
 #### 2. Modern Bible Translations & Commentaries
@@ -203,7 +215,7 @@ A foundational architectural principle of this project is: **"Link out, don't re
 **Answer: Because doing so would violate our license aims, website Terms of Service, and copyright laws.**
 1. **Terms of Service Compliance**: Online repositories such as `egwwritings.org` and commercial Bible portals explicitly restrict automated web scraping, bulk crawling, and unauthorized data harvesting in their Terms of Service. Shipping an automated scraper script in an open-source tool would encourage bulk extraction in violation of those terms.
 2. **License Purity**: The Adventist Bible Study Tool core is licensed under MIT and CC BY 4.0. Providing scripts that bypass access controls or ingest copyrighted content into derivative databases would compromise the legal purity and longevity of the project.
-3. **The Clean Reference Architecture**: By standardizing on canonical citation tokens (`egw:BOOK.PAGE.PARA`) and providing local import tooling (`--import-json`) for user-supplied data, the project remains an objective study engine and indexer, strictly honoring copyright while delivering instant, offline research capabilities.
+3. **The Clean Reference Architecture**: By standardizing on canonical citation tokens (`egw:BOOK.PAGE.PARA`) and providing local import tooling (`--ingest-json`) for user-supplied data, the project remains an objective study engine and indexer, strictly honoring copyright while delivering instant, offline research capabilities.
 
 ---
 
@@ -222,64 +234,51 @@ The knowledge base combines broad whole-Bible textual integration with deeply cu
 * **Whole-Bible Scripture Database (`data/bible.db`)**:
   * All 66 books (31,102 verses) fully indexed in KJV, ASV, BSB, and YLT with sub-millisecond retrieval.
 
-## Lexical / Keyword Search
+## Search & Semantic Discovery
 
-All search — free-text, metadata, and cross-references — runs through the
-`search/linking/` pipeline backed by a single SQLite index (`index/semantic.db`).
-No API calls; fully offline.
+### 1. Unified Faceted Search Engine (C4 Query API)
 
-> **Honesty note:** The free-text search is lexical/keyword (SQLite FTS5 BM25),
-> not neural-semantic. It matches literal terms and n-grams; it does not
-> understand synonyms, concepts, paraphrase, or cross-language meaning. True
-> semantic matching (embeddings) is the planned upgrade, provided by the
-> pluggable embedder in the linking layer (c). The older standalone
-> `search/semantic_search.py` (TF-IDF) has been **removed** — its deterministic
-> lookups and cross-reference support are now native to the linking pipeline,
-> which is a single, more capable engine.
+Search across the entire knowledge base is powered by a high-performance, sidecar-free query engine (`search/corpus/query.py`) that unifies **all three content stores**:
 
-### Semantic linking pipeline (layers b & c)
+1. **Curated Study Entries** (`materials/bible/**/*.md`): 1,610+ deeply analyzed verses indexed in-memory with FTS5 and frontmatter facet tables.
+2. **Whole-Bible Scripture** (`data/bible.db`): 31,102 verses across 66 books in 4 translations (KJV, ASV, BSB, YLT) via `BibleDB.search`.
+3. **Spirit of Prophecy Commentary** (`data/egw.db`): Ellen G. White paragraph corpus via `EgwDB.search`.
 
-A dedicated package (`search/linking/`) implements the semantic correlating
-feature in two cooperating layers, matching the deterministic/AI boundary in
-[DETERMINISTIC_VS_AI.md](correlations/DETERMINISTIC_VS_AI.md). See
-[SEMANTIC_LINKING_GUIDE.md](correlations/SEMANTIC_LINKING_GUIDE.md) for full
-detail.
-
-* **Layer (b) — deterministic concordance**: groups entries that share an
-  original-language lexeme (Strong's number) into cross-passage /
-  cross-language root links. Always authoritative. Writes `index/concordance.json`.
-* **Layer (c) — multilingual discovery (AI)**: proposes cross-language links
-  *beyond* a shared Strong's number (different lexemes, different scripts,
-  same conceptual field) using a pluggable multilingual embedder. Gated by
-  strict rules and written only to `correlations/ai-discovered-links.json`
-  for human review — it never touches the deterministic core.
-
-Both layers query a shared **SQLite index** (`index/semantic.db`) so they read
-only the generated index instead of rescanning the Markdown tree. Markdown in
-`materials/` stays the single source of truth; the `.db` is a rebuilt artifact.
+#### Features:
+* **Faceted Filtering**: Filter by any structured metadata (`--book`, `--theme`, `--translation`, `--language`, `--status`). Facets combine by intersection (AND); values within a facet combine by union (OR).
+* **Cross-Source BM25 Ranking**: Converts disparate SQLite BM25 scales into positive relevance, normalizes scores per source to `[0, 1]`, and globally sorts merged results so the most relevant passages rise to the top.
+* **Sidecar-Free Hygiene (ADR-027)**: Uses immutable read connections (`mode=ro&immutable=1`), ensuring zero lock contention and preventing rogue `-wal`/`-shm` sidecar creation.
 
 ```bash
-# Build the SQLite index (once, from authoritative Markdown)
-python -m search.linking.dbindex build --repo .
+# Multi-facet search across the curated corpus and Bible:
+python scripts/study.py search "grace" --book genesis --theme theme/grace
 
-# Query the index (FTS5 free-text + metadata, no rescan of materials/)
-python -m search.linking.dbindex query --db index/semantic.db --count
-python -m search.linking.dbindex query --db index/semantic.db --strongs H7225
-python -m search.linking.dbindex query --db index/semantic.db --tag theme/creation
-python -m search.linking.dbindex query --db index/semantic.db --free-text "creation light"
-python -m search.linking.dbindex query --db index/semantic.db --xref gen-1-1-kjv
+# Search verses matching a theme or term in a specific book:
+python scripts/study.py search "covenant" --book genesis --limit 10
 
-# Layer (b): deterministic concordance (queries the index)
+# Filter curated entries by review status:
+python scripts/study.py search --status review --limit 20
+
+# Output results as structured JSON:
+python scripts/study.py search "tabernacle" --json
+```
+
+### 2. Semantic Linking Pipeline (Layers b & c)
+
+A dedicated engine (`search/linking/`) links passages and concepts across Scripture and languages, maintaining the strict boundary defined in [DETERMINISTIC_VS_AI.md](correlations/DETERMINISTIC_VS_AI.md):
+
+* **Layer (b) — Deterministic Concordance**: Groups entries sharing an original-language lexeme (Strong's number) into cross-passage and cross-language root links. Always authoritative. Generates `index/concordance.json`.
+* **Layer (c) — Multilingual Discovery (AI)**: Proposes conceptual links *beyond* shared Strong's numbers (different lexemes, different scripts, same semantic field) using a pluggable embedder (`intfloat/multilingual-e5-small` or offline n-gram fallback). Gated by strict rules and written only to `correlations/ai-discovered-links.json` for human review — AI never touches the deterministic core.
+
+```bash
+# Run deterministic concordance linking:
 python -m search.linking.cli --repo . --deterministic
 
-# Layer (c): multilingual candidate discovery (pending human review)
+# Run multilingual candidate discovery (proposals for human review):
 python -m search.linking.cli --repo . --discover --top-k 5
 
-# Both layers, rebuilding the index and seeding accepted candidates
+# Rebuild indexes and seed accepted candidates:
 python -m search.linking.cli --repo . --all --rebuild-db --seed
-
-# Run tests
-python -m search.linking.test_pipeline
 ```
 
 The embedder is pluggable: it uses `intfloat/multilingual-e5-small` when
@@ -318,11 +317,13 @@ Macula Hebrew and Greek linguistic annotations are integrated directly into `dat
 
 ## Key Design & Study Documents
 
-*   [User & Study Guide](docs/USER_GUIDE.md) — Non-technical tutorial, study walkthroughs, and keyboard cheat sheet
-*   [How to Study the Bible Deeply](docs/HOW_TO_STUDY_THE_BIBLE.md) — Foundational principles, four study methods, and sanctuary blueprint for anyone beginning serious biblical study
-*   [Architecture Decision Records (ADRs)](docs/decisions/INDEX.md) — 21 formal architectural decisions documenting all design milestones
-*   [Work Packages (WPs)](docs/wp/INDEX.md) — Completed and open engineering packages (WP-001 through WP-027)
-*   [Workflow Guide](docs/WORKFLOW.md) — Explicit guide to the project's working method and verification cycle
+*   [Installation Guide](docs/INSTALL.md) — 3-step zero-Python standalone setup for Windows, macOS, and Linux
+*   [Visual Tour](docs/VISUAL_TOUR.md) — High-resolution screenshots of the workstation in everyday use
+*   [User & Study Guide](docs/USER_GUIDE.md) — Tutorial, practical study walkthroughs, and keyboard cheat sheet
+*   [How to Study the Bible Deeply](docs/HOW_TO_STUDY_THE_BIBLE.md) — Inductive study methods, word studies, and sanctuary blueprint
+*   [Architecture Decision Records (ADRs)](docs/decisions/INDEX.md) — 27 formal architectural decisions documenting all design milestones (ADR-001..027)
+*   [Work Packages (WPs)](docs/wp/INDEX.md) — Completed and open engineering packages (WP-001 through WP-037)
+*   [Workflow Guide](docs/WORKFLOW.md) — Explicit guide to the project's working method, subagent review, and verification cycle
 *   [Tag Taxonomy](tags/taxonomy.json) — Complete tag vocabulary and relationship types (66 books, themes, xrefs)
 *   [Knowledge Base Schema](kc-schema.md) — Entry format, YAML frontmatter, and metadata validation rules
 *   [Contribution Standards](CONTRIBUTION_STANDARDS.md) — Submission rules and review workflow
@@ -332,12 +333,14 @@ Macula Hebrew and Greek linguistic annotations are integrated directly into `dat
 
 ## Technology Stack
 
-*   **Interactive Workstation**: [Textual](https://textual.textualize.io/) (modern terminal application framework), Rich typography, persistent viewport engine, and 7 built-in themes (`search/ui/`)
-*   **Core Knowledge Base**: Markdown files with standard YAML frontmatter (human-readable, Git-friendly)
-*   **Local Databases**: SQLite FTS5 (BM25) on-device engines (`data/bible.db`, `data/macula.db`, `data/egw.db`, `index/semantic.db`)
-*   **Linguistic & Lexical Data**: Clear-Bible Macula Hebrew MT & Greek NT (Nestle 1904), Open Scriptures Hebrew Bible (OSHB), Strong's Exhaustive Concordance, STEPBible TBESH/TBESG glosses, Brown-Driver-Briggs (BDB), Abbott-Smith Greek Lexicon
-*   **Translations**: Pinned KJV (1769), BSB (2020), ASV (1901), and YLT (1898)
-*   **Verification & CI**: Python `pytest`, 4 automated data-integrity gates (F1 Schema, F2 Strong's, F3 Cross-refs, F4 Audit), and GitLab CI / GitHub Actions
+*   **Primary Web Workstation**: Responsive HTML5, Vanilla JavaScript, and CSS3 single-page app (`web/`) with draggable 65/35 split-pane, Study Room visual ergonomics (ADR-024, ADR-025, WP-030), and zero external web dependencies.
+*   **Companion Terminal Workstation**: [Textual](https://textual.textualize.io/) TUI, Rich typography, persistent sub-millisecond viewport engine, and 7 built-in themes (`search/ui/app.py`).
+*   **Core Knowledge Base**: Markdown files with standard YAML frontmatter (human-readable, Git-friendly).
+*   **Local Databases**: SQLite FTS5 (BM25) sidecar-free on-device engines (`data/bible.db`, `data/macula.db`, `data/egw.db`).
+*   **Linguistic & Lexical Data**: Clear-Bible Macula Hebrew MT & Greek NT (Nestle 1904), Open Scriptures Hebrew Bible (OSHB), Strong's Exhaustive Concordance, STEPBible TBESH/TBESG glosses, Brown-Driver-Briggs (BDB), Abbott-Smith Greek Lexicon.
+*   **Translations & Cross-References**: Pinned KJV (1769), BSB (2020), ASV (1901), YLT (1898), and ~345k Treasury of Scripture Knowledge (TSK) cross-reference pairs.
+*   **Data Integrity & Verification**: Python `pytest`, 5 automated data-integrity gates (F1 Schema, F2 Strong's, F3 Cross-refs, F4 Audit, F6 SQLite Content Integrity via `data/INTEGRITY.json`), and CI automation.
+*   **Packaging & Distribution**: Zero-Python standalone binary builds via PyInstaller (`scripts/build_release.sh`).
     
 
 ## License
@@ -371,9 +374,9 @@ python scripts/wp_check.py --wp WP-003
 bash scripts/verify_all.sh
 ```
 
-`bash scripts/verify_all.sh` runs the test suite, the F1-F4 data-integrity validators, and the source
+`bash scripts/verify_all.sh` runs the test suite, the F1–F4 data-integrity validators, the F6 SQLite content integrity gate, and the raw source
 checksums — the exact checks CI runs — and prints a remedy for each failure.
-Hand-authored content (`materials/`) is validated by the F1-F4 validators;
+Hand-authored content (`materials/`) is validated by the F1–F4 validators;
 generated artifacts (`lexicons/`, the agreement ledger, generated corpus
-entries) are never hand-edited — regenerate them with the commands printed in
+entries, `data/INTEGRITY.json`) are never hand-edited — regenerate them with the commands printed in
 their failure messages (see Contribution Standards for the full workflow).
