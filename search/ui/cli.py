@@ -68,6 +68,11 @@ def add_cli_subparsers(subparsers: argparse._SubParsersAction) -> None:
     p_search.add_argument("query", help="Keywords or search phrase")
     p_search.add_argument("--in", dest="scope", choices=["all", "bible", "egw"], default="all", help="Corpus to search")
     p_search.add_argument("--book", help="Filter search to specific biblical book")
+    p_search.add_argument("--theme", help="Filter by theme tag (e.g. theme/grace)")
+    p_search.add_argument("--translation", help="Filter by translation (e.g. kjv)")
+    p_search.add_argument("--language", help="Filter by language (e.g. lang/hebrew)")
+    p_search.add_argument("--status", help="Filter by curation status (e.g. status/review)")
+    p_search.add_argument("--text", help="Free-text across all content stores")
     p_search.add_argument("--limit", type=int, default=10, help="Max results to return")
     p_search.add_argument("--json", action="store_true", help="Output raw JSON data")
 
@@ -95,9 +100,17 @@ def execute_subcommand(service: StudyService, args: argparse.Namespace) -> int:
     """Execute a CLI subcommand. Returns exit code (0 for success, non-zero for error)."""
     subcommand = getattr(args, "subcommand", None)
 
-    # Guard: bible.db is required for all read/study/word/search subcommands.
-    # TUI and shell handle the missing DB gracefully on their own.
-    if subcommand in _DB_REQUIRED and service.bible_db is None:
+    # Facet/text flags route search to the C4 query API, which works on the
+    # curated markdown corpus (no bible.db required). TUI and shell handle
+    # the missing DB gracefully on their own.
+    use_query = subcommand == "search" and any([
+        getattr(args, "theme", None),
+        getattr(args, "translation", None),
+        getattr(args, "language", None),
+        getattr(args, "status", None),
+        getattr(args, "text", None),
+    ])
+    if subcommand in _DB_REQUIRED and service.bible_db is None and not use_query:
         sys.stderr.write(
             "ERROR: data/bible.db not found.\n"
             "Build it first by running:\n\n"
@@ -218,6 +231,33 @@ def execute_subcommand(service: StudyService, args: argparse.Namespace) -> int:
         return 0
 
     if subcommand == "search":
+        if use_query:
+            facets = {}
+            for facet, value in (
+                ("theme", getattr(args, "theme", None)),
+                ("translation", getattr(args, "translation", None)),
+                ("language", getattr(args, "language", None)),
+                ("status", getattr(args, "status", None)),
+            ):
+                if value:
+                    facets.setdefault(facet, []).append(value)
+            text = getattr(args, "text", None) or args.query or None
+            from search.corpus.query import query as _c4_query
+
+            res = _c4_query(facets, text, limit=args.limit)
+            if getattr(args, "json", False):
+                out = {
+                    "query": args.query,
+                    "facets": facets,
+                    "text": text,
+                    "results": res,
+                    "count": len(res),
+                }
+                print(json.dumps(out, indent=2, ensure_ascii=False))
+                return 0
+            for r in res:
+                print(f"{r.get('source', 'entry')}: {r.get('passage', '')}")
+            return 0
         limit_b = args.limit if args.scope in ("all", "bible") else 0
         limit_e = args.limit if args.scope in ("all", "egw") else 0
         res = service.search_unified(args.query, limit_bible=limit_b, limit_egw=limit_e, book_filter=args.book)

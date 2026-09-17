@@ -32,6 +32,7 @@ from urllib.parse import parse_qs, urlparse
 import zipfile
 
 from search.linking.egw_importer import BulkImporter
+from search.corpus.query import query
 from search.ui.study_service import StudyService
 from search.ui.themes import DEFAULT_THEME, THEMES
 
@@ -220,6 +221,8 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 self._api_commentary(query)
             elif path == "/api/xrefs":
                 self._api_xrefs(query)
+            elif path == "/api/c4-query":
+                self._api_c4_query(query)
             elif path == "/api/import-books":
                 self._api_import_books_status()
             elif path.startswith("/api/"):
@@ -264,6 +267,29 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "import_books_url": "/api/import-books",
                 "egw_available": has_egw,
                 "egw_stats": egw_stats,
+            })
+
+        def _api_c4_query(self, params: dict[str, list[str]]) -> None:
+            # Thin pass-through to search.corpus.query (roadmap C4).
+            # Facets from query params; free-text from q/text/query.
+            facets: dict[str, list[str]] = {}
+            for facet in ("book", "theme", "translation", "language", "status"):
+                values = params.get(facet, [])
+                if values:
+                    facets[facet] = [str(v) for v in values]
+            text = params.get("q", params.get("text", params.get("query", [""])))[0].strip() or None
+            limit = int(params.get("limit", ["50"])[0])
+            try:
+                results = query(facets or None, text, limit)
+            except Exception as exc:
+                self._reply_error(HTTPStatus.INTERNAL_SERVER_ERROR, f"c4 query failed: {exc}")
+                return
+            self._reply_json(HTTPStatus.OK, {
+                "status": "ok",
+                "facets": facets,
+                "text": text,
+                "results": _jsonable(results),
+                "count": len(results),
             })
 
         def _api_verify_bundle(self, query: dict[str, list[str]]) -> None:
