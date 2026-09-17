@@ -1,6 +1,6 @@
 # C4 — Faceted/Filtered Querying (implementation plan)
 
-Status: **approved — Phase 1 shipped**
+Status: **approved — Phase 2 shipped**
 
 See `ROADMAP.md` C4: *"Faceted/filtered querying — by book/theme/translation/language/status; clean query API."*
 This is a structural plan only; no content generation, no dependencies, no changes to the deterministic core.
@@ -101,3 +101,4 @@ web surface, which is the surface it's meant for.
 ## Phases
 
 - **Phase 1 (this step)**: the API + CLI flags + thin web endpoint, acceptance-tested.
+- **Phase 2**: per-DB verse/paragraph search integrated behind the unified backend
