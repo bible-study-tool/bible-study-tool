@@ -19,6 +19,7 @@ You **do not need to be a programmer**, understand Python, or have any previous 
 - **Original Languages Made Simple**: You do not need to read Biblical Hebrew or Koine Greek. The tool automatically translates grammatical forms (verbal stems, voices, and moods) into **clear, plain English** and highlights their spiritual and theological significance.
 - **Spirit of Prophecy Integration**: Connects inspired commentary from Ellen G. White (*Patriarchs and Prophets*, *The Desire of Ages*, *The Great Controversy*, *Steps to Christ*, and more) directly alongside the biblical text.
 - **Instant & Distraction-Free**: No advertisements, no social notifications, no loading delays. The interface responds in less than a single millisecond.
+- **Visual Tour**: See [VISUAL_TOUR.md](VISUAL_TOUR.md) for screenshots of Focus Mode, the syntax inspector, parallel translations, and the Sanctuary blueprint.
 
 ---
 
