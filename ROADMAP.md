@@ -62,7 +62,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **C2. Hybrid search** — FTS5 BM25 + embeddings, combined ranker
 - `[ ]` **C3. Cross-language semantic search** — search in one language, find linked content in others
 - `[x]` **C4. Faceted/filtered querying** — by book/theme/translation/language/status; clean query API
-  (Phase 1 shipped: `search/corpus/query.py` + CLI flags + `/api/c4-query` endpoint; `search/test_query.py`, 9 tests)
+  (Phases 1–3 shipped: `search/corpus/query.py` + CLI flags + `/api/c4-query` endpoint + cross-source BM25 ranking across curated entries, Bible, and EGW; `search/test_query.py`, 10 tests)
 - `[ ]` **C5. Validate & expand discovery layer** — more curated links → stronger candidate signal
 - `[x]` **C6. Master Prophetic Key Table & Symbol Chaining** — deterministic historicist prophetic symbol dataset (`data/prophetic_lexicon.json`), real-time search/filter table UI, and in-context Scripture chaining linking apocalyptic symbols (Daniel 7, Revelation 12) directly to their defining Old Testament keys and historical consensus citations — WP-031, ADR-025
 
