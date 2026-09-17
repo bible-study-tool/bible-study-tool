@@ -1,6 +1,6 @@
 # WP-018: Whole-Bible Macula Linguistic Integration (Pillar B, ADR-014, ADR-015)
 
-status: completed
+status: complete
 scope: Generalize Macula Hebrew parsing, versification mapping, and SQLite compilation across the entire Old Testament (all 39 books, 929 chapters, 23,206 verses, 102,124 clauses, 678,091 tokens).
 priority: high
 

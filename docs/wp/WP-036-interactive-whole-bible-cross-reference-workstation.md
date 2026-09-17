@@ -1,6 +1,6 @@
 # WP-036: Interactive Whole-Bible Cross-Reference Workstation UI
 
-status: done
+status: complete
 scope: Pillar D (Application & Workstation UX), ADR-017, ADR-018, ADR-024, ADR-025, ADR-026
 priority: high
 decisions: [ADR-013](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md), [ADR-024](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-024-gui-first-architecture-tui-as-mode.md), [ADR-025](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-025-visual-identity-and-anti-slop-design-charter.md), [ADR-026](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-026-treasury-of-scripture-knowledge-cross-references.md)

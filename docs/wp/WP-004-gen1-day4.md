@@ -1,6 +1,6 @@
 # WP-004: Curate Genesis 1:14-19 (Day 4 — luminaries, appointed times)
 
-status: done
+status: complete
 scope: gen-1-14-kjv.md .. gen-1-19-kjv.md (six drafts)
 priority: medium
 

@@ -1,6 +1,6 @@
 # WP-016: Spirit of Prophecy (EGW) Public Domain Corpus Harvester Expansion (Step 1a)
 
-status: completed
+status: complete
 scope: Expand public domain harvester in `search/linking/egw_importer.py` and CLI `scripts/egw_lookup.py` to fetch, parse, and ingest the complete Conflict of the Ages series and core public-domain works into `data/egw.db` (Pillar A, Goal A7, ADR-011, ADR-013).
 priority: high
 

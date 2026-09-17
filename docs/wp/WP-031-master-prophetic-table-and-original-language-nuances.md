@@ -1,6 +1,6 @@
 # WP-031: Master Prophetic Key Table & Original-Language Theological Nuances
 
-status: done
+status: complete
 scope: Pillar B (Original Languages), Pillar C (Prophetic Structure) — Plain-English theological glosses for Hebrew/Greek grammar + aggregated prophetic symbols lexicon and in-context chaining.
 priority: high
 

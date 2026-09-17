@@ -1,6 +1,6 @@
 # WP-009: Build the WordGraph lexical knowledge graph for Genesis (ADR-010)
 
-status: done
+status: complete
 scope: wordgraph-genesis.json (Genesis 1-2) — the lemma-centric spine + aggregate-first dictionary
 priority: high
 

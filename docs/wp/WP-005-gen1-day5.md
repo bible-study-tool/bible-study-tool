@@ -1,6 +1,6 @@
 # WP-005: Curate Genesis 1:20-23 (Day 5 — sea creatures and birds)
 
-status: done
+status: complete
 scope: gen-1-20-kjv.md .. gen-1-23-kjv.md (four drafts)
 priority: medium
 

@@ -1,6 +1,6 @@
 # WP-024: Textual Workstation Performance & Biblical Comprehension Tools
 
-status: completed
+status: complete
 scope: Eliminate interaction-layer sluggishness via the persistent viewport pattern and lazy tab rendering (Phase 1), then implement plain-English verbal stems (Phase 2) and multi-translation parallel engine (Phase 3).
 priority: high
 

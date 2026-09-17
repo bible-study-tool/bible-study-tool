@@ -1,6 +1,6 @@
 # WP-001 (DONE) — Curate Genesis 1:4-5 (Day 1 completion)
 
-status: done
+status: complete
 scope: gen-1-4-kjv.md, gen-1-5-kjv.md (both `status: draft`)
 priority: high
 

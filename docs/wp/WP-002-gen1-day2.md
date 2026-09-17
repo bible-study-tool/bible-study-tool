@@ -1,6 +1,6 @@
 # WP-002 (DONE) — Curate Genesis 1:6-8 (Day 2 — firmament, waters)
 
-status: done
+status: complete
 scope: gen-1-6-kjv.md, gen-1-7-kjv.md, gen-1-8-kjv.md (all `status: review`)
 priority: medium
 

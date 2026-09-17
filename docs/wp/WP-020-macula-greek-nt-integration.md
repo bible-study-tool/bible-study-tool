@@ -1,6 +1,6 @@
 # WP-020: Macula Greek (NT) Linguistic Integration & Canon Unification
 
-status: completed
+status: complete
 scope: Ingest Clear-Bible macula-greek Lowfat XML across all 27 New Testament books (260 chapters, 7,943 verses, ~138,000 tokens), extract token morphology, Greek Strong's (G1–G5624), syntactic trees, and participant roles, and unify with data/macula.db for whole-Bible original language coverage.
 priority: high
 

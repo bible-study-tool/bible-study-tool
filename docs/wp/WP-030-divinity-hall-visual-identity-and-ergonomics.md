@@ -1,6 +1,6 @@
 # WP-030: Study Room Visual Identity & Workspace Ergonomics
 
-status: done
+status: complete
 scope: Pillar D (GUI / UX) — Foundation layout, draggable split pane, focus modes, warm sepia design tokens, typography, and progressive disclosure primitives.
 priority: high
 

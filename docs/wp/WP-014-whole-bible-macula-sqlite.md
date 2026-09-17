@@ -1,6 +1,6 @@
 # WP-014: Whole-Bible Macula SQLite Architecture (Pillar B, ADR-014)
 
-status: completed
+status: complete
 scope: Scalable, normalized SQLite database engine (`data/macula.db`) indexing tokens, syntactic clauses, constituent participant roles, Strong's alignments, and semantic domains across the biblical canon (ADR-013, ADR-014).
 priority: high
 

@@ -1,6 +1,6 @@
 # WP-032: Sanctuary Typology Blueprint & Chronological Plan of Salvation
 
-status: done
+status: complete
 scope: Pillar A (Biblical Corpus & SDA Doctrinal Foundations), Pillar D (Workstation Component) — Interactive spatial and chronological roadmap of the Sanctuary (Fundamental Belief #24).
 priority: medium
 

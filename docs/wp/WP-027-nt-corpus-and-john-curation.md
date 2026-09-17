@@ -1,6 +1,6 @@
 # WP-027: New Testament Corpus Generation & John 1 / 17 Theological Curation
 
-status: done
+status: complete
 scope: Implementation of Pillar A3: New Testament taxonomy expansion, deterministic Greek draft generator, per-chapter folder organization, and comprehensive theological curation of John 1 and John 17.
 priority: high
 

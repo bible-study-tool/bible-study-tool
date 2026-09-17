@@ -1,6 +1,6 @@
 # WP-012: Macula Hebrew Linguistic Integration & Strong's-LXX Crosswalk (Pillar B)
 
-status: completed
+status: complete
 scope: Integration of Clear-Bible Macula Hebrew linguistic data (lowfat XML), Strong's-LXX crosswalk, SDBH semantic domains, and sentence/clause syntax extraction (ADR-012, Roadmap B1).
 priority: high
 

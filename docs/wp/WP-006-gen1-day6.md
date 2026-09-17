@@ -1,6 +1,6 @@
 # WP-006: Curate Genesis 1:24-31 (Day 6 — land animals, humanity, dominion)
 
-status: done
+status: complete
 scope: gen-1-24-kjv.md .. gen-1-31-kjv.md (eight drafts)
 priority: high
 

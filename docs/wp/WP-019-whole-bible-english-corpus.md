@@ -1,6 +1,6 @@
 # WP-019: Whole-Bible English Text Integration (All 66 Books)
 
-status: completed
+status: complete
 scope: Extract, normalize, and index the complete English biblical canon across all 66 books (OT 39 + NT 27, 1,189 chapters, ~31,102 verses) from pinned KJV-osis XML, integrate public-domain translation witnesses (ASV, WEB), provide whole-canon lookup APIs, and establish human-friendly skeleton directory structures.
 priority: high
 

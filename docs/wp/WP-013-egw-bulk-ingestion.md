@@ -1,6 +1,6 @@
 # WP-013: Spirit of Prophecy (EGW) Bulk Ingestion Engine & Importers (Pillar A, Goal A7)
 
-status: completed
+status: complete
 scope: Multi-format bulk ingestion (EPUB, TXT/Markdown, JSON, directory batching), high-performance SQLite FTS5 rebuild indexing, and public-domain edition harvester (ADR-011, ADR-013).
 priority: high
 

@@ -1,6 +1,6 @@
 # WP-037: Curation Velocity Dashboard & Verifiable Terminal Manifest
 
-status: done
+status: complete
 scope: Pillar A (Corpus & Content), Pillar F (Integrity), Pillar H (Governance & Tooling)
 priority: high
 decisions: [ADR-001](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-001-deterministic-core-vs-ai.md), [ADR-003](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-003-standard-yaml-frontmatter.md), [ADR-005](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-005-data-integrity-precedes-scale.md), [ADR-006](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-006-provenance-and-generated-artifacts.md)

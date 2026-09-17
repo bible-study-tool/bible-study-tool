@@ -1,6 +1,6 @@
 # WP-023: Human-Accessible Original Language Framing & Direct Commentary Navigation
 
-status: completed
+status: complete
 scope: Enhance Textual study workstation and core services with dual-layered original language + English gloss framing, automatic KJV-word to Strong's mapping in the Lexicon inspector, full-text Spirit of Prophecy paragraph rendering, and direct EGW citation navigation (`PP 44.1`, `DA 25.3`).
 priority: high
 

@@ -1,6 +1,6 @@
 # WP-007: Book-level pipeline generalization + Genesis 2 skeletons (ADR-009, part 1)
 
-status: done
+status: complete
 scope: pipeline generalization (per ADR-009) + Genesis 2 skeleton generation (gen-2-1..25)
 priority: high
 

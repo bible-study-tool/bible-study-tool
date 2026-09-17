@@ -1,6 +1,6 @@
 # WP-034: Developer Ergonomics, One-Command Bootstrapping & Environment Hardening
 
-status: done
+status: complete
 scope: Pillar G (G5 — Packaging / Reproducible Environment), Developer Experience, Session Portability
 priority: high
 decisions: [ADR-011](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-011-whole-book-scaffolding-and-jit-egw.md), [ADR-013](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md), [ADR-024](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-024-gui-first-architecture-tui-as-mode.md)

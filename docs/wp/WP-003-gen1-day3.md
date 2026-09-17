@@ -1,6 +1,6 @@
 # WP-003 (DONE) — Curate Genesis 1:9-13 (Day 3 — dry land, seed-bearing plants)
 
-status: done
+status: complete
 scope: gen-1-9-kjv.md .. gen-1-13-kjv.md (five entries, all `status: review`)
 priority: medium
 

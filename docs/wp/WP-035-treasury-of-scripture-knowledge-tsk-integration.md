@@ -1,6 +1,6 @@
 # WP-035: Treasury of Scripture Knowledge (TSK) Whole-Bible Ingestion Engine
 
-status: done
+status: complete
 scope: Pillar A (Corpus & Content), Pillar C (Search & Cross-Referencing), ADR-013, ADR-026
 priority: high
 decisions: [ADR-001](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-001-deterministic-core-vs-ai.md), [ADR-002](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-002-licensing-and-content-sourcing.md), [ADR-006](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-006-provenance-and-generated-artifacts.md), [ADR-013](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-013-design-principles-stewardship-and-scalability.md), [ADR-026](file:///home/archvm/projects/bible-study-tool/docs/decisions/ADR-026-treasury-of-scripture-knowledge-cross-references.md)

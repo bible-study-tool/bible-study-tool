@@ -1,6 +1,6 @@
 # WP-021: Interactive Terminal User Interface (TUI) & Unified Study CLI
 
-status: completed
+status: complete
 scope: Build a zero-dependency, human-friendly, interactive Terminal User Interface (TUI) and unified CLI (`scripts/study.py`) bringing together Scripture reading, original language syntax & semantic frames (Macula), Strong's lexicons, and Spirit of Prophecy (EGW) correlations into an intuitive terminal Bible study environment.
 priority: high
 

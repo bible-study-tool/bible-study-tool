@@ -1,6 +1,6 @@
 # WP-015: Macula Semantic Enrichment (Pillar B, Goal B3)
 
-status: completed
+status: complete
 scope: Semantic enrichment engine (`search/macula/enrichment.py`) connecting Macula syntactic clause roles and empirical Septuagint (LXX) translation equivalences to the semantic linking and candidate discovery pipelines (ADR-012, ADR-014, ADR-015).
 priority: high
 

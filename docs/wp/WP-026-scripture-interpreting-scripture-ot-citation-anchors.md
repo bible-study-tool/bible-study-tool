@@ -1,6 +1,6 @@
 # WP-026: Scripture Interpreting Scripture — Old Testament Citation Anchors in New Testament Epistles
 
-status: completed
+status: complete
 scope: Deterministic detection, cross-referencing, and multi-dimensional presentation of Old Testament quotations, prophetic fulfillments, and covenant anchors in the New Testament epistles and Gospels, bridging Hebrew WLC, Greek LXX, and apostolic theology.
 priority: high
 

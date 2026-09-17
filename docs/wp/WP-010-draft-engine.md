@@ -1,6 +1,6 @@
 # WP-010: Deterministic word-study draft engine (ADR-010, part 2)
 
-status: done
+status: complete
 scope: word-study block assembly from the WordGraph + integration into the skeleton generator
 priority: high
 

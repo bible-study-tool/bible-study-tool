@@ -1,6 +1,6 @@
 # WP-011: Curate Genesis 3 (the Fall) — ADR-009, per-chapter package
 
-status: done
+status: complete
 scope: gen-3-1-kjv.md .. gen-3-24-kjv.md (24 engine-generated skeletons)
 priority: high
 

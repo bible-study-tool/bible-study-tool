@@ -1,6 +1,6 @@
 # WP-029: Zero-Python Distribution — "Open the Book" Installer
 
-status: done
+status: complete
 scope: Pillar P (Public Distribution) — package the full study tool as a single downloadable application that requires no Python, no terminal fluency, and no configuration from the end user. GUI-first local web app (ADR-024) with the TUI retained as a mode.
 priority: high
 

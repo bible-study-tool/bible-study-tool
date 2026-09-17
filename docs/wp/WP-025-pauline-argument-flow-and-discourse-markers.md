@@ -1,6 +1,6 @@
 # WP-025: Pauline Argument Flow & Discourse Markers
 
-status: completed
+status: complete
 scope: Deterministic detection, classification, and presentation of Koine Greek and Biblical Hebrew logical discourse markers (premises, conclusions, divine purposes, adversative pivots, analogies) to clarify the apostle Paul's argument flow across epistles and the biblical canon.
 priority: high
 

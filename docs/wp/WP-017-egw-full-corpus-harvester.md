@@ -1,6 +1,6 @@
 # WP-017: Full Official English EGW Corpus Harvester & Pagination Fidelity (Step 1b)
 
-status: completed
+status: complete
 scope: Automated harvester and high-fidelity pagination parser for the complete official English Ellen G. White corpus from media2.egwwritings.org across 414 publication codes (Pillar A, Goal A7, ADR-011, ADR-013).
 priority: high
 

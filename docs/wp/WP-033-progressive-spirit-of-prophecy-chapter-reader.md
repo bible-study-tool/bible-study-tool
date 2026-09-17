@@ -1,6 +1,6 @@
 # WP-033: Progressive Spirit of Prophecy Narrative Navigation & Chapter Reader
 
-status: done
+status: complete
 scope: Pillar A (Commentary / EGW Corpus), Pillar D (Immersive Reading) — Progressive disclosure commentary hierarchy from compact chips to full-chapter immersive reading.
 priority: medium
 
