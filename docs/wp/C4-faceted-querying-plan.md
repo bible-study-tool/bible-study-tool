@@ -1,6 +1,6 @@
 # C4 — Faceted/Filtered Querying (implementation plan)
 
-Status: **approved — Phase 2 shipped**
+Status: **approved — Phase 3 shipped**
 
 See `ROADMAP.md` C4: *"Faceted/filtered querying — by book/theme/translation/language/status; clean query API."*
 This is a structural plan only; no content generation, no dependencies, no changes to the deterministic core.
@@ -102,3 +102,4 @@ web surface, which is the surface it's meant for.
 
 - **Phase 1 (this step)**: the API + CLI flags + thin web endpoint, acceptance-tested.
 - **Phase 2**: per-DB verse/paragraph search integrated behind the unified backend
+- **Phase 3**: cross-source BM25 ranking — each store's relevance score is converted to positive relevance, normalized per source to [0, 1], and the merged result is sorted globally; `_norm` (0–1) is the public-facing relevance field; facet-only queries keep insertion order.
