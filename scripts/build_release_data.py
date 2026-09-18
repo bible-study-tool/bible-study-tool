@@ -104,6 +104,57 @@ def verify_bundle(target_dir: Path, repo_root: Path) -> None:
     print("✔ Data bundle integrity verified successfully.")
 
 
+def ensure_pinned_sources(repo_root: Path) -> None:
+    """Ensure raw pinned sources are fetched and verified before compiling databases."""
+    data_src = repo_root / "data"
+    required = [
+        data_src / "KJV-osis.json",
+        data_src / "ASV.json",
+        data_src / "BSB.json",
+        data_src / "YLT.json",
+        data_src / "cross-references.zip",
+        data_src / "macula-greek" / "27-revelation.xml",
+        data_src / "macula-hebrew" / "39-Mal-003-lowfat.xml",
+    ]
+    missing = [p for p in required if not p.exists()]
+    if not missing:
+        return
+
+    print(f"   Missing {len(missing)} pinned source file(s); fetching via scripts/fetch_sources.sh...")
+    bash_exe = shutil.which("bash")
+    if not bash_exe and sys.platform == "win32":
+        candidates: list[Path] = []
+        git_cmd = shutil.which("git")
+        if git_cmd:
+            git_root = Path(git_cmd).resolve().parent.parent
+            candidates.extend([git_root / "bin" / "bash.exe", git_root / "usr" / "bin" / "bash.exe"])
+        for env_var, default in [("PROGRAMFILES", "C:\\Program Files"), ("PROGRAMFILES(X86)", "C:\\Program Files (x86)")]:
+            base = Path(os.environ.get(env_var, default))
+            candidates.extend([base / "Git" / "bin" / "bash.exe", base / "Git" / "usr" / "bin" / "bash.exe"])
+        local_app = os.environ.get("LOCALAPPDATA")
+        if local_app:
+            candidates.extend([
+                Path(local_app) / "Programs" / "Git" / "bin" / "bash.exe",
+                Path(local_app) / "Programs" / "Git" / "usr" / "bin" / "bash.exe",
+            ])
+        for c in candidates:
+            if c.is_file():
+                bash_exe = str(c)
+                break
+
+    if not bash_exe:
+        raise RuntimeError(
+            "Cannot fetch raw sources: 'bash' executable not found on PATH. "
+            "Please ensure Git or bash is installed."
+        )
+
+    fetch_script = repo_root / "scripts" / "fetch_sources.sh"
+    if not fetch_script.is_file():
+        raise FileNotFoundError(f"Fetch script not found: {fetch_script}")
+    subprocess.run([bash_exe, fetch_script.as_posix()], cwd=repo_root, check=True)
+    print("   ✔ Raw sources fetched and cryptographically verified.")
+
+
 def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
     """Compile, vacuum, and assemble the data bundle into out_dir."""
     data_src = repo_root / "data"
@@ -115,6 +166,11 @@ def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
 
     # 1. Verify source databases exist or compile them
     bible_db_src = data_src / "bible.db"
+    macula_db_src = data_src / "macula.db"
+
+    if not bible_db_src.is_file() or not macula_db_src.is_file():
+        ensure_pinned_sources(repo_root)
+
     if not bible_db_src.is_file():
         print("1. data/bible.db not found; compiling from pinned sources...")
         subprocess.run([sys.executable, "-m", "search.corpus.extract_kjv", "--compile"], cwd=repo_root, check=True)
@@ -124,7 +180,6 @@ def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
         print("1. Found data/bible.db; ensuring TSK cross references...")
         subprocess.run([sys.executable, "-m", "search.corpus.extract_tsk"], cwd=repo_root, check=True)
 
-    macula_db_src = data_src / "macula.db"
     if not macula_db_src.is_file():
         print("   data/macula.db not found; compiling linguistic database...")
         subprocess.run([sys.executable, "-m", "search.macula.build_db", "--repo", str(repo_root)], cwd=repo_root, check=True)

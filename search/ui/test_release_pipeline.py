@@ -6,6 +6,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
 import yaml
 
@@ -85,6 +86,51 @@ class ReleasePipelineScriptTests(unittest.TestCase):
         self.assertIn("--no-archive", res.stdout)
         self.assertIn("--zip", res.stdout)
         self.assertIn("--check", res.stdout)
+
+    def test_ensure_pinned_sources_when_present(self):
+        import importlib.util
+        from unittest.mock import patch
+
+        spec = importlib.util.spec_from_file_location("build_release_data", BUILD_RELEASE_DATA_PY)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp_repo = Path(td)
+            data_dir = tmp_repo / "data"
+            data_dir.mkdir()
+            for name in ["KJV-osis.json", "ASV.json", "BSB.json", "YLT.json", "cross-references.zip"]:
+                (data_dir / name).touch()
+            (data_dir / "macula-greek").mkdir()
+            (data_dir / "macula-greek" / "27-revelation.xml").touch()
+            (data_dir / "macula-hebrew").mkdir()
+            (data_dir / "macula-hebrew" / "39-Mal-003-lowfat.xml").touch()
+
+            with patch("subprocess.run") as mock_run:
+                mod.ensure_pinned_sources(tmp_repo)
+                mock_run.assert_not_called()
+
+    def test_ensure_pinned_sources_missing_triggers_bash(self):
+        import importlib.util
+        from unittest.mock import patch
+
+        spec = importlib.util.spec_from_file_location("build_release_data", BUILD_RELEASE_DATA_PY)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp_repo = Path(td)
+            (tmp_repo / "data").mkdir()
+            (tmp_repo / "scripts").mkdir()
+            (tmp_repo / "scripts" / "fetch_sources.sh").touch()
+
+            with patch("shutil.which", return_value="/bin/bash"), patch("subprocess.run") as mock_run:
+                mod.ensure_pinned_sources(tmp_repo)
+                mock_run.assert_called_once()
+                args, _ = mock_run.call_args
+                self.assertIn("fetch_sources.sh", str(args[0]))
+
+
 
 
 class GitlabCIConfigTests(unittest.TestCase):
