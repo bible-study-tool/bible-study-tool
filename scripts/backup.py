@@ -2,7 +2,7 @@
 """CLI utility for Portable Offline Backup and Restore (ADR-016).
 
 Usage:
-  # Export default study state (egw.db, corpus.db, macula.db):
+  # Export default study state (egw.db, corpus.db, bible.db, macula.db):
   python scripts/backup.py export -o my_study_backup.tar.gz --note "Full study library"
 
   # Inspect an existing backup archive:
@@ -58,12 +58,16 @@ def handle_export(args: argparse.Namespace) -> int:
     root_data = repo_root / "data"
 
     if not args.sources_only:
-        if args.include_egw and (root_data / "egw.db").exists():
-            db_paths.append(root_data / "egw.db")
-        if args.include_corpus and (root_data / "corpus.db").exists():
-            db_paths.append(root_data / "corpus.db")
-        if args.include_macula and (root_data / "macula.db").exists():
-            db_paths.append(root_data / "macula.db")
+        default_db_flags = [
+            (args.include_egw, "egw.db"),
+            (args.include_corpus, "corpus.db"),
+            (args.include_bible, "bible.db"),
+            (args.include_macula, "macula.db"),
+        ]
+        for include_db, db_name in default_db_flags:
+            db_file = root_data / db_name
+            if include_db and db_file.exists():
+                db_paths.append(db_file)
 
         resolved_dbs = {p.resolve() for p in db_paths}
         if args.db:
@@ -260,6 +264,8 @@ def main() -> int:
     exp_parser.add_argument("--no-egw", action="store_false", dest="include_egw", help="Exclude data/egw.db")
     exp_parser.add_argument("--include-corpus", action="store_true", default=True, help="Include data/corpus.db (default)")
     exp_parser.add_argument("--no-corpus", action="store_false", dest="include_corpus", help="Exclude data/corpus.db")
+    exp_parser.add_argument("--include-bible", action="store_true", default=True, help="Include data/bible.db (default)")
+    exp_parser.add_argument("--no-bible", action="store_false", dest="include_bible", help="Exclude data/bible.db")
     exp_parser.add_argument("--include-macula", action="store_true", default=True, help="Include data/macula.db (default)")
     exp_parser.add_argument("--no-macula", action="store_false", dest="include_macula", help="Exclude data/macula.db")
 

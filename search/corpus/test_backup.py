@@ -403,6 +403,7 @@ class BackupCLITests(unittest.TestCase):
                 str(self.archive_path),
                 "--no-egw",
                 "--no-corpus",
+                "--no-bible",
                 "--no-macula",
                 "--db",
                 str(self.db_path),
@@ -472,6 +473,7 @@ class BackupCLITests(unittest.TestCase):
                 str(self.test_dir),
                 "--no-egw",
                 "--no-corpus",
+                "--no-bible",
                 "--no-macula",
                 "--db",
                 str(self.db_path),
@@ -493,6 +495,36 @@ class BackupCLITests(unittest.TestCase):
         self.assertEqual(res_insp.returncode, 0)
         self.assertIn("Mode:          COMPLETE", res_insp.stdout)
         self.assertIn("source", res_insp.stdout)
+
+    def test_cli_no_bible_flag(self):
+        archive = self.test_dir / "cli_no_bible.tar.gz"
+        res = subprocess.run(
+            [
+                sys.executable,
+                str(CLI_SCRIPT),
+                "export",
+                "-o",
+                str(archive),
+                "--no-egw",
+                "--no-corpus",
+                "--no-macula",
+                "--no-bible",
+                "--db",
+                str(self.db_path),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(res.returncode, 0)
+        res_insp = subprocess.run(
+            [sys.executable, str(CLI_SCRIPT), "inspect", "--json", str(archive)],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(res_insp.returncode, 0)
+        manifest = json.loads(res_insp.stdout)
+        arcnames = [f["arcname"] for f in manifest.get("files", [])]
+        self.assertNotIn("databases/bible.db", arcnames)
 
 
 if __name__ == "__main__":
