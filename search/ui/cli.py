@@ -15,7 +15,6 @@ from typing import Sequence
 from search.linking.egw import is_egw_token
 from search.ui.shell import StudyShell
 from search.ui.study_service import StudyService
-from search.ui.tui import run_tui
 
 try:
     from search.ui.app import run_textual_app
@@ -42,7 +41,12 @@ def launch_interactive_tui(
             return
         except Exception as e:
             sys.stderr.write(f"Notice: Textual UI encountered an issue ({e}). Falling back to curses...\n")
-    run_tui(service, initial_ref=passage)
+    try:
+        from search.ui.tui import run_tui
+        run_tui(service, initial_ref=passage)
+    except (RuntimeError, ImportError, Exception) as err:
+        sys.stderr.write(f"Error launching TUI: {err}\n")
+        sys.exit(1)
 
 
 def add_cli_subparsers(subparsers: argparse._SubParsersAction) -> None:

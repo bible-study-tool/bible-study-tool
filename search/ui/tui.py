@@ -7,7 +7,10 @@ and Spirit of Prophecy correlations.
 
 from __future__ import annotations
 
-import curses
+try:
+    import curses
+except ImportError:
+    curses = None  # type: ignore[assignment]
 import os
 import sys
 import textwrap
@@ -22,6 +25,10 @@ class BibleStudyTUI:
     """Curses-driven full-screen Bible study workstation."""
 
     def __init__(self, service: StudyService | None = None, initial_ref: str = "Gen 1:1") -> None:
+        if curses is None:
+            raise RuntimeError(
+                "Curses interface is not available on this platform. Please run without '--curses' to use the modern Textual TUI, or run 'bible-study serve' for the web interface."
+            )
         self.service = service or StudyService()
         self.initial_ref = initial_ref
         self.current_passage: PassageStudy | None = None

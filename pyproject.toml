@@ -22,6 +22,7 @@ dependencies = [
     "numpy>=1.24",
     "PyYAML>=6.0",
     "textual>=0.80.0",
+    "windows-curses>=2.3.0; sys_platform == 'win32'",
 ]
 
 [project.optional-dependencies]

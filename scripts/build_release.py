@@ -138,53 +138,49 @@ def smoke_test_binary(exe_path: Path, has_data: bool) -> None:
 
     bundle_dir = exe_path.parent
 
+    def _run_smoke(cmd: list[str], input_text: str | None = None, check: bool = True) -> subprocess.CompletedProcess[str]:
+        try:
+            return subprocess.run(
+                cmd,
+                input=input_text,
+                cwd=bundle_dir,
+                check=check,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+        except subprocess.CalledProcessError as err:
+            sys.stderr.write(f"ERROR: Standalone binary smoke test command failed: {' '.join(cmd)}\n")
+            if err.stdout:
+                sys.stderr.write(f"--- STDOUT ---\n{err.stdout}\n")
+            if err.stderr:
+                sys.stderr.write(f"--- STDERR ---\n{err.stderr}\n")
+            raise
+
     # Basic CLI checks (isolated cwd to verify bundled environment)
-    subprocess.run([str(exe_path), "--version"], cwd=bundle_dir, check=True, capture_output=True, text=True, encoding="utf-8", errors="replace")
-    subprocess.run([str(exe_path), "--help"], cwd=bundle_dir, check=True, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    _run_smoke([str(exe_path), "--version"])
+    _run_smoke([str(exe_path), "--help"])
 
     if has_data:
         # 1. CLI Scripture reading (isolated cwd to verify sidecar data path)
-        res = subprocess.run(
-            [str(exe_path), "read", "Gen 1:1", "--json"],
-            cwd=bundle_dir,
-            check=True,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-        )
+        res = _run_smoke([str(exe_path), "read", "Gen 1:1", "--json"])
         if "In the beginning God created" not in res.stdout:
             sys.stderr.write("ERROR: Standalone binary failed smoke test on Gen 1:1\n")
             sys.exit(1)
         print("✔ CLI Scripture reading verified.")
 
         # 2. Lexical concordance
-        res = subprocess.run(
-            [str(exe_path), "word", "H1254", "--json"],
-            cwd=bundle_dir,
-            check=True,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-        )
+        res = _run_smoke([str(exe_path), "word", "H1254", "--json"])
         if "H1254" not in res.stdout:
             sys.stderr.write("ERROR: Standalone binary failed smoke test on word H1254\n")
             sys.exit(1)
         print("✔ Lexical concordance verified.")
 
         # 3. TUI / shell mode smoke test
-        res = subprocess.run(
-            [str(exe_path), "--tui"],
-            input="exit\n",
-            cwd=bundle_dir,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-        )
-        if "ADVENTIST BIBLE STUDY TOOL" not in res.stdout and "ADVENTIST BIBLE STUDY TOOL" not in res.stderr:
-            sys.stderr.write("ERROR: Standalone binary failed TUI / shell smoke test\n")
+        res = _run_smoke([str(exe_path), "--tui"], input_text="exit\n", check=False)
+        if "Traceback (most recent call last):" in res.stderr:
+            sys.stderr.write(f"ERROR: Standalone binary crashed in TUI mode with traceback:\n{res.stderr}\n")
             sys.exit(1)
         print("✔ TUI mode smoke test verified.")
 

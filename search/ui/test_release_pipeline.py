@@ -287,6 +287,34 @@ class GitHubActionsConfigTests(unittest.TestCase):
             "Both macula-hebrew and macula-greek shallow clones must disable autocrlf",
         )
 
+    def test_windows_curses_dependency_declared(self):
+        pyproject = get_repo_root() / "pyproject.toml"
+        content = pyproject.read_text(encoding="utf-8")
+        self.assertIn("windows-curses", content)
+        self.assertIn("sys_platform == 'win32'", content)
+
+    def test_shell_handles_missing_readline(self):
+        import importlib
+        import unittest.mock
+        import search.ui.shell
+        self.addCleanup(importlib.reload, search.ui.shell)
+        with unittest.mock.patch.dict("sys.modules", {"readline": None}):
+            importlib.reload(search.ui.shell)
+            self.assertIsNone(search.ui.shell.readline)
+            completer = search.ui.shell.StudyShellCompleter()
+            self.assertIsNone(completer.complete("read", 0))
+
+    def test_tui_handles_missing_curses(self):
+        import importlib
+        import unittest.mock
+        import search.ui.tui
+        self.addCleanup(importlib.reload, search.ui.tui)
+        with unittest.mock.patch.dict("sys.modules", {"curses": None}):
+            importlib.reload(search.ui.tui)
+            self.assertIsNone(search.ui.tui.curses)
+            with self.assertRaises(RuntimeError):
+                search.ui.tui.run_tui(None)
+
 
 class ReleaseNotesExtractorTests(unittest.TestCase):
     """Test behavior of scripts/extract_release_notes.py."""

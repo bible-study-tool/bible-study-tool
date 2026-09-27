@@ -8,7 +8,10 @@ from __future__ import annotations
 
 import atexit
 import os
-import readline
+try:
+    import readline
+except ImportError:
+    readline = None  # type: ignore[assignment]
 import shlex
 import sys
 from pathlib import Path
@@ -64,6 +67,8 @@ class StudyShellCompleter:
             self.words.append(b.osis)
 
     def complete(self, text: str, state: int) -> str | None:
+        if readline is None:
+            return None
         line = ""
         try:
             line = readline.get_line_buffer()
@@ -92,9 +97,10 @@ class StudyShell:
         self.service = service or StudyService()
         self.current_passage: PassageStudy | None = None
         self.show_strongs: bool = False
-        self._setup_readline()
 
     def _setup_readline(self) -> None:
+        if readline is None:
+            return
         try:
             completer = StudyShellCompleter()
             readline.set_completer(completer.complete)
@@ -110,6 +116,8 @@ class StudyShell:
             pass
 
     def _save_history(self) -> None:
+        if readline is None:
+            return
         try:
             readline.set_history_length(1000)
             readline.write_history_file(str(HISTORY_FILE))
@@ -118,6 +126,7 @@ class StudyShell:
 
     def run(self) -> None:
         """Run the interactive REPL loop."""
+        self._setup_readline()
         w = terminal_width()
         print(banner("Adventist Bible Study Tool", "Interactive Study Shell", width=w))
         print(style("  Type 'help' for commands, or enter a passage (e.g. 'John 1', 'Gen 1:1-5').", DIM))
