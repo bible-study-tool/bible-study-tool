@@ -245,7 +245,6 @@ class GitHubActionsConfigTests(unittest.TestCase):
         self.assertIn("linux-x86_64", matrix_targets)
         self.assertIn("windows-x86_64", matrix_targets)
         self.assertIn("macos-arm64", matrix_targets)
-        self.assertIn("macos-x86_64", matrix_targets)
 
         # Verify release publisher depends on build job and specifies write permission
         rel_job = data["jobs"]["create-github-release"]

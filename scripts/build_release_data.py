@@ -32,6 +32,18 @@ import tarfile
 import tempfile
 import zipfile
 
+# Force UTF-8 encoding for stdout/stderr across platforms (avoids cp1252 UnicodeEncodeError on Windows)
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 
 def sha256_file(path: Path) -> str:
     """Compute hex SHA-256 digest of a file in streaming chunks."""

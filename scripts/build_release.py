@@ -50,6 +50,18 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+# Force UTF-8 encoding for stdout/stderr across platforms (avoids cp1252 UnicodeEncodeError on Windows)
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 from scripts.build_release_data import assemble_data_bundle, sha256_file, verify_bundle, verify_manifest
 
 
@@ -79,10 +91,10 @@ def get_version(repo_root: Path) -> str:
 def detect_platform() -> tuple[str, str, str]:
     """Detect normalized (os_name, arch_name, platform_tag)."""
     system = platform.system().lower()
-    if any(k in system for k in ("win", "mingw", "msys", "cygwin")):
-        os_name = "windows"
-    elif "darwin" in system:
+    if "darwin" in system:
         os_name = "macos"
+    elif system.startswith("win") or any(k in system for k in ("windows", "mingw", "msys", "cygwin")):
+        os_name = "windows"
     else:
         os_name = "linux"
 

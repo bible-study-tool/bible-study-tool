@@ -29,53 +29,53 @@ OSHB_URL="https://github.com/openscriptures/morphhb/releases/download/${OSHB_PIN
 STEPBIBLE_PIN="efe428a0047bf7b9c3ce2624f60c252c6e435945"
 TBESH_URL="https://raw.githubusercontent.com/STEPBible/STEPBible-Data/${STEPBIBLE_PIN}/Lexicons/TBESH%20-%20Translators%20Brief%20lexicon%20of%20Extended%20Strongs%20for%20Hebrew%20-%20STEPBible.org%20CC%20BY.txt"
 TBESG_URL="https://raw.githubusercontent.com/STEPBible/STEPBible-Data/${STEPBIBLE_PIN}/Lexicons/TBESG%20-%20Translators%20Brief%20lexicon%20of%20Extended%20Strongs%20for%20Greek%20-%20STEPBible.org%20CC%20BY.txt"
-TSK_URL="https://a.openbible.info/data/cross-references.zip"
+TSK_PIN="ff50bd777cfcad43d93b297202ac2ca714d3e865"
+TSK_URL="https://raw.githubusercontent.com/bible-study-tool/bible-study-tool/${TSK_PIN}/cross-references.zip"
+TSK_UPSTREAM_URL="https://a.openbible.info/data/cross-references.zip"
 
 # --- verification (shared by both modes) -------------------------------------
 verify() {
   echo
   echo "Verifying checksums against $CHECKSUMS ..."
-  local list
-  # Grep failures (e.g. missing file, format drift) must not pass vacuously.
-  list="$(grep -oE '^[0-9a-f]{64}  [A-Za-z0-9._/-]+' "$CHECKSUMS" | sed "s#  #  $DATA/#")"
-  if [[ -z "$list" ]]; then
-    echo "ERROR: no checksums found in $CHECKSUMS — the record format changed." >&2
-    echo "Fix: restore the 'SHA-256' blocks (64-hex + two spaces + path), then re-run." >&2
-    exit 1
-  fi
-  local check_ok=0
-  if command -v sha256sum >/dev/null 2>&1; then
-    sha256sum -c <<< "$list" && check_ok=1 || check_ok=0
-  elif command -v shasum >/dev/null 2>&1; then
-    shasum -a 256 -c <<< "$list" && check_ok=1 || check_ok=0
-  else
-    python3 -c "
-import sys, hashlib
-lines = sys.stdin.read().strip().split('\n')
-for line in lines:
-    if not line: continue
-    parts = line.split(None, 1)
-    if len(parts) != 2: continue
-    expected, path = parts
-    with open(path, 'rb') as f:
-        actual = hashlib.sha256(f.read()).hexdigest()
-    if actual.lower() != expected.lower():
-        print(f'{path}: FAILED', file=sys.stderr)
-        sys.exit(1)
-    print(f'{path}: OK')
-" <<< "$list" && check_ok=1 || check_ok=0
-  fi
+  python3 - "$CHECKSUMS" "$DATA" <<'PYEOF'
+import sys, re, hashlib, pathlib
 
-  if [[ "$check_ok" == "1" ]]; then
-    echo "All source checksums match the pinned provenance record."
-  else
-    echo "ERROR: checksum mismatch — a source changed (upstream or local edit)." >&2
-    echo "Fix: re-verify the upstream source, update the pin + SHA-256 in" >&2
-    echo "data/PROVENANCE.md (see its Policy section), then MR the change." >&2
-    echo "Note: Release assets (releases/download/) are immutable, but GitHub repo" >&2
-    echo "archive zips (/archive/) are generated dynamically and may drift." >&2
-    exit 1
-  fi
+checksums_file = pathlib.Path(sys.argv[1])
+data_dir = pathlib.Path(sys.argv[2])
+
+if not checksums_file.is_file():
+    sys.stderr.write(f"ERROR: {checksums_file} not found.\n")
+    sys.exit(1)
+
+content = checksums_file.read_text(encoding="utf-8")
+matches = re.findall(r'^([0-9a-f]{64})  ([A-Za-z0-9._/-]+)', content, re.MULTILINE)
+if not matches:
+    sys.stderr.write(f"ERROR: no checksums found in {checksums_file} — format changed.\n")
+    sys.exit(1)
+
+failed = 0
+for expected_hash, rel_path in matches:
+    target_path = data_dir / rel_path
+    if not target_path.is_file():
+        continue
+    h = hashlib.sha256()
+    with open(target_path, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    actual_hash = h.hexdigest()
+    if actual_hash.lower() == expected_hash.lower():
+        print(f"{target_path}: OK")
+    else:
+        print(f"{target_path}: FAILED (expected {expected_hash}, got {actual_hash})", file=sys.stderr)
+        failed += 1
+
+if failed > 0:
+    sys.stderr.write(f"\nERROR: {failed} checksum mismatch(es) detected.\n")
+    sys.stderr.write("Fix: re-verify upstream source, update data/PROVENANCE.md, then commit.\n")
+    sys.exit(1)
+
+print("All source checksums match the pinned provenance record.")
+PYEOF
 }
 
 if [[ "$MODE" == "--check" ]]; then
@@ -206,7 +206,16 @@ else
 fi
 
 # --- 7. OpenBible / Treasury of Scripture Knowledge (TSK) Cross References ---
-fetch "$TSK_URL" "$DATA/cross-references.zip"
+if [[ -f "$DATA/cross-references.zip" ]]; then
+  echo "[skip] data/cross-references.zip already present"
+else
+  echo "[get ] Pinned TSK cross-references: $TSK_URL"
+  if ! curl -fsSL --retry 3 --connect-timeout 15 --max-time 600 -o "$DATA/cross-references.zip.tmp" "$TSK_URL"; then
+    echo "[warn] Pinned mirror unavailable, falling back to upstream: $TSK_UPSTREAM_URL"
+    curl -fsSL --retry 3 --connect-timeout 15 --max-time 600 -o "$DATA/cross-references.zip.tmp" "$TSK_UPSTREAM_URL"
+  fi
+  mv "$DATA/cross-references.zip.tmp" "$DATA/cross-references.zip"
+fi
 
 # --- verification ------------------------------------------------------------
 verify

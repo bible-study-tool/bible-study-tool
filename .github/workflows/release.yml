@@ -24,6 +24,8 @@ permissions:
 
 env:
   CI_COMMIT_TAG: ${{ inputs.version != '' && inputs.version || github.ref_name }}
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: "utf-8"
 
 jobs:
   build-standalone:
@@ -42,9 +44,6 @@ jobs:
           - target: macos-arm64
             os: macos-latest
             artifact-suffix: macos-arm64
-          - target: macos-x86_64
-            os: macos-13
-            artifact-suffix: macos-x86_64
 
     steps:
       - name: Check out repository
