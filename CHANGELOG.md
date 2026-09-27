@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Fresh CI Environment Packaging & Robustness:**
   - Automatic pre-compilation source hydration in `scripts/build_release_data.py`: detects and fetches missing raw sources (`scripts/fetch_sources.sh`) with POSIX-normalized paths before building SQLite databases in ephemeral CI runners.
   - Dual-mode checksum verification in `scripts/fetch_sources.sh` supporting native BSD/macOS `shasum -a 256` and Python fallback.
+  - Enforced deterministic LF line endings (`.gitattributes`) and disabled git `core.autocrlf` during provenance verification on Windows runners.
+- **Cross-Platform Binary Execution (Windows & macOS):**
+  - Reconfigured standard streams (`sys.stdout`/`sys.stderr`) to UTF-8 across all application entry points (`web.py`, `cli.py`, `resource.py`), resolving `UnicodeEncodeError` when printing Hebrew and Greek lexical data on Windows consoles.
+  - Isolated Unix-specific terminal dependencies (`curses`, `readline`) with graceful non-fatal fallbacks, and declared `windows-curses` for native Windows terminal support.
+  - Added macOS `open-macos.command` helper script and automatic ad-hoc deep code signing to clear Gatekeeper quarantine (`com.apple.quarantine`) on Apple Silicon.
 
 ## [0.1.2-alpha] - 2026-09-17
 

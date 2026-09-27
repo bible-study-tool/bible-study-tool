@@ -369,6 +369,31 @@ def main() -> int:
     if os_name != "windows" and exe_path.exists():
         os.chmod(exe_path, 0o755)
 
+    # macOS specific: ad-hoc codesign and add open-macos.command helper
+    if os_name == "macos":
+        cmd_path = stage_dir / "open-macos.command"
+        cmd_path.write_text(
+            '#!/usr/bin/env bash\n'
+            '# First-time launcher for macOS (bypasses Gatekeeper quarantine)\n'
+            'DIR="$(cd "$(dirname "$0")" && pwd)"\n'
+            'xattr -cr "$DIR" 2>/dev/null || true\n'
+            'chmod +x "$DIR/bible-study" 2>/dev/null || true\n'
+            'exec "$DIR/bible-study" "$@"\n',
+            encoding="utf-8",
+        )
+        os.chmod(cmd_path, 0o755)
+        codesign_bin = shutil.which("codesign")
+        if codesign_bin:
+            try:
+                subprocess.run(
+                    [codesign_bin, "--force", "--deep", "--sign", "-", str(exe_path)],
+                    check=True,
+                    capture_output=True,
+                )
+                print("✔ Applied deep ad-hoc codesign to macOS standalone binary.")
+            except Exception as e:
+                print(f"Warning: codesign failed ({e}); continuing with PyInstaller default signature.")
+
     # Copy release documentation & notices
     for doc in ["README.md", "NOTICE.md", "LICENSE", "CONTRIBUTION_STANDARDS.md"]:
         doc_path = repo_root / doc

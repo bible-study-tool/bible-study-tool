@@ -12,6 +12,18 @@ import json
 import sys
 from typing import Sequence
 
+# Force UTF-8 encoding for stdout/stderr across platforms (avoids cp1252 UnicodeEncodeError on Windows)
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 from search.linking.egw import is_egw_token
 from search.ui.shell import StudyShell
 from search.ui.study_service import StudyService

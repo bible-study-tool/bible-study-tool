@@ -315,6 +315,12 @@ class GitHubActionsConfigTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 search.ui.tui.run_tui(None)
 
+    def test_build_release_macos_staging_helper(self):
+        build_release = get_repo_root() / "scripts" / "build_release.py"
+        content = build_release.read_text(encoding="utf-8")
+        self.assertIn("open-macos.command", content)
+        self.assertIn("codesign", content)
+
 
 class ReleaseNotesExtractorTests(unittest.TestCase):
     """Test behavior of scripts/extract_release_notes.py."""
