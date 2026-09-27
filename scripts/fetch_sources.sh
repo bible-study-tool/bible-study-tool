@@ -178,7 +178,7 @@ if [[ ! -f "$DATA/macula-hebrew/39-Mal-003-lowfat.xml" ]]; then
   echo "[get ] Macula Hebrew Lowfat XML (39 books, 929 chapters) from Clear-Bible/macula-hebrew ..."
   TMP="$(mktemp -d)"
   trap 'rm -rf "$TMP"' EXIT
-  git clone --filter=blob:none --no-checkout https://github.com/Clear-Bible/macula-hebrew.git "$TMP/macula"
+  git clone -c core.autocrlf=false -c core.eol=lf --filter=blob:none --no-checkout https://github.com/Clear-Bible/macula-hebrew.git "$TMP/macula"
   git -C "$TMP/macula" sparse-checkout set WLC/lowfat
   git -C "$TMP/macula" checkout "$MACULA_PIN"
   cp "$TMP/macula/WLC/lowfat"/*.xml "$DATA/macula-hebrew/"
@@ -195,7 +195,7 @@ if [[ ! -f "$DATA/macula-greek/27-revelation.xml" ]]; then
   echo "[get ] Macula Greek Lowfat XML (27 books, 260 chapters) from Clear-Bible/macula-greek ..."
   TMP="$(mktemp -d)"
   trap 'rm -rf "$TMP"' EXIT
-  git clone --filter=blob:none --no-checkout https://github.com/Clear-Bible/macula-greek.git "$TMP/macula_greek"
+  git clone -c core.autocrlf=false -c core.eol=lf --filter=blob:none --no-checkout https://github.com/Clear-Bible/macula-greek.git "$TMP/macula_greek"
   git -C "$TMP/macula_greek" sparse-checkout set Nestle1904/lowfat
   git -C "$TMP/macula_greek" checkout "$MACULA_GREEK_PIN"
   cp "$TMP/macula_greek/Nestle1904/lowfat"/[0-9]*.xml "$DATA/macula-greek/"

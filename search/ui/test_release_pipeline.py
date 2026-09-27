@@ -251,6 +251,42 @@ class GitHubActionsConfigTests(unittest.TestCase):
         self.assertEqual(rel_job.get("needs"), "build-standalone")
         self.assertEqual(data.get("permissions", {}).get("contents"), "write")
 
+        # Verify git autocrlf is disabled before checkout to prevent Windows checksum failures
+        build_steps = build_job.get("steps", [])
+        autocrlf_idx = next(
+            (i for i, s in enumerate(build_steps) if "core.autocrlf false" in s.get("run", "")),
+            -1,
+        )
+        checkout_idx = next(
+            (i for i, s in enumerate(build_steps) if "actions/checkout" in s.get("uses", "")),
+            -1,
+        )
+        self.assertNotEqual(autocrlf_idx, -1, "Release workflow must disable core.autocrlf")
+        self.assertNotEqual(checkout_idx, -1, "Release workflow must check out repository")
+        self.assertLess(
+            autocrlf_idx,
+            checkout_idx,
+            "Git line endings must be configured before actions/checkout step",
+        )
+
+    def test_gitattributes_enforces_lf(self):
+        gitattributes = get_repo_root() / ".gitattributes"
+        self.assertTrue(gitattributes.is_file(), ".gitattributes must exist at repo root")
+        content = gitattributes.read_text(encoding="utf-8")
+        self.assertIn("* text=auto eol=lf", content)
+        self.assertIn("*.json text eol=lf", content)
+        self.assertIn("*.xml text eol=lf", content)
+        self.assertIn("*.zip binary", content)
+
+    def test_fetch_sources_disables_autocrlf(self):
+        fetch_script = get_repo_root() / "scripts" / "fetch_sources.sh"
+        content = fetch_script.read_text(encoding="utf-8")
+        self.assertGreaterEqual(
+            content.count("core.autocrlf=false"),
+            2,
+            "Both macula-hebrew and macula-greek shallow clones must disable autocrlf",
+        )
+
 
 class ReleaseNotesExtractorTests(unittest.TestCase):
     """Test behavior of scripts/extract_release_notes.py."""
