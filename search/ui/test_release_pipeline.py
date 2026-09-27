@@ -242,9 +242,10 @@ class GitHubActionsConfigTests(unittest.TestCase):
 
         build_job = data["jobs"]["build-standalone"]
         matrix_targets = [m["target"] for m in build_job["strategy"]["matrix"]["include"]]
-        self.assertIn("linux", matrix_targets)
-        self.assertIn("windows", matrix_targets)
-        self.assertIn("macos", matrix_targets)
+        self.assertIn("linux-x86_64", matrix_targets)
+        self.assertIn("windows-x86_64", matrix_targets)
+        self.assertIn("macos-arm64", matrix_targets)
+        self.assertIn("macos-x86_64", matrix_targets)
 
         # Verify release publisher depends on build job and specifies write permission
         rel_job = data["jobs"]["create-github-release"]

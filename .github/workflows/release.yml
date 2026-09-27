@@ -3,21 +3,27 @@ name: Release
 # Multi-Platform Standalone Release Pipeline
 #
 # Triggered on version tags (v*) or manual dispatch.
-# Builds zero-Python standalone distributions for Linux, Windows, and macOS,
-# packages sidecar databases and cryptographic checksums, and publishes
-# the formal release with release assets on GitHub Releases.
+# Builds zero-Python standalone distributions for Linux (x86_64),
+# Windows (x86_64), macOS Apple Silicon (arm64, macos-latest), and
+# macOS Intel (x86_64, macos-13). Packages sidecar databases and cryptographic
+# checksums, and publishes the formal release with release assets on GitHub Releases.
 
 "on":
   push:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version tag (e.g. v0.1.2-alpha)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
 
 env:
-  CI_COMMIT_TAG: ${{ github.ref_name }}
+  CI_COMMIT_TAG: ${{ inputs.version != '' && inputs.version || github.ref_name }}
 
 jobs:
   build-standalone:
@@ -27,15 +33,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: linux
+          - target: linux-x86_64
             os: ubuntu-latest
-            artifact-suffix: linux
-          - target: windows
+            artifact-suffix: linux-x86_64
+          - target: windows-x86_64
             os: windows-latest
-            artifact-suffix: windows
-          - target: macos
+            artifact-suffix: windows-x86_64
+          - target: macos-arm64
             os: macos-latest
-            artifact-suffix: macos
+            artifact-suffix: macos-arm64
+          - target: macos-x86_64
+            os: macos-13
+            artifact-suffix: macos-x86_64
 
     steps:
       - name: Check out repository
@@ -101,8 +110,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
+          tag_name: ${{ inputs.version != '' && inputs.version || github.ref_name }}
+          name: Release ${{ inputs.version != '' && inputs.version || github.ref_name }}
           body_path: dist/RELEASE_NOTES.md
           files: |
             dist/*.tar.gz

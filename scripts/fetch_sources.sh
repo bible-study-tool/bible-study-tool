@@ -43,7 +43,30 @@ verify() {
     echo "Fix: restore the 'SHA-256' blocks (64-hex + two spaces + path), then re-run." >&2
     exit 1
   fi
-  if sha256sum -c <<< "$list"; then
+  local check_ok=0
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum -c <<< "$list" && check_ok=1 || check_ok=0
+  elif command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 -c <<< "$list" && check_ok=1 || check_ok=0
+  else
+    python3 -c "
+import sys, hashlib
+lines = sys.stdin.read().strip().split('\n')
+for line in lines:
+    if not line: continue
+    parts = line.split(None, 1)
+    if len(parts) != 2: continue
+    expected, path = parts
+    with open(path, 'rb') as f:
+        actual = hashlib.sha256(f.read()).hexdigest()
+    if actual.lower() != expected.lower():
+        print(f'{path}: FAILED', file=sys.stderr)
+        sys.exit(1)
+    print(f'{path}: OK')
+" <<< "$list" && check_ok=1 || check_ok=0
+  fi
+
+  if [[ "$check_ok" == "1" ]]; then
     echo "All source checksums match the pinned provenance record."
   else
     echo "ERROR: checksum mismatch — a source changed (upstream or local edit)." >&2
