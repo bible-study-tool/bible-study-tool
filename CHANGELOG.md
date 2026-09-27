@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.3-alpha] - 2026-09-27
+
+### Added
+- **Multi-Platform Standalone Release Matrix (Linux, Windows, macOS ARM64 & Intel):**
+  - Standalone release packaging workflow (`.github/workflows/release.yml`) producing native, zero-Python binary distributions across 4 distinct platforms:
+    - Linux x86_64 (`.tar.gz`)
+    - Windows x86_64 (`.zip`)
+    - macOS Apple Silicon M-series ARM64 (`macos-latest`, `.tar.gz`)
+    - macOS Intel x86_64 (`macos-13`, `.tar.gz`)
+  - Automated publishing to GitHub Releases with sidecar databases (`data/bible.db`, `data/macula.db`), cryptographic SHA-256 manifests, and extracted release notes.
+- **GitHub Actions CI/CD Pipeline (`.github/workflows/ci.yml`):**
+  - Continuous integration running the 834-test pytest suite and F1–F5 deterministic data-integrity gates on pushes and pull requests to `main` and `master`.
+  - Non-blocking validator diagnostic reporting and branch-safe concurrency management.
+- **Backup CLI Enhancements:**
+  - Added `--include-bible` flag to `scripts/backup.py` with comprehensive unit and CLI test coverage, allowing user-curated knowledge bases to be backed up with or without bundled Bible databases.
+
+### Fixed
+- **Fresh CI Environment Packaging & Robustness:**
+  - Automatic pre-compilation source hydration in `scripts/build_release_data.py`: detects and fetches missing raw sources (`scripts/fetch_sources.sh`) with POSIX-normalized paths before building SQLite databases in ephemeral CI runners.
+  - Dual-mode checksum verification in `scripts/fetch_sources.sh` supporting native BSD/macOS `shasum -a 256` and Python fallback.
+
 ## [0.1.2-alpha] - 2026-09-17
 
 ### Added
@@ -122,6 +143,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - F1–F4 automated validators (schema, Strong's, cross-references, dead-link audit).
   - 645 automated unit and integration tests passing in CI.
 
+[0.1.3-alpha]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.3-alpha
 [0.1.2-alpha]: https://gitlab.com/bible-study-tool/adventist-bible-study-tool/-/releases/v0.1.2-alpha
 [0.1.1-alpha]: https://gitlab.com/bible-study-tool/adventist-bible-study-tool/-/releases/v0.1.1-alpha
 [0.1.0-alpha]: https://gitlab.com/bible-study-tool/adventist-bible-study-tool/-/releases/v0.1.0-alpha
