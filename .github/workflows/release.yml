@@ -1,0 +1,111 @@
+name: Release
+
+# Multi-Platform Standalone Release Pipeline
+#
+# Triggered on version tags (v*) or manual dispatch.
+# Builds zero-Python standalone distributions for Linux, Windows, and macOS,
+# packages sidecar databases and cryptographic checksums, and publishes
+# the formal release with release assets on GitHub Releases.
+
+"on":
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  CI_COMMIT_TAG: ${{ github.ref_name }}
+
+jobs:
+  build-standalone:
+    name: Build Standalone (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: linux
+            os: ubuntu-latest
+            artifact-suffix: linux
+          - target: windows
+            os: windows-latest
+            artifact-suffix: windows
+          - target: macos
+            os: macos-latest
+            artifact-suffix: macos
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies and build tools
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install -e '.[test,dist]'
+
+      - name: Build standalone package (Linux / macOS)
+        if: runner.os != 'Windows'
+        run: python scripts/build_release.py --skip-tests
+
+      - name: Build standalone package (Windows)
+        if: runner.os == 'Windows'
+        run: python scripts/build_release.py --skip-tests --zip
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts-${{ matrix.artifact-suffix }}
+          path: |
+            dist/*.tar.gz
+            dist/*.tar.gz.sha256
+            dist/*.zip
+            dist/*.zip.sha256
+            dist/RELEASE_NOTES.md
+            dist/bible-study-*/SHA256SUMS
+          if-no-files-found: ignore
+
+  create-github-release:
+    name: Publish GitHub Release
+    needs: build-standalone
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-artifacts-*
+          path: dist-downloads
+          merge-multiple: true
+
+      - name: Inspect and organize distribution packages
+        run: |
+          mkdir -p dist
+          find dist-downloads -type f \( -name "*.tar.gz*" -o -name "*.zip*" -o -name "RELEASE_NOTES.md" \) -exec cp -v {} dist/ \;
+          ls -la dist/
+          pkg_count=$(ls -1 dist/*.tar.gz dist/*.zip 2>/dev/null | wc -l)
+          if [ "$pkg_count" -eq 0 ]; then
+            echo "ERROR: No standalone distribution packages found in dist/." >&2
+            exit 1
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body_path: dist/RELEASE_NOTES.md
+          files: |
+            dist/*.tar.gz
+            dist/*.tar.gz.sha256
+            dist/*.zip
+            dist/*.zip.sha256

@@ -1,0 +1,83 @@
+name: CI
+
+# Continuous Integration for Adventist Bible Study Tool
+#
+# Runs on every push and pull request targeting main or master.
+# Enforces the non-negotiable data-integrity core (F1-F5 validators)
+# and the full pytest suite (including byte-regeneration tripwires and
+# data/PROVENANCE.md checksum gates).
+
+"on":
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
+
+jobs:
+  test:
+    name: Test Suite (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install -e '.[test]'
+
+      - name: Run pytest
+        run: |
+          python -m pytest
+
+  validate:
+    name: Data Integrity Gates (F1-F5)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install -e '.[test]'
+
+      - name: F1 — Schema Validator
+        run: python -m search.validation.schema --repo .
+
+      - name: F2 — Strong's Canonical Validator
+        if: success() || failure()
+        run: python -m search.validation.strongs --repo .
+
+      - name: F3 — Cross-Reference Integrity Checker
+        if: success() || failure()
+        run: python -m search.validation.xrefs --repo .
+
+      - name: F4 — Dead-Reference & Broken Link Audit
+        if: success() || failure()
+        run: python -m search.validation.audit --repo .
+
+      - name: F5 — Curation Manifest Integrity
+        if: success() || failure()
+        run: python -m search.corpus.curation_manifest --check

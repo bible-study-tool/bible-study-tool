@@ -189,6 +189,69 @@ class GitlabCIConfigTests(unittest.TestCase):
         self.assertIn("--use-package-registry", script_text)
 
 
+class GitHubActionsConfigTests(unittest.TestCase):
+    """Verify integrity and schema of GitHub Actions workflows."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.repo_root = get_repo_root()
+
+    def _load_workflow(self, filename: str) -> dict:
+        workflow_path = self.repo_root / ".github" / "workflows" / filename
+        self.assertTrue(workflow_path.is_file(), f"Workflow file missing: {workflow_path}")
+        with open(workflow_path, "r", encoding="utf-8") as f:
+            return yaml.safe_load(f)
+
+    def test_github_ci_yaml_valid(self):
+        data = self._load_workflow("ci.yml")
+
+        self.assertIn("jobs", data)
+        self.assertIn("test", data["jobs"])
+        self.assertIn("validate", data["jobs"])
+
+        # Verify triggers
+        triggers = data.get("on") or data.get(True, {})
+        self.assertIn("push", triggers)
+        self.assertIn("pull_request", triggers)
+        self.assertIn("main", triggers["push"]["branches"])
+
+        # Verify test job
+        test_job = data["jobs"]["test"]
+        self.assertEqual(test_job["runs-on"], "ubuntu-latest")
+        test_steps = [s.get("name", "") for s in test_job.get("steps", [])]
+        self.assertTrue(any("Run pytest" in name for name in test_steps))
+
+        # Verify validator job gates F1-F5
+        val_job = data["jobs"]["validate"]
+        self.assertEqual(val_job["runs-on"], "ubuntu-latest")
+        val_steps = [s.get("name", "") for s in val_job.get("steps", [])]
+        for gate in ("F1", "F2", "F3", "F4", "F5"):
+            self.assertTrue(any(gate in name for name in val_steps), f"Missing gate {gate} in validate job")
+
+    def test_github_release_yaml_valid(self):
+        data = self._load_workflow("release.yml")
+
+        # Verify tag trigger glob syntax
+        triggers = data.get("on") or data.get(True, {})
+        tag_filters = triggers.get("push", {}).get("tags", [])
+        self.assertTrue(any(t == "v*" or t == "v[0-9]*" for t in tag_filters), "Release workflow must match v* tags")
+
+        self.assertIn("jobs", data)
+        self.assertIn("build-standalone", data["jobs"])
+        self.assertIn("create-github-release", data["jobs"])
+
+        build_job = data["jobs"]["build-standalone"]
+        matrix_targets = [m["target"] for m in build_job["strategy"]["matrix"]["include"]]
+        self.assertIn("linux", matrix_targets)
+        self.assertIn("windows", matrix_targets)
+        self.assertIn("macos", matrix_targets)
+
+        # Verify release publisher depends on build job and specifies write permission
+        rel_job = data["jobs"]["create-github-release"]
+        self.assertEqual(rel_job.get("needs"), "build-standalone")
+        self.assertEqual(data.get("permissions", {}).get("contents"), "write")
+
+
 class ReleaseNotesExtractorTests(unittest.TestCase):
     """Test behavior of scripts/extract_release_notes.py."""
 
