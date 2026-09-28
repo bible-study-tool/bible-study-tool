@@ -111,6 +111,7 @@ build-standalone-windows:
     - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE_BUILD == "true"
   allow_failure: true
   before_script:
+    - git config --global http.schannelCheckRevoke false
     - python -m pip install --upgrade pip setuptools wheel
     - python -m pip install -e '.[test]'
     - python -m pip install pyinstaller

@@ -251,22 +251,22 @@ class GitHubActionsConfigTests(unittest.TestCase):
         self.assertEqual(rel_job.get("needs"), "build-standalone")
         self.assertEqual(data.get("permissions", {}).get("contents"), "write")
 
-        # Verify git autocrlf is disabled before checkout to prevent Windows checksum failures
+        # Verify git autocrlf and schannel revocation are configured before checkout
         build_steps = build_job.get("steps", [])
-        autocrlf_idx = next(
-            (i for i, s in enumerate(build_steps) if "core.autocrlf false" in s.get("run", "")),
+        git_config_idx = next(
+            (i for i, s in enumerate(build_steps) if "core.autocrlf false" in s.get("run", "") and "http.schannelCheckRevoke false" in s.get("run", "")),
             -1,
         )
         checkout_idx = next(
             (i for i, s in enumerate(build_steps) if "actions/checkout" in s.get("uses", "")),
             -1,
         )
-        self.assertNotEqual(autocrlf_idx, -1, "Release workflow must disable core.autocrlf")
+        self.assertNotEqual(git_config_idx, -1, "Release workflow must disable core.autocrlf and schannelCheckRevoke")
         self.assertNotEqual(checkout_idx, -1, "Release workflow must check out repository")
         self.assertLess(
-            autocrlf_idx,
+            git_config_idx,
             checkout_idx,
-            "Git line endings must be configured before actions/checkout step",
+            "Git configuration (autocrlf and schannelCheckRevoke) must be executed before actions/checkout step",
         )
 
     def test_release_workflow_includes_tauri_desktop_build(self):
@@ -304,6 +304,17 @@ class GitHubActionsConfigTests(unittest.TestCase):
             content.count("core.autocrlf=false"),
             2,
             "Both macula-hebrew and macula-greek shallow clones must disable autocrlf",
+        )
+
+    def test_fetch_sources_handles_windows_ssl_revocation(self):
+        fetch_script = get_repo_root() / "scripts" / "fetch_sources.sh"
+        content = fetch_script.read_text(encoding="utf-8")
+        self.assertIn("--ssl-no-revoke", content)
+        self.assertIn('curl "${CURL_OPTS[@]}"', content, "fetch_sources.sh must invoke curl via CURL_OPTS array")
+        self.assertGreaterEqual(
+            content.count("http.schannelCheckRevoke=false"),
+            2,
+            "Both macula-hebrew and macula-greek shallow clones must disable schannel CRL checks",
         )
 
     def test_windows_curses_dependency_declared(self):

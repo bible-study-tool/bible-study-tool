@@ -92,13 +92,23 @@ command -v curl >/dev/null || {
   exit 1
 }
 
+# curl options: fail on HTTP error (-f), silent with error report (-sS), follow redirects (-L),
+# retry up to 3 times, with connect and total timeouts.
+CURL_OPTS=( -fsSL --retry 3 --connect-timeout 15 --max-time 600 )
+
+# On Windows Schannel, CRL revocation checks fail if the revocation server is unreachable (CRYPT_E_REVOCATION_OFFLINE).
+# Disable revocation check so Schannel behaves identically to OpenSSL on Linux/macOS.
+if curl --ssl-no-revoke --version >/dev/null 2>&1; then
+  CURL_OPTS+=( --ssl-no-revoke )
+fi
+
 fetch() { # fetch <url> <dest>
   local url="$1" dest="$2"
   if [[ -f "$dest" ]]; then
     echo "[skip] ${dest#"$REPO_ROOT"/} already present"
   else
     echo "[get ] $url"
-    curl -fsSL --retry 3 --connect-timeout 15 --max-time 600 -o "$dest.tmp" "$url"
+    curl "${CURL_OPTS[@]}" -o "$dest.tmp" "$url"
     mv "$dest.tmp" "$dest"
   fi
 }
@@ -114,7 +124,7 @@ if [[ "$NEED_GMLEWIS" == "1" ]]; then
   TMP="$(mktemp -d)"
   trap 'rm -rf "$TMP"' EXIT
   echo "[get ] $GMLEWIS_URL"
-  curl -fsSL --retry 3 --connect-timeout 15 --max-time 600 -o "$TMP/bc.zip" "$GMLEWIS_URL"
+  curl "${CURL_OPTS[@]}" -o "$TMP/bc.zip" "$GMLEWIS_URL"
   python3 - "$TMP" "$GMLEWIS_PIN" <<'PYEOF'
 import sys, zipfile, pathlib
 tmp, pin = pathlib.Path(sys.argv[1]), sys.argv[2]
@@ -178,7 +188,7 @@ if [[ ! -f "$DATA/macula-hebrew/39-Mal-003-lowfat.xml" ]]; then
   echo "[get ] Macula Hebrew Lowfat XML (39 books, 929 chapters) from Clear-Bible/macula-hebrew ..."
   TMP="$(mktemp -d)"
   trap 'rm -rf "$TMP"' EXIT
-  git clone -c core.autocrlf=false -c core.eol=lf --filter=blob:none --no-checkout https://github.com/Clear-Bible/macula-hebrew.git "$TMP/macula"
+  git clone -c core.autocrlf=false -c core.eol=lf -c http.schannelCheckRevoke=false --filter=blob:none --no-checkout https://github.com/Clear-Bible/macula-hebrew.git "$TMP/macula"
   git -C "$TMP/macula" sparse-checkout set WLC/lowfat
   git -C "$TMP/macula" checkout "$MACULA_PIN"
   cp "$TMP/macula/WLC/lowfat"/*.xml "$DATA/macula-hebrew/"
@@ -195,7 +205,7 @@ if [[ ! -f "$DATA/macula-greek/27-revelation.xml" ]]; then
   echo "[get ] Macula Greek Lowfat XML (27 books, 260 chapters) from Clear-Bible/macula-greek ..."
   TMP="$(mktemp -d)"
   trap 'rm -rf "$TMP"' EXIT
-  git clone -c core.autocrlf=false -c core.eol=lf --filter=blob:none --no-checkout https://github.com/Clear-Bible/macula-greek.git "$TMP/macula_greek"
+  git clone -c core.autocrlf=false -c core.eol=lf -c http.schannelCheckRevoke=false --filter=blob:none --no-checkout https://github.com/Clear-Bible/macula-greek.git "$TMP/macula_greek"
   git -C "$TMP/macula_greek" sparse-checkout set Nestle1904/lowfat
   git -C "$TMP/macula_greek" checkout "$MACULA_GREEK_PIN"
   cp "$TMP/macula_greek/Nestle1904/lowfat"/[0-9]*.xml "$DATA/macula-greek/"
@@ -210,9 +220,9 @@ if [[ -f "$DATA/cross-references.zip" ]]; then
   echo "[skip] data/cross-references.zip already present"
 else
   echo "[get ] Pinned TSK cross-references: $TSK_URL"
-  if ! curl -fsSL --retry 3 --connect-timeout 15 --max-time 600 -o "$DATA/cross-references.zip.tmp" "$TSK_URL"; then
+  if ! curl "${CURL_OPTS[@]}" -o "$DATA/cross-references.zip.tmp" "$TSK_URL"; then
     echo "[warn] Pinned mirror unavailable, falling back to upstream: $TSK_UPSTREAM_URL"
-    curl -fsSL --retry 3 --connect-timeout 15 --max-time 600 -o "$DATA/cross-references.zip.tmp" "$TSK_UPSTREAM_URL"
+    curl "${CURL_OPTS[@]}" -o "$DATA/cross-references.zip.tmp" "$TSK_UPSTREAM_URL"
   fi
   mv "$DATA/cross-references.zip.tmp" "$DATA/cross-references.zip"
 fi

@@ -45,8 +45,10 @@ jobs:
             artifact-suffix: macos-arm64
 
     steps:
-      - name: Configure Git line endings
-        run: git config --global core.autocrlf false
+      - name: Configure Git line endings and network settings
+        run: |
+          git config --global core.autocrlf false
+          git config --global http.schannelCheckRevoke false
 
       - name: Check out repository
         uses: actions/checkout@v4
