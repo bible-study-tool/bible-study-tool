@@ -94,8 +94,11 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
         self.assertIn("find_available_port", code)
         self.assertIn("TcpListener::bind", code)
 
-        # Sidecar resolution
+        # Sidecar and development engine resolution
+        self.assertIn("find_repo_root", code)
         self.assertIn("resolve_engine_path", code)
+        self.assertIn("resolve_engine_command", code)
+        self.assertIn("search.ui.web", code)
         self.assertIn("bible-study", code)
 
         # Health checking & timeouts
@@ -135,6 +138,15 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
         cmd = resolve_tauri_command()
         self.assertIsInstance(cmd, list)
         self.assertGreaterEqual(len(cmd), 1)
+
+    def test_web_cli_parser_tolerates_server_flag(self):
+        """Verify that build_web_parser parses the --server flag without error (ADR-028)."""
+        from search.ui.web import build_web_parser
+        parser = build_web_parser()
+        args = parser.parse_args(["--server", "--port", "9000", "--no-browser"])
+        self.assertTrue(args.server)
+        self.assertEqual(args.port, 9000)
+        self.assertTrue(args.no_browser)
 
 
 if __name__ == "__main__":

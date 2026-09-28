@@ -161,6 +161,11 @@ def build_web_parser(prog: str = "bible-study") -> argparse.ArgumentParser:
         action="store_true",
         help="do not open web browser automatically",
     )
+    parser.add_argument(
+        "--server",
+        action="store_true",
+        help="explicitly start local web server (default behaviour)",
+    )
 
     # TUI options
     parser.add_argument(
