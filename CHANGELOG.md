@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.5-beta] - 2026-09-28
+
+### Added
+- **Local Neural Semantic Embeddings & Tri-Brid Hybrid Search (WP-040, ADR-029):**
+  - Pure zero-PyTorch ONNX embedding runtime (`search/linking/onnx_embedder.py`) running INT8 quantized `multilingual-e5-small` (<10ms single query latency, <40 MB RAM) on standard CPU with RoBERTa pad token handling (`pad_id=1`), mean pooling, and L2 normalization.
+  - Transparent fallback to character n-gram embedder if ONNX runtime or model weights are missing.
+  - Whole-Bible dense vector precomputation pipeline (`scripts/build_embeddings.py`) generating 384-dimensional dense vectors for all 31,102 verses into `data/embeddings.db` (61.4 MB) in ~3.8 minutes.
+  - In-memory contiguous Float32 vector store (`search/corpus/hybrid_search.py`) executing whole-Bible BLAS dot product cosine scans in **~3.5 ms** on standard CPU without external vector database daemons.
+  - **Tri-Brid Reciprocal Rank Fusion (RRF)**: seamlessly blends SQLite FTS5 BM25 text rank, vector cosine rank, and Treasury of Scripture Knowledge (TSK) reciprocal cross-reference graph.
+  - Search mode segmented pills (`✦ Hybrid`, `Aa Keyword`, `☵ Thematic`), match type badges (`hybrid`, `exact`, `semantic`, `cross_reference`), and cosine similarity score chips.
+  - Hardened with thread-safe lazy init locks, boundary-safe book-scoped slicing in `VectorStore.query`, sequential TSK ranks and candidate deduplication, and calibrated multi-source RRF scoring.
+  - Transparent documentation of the 100% deterministic human-curated knowledge base vs. local mathematical vector retrieval (zero cloud, zero generative AI chatbots, zero synthetic text fabrication).
+
+---
+
 ## [0.1.4-beta] - 2026-09-28
 
 ### Added
@@ -39,15 +54,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Collapsible fine-grained advanced search drawer with filters for translations, testaments, books, search modes, and cheat sheet syntax tips.
     - Interactive query expansion root chips and one-click navigation to Bible verses or commentary paragraphs.
     - Global keyboard shortcuts `/` and `0` to focus Search.
-
-- **Local Neural Semantic Embeddings & Tri-Brid Hybrid Search (WP-040, ADR-029):**
-  - Pure zero-PyTorch ONNX embedding runtime (`search/linking/onnx_embedder.py`) running INT8 quantized `multilingual-e5-small` (<10ms single query latency, <40 MB RAM) on standard CPU with RoBERTa pad token handling (`pad_id=1`), mean pooling, and L2 normalization.
-  - Transparent fallback to character n-gram embedder if ONNX runtime or model weights are missing.
-  - Whole-Bible dense vector precomputation pipeline (`scripts/build_embeddings.py`) generating 384-dimensional dense vectors for all 31,102 verses into `data/embeddings.db` (61.4 MB) in ~3.8 minutes.
-  - In-memory contiguous Float32 vector store (`search/corpus/hybrid_search.py`) executing whole-Bible BLAS dot product cosine scans in **~3.5 ms** on standard CPU without external vector database daemons.
-  - **Tri-Brid Reciprocal Rank Fusion (RRF)**: seamlessly blends SQLite FTS5 BM25 text rank, vector cosine rank, and Treasury of Scripture Knowledge (TSK) reciprocal cross-reference graph.
-  - Search mode segmented pills (`✦ Hybrid`, `Aa Keyword`, `☵ Thematic`), match type badges (`hybrid`, `exact`, `semantic`, `cross_reference`), and cosine similarity score chips.
-  - Hardened with thread-safe lazy init locks, boundary-safe book-scoped slicing in `VectorStore.query`, sequential TSK ranks and candidate deduplication, and calibrated multi-source RRF scoring.
 
 - **High-Fidelity Biblical Typography across Web, Desktop, and Terminal:**
   - Standardized small-caps rendering for the Tetragrammaton YHWH (`<divineName>LORD</divineName>` and `<divineName>GOD</divineName>`) and italics for supplied words (`<transChange type="added">...`).
