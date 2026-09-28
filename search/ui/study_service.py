@@ -1327,9 +1327,49 @@ class StudyService:
                     "paragraphs_count": 0,
                 }
 
+    def search(
+        self,
+        query: str,
+        sources: Sequence[str] | str = "all",
+        limit: int = 50,
+        book: Optional[str] = None,
+        testament: Optional[str] = None,
+        translation: Optional[str] = None,
+        strongs: Optional[str] = None,
+        domain: Optional[str] = None,
+        egw_book: Optional[str] = None,
+        expand: bool = True,
+    ) -> dict[str, Any]:
+        """Unified deterministic multi-database search across scripture, translations, original languages, commentary, and curated notes."""
+        with self._lock:
+            if getattr(self, "_search_bridge", None) is None:
+                from search.corpus.search_bridge import DeterministicSearchBridge
+                from search.macula.search import MaculaSearchEngine
+                m_path = self.macula_db.db_path if self.macula_db else data_path(DEFAULT_MACULA_DB)
+                self._search_bridge = DeterministicSearchBridge(
+                    bible_db=self.bible_db,
+                    macula_engine=MaculaSearchEngine(db_path=m_path, lexicon_file=self.strongs_path),
+                    egw_db=self.egw_db,
+                )
+            return self._search_bridge.search(
+                query=query,
+                sources=sources,
+                limit=limit,
+                book=book,
+                testament=testament,
+                translation=translation,
+                strongs=strongs,
+                domain=domain,
+                egw_book=egw_book,
+                expand=expand,
+            )
+
     def close(self) -> None:
         """Close database connections."""
         with self._lock:
+            if getattr(self, "_search_bridge", None) is not None:
+                self._search_bridge.close()
+                self._search_bridge = None
             if self.bible_db is not None:
                 self.bible_db.close()
             if self.macula_db is not None:

@@ -60,7 +60,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 ### C. Search & Semantic Engine
 - `[ ]` **C1. True semantic embeddings** — enable multilingual-e5 by default when corpus is large enough
 - `[ ]` **C2. Hybrid search** — FTS5 BM25 + embeddings, combined ranker
-- `[ ]` **C3. Cross-language semantic search** — search in one language, find linked content in others
+- `[x]` **C3. Cross-language semantic search** — deterministic bidirectional lexical expansion across English, Strong's codes (H/G), Hebrew and Greek lemmas, semantic domains (Louw-Nida, SDBH), and parallel translations (ASV, BSB, YLT) without external neural models; unified multi-database search across `bible.db`, `macula.db`, `egw.db`, and `materials/` with normalized BM25 ranking, smart omnibox reference routing, and dedicated search workstation UI — WP-039
 - `[x]` **C4. Faceted/filtered querying** — by book/theme/translation/language/status; clean query API
   (Phases 1–3 shipped: `search/corpus/query.py` + CLI flags + `/api/c4-query` endpoint + cross-source BM25 ranking across curated entries, Bible, and EGW; `search/test_query.py`, 10 tests)
 - `[ ]` **C5. Validate & expand discovery layer** — more curated links → stronger candidate signal

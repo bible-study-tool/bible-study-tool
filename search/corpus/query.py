@@ -47,7 +47,7 @@ _FACET_SCALAR = {"status"}
 @lru_cache(maxsize=1)
 def _build_index() -> sqlite3.Connection:
     """Build the in-memory curated index from markdown frontmatter."""
-    con = sqlite3.connect(":memory:")
+    con = sqlite3.connect(":memory:", check_same_thread=False)
     con.row_factory = sqlite3.Row
     con.execute(
         """CREATE TABLE entries (

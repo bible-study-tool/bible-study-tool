@@ -278,10 +278,15 @@ def execute_subcommand(service: StudyService, args: argparse.Namespace) -> int:
         limit_e = args.limit if args.scope in ("all", "egw") else 0
         res = service.search_unified(args.query, limit_bible=limit_b, limit_egw=limit_e, book_filter=args.book)
         if getattr(args, "json", False):
+            bridge_res = service.search(args.query, limit=args.limit, book=args.book)
             out = {
                 "query": res.query,
                 "bible_hits": res.bible_hits,
                 "egw_hits": res.egw_hits,
+                "total_hits": bridge_res.get("total_hits", 0),
+                "counts": bridge_res.get("counts", {}),
+                "expansion": bridge_res.get("expansion", {}),
+                "results": bridge_res.get("results", []),
             }
             print(json.dumps(out, indent=2, ensure_ascii=False))
             return 0

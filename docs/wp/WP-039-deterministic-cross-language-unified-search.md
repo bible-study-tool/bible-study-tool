@@ -1,6 +1,6 @@
 # WP-039: Deterministic Cross-Language & Unified Multi-Database Search
 
-status: in-progress
+status: complete
 scope: Pillar C (C3, C4), Pillar D (D1, D3, D4) — Implement a 100% deterministic, zero-ML, sub-millisecond search engine unifying all project databases (bible.db KJV + parallel translations ASV/BSB/YLT, macula.db Hebrew/Greek lemmas & semantic domains, egw.db Spirit of Prophecy, and materials/ curated notes) with bidirectional query expansion (English <-> Strong's <-> Hebrew/Greek Lemma <-> TSK), smart omnibox routing, fine-grained search filters and advanced syntax, and a serene Study Room Desk search workstation.
 priority: high
 
@@ -21,9 +21,9 @@ Unify all textual and linguistic databases in the Adventist Bible Study Tool und
 ## Tasks
 - [x] Task 1: Multi-Translation SQLite FTS indexing in `search/corpus/extract_kjv.py` (`ensure_translations_fts()`, multi-translation `search()`) + unit tests in `search/corpus/test_translations_fts.py`.
 - [x] Task 2: Macula Lexical & Semantic Search Engine in `search/macula/search.py` (Strong's lookup, Greek/Hebrew lemma and gloss matching, transliteration, Louw-Nida & SDBH domain search) + unit tests in `search/macula/test_search.py`.
-- [ ] Task 3: Deterministic Query Expansion Bridge & Advanced Syntax Parser in `search/corpus/search_bridge.py` (`DeterministicSearchBridge`, query classifier, lexical expansion, operator parsing for `book:`, `testament:`, `translation:`, `strong:`, `domain:`, `egw:`, exact `"quotes"`, boolean logic, BM25 score normalization) + unit tests in `search/corpus/test_search_bridge.py`.
-- [ ] Task 4: REST API & Study Service integration in `search/ui/study_service.py` and `search/ui/web_server.py` (`/api/search` endpoint with query, expansion, categorized counts, facets) + unit tests in `search/ui/test_search_api.py`.
-- [ ] Task 5: Web & Desktop Workstation UI in `web/index.html`, `web/app.js`, `web/styles.css`:
+- [x] Task 3: Deterministic Query Expansion Bridge & Advanced Syntax Parser in `search/corpus/search_bridge.py` (`DeterministicSearchBridge`, query classifier, lexical expansion, operator parsing for `book:`, `testament:`, `translation:`, `strong:`, `domain:`, `egw:`, exact `"quotes"`, boolean logic, BM25 score normalization) + unit tests in `search/corpus/test_search_bridge.py`.
+- [x] Task 4: REST API & Study Service integration in `search/ui/study_service.py` and `search/ui/web_server.py` (`/api/search` endpoint with query, expansion, categorized counts, facets) + unit tests in `search/ui/test_search_api.py`.
+- [x] Task 5: Web & Desktop Workstation UI in `web/index.html`, `web/app.js`, `web/styles.css`:
   - Smart omnibox routing: references navigate to Scripture reader; free-text/Strong's auto-routes to Search workstation tab.
   - `#tab-search` and `#panel-search` workstation container.
   - Source filter pills: All, Scripture, Translations, Original Languages, Commentary, Curated.
@@ -31,8 +31,8 @@ Unify all textual and linguistic databases in the Adventist Bible Study Tool und
   - Query expansion chip banner (discovered Hebrew/Greek roots and Strong's numbers).
   - High-fidelity biblical typography rendering and instant navigation into Scripture or Commentary.
   - Unit tests in `search/ui/test_web.py`.
-- [ ] Task 6: CLI & Terminal enhancements in `search/ui/cli.py` and `search/ui/shell.py` for unified multi-database search results.
-- [ ] Task 7: Full verification with `scripts/verify_all.sh`, subagent code review, and git synchronization.
+- [x] Task 6: CLI & Terminal enhancements in `search/ui/cli.py` and `search/ui/shell.py` for unified multi-database search results.
+- [x] Task 7: Full verification with `scripts/verify_all.sh`, subagent code review, and git synchronization.
 
 ## Conventions that apply
 - **Deterministic core (AGENTS.md Non-negotiable 1):** Zero external ML downloads, zero network calls during search.
@@ -41,14 +41,17 @@ Unify all textual and linguistic databases in the Adventist Bible Study Tool und
 - **Anti-slop visual charter (ADR-025):** WCAG AAA contrast, serene literary aesthetics, progressive disclosure for advanced features.
 
 ## Acceptance criteria
-- [ ] `ensure_translations_fts()` creates and indexes ASV, BSB, and YLT verses without affecting canonical integrity.
+- [x] `ensure_translations_fts()` creates and indexes ASV, BSB, and YLT verses without affecting canonical integrity.
 - [x] Macula search resolves Strong's codes (`H7225`, `G2424`), lemmas, transliterations, and semantic domains.
-- [ ] Query expansion bridge links English terms (e.g. `covenant`, `sanctuary`) to Strong's codes and Greek/Hebrew lemmas.
-- [ ] Advanced syntax (`book:`, `testament:`, `translation:`, `strong:`, `domain:`, `egw:`, `"quotes"`) properly filters results.
-- [ ] Top omnibox routes valid references to Scripture view and search queries to the Search tab.
-- [ ] Web and desktop search workstation displays source filter pills, collapsible advanced options, expansion chips, and highlighted snippets.
-- [ ] Clicking a verse or commentary result navigates directly to that passage or chapter.
-- [ ] `bash scripts/verify_all.sh` remains 100% green with all new tests passing.
+- [x] Query expansion bridge links English terms (e.g. `covenant`, `sanctuary`) to Strong's codes and Greek/Hebrew lemmas.
+- [x] Advanced syntax (`book:`, `testament:`, `translation:`, `strong:`, `domain:`, `egw:`, `"quotes"`) properly filters results.
+- [x] Top omnibox routes valid references to Scripture view and search queries to the Search tab.
+- [x] Web and desktop search workstation displays source filter pills, collapsible advanced options, expansion chips, and highlighted snippets.
+- [x] Clicking a verse or commentary result navigates directly to that passage or chapter.
+- [x] `bash scripts/verify_all.sh` remains 100% green with all new tests passing (905 unit tests).
 
 ## Notes / findings
 - FTS5 virtual tables in SQLite are explicitly omitted from canonical table hashing in `search/validation/db_integrity.py` (`CANONICAL_TABLES = {"books", "verses", "notes", "topics", "tokens", "strongs_crosswalk", "paragraphs"}`). Creating `translations_fts` preserves cryptographic integrity.
+- In `search/corpus/query.py`, in-memory SQLite connection specifies `check_same_thread=False` to ensure thread-safe search across web server worker threads.
+- Search service locks around multi-database queries to avoid concurrent cursor collisions.
+

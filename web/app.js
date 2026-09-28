@@ -23,6 +23,35 @@ const els = {
   statusRight: $("#status-right"),
   translationsPanel: $("#panel-translations"),
   languagesPanel: $("#panel-languages"),
+  tabSearch: document.querySelector("button.tab[data-tab='search']"),
+  searchPanel: $("#panel-search"),
+  searchPanelForm: $("#search-panel-form"),
+  searchPanelInput: $("#search-panel-input"),
+  searchPills: document.querySelectorAll(".search-pill"),
+  searchAdvancedToggle: $("#search-advanced-toggle"),
+  searchAdvancedDrawer: $("#search-advanced-drawer"),
+  searchFilterTestament: $("#search-filter-testament"),
+  searchFilterBook: $("#search-filter-book"),
+  searchFilterTranslation: $("#search-filter-translation"),
+  searchFilterStrongs: $("#search-filter-strongs"),
+  searchFilterEgw: $("#search-filter-egw"),
+  searchApplyFiltersBtn: $("#search-apply-filters-btn"),
+  searchClearFiltersBtn: $("#search-clear-filters-btn"),
+  searchExpansionBanner: $("#search-expansion-banner"),
+  expansionTerm: $("#expansion-term"),
+  searchExpansionChips: $("#search-expansion-chips"),
+  searchResultsContainer: $("#search-results-container"),
+  searchStatusBar: $("#search-status-bar"),
+  searchStatusText: $("#search-status-text"),
+  searchResultsList: $("#search-results-list"),
+  searchEmptyState: $("#search-empty-state"),
+  searchEmptyMessage: $("#search-empty-message"),
+  pillCountAll: $("#pill-count-all"),
+  pillCountScripture: $("#pill-count-scripture"),
+  pillCountTranslations: $("#pill-count-translations"),
+  pillCountOriginal: $("#pill-count-original"),
+  pillCountCommentary: $("#pill-count-commentary"),
+  pillCountCurated: $("#pill-count-curated"),
   xrefsPanel: $("#panel-xrefs"),
   tabXrefs: document.querySelector("button.tab[data-tab='xrefs']"),
   xrefsVerseSelect: $("#xrefs-verse-select"),
@@ -1802,7 +1831,16 @@ function initFocusAndZoomModes() {
       return;
     }
 
-    // Side tab shortcuts: 'x' for Cross-Refs, plus updated tab numbers
+    // Side tab shortcuts: '0' or '/' for Search, 'x' for Cross-Refs, plus updated tab numbers
+    if (e.key === "0" || e.key === "/") {
+      e.preventDefault();
+      switchTab("search");
+      if (els.searchPanelInput) {
+        els.searchPanelInput.focus();
+        els.searchPanelInput.select();
+      }
+      return;
+    }
     if (e.key === "x" || e.key === "X") { e.preventDefault(); switchTab("xrefs"); return; }
     if (e.key === "1") { e.preventDefault(); switchTab("translations"); return; }
     if (e.key === "2") { e.preventDefault(); switchTab("languages"); return; }
@@ -1847,11 +1885,29 @@ function initFocusAndZoomModes() {
 
 /* ---- wiring ---- */
 
-els.form.addEventListener("submit", (e) => {
+const SCRIPTURE_REF_PATTERN = /^(?:[1-3]\s*)?[a-zA-Z]+(?:\s+[a-zA-Z]+)*\s+\d+(?:[\s:.]\d+(?:\s*-\s*\d+)?)?$/;
+
+async function handleOmniboxSubmit(e) {
   e.preventDefault();
-  const ref = els.input.value.trim();
-  if (ref) navigate(ref);
-});
+  const raw = (els.input.value || "").trim();
+  if (!raw) return;
+
+  // If query resembles a scripture reference (e.g. John 3:16, Gen 1:1-3, Rom 8:28)
+  if (SCRIPTURE_REF_PATTERN.test(raw)) {
+    try {
+      await navigate(raw);
+      return;
+    } catch (_) {
+      // If passage navigation fails, fall through to library search
+    }
+  }
+
+  // Non-reference auto routes to search tab (WP-039 / L50)
+  switchTab("search");
+  runLibrarySearch(raw);
+}
+
+els.form.addEventListener("submit", handleOmniboxSubmit);
 
 if (els.theme) els.theme.addEventListener("change", () => setTheme(els.theme.value));
 
@@ -3230,6 +3286,278 @@ function filterAndRenderCrossReferences() {
   }
 }
 
+/* ---- Unified Multi-Database Search Workstation (WP-039) ---- */
+
+let currentSearchQuery = "";
+let currentSearchSource = "all";
+let isAdvancedSearchOpen = false;
+
+function initSearchWorkstation() {
+  if (els.searchPanelForm) {
+    els.searchPanelForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const q = (els.searchPanelInput && els.searchPanelInput.value || "").trim();
+      if (q) {
+        runLibrarySearch(q);
+      }
+    });
+  }
+
+  // Source filter pills
+  if (els.searchPills && els.searchPills.length > 0) {
+    els.searchPills.forEach((pill) => {
+      pill.addEventListener("click", () => {
+        const src = pill.dataset.source || "all";
+        setSearchSource(src);
+      });
+    });
+  }
+
+  // Advanced search toggle
+  if (els.searchAdvancedToggle && els.searchAdvancedDrawer) {
+    els.searchAdvancedToggle.addEventListener("click", () => {
+      isAdvancedSearchOpen = !isAdvancedSearchOpen;
+      els.searchAdvancedDrawer.hidden = !isAdvancedSearchOpen;
+      els.searchAdvancedToggle.setAttribute("aria-expanded", String(isAdvancedSearchOpen));
+      const arrow = els.searchAdvancedToggle.querySelector(".advanced-arrow");
+      if (arrow) arrow.textContent = isAdvancedSearchOpen ? "▴" : "▾";
+    });
+  }
+
+  // Apply filters button
+  if (els.searchApplyFiltersBtn) {
+    els.searchApplyFiltersBtn.addEventListener("click", () => {
+      const q = (els.searchPanelInput && els.searchPanelInput.value || "").trim();
+      runLibrarySearch(q);
+    });
+  }
+
+  // Clear filters button
+  if (els.searchClearFiltersBtn) {
+    els.searchClearFiltersBtn.addEventListener("click", () => {
+      if (els.searchFilterTestament) els.searchFilterTestament.value = "";
+      if (els.searchFilterBook) els.searchFilterBook.value = "";
+      if (els.searchFilterTranslation) els.searchFilterTranslation.value = "all";
+      if (els.searchFilterStrongs) els.searchFilterStrongs.value = "";
+      if (els.searchFilterEgw) els.searchFilterEgw.value = "";
+      const q = (els.searchPanelInput && els.searchPanelInput.value || "").trim();
+      runLibrarySearch(q);
+    });
+  }
+}
+
+function setSearchSource(source) {
+  currentSearchSource = source;
+  if (els.searchPills) {
+    els.searchPills.forEach((p) => {
+      const isActive = p.dataset.source === source;
+      p.classList.toggle("active", isActive);
+      p.setAttribute("aria-pressed", String(isActive));
+    });
+  }
+  if (currentSearchQuery) {
+    runLibrarySearch(currentSearchQuery, source);
+  }
+}
+
+async function runLibrarySearch(rawQuery, sourceOverride) {
+  const q = (rawQuery || "").trim();
+  if (!q) return;
+
+  currentSearchQuery = q;
+  const source = sourceOverride || currentSearchSource || "all";
+
+  if (els.searchPanelInput && els.searchPanelInput.value !== q) {
+    els.searchPanelInput.value = q;
+  }
+
+  // Show loading indicator
+  if (els.searchStatusBar && els.searchStatusText) {
+    els.searchStatusBar.hidden = false;
+    els.searchStatusText.textContent = `Searching library for "${q}"...`;
+  }
+  if (els.searchEmptyState) els.searchEmptyState.hidden = true;
+  if (els.searchResultsList) els.searchResultsList.innerHTML = '<div class="tab-hint">Searching library across all databases...</div>';
+
+  const params = new URLSearchParams();
+  params.set("q", q);
+  params.set("sources", source);
+  params.set("limit", "50");
+  params.set("expand", "1");
+
+  // Advanced drawer filters
+  if (els.searchFilterTestament && els.searchFilterTestament.value) {
+    params.set("testament", els.searchFilterTestament.value);
+  }
+  if (els.searchFilterBook && els.searchFilterBook.value.trim()) {
+    params.set("book", els.searchFilterBook.value.trim());
+  }
+  if (els.searchFilterTranslation && els.searchFilterTranslation.value && els.searchFilterTranslation.value !== "all") {
+    params.set("translation", els.searchFilterTranslation.value);
+  }
+  if (els.searchFilterStrongs && els.searchFilterStrongs.value.trim()) {
+    params.set("strongs", els.searchFilterStrongs.value.trim());
+  }
+  if (els.searchFilterEgw && els.searchFilterEgw.value.trim()) {
+    params.set("egw_book", els.searchFilterEgw.value.trim());
+  }
+
+  try {
+    const data = await api(`/api/search?${params.toString()}`);
+    renderSearchResults(data);
+  } catch (err) {
+    if (els.searchResultsList) {
+      els.searchResultsList.innerHTML = `<div class="error-msg">Search failed: ${escapeHtml(err.message || String(err))}</div>`;
+    }
+    if (els.searchStatusBar) els.searchStatusBar.hidden = true;
+  }
+}
+
+function renderSearchResults(data) {
+  const counts = data.counts || {};
+  // Only update all pill counts when searching global library ('all') or on initial search
+  if (currentSearchSource === "all" || !window._lastGlobalSearchCounts) {
+    window._lastGlobalSearchCounts = counts;
+    if (els.pillCountAll) els.pillCountAll.textContent = String(counts.all || 0);
+    if (els.pillCountScripture) els.pillCountScripture.textContent = String(counts.scripture || 0);
+    if (els.pillCountTranslations) els.pillCountTranslations.textContent = String(counts.translations || 0);
+    if (els.pillCountOriginal) els.pillCountOriginal.textContent = String(counts.original || 0);
+    if (els.pillCountCommentary) els.pillCountCommentary.textContent = String(counts.commentary || 0);
+    if (els.pillCountCurated) els.pillCountCurated.textContent = String(counts.curated || 0);
+  }
+
+  // Status text
+  const total = data.total_hits || 0;
+  if (els.searchStatusBar && els.searchStatusText) {
+    els.searchStatusBar.hidden = false;
+    els.searchStatusText.textContent = `Showing ${data.results.length} of ${total} result${total === 1 ? "" : "s"} for "${data.query}"`;
+  }
+
+  // Render Query Expansion Banner
+  const exp = data.expansion || {};
+  const hasExpansion = exp && ((exp.strongs && exp.strongs.length > 0) || (exp.lemmas && exp.lemmas.length > 0));
+  if (els.searchExpansionBanner && els.searchExpansionChips) {
+    if (hasExpansion) {
+      els.searchExpansionBanner.hidden = false;
+      if (els.expansionTerm) els.expansionTerm.textContent = `(${exp.term || data.query})`;
+      els.searchExpansionChips.innerHTML = "";
+
+      for (const item of (exp.lemmas || [])) {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "expansion-chip";
+        chip.title = `Search Strong's ${item.strongs} (${item.gloss || item.lemma})`;
+        chip.innerHTML = `
+          <span class="chip-strongs">${escapeHtml(item.strongs)}</span>
+          <span class="chip-lemma">${escapeHtml(item.lemma)}</span>
+          ${item.translit ? `<span class="chip-translit">(${escapeHtml(item.translit)})</span>` : ""}
+          ${item.gloss ? `<span class="chip-gloss">&bull; ${escapeHtml(item.gloss)}</span>` : ""}
+        `;
+        chip.addEventListener("click", () => {
+          runLibrarySearch(item.strongs);
+        });
+        els.searchExpansionChips.appendChild(chip);
+      }
+    } else {
+      els.searchExpansionBanner.hidden = true;
+    }
+  }
+
+  // Render results
+  if (!els.searchResultsList) return;
+  els.searchResultsList.innerHTML = "";
+
+  if (!data.results || data.results.length === 0) {
+    if (els.searchEmptyState) {
+      els.searchEmptyState.hidden = false;
+      if (els.searchEmptyMessage) {
+        els.searchEmptyMessage.textContent = `No matches found for "${data.query}" in ${currentSearchSource === "all" ? "the library" : currentSearchSource}.`;
+      }
+    }
+    return;
+  }
+
+  if (els.searchEmptyState) els.searchEmptyState.hidden = true;
+
+  for (const hit of data.results) {
+    const card = document.createElement("div");
+    card.className = "search-hit-card";
+
+    // Source label mapping
+    const sourceLabels = {
+      scripture: "Scripture (KJV)",
+      translations: hit.metadata && hit.metadata.translation_name ? `Translation (${hit.metadata.translation_name})` : "Translation",
+      original: hit.metadata && hit.metadata.language === "hebrew" ? "Hebrew OT" : "Greek NT",
+      commentary: hit.metadata && hit.metadata.book_code ? `EGW (${hit.metadata.book_code})` : "Commentary",
+      curated: "Curated Study Note",
+    };
+    const srcLabel = sourceLabels[hit.source] || hit.source;
+    const pctScore = Math.round((hit.score || 0.5) * 100);
+
+    const formattedSnippet = formatBiblicalHtml(hit.snippet || "")
+      .replace(/\[b\](.*?)\[\/b\]/gi, '<mark class="search-match">$1</mark>');
+
+    card.innerHTML = `
+      <div class="search-hit-header">
+        <span class="hit-source-badge src-${escapeHtml(hit.source)}">${escapeHtml(srcLabel)}</span>
+        <button type="button" class="hit-title-link">${escapeHtml(hit.title)}</button>
+        <span class="hit-score-badge">${pctScore}% match</span>
+      </div>
+      <div class="search-hit-snippet">${formattedSnippet}</div>
+      <div class="search-hit-footer"></div>
+    `;
+
+    const footer = card.querySelector(".search-hit-footer");
+    const titleBtn = card.querySelector(".hit-title-link");
+
+    // Click handler for hit navigation
+    const openHit = () => {
+      if (hit.source === "scripture" || hit.source === "translations") {
+        const ref = hit.metadata && hit.metadata.osis ? `${hit.metadata.osis}.${hit.metadata.chapter}.${hit.metadata.verse}` : hit.reference;
+        navigate(ref);
+        if (els.readingPane) els.readingPane.focus();
+      } else if (hit.source === "commentary") {
+        if (typeof openCommentaryChapterByToken === "function") {
+          switchTab("commentary");
+          openCommentaryChapterByToken(hit.id || hit.reference);
+        }
+      } else if (hit.source === "original") {
+        runLibrarySearch(hit.id);
+      } else if (hit.source === "curated") {
+        const ref = hit.reference || (hit.metadata && hit.metadata.passage);
+        if (ref) navigate(ref);
+      }
+    };
+
+    if (titleBtn) titleBtn.addEventListener("click", openHit);
+
+    // Contextual action button
+    const actionBtn = document.createElement("button");
+    actionBtn.type = "button";
+    actionBtn.className = "search-hit-action-btn";
+
+    if (hit.source === "scripture" || hit.source === "translations") {
+      actionBtn.textContent = "Open in Scripture";
+      actionBtn.addEventListener("click", openHit);
+      footer.appendChild(actionBtn);
+    } else if (hit.source === "commentary") {
+      actionBtn.textContent = "Open Chapter";
+      actionBtn.addEventListener("click", openHit);
+      footer.appendChild(actionBtn);
+    } else if (hit.source === "original") {
+      actionBtn.textContent = "Word Concordance";
+      actionBtn.addEventListener("click", openHit);
+      footer.appendChild(actionBtn);
+    } else if (hit.source === "curated") {
+      actionBtn.textContent = "View Note";
+      actionBtn.addEventListener("click", openHit);
+      footer.appendChild(actionBtn);
+    }
+
+    els.searchResultsList.appendChild(card);
+  }
+}
+
 initPaneResizer();
 initFocusAndZoomModes();
 initAutoUpdate();
@@ -3239,6 +3567,7 @@ initProphecyWorkstation();
 initSanctuaryWorkstation();
 initCommentaryWorkstation();
 initCrossReferencesWorkstation();
+initSearchWorkstation();
 initBookDropzone();
 let setupCompleted = false;
 try {

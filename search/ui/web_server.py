@@ -223,6 +223,8 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 self._api_xrefs(query)
             elif path == "/api/c4-query":
                 self._api_c4_query(query)
+            elif path == "/api/search":
+                self._api_search(query)
             elif path == "/api/import-books":
                 self._api_import_books_status()
             elif path.startswith("/api/"):
@@ -258,6 +260,7 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "default_theme": "sepia",
                 "themes": themes,
                 "translations_url": "/api/translations",
+                "search_url": "/api/search",
                 "nuance_url": "/api/nuance",
                 "prophetic_url": "/api/prophetic",
                 "sanctuary_url": "/api/sanctuary",
@@ -268,6 +271,55 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "egw_available": has_egw,
                 "egw_stats": egw_stats,
             })
+
+        def _api_search(self, query: dict[str, list[str]]) -> None:
+            raw_q = query.get("q", query.get("query", [""]))[0].strip()
+            if not raw_q:
+                self._reply_json(HTTPStatus.OK, {
+                    "status": "ok",
+                    "query": "",
+                    "is_reference": False,
+                    "reference_target": None,
+                    "expansion": {},
+                    "total_hits": 0,
+                    "counts": {"all": 0, "scripture": 0, "translations": 0, "original": 0, "commentary": 0, "curated": 0},
+                    "results": [],
+                })
+                return
+
+            sources_raw = query.get("sources", query.get("source", ["all"]))[0].strip()
+            sources = [s.strip().lower() for s in sources_raw.split(",") if s.strip()] if sources_raw else ["all"]
+            limit_str = query.get("limit", ["50"])[0].strip()
+            try:
+                limit = max(1, min(200, int(limit_str)))
+            except ValueError:
+                limit = 50
+
+            book = query.get("book", [None])[0]
+            testament = query.get("testament", [None])[0]
+            translation = query.get("translation", [None])[0]
+            strongs = query.get("strongs", [None])[0]
+            domain = query.get("domain", [None])[0]
+            egw_book = query.get("egw_book", query.get("egw", [None]))[0]
+            expand_raw = query.get("expand", ["1"])[0].strip().lower()
+            expand = expand_raw not in ("0", "false", "no")
+
+            try:
+                res = study.search(
+                    query=raw_q,
+                    sources=sources,
+                    limit=limit,
+                    book=book,
+                    testament=testament,
+                    translation=translation,
+                    strongs=strongs,
+                    domain=domain,
+                    egw_book=egw_book,
+                    expand=expand,
+                )
+                self._reply_json(HTTPStatus.OK, {"status": "ok", **_jsonable(res)})
+            except Exception as exc:
+                self._reply_error(HTTPStatus.INTERNAL_SERVER_ERROR, f"search error: {exc}")
 
         def _api_c4_query(self, params: dict[str, list[str]]) -> None:
             # Thin pass-through to search.corpus.query (roadmap C4).

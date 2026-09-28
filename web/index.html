@@ -15,7 +15,7 @@
 
     <form id="ref-form" class="ref-form" role="search" aria-label="Go to a scripture reference">
       <input id="ref-input" type="text" value="Genesis 1:1-3"
-             placeholder="e.g. Genesis 1:1, John 17, Rom 8:28" spellcheck="false">
+             placeholder="Enter passage (e.g. John 3:16) or search library (e.g. covenant, H7225)..." spellcheck="false">
       <div class="ref-actions">
         <button id="prev-btn" type="button" aria-label="Previous passage" title="Previous passage" disabled>&#8592;</button>
         <button id="go-btn" type="submit">Go</button>
@@ -51,6 +51,7 @@
     <aside class="pane pane-side">
       <div class="tab-bar">
         <div class="tab-list" role="tablist" aria-label="Study panels">
+          <button class="tab" role="tab" aria-selected="false" data-tab="search" id="tab-search" aria-controls="panel-search" title="Library Search across Scripture, Translations, Macula, EGW &amp; Notes (double-click to maximize)">Search</button>
           <button class="tab" role="tab" aria-selected="true" data-tab="translations" title="Translations (double-click to maximize)">Translations</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="languages" title="Languages (double-click to maximize)">Languages</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="xrefs" id="tab-xrefs" aria-controls="panel-xrefs" title="Cross References &amp; Treasury of Scripture Knowledge (double-click to maximize)">Cross-Refs</button>
@@ -61,6 +62,119 @@
         </div>
         <button id="exit-zoom-btn" class="tab-exit-zoom" aria-label="Exit full panel view" title="Exit full panel view (Esc / double-click)" hidden>⤢ Exit Full View</button>
       </div>
+
+      <section class="tab-body" id="panel-search" role="tabpanel" aria-labelledby="tab-search" tabindex="-1" hidden>
+        <!-- Search Toolbar -->
+        <div class="search-toolbar">
+          <form id="search-panel-form" class="search-panel-form" role="search">
+            <div class="search-input-wrapper">
+              <span class="search-icon" aria-hidden="true">🔍</span>
+              <input type="search" id="search-panel-input" class="search-panel-input" placeholder="Search scripture, translations, Greek/Hebrew, commentary, or notes..." aria-label="Library search query">
+              <button type="submit" id="search-submit-btn" class="btn btn-primary search-submit-btn">Search</button>
+            </div>
+          </form>
+
+          <!-- Source Filter Pills -->
+          <div class="search-pills-bar" role="group" aria-label="Search source filters">
+            <button type="button" class="search-pill active" data-source="all">All <span class="pill-count" id="pill-count-all">0</span></button>
+            <button type="button" class="search-pill" data-source="scripture">Scripture <span class="pill-count" id="pill-count-scripture">0</span></button>
+            <button type="button" class="search-pill" data-source="translations">Translations <span class="pill-count" id="pill-count-translations">0</span></button>
+            <button type="button" class="search-pill" data-source="original">Original Languages <span class="pill-count" id="pill-count-original">0</span></button>
+            <button type="button" class="search-pill" data-source="commentary">Commentary <span class="pill-count" id="pill-count-commentary">0</span></button>
+            <button type="button" class="search-pill" data-source="curated">Curated <span class="pill-count" id="pill-count-curated">0</span></button>
+
+            <!-- Collapsible Advanced Search Trigger -->
+            <button type="button" id="search-advanced-toggle" class="btn-search-advanced" aria-expanded="false" aria-controls="search-advanced-drawer" title="Toggle fine-grained search filters and syntax cheat sheet">
+              <span>⚙ Filters &amp; Syntax</span>
+              <span class="advanced-arrow" aria-hidden="true">▾</span>
+            </button>
+          </div>
+
+          <!-- Fine-Grained Advanced Search Drawer (Collapsible) -->
+          <div id="search-advanced-drawer" class="search-advanced-drawer" hidden>
+            <div class="advanced-filters-grid">
+              <div class="filter-field">
+                <label for="search-filter-testament">Testament</label>
+                <select id="search-filter-testament" class="search-select">
+                  <option value="">All Testaments</option>
+                  <option value="OT">Old Testament (OT)</option>
+                  <option value="NT">New Testament (NT)</option>
+                </select>
+              </div>
+
+              <div class="filter-field">
+                <label for="search-filter-book">Book</label>
+                <input type="text" id="search-filter-book" class="search-input-sub" placeholder="e.g. Genesis, Rom, Heb">
+              </div>
+
+              <div class="filter-field">
+                <label for="search-filter-translation">Translation</label>
+                <select id="search-filter-translation" class="search-select">
+                  <option value="all">All (KJV, ASV, BSB, YLT)</option>
+                  <option value="kjv">KJV only</option>
+                  <option value="asv">ASV (American Standard)</option>
+                  <option value="bsb">BSB (Berean Standard)</option>
+                  <option value="ylt">YLT (Young's Literal)</option>
+                </select>
+              </div>
+
+              <div class="filter-field">
+                <label for="search-filter-strongs">Strong's / Domain</label>
+                <input type="text" id="search-filter-strongs" class="search-input-sub" placeholder="e.g. H7225, G3056, or 67.65">
+              </div>
+
+              <div class="filter-field">
+                <label for="search-filter-egw">EGW Book</label>
+                <input type="text" id="search-filter-egw" class="search-input-sub" placeholder="e.g. PP, DA, GC, SC">
+              </div>
+
+              <div class="filter-field filter-actions">
+                <button type="button" id="search-apply-filters-btn" class="btn btn-primary btn-sm">Apply Filters</button>
+                <button type="button" id="search-clear-filters-btn" class="btn btn-secondary btn-sm">Reset</button>
+              </div>
+            </div>
+
+            <!-- Syntax Cheat Sheet Tips -->
+            <div class="search-syntax-cheatsheet">
+              <div class="syntax-title">Quick Search Operators:</div>
+              <div class="syntax-tags">
+                <code>"exact phrase"</code>
+                <code>AND</code>
+                <code>OR</code>
+                <code>NOT</code>
+                <code>book:Gen</code>
+                <code>testament:OT</code>
+                <code>translation:asv</code>
+                <code>strong:H7225</code>
+                <code>domain:67.65</code>
+                <code>egw:DA</code>
+              </div>
+            </div>
+          </div>
+
+          <!-- Query Expansion Banner -->
+          <div id="search-expansion-banner" class="search-expansion-banner" hidden>
+            <div class="expansion-header">
+              <span class="expansion-title">Original Roots &amp; Concordance:</span>
+              <span id="expansion-term" class="expansion-term"></span>
+            </div>
+            <div id="search-expansion-chips" class="search-expansion-chips"></div>
+          </div>
+        </div>
+
+        <!-- Search Results List -->
+        <div class="search-results-container" id="search-results-container">
+          <div class="search-status-bar" id="search-status-bar" hidden>
+            <span id="search-status-text" class="search-status-text"></span>
+          </div>
+
+          <div class="search-results-list" id="search-results-list"></div>
+
+          <div class="search-empty-state" id="search-empty-state">
+            <p class="tab-hint" id="search-empty-message">Enter a search term, Strong's number (e.g. H7225), or phrase above to search across Scripture, translations, original Hebrew/Greek, commentary, and curated notes.</p>
+          </div>
+        </div>
+      </section>
 
       <section class="tab-body" id="panel-translations" role="tabpanel" tabindex="-1">
         <p class="tab-hint">Alignments for the passage appear here.</p>

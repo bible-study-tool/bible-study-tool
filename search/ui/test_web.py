@@ -1164,6 +1164,35 @@ class WebServerModuleTests(unittest.TestCase):
         self.assertIn("appendFormattedVerseText(tokSpan, tok.text", js_text)
         self.assertIn("appendFormattedVerseText(textSpan, v.text", js_text)
 
+    def test_search_workstation_ui(self) -> None:
+        """Verifies that the unified search workstation markup, styling, and JS are wired cleanly."""
+        html_text = (get_web_dir() / "index.html").read_text(encoding="utf-8")
+        css_text = (get_web_dir() / "styles.css").read_text(encoding="utf-8")
+        js_text = (get_web_dir() / "app.js").read_text(encoding="utf-8")
+
+        # HTML assertions
+        self.assertIn('data-tab="search"', html_text)
+        self.assertIn('id="tab-search"', html_text)
+        self.assertIn('id="panel-search"', html_text)
+        self.assertIn('id="search-panel-input"', html_text)
+        self.assertIn('class="search-pills-bar"', html_text)
+        self.assertIn('id="search-advanced-toggle"', html_text)
+        self.assertIn('id="search-advanced-drawer"', html_text)
+        self.assertIn('id="search-expansion-banner"', html_text)
+        self.assertIn('id="search-results-list"', html_text)
+
+        # CSS assertions
+        self.assertIn(".search-toolbar", css_text)
+        self.assertIn(".search-pill", css_text)
+        self.assertIn(".search-advanced-drawer", css_text)
+        self.assertIn(".search-hit-card", css_text)
+
+        # JS assertions
+        self.assertIn("initSearchWorkstation()", js_text)
+        self.assertIn("runLibrarySearch(", js_text)
+        self.assertIn("handleOmniboxSubmit(", js_text)
+        self.assertIn("SCRIPTURE_REF_PATTERN", js_text)
+
 
 if __name__ == "__main__":
     unittest.main()
