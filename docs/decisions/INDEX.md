@@ -34,6 +34,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-026](ADR-026-treasury-of-scripture-knowledge-cross-references.md) | Treasury of Scripture Knowledge (TSK) Cross-Reference Integration & Whole-Bible Hyperlinking | Accepted |
 | [ADR-027](ADR-027-content-level-sqlite-integrity.md) | Content-Level Integrity Verification for SQLite Data Bundles (`INTEGRITY.json`, Option B) | Accepted |
 | [ADR-028](ADR-028-tauri-desktop-packaging-and-native-window.md) | Tauri Desktop Packaging and Native Window Architecture (Pillar D/P, WP-038) | Accepted |
+| [ADR-029](ADR-029-zero-pytorch-local-neural-embeddings-and-hybrid-search.md) | Zero-PyTorch Local Neural Embeddings & Hybrid RRF Search (Pillars C1, C2, WP-040) | Accepted |
 
 
 ## When to write one
