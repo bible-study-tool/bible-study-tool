@@ -31,6 +31,13 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
         self.assertTrue(self.main_rs.is_file(), "src/main.rs must exist")
         self.assertTrue(self.build_script.is_file(), "scripts/build_desktop.py must exist")
 
+    def test_binaries_placeholder_exists(self):
+        """Verify placeholder.txt exists so Tauri bundle resource glob matches in dev mode."""
+        placeholder = self.src_tauri / "binaries" / "placeholder.txt"
+        self.assertTrue(placeholder.is_file(), "src-tauri/binaries/placeholder.txt must exist")
+        build_rs = (self.src_tauri / "build.rs").read_text(encoding="utf-8")
+        self.assertIn("placeholder.txt", build_rs, "build.rs must defensively ensure placeholder exists")
+
     def test_tauri_conf_json_validity(self):
         """Verify tauri.conf.json satisfies ADR-024 and ADR-028 requirements."""
         data = json.loads(self.tauri_conf.read_text(encoding="utf-8"))
