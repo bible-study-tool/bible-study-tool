@@ -7,18 +7,39 @@ use std::time::Duration;
 use tauri::Manager;
 
 pub struct EngineState {
-    pub child: Mutex<Option<Child>>,
+    child: Mutex<Option<Child>>,
     pub port: u16,
 }
 
 impl EngineState {
-    pub fn stop(&self) {
-        if let Ok(mut lock) = self.child.lock() {
-            if let Some(mut child) = lock.take() {
-                let _ = child.kill();
-                let _ = child.wait();
-            }
+    pub fn new(port: u16) -> Self {
+        Self {
+            child: Mutex::new(None),
+            port,
         }
+    }
+
+    pub fn set_child(&self, child: Child) {
+        let mut lock = self.child.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(mut old) = lock.take() {
+            let _ = old.kill();
+            let _ = old.wait();
+        }
+        *lock = Some(child);
+    }
+
+    pub fn stop(&self) {
+        let mut lock = self.child.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(mut child) = lock.take() {
+            let _ = child.kill();
+            let _ = child.wait();
+        }
+    }
+}
+
+impl Drop for EngineState {
+    fn drop(&mut self) {
+        self.stop();
     }
 }
 
@@ -131,10 +152,7 @@ pub fn run() {
     let port = find_available_port();
 
     tauri::Builder::default()
-        .manage(EngineState {
-            child: Mutex::new(None),
-            port,
-        })
+        .manage(EngineState::new(port))
         .setup(move |app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -167,10 +185,7 @@ pub fn run() {
 
                 match cmd.spawn() {
                     Ok(child) => {
-                        let state = app.state::<EngineState>();
-                        if let Ok(mut lock) = state.child.lock() {
-                            *lock = Some(child);
-                        }
+                        app.state::<EngineState>().set_child(child);
                     }
                     Err(e) => {
                         log::error!("Failed to spawn engine sidecar: {:?}", e);

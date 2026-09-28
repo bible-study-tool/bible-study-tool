@@ -108,7 +108,11 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
         self.assertIn("CREATE_NO_WINDOW", code)
         self.assertIn("current_dir", code)
         self.assertIn("Stdio::null", code)
+        self.assertIn("pub fn new(", code)
+        self.assertIn("pub fn set_child(", code)
         self.assertIn("pub fn stop(", code)
+        self.assertIn("impl Drop for EngineState", code)
+        self.assertIn("into_inner()", code)
         self.assertIn("child.kill()", code)
 
     def test_web_app_js_supports_dynamic_api_base(self):
