@@ -86,6 +86,44 @@ def clean_verse_text(raw: str) -> str:
     return _WS_RE.sub(" ", text).strip()
 
 
+_FTS_OPERATORS = {"AND", "OR", "NOT"}
+
+
+def prepare_fts_query(query: str) -> str:
+    """Format and sanitize a free-text search string for SQLite FTS5.
+
+    Supports:
+    - Exact quoted phrases: '"in the beginning"' -> '"in the beginning"'
+    - Boolean operators: AND, OR, NOT
+    - Plain keywords: sanitized and quoted to avoid FTS syntax errors
+    """
+    clean_q = query.strip()
+    if not clean_q:
+        return ""
+
+    tokens: list[str] = []
+    raw_tokens = re.findall(r'"([^"]*)"|(\S+)', clean_q)
+    for phrase, word in raw_tokens:
+        if phrase:
+            clean_phrase = re.sub(r'[^\w\s]', ' ', phrase).strip()
+            if clean_phrase:
+                tokens.append(f'"{clean_phrase}"')
+        elif word:
+            if word in _FTS_OPERATORS:
+                if tokens and tokens[-1] not in _FTS_OPERATORS:
+                    tokens.append(word)
+            else:
+                for clean_word in re.sub(r'[^\w]', ' ', word).split():
+                    tokens.append(f'"{clean_word}"')
+
+    while tokens and tokens[-1] in _FTS_OPERATORS:
+        tokens.pop()
+    while tokens and tokens[0] in _FTS_OPERATORS:
+        tokens.pop(0)
+
+    return " ".join(tokens)
+
+
 def extract_tokens(raw: str) -> list[WordToken]:
     """Extract word tokens and Strong's markup from a raw KJV-osis verse."""
     tokens: list[WordToken] = []
@@ -185,7 +223,9 @@ CREATE INDEX IF NOT EXISTS idx_xrefs_from ON cross_references(from_verse, votes 
 CREATE INDEX IF NOT EXISTS idx_xrefs_to ON cross_references(to_verse);
 """
 
-_FTS_SCHEMA = """
+DEFAULT_PARALLEL_TRANSLATIONS = ("asv", "bsb", "ylt")
+
+_KJV_FTS_SCHEMA = """
 CREATE VIRTUAL TABLE IF NOT EXISTS bible_fts USING fts5(
     id UNINDEXED,
     osis UNINDEXED,
@@ -211,6 +251,38 @@ CREATE TRIGGER IF NOT EXISTS verses_au AFTER UPDATE ON verses BEGIN
     VALUES (new.rowid, new.id, new.osis, new.clean_text);
 END;
 """
+
+_TRANSLATIONS_FTS_SCHEMA = """
+CREATE VIRTUAL TABLE IF NOT EXISTS translations_fts USING fts5(
+    translation_id UNINDEXED,
+    verse_id UNINDEXED,
+    osis UNINDEXED,
+    chapter UNINDEXED,
+    verse UNINDEXED,
+    text,
+    content='translation_verses',
+    content_rowid='rowid'
+);
+
+CREATE TRIGGER IF NOT EXISTS translation_verses_ai AFTER INSERT ON translation_verses BEGIN
+    INSERT INTO translations_fts(rowid, translation_id, verse_id, osis, chapter, verse, text)
+    VALUES (new.rowid, new.translation_id, new.verse_id, new.osis, new.chapter, new.verse, new.text);
+END;
+
+CREATE TRIGGER IF NOT EXISTS translation_verses_ad AFTER DELETE ON translation_verses BEGIN
+    INSERT INTO translations_fts(translations_fts, rowid, translation_id, verse_id, osis, chapter, verse, text)
+    VALUES ('delete', old.rowid, old.translation_id, old.verse_id, old.osis, old.chapter, old.verse, old.text);
+END;
+
+CREATE TRIGGER IF NOT EXISTS translation_verses_au AFTER UPDATE ON translation_verses BEGIN
+    INSERT INTO translations_fts(translations_fts, rowid, translation_id, verse_id, osis, chapter, verse, text)
+    VALUES ('delete', old.rowid, old.translation_id, old.verse_id, old.osis, old.chapter, old.verse, old.text);
+    INSERT INTO translations_fts(rowid, translation_id, verse_id, osis, chapter, verse, text)
+    VALUES (new.rowid, new.translation_id, new.verse_id, new.osis, new.chapter, new.verse, new.text);
+END;
+"""
+
+_FTS_SCHEMA = _KJV_FTS_SCHEMA + _TRANSLATIONS_FTS_SCHEMA
 
 
 class BibleDB:
@@ -383,48 +455,174 @@ class BibleDB:
 
         return [self._format_verse_row(r) for r in cur.fetchall()]
 
+    def _has_translations_fts(self) -> bool:
+        """Check if translations_fts virtual table exists in the database."""
+        if getattr(self, "_has_trans_fts_cached", None) is not None:
+            return self._has_trans_fts_cached
+        if not self.exists():
+            return False
+        try:
+            cur = self.readonly_conn.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='translations_fts';"
+            )
+            self._has_trans_fts_cached = cur.fetchone() is not None
+        except sqlite3.OperationalError:
+            self._has_trans_fts_cached = False
+        return self._has_trans_fts_cached
+
+    def ensure_translations_fts(self) -> None:
+        """Ensure translations_fts virtual table and triggers exist and are populated.
+
+        Enables whole-Bible full-text search across ASV, BSB, and YLT parallel translations
+        using SQLite FTS5 BM25 ranking without invalidating canonical checksums (ADR-027).
+        """
+        if not self.exists() or self._has_translations_fts():
+            return
+        with self.conn:
+            self.conn.executescript(_TRANSLATIONS_FTS_SCHEMA)
+            self.conn.execute("INSERT INTO translations_fts(translations_fts) VALUES('rebuild');")
+        self._has_trans_fts_cached = True
+        self._checkpoint()
+
+    def _execute_fts_search(
+        self, sql: str, params: list[Any], raw_query: str
+    ) -> list[dict[str, Any]]:
+        """Execute an FTS search with automatic safe fallback on syntax failure."""
+        try:
+            cur = self.readonly_conn.execute(sql, params)
+            return [self._format_verse_row(r) for r in cur.fetchall()]
+        except sqlite3.OperationalError:
+            safe_words = re.sub(r'[^\w\s]', ' ', raw_query).split()
+            safe_term = " ".join(f'"{w}"' for w in safe_words)
+            if not safe_term:
+                return []
+            retry_params = [safe_term] + params[1:]
+            try:
+                cur = self.readonly_conn.execute(sql, retry_params)
+                return [self._format_verse_row(r) for r in cur.fetchall()]
+            except sqlite3.OperationalError:
+                return []
+
     def search(
         self,
         query: str,
         limit: int = 50,
         book: Optional[str] = None,
         testament: Optional[str] = None,
+        translation: Optional[str | list[str]] = None,
     ) -> list[dict[str, Any]]:
-        """Full-text search across whole-Bible verses using BM25 ranking."""
+        """Full-text search across whole-Bible verses using BM25 ranking.
+
+        Supports:
+        - Free text terms, exact quoted phrases (e.g. '"holy place"'), and boolean operators.
+        - Scoping by book (e.g. 'Gen' or 'Revelation') and testament ('OT' or 'NT').
+        - Translation scoping:
+          * None or 'kjv': KJV verses from bible_fts (with tokens and Strong's).
+          * 'all': Both KJV and parallel translations (ASV, BSB, YLT) merged by BM25 rank.
+          * 'asv', 'bsb', 'ylt', or a list of translation IDs: target translation(s).
+        """
         if not self.exists() or not query.strip():
             return []
 
-        # Sanitize FTS query
-        clean_q = re.sub(r'[^\w\s]', ' ', query).strip()
-        if not clean_q:
+        fts_term = prepare_fts_query(query)
+        if not fts_term:
             return []
-        fts_term = " ".join(f'"{word}"' for word in clean_q.split())
 
-        sql = """
-        SELECT v.*, b.name as book_name, b.testament, bm25(bible_fts) as rank
-        FROM bible_fts f
-        JOIN verses v ON f.rowid = v.rowid
-        JOIN books b ON v.osis = b.osis
-        WHERE bible_fts MATCH ?
-        """
-        params: list[Any] = [fts_term]
+        search_kjv = False
+        trans_targets: list[str] = []
 
+        if translation is None:
+            search_kjv = True
+        elif isinstance(translation, str):
+            t_lower = translation.strip().lower()
+            if t_lower == "all":
+                search_kjv = True
+                trans_targets = list(DEFAULT_PARALLEL_TRANSLATIONS)
+            elif t_lower == "kjv":
+                search_kjv = True
+            else:
+                trans_targets = [t_lower]
+        elif isinstance(translation, (list, tuple, set)):
+            targets = {str(t).strip().lower() for t in translation}
+            if "all" in targets:
+                search_kjv = True
+                trans_targets = list(DEFAULT_PARALLEL_TRANSLATIONS)
+            else:
+                if "kjv" in targets:
+                    search_kjv = True
+                trans_targets = sorted(t for t in targets if t != "kjv")
+
+        book_osis: Optional[str] = None
         if book:
-            osis = resolve_book_code(book)
-            sql += " AND v.osis = ?"
-            params.append(osis)
-        elif testament:
-            t_clean = testament.strip().upper()
-            if t_clean not in ("OT", "NT"):
+            book_osis = resolve_book_code(book)
+
+        clean_testament: Optional[str] = None
+        if testament:
+            clean_testament = testament.strip().upper()
+            if clean_testament not in ("OT", "NT"):
                 raise ValueError(f"Invalid testament '{testament}'. Expected 'OT' or 'NT'.")
-            sql += " AND b.testament = ?"
-            params.append(t_clean)
 
-        sql += " ORDER BY rank ASC LIMIT ?;"
-        params.append(limit)
+        results: list[dict[str, Any]] = []
 
-        cur = self.readonly_conn.execute(sql, params)
-        return [self._format_verse_row(r) for r in cur.fetchall()]
+        # 1. Search KJV in bible_fts if requested
+        if search_kjv:
+            sql_kjv = """
+            SELECT v.*, b.name as book_name, b.testament, bm25(bible_fts) as rank
+            FROM bible_fts f
+            JOIN verses v ON f.rowid = v.rowid
+            JOIN books b ON v.osis = b.osis
+            WHERE bible_fts MATCH ?
+            """
+            params_kjv: list[Any] = [fts_term]
+            if book_osis:
+                sql_kjv += " AND v.osis = ?"
+                params_kjv.append(book_osis)
+            elif clean_testament:
+                sql_kjv += " AND b.testament = ?"
+                params_kjv.append(clean_testament)
+
+            sql_kjv += " ORDER BY rank ASC LIMIT ?;"
+            params_kjv.append(limit)
+            results.extend(self._execute_fts_search(sql_kjv, params_kjv, query))
+
+        # 2. Search parallel translations if requested and translations_fts is available
+        if trans_targets and self._has_translations_fts():
+            placeholders = ",".join("?" for _ in trans_targets)
+            sql_trans = f"""
+            SELECT
+                tv.verse_id as id,
+                tv.osis,
+                b.name as book_name,
+                b.testament,
+                tv.chapter,
+                tv.verse,
+                tv.text,
+                tv.text as clean_text,
+                tv.translation_id,
+                t.name as translation_name,
+                bm25(translations_fts) as rank
+            FROM translations_fts f
+            JOIN translation_verses tv ON f.rowid = tv.rowid
+            JOIN books b ON tv.osis = b.osis
+            JOIN translations t ON tv.translation_id = t.id
+            WHERE translations_fts MATCH ?
+              AND tv.translation_id IN ({placeholders})
+            """
+            params_trans: list[Any] = [fts_term] + trans_targets
+            if book_osis:
+                sql_trans += " AND tv.osis = ?"
+                params_trans.append(book_osis)
+            elif clean_testament:
+                sql_trans += " AND b.testament = ?"
+                params_trans.append(clean_testament)
+
+            sql_trans += " ORDER BY rank ASC LIMIT ?;"
+            params_trans.append(limit)
+            results.extend(self._execute_fts_search(sql_trans, params_trans, query))
+
+        if len(results) > 1:
+            results.sort(key=lambda r: r.get("rank", 0.0))
+        return results[:limit]
 
     def find_by_strongs(self, strongs_code: str, limit: int = 50) -> list[dict[str, Any]]:
         """Find verses containing a specific Hebrew or Greek Strong's code."""
@@ -768,6 +966,19 @@ class BibleDB:
 
     @staticmethod
     def _format_verse_row(row: sqlite3.Row) -> dict[str, Any]:
+        keys = set(row.keys())
+        strongs = []
+        if "strongs_json" in keys and row["strongs_json"]:
+            try:
+                strongs = json.loads(row["strongs_json"])
+            except (json.JSONDecodeError, TypeError):
+                strongs = []
+        tokens = []
+        if "tokens_json" in keys and row["tokens_json"]:
+            try:
+                tokens = json.loads(row["tokens_json"])
+            except (json.JSONDecodeError, TypeError):
+                tokens = []
         result = {
             "id": row["id"],
             "osis": row["osis"],
@@ -777,10 +988,12 @@ class BibleDB:
             "verse": row["verse"],
             "text": row["text"],
             "clean_text": row["clean_text"],
-            "strongs": json.loads(row["strongs_json"]),
-            "tokens": json.loads(row["tokens_json"]),
+            "strongs": strongs,
+            "tokens": tokens,
+            "translation_id": row["translation_id"] if "translation_id" in keys else "kjv",
+            "translation_name": row["translation_name"] if "translation_name" in keys else "King James Version",
         }
-        if "rank" in row.keys():
+        if "rank" in keys:
             result["rank"] = row["rank"]
         return result
 

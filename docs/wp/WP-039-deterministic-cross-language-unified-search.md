@@ -19,7 +19,7 @@ Unify all textual and linguistic databases in the Adventist Bible Study Tool und
 - `docs/decisions/ADR-027-sqlite-storage-and-single-file-verification.md` (FTS virtual table exclusion from checksums)
 
 ## Tasks
-- [ ] Task 1: Multi-Translation SQLite FTS indexing in `search/corpus/extract_kjv.py` (`ensure_translations_fts()`, multi-translation `search()`) + unit tests in `search/corpus/test_translations_fts.py`.
+- [x] Task 1: Multi-Translation SQLite FTS indexing in `search/corpus/extract_kjv.py` (`ensure_translations_fts()`, multi-translation `search()`) + unit tests in `search/corpus/test_translations_fts.py`.
 - [ ] Task 2: Macula Lexical & Semantic Search Engine in `search/macula/search.py` (Strong's lookup, Greek/Hebrew lemma and gloss matching, transliteration, Louw-Nida & SDBH domain search) + unit tests in `search/macula/test_search.py`.
 - [ ] Task 3: Deterministic Query Expansion Bridge & Advanced Syntax Parser in `search/corpus/search_bridge.py` (`DeterministicSearchBridge`, query classifier, lexical expansion, operator parsing for `book:`, `testament:`, `translation:`, `strong:`, `domain:`, `egw:`, exact `"quotes"`, boolean logic, BM25 score normalization) + unit tests in `search/corpus/test_search_bridge.py`.
 - [ ] Task 4: REST API & Study Service integration in `search/ui/study_service.py` and `search/ui/web_server.py` (`/api/search` endpoint with query, expansion, categorized counts, facets) + unit tests in `search/ui/test_search_api.py`.

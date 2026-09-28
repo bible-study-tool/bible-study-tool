@@ -93,6 +93,8 @@ def ingest_translations(
             results[key] = count
             print(f"Ingested {meta['name']} ({key.upper()}): {count:,} verses in {elapsed:.2f}s")
 
+        db.ensure_translations_fts()
+
     return results
 
 
