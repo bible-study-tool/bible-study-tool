@@ -20,7 +20,7 @@ Unify all textual and linguistic databases in the Adventist Bible Study Tool und
 
 ## Tasks
 - [x] Task 1: Multi-Translation SQLite FTS indexing in `search/corpus/extract_kjv.py` (`ensure_translations_fts()`, multi-translation `search()`) + unit tests in `search/corpus/test_translations_fts.py`.
-- [ ] Task 2: Macula Lexical & Semantic Search Engine in `search/macula/search.py` (Strong's lookup, Greek/Hebrew lemma and gloss matching, transliteration, Louw-Nida & SDBH domain search) + unit tests in `search/macula/test_search.py`.
+- [x] Task 2: Macula Lexical & Semantic Search Engine in `search/macula/search.py` (Strong's lookup, Greek/Hebrew lemma and gloss matching, transliteration, Louw-Nida & SDBH domain search) + unit tests in `search/macula/test_search.py`.
 - [ ] Task 3: Deterministic Query Expansion Bridge & Advanced Syntax Parser in `search/corpus/search_bridge.py` (`DeterministicSearchBridge`, query classifier, lexical expansion, operator parsing for `book:`, `testament:`, `translation:`, `strong:`, `domain:`, `egw:`, exact `"quotes"`, boolean logic, BM25 score normalization) + unit tests in `search/corpus/test_search_bridge.py`.
 - [ ] Task 4: REST API & Study Service integration in `search/ui/study_service.py` and `search/ui/web_server.py` (`/api/search` endpoint with query, expansion, categorized counts, facets) + unit tests in `search/ui/test_search_api.py`.
 - [ ] Task 5: Web & Desktop Workstation UI in `web/index.html`, `web/app.js`, `web/styles.css`:
@@ -42,7 +42,7 @@ Unify all textual and linguistic databases in the Adventist Bible Study Tool und
 
 ## Acceptance criteria
 - [ ] `ensure_translations_fts()` creates and indexes ASV, BSB, and YLT verses without affecting canonical integrity.
-- [ ] Macula search resolves Strong's codes (`H7225`, `G2424`), lemmas, transliterations, and semantic domains.
+- [x] Macula search resolves Strong's codes (`H7225`, `G2424`), lemmas, transliterations, and semantic domains.
 - [ ] Query expansion bridge links English terms (e.g. `covenant`, `sanctuary`) to Strong's codes and Greek/Hebrew lemmas.
 - [ ] Advanced syntax (`book:`, `testament:`, `translation:`, `strong:`, `domain:`, `egw:`, `"quotes"`) properly filters results.
 - [ ] Top omnibox routes valid references to Scripture view and search queries to the Search tab.
