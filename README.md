@@ -47,8 +47,14 @@ An interactive, zero-cloud biblical research workstation that brings original Bi
    - Maps apostolic argumentation through **Pauline Argument Flow** (`⟨Premise: γάρ⟩`, `⟨Therefore: οὖν⟩`, `⟨Purpose: ἵνα⟩`, `⟨Contrast: ἀλλά⟩`).
    - One-key jump (`o`) linking New Testament quotations directly to their Old Testament Hebrew and Septuagint (LXX) source passages.
 
-2. **Deterministic Cross-Language Unified Search (WP-039)**:
+2. **Unified & Hybrid Semantic Search Engine ([WP-039](docs/wp/WP-039-deterministic-cross-language-unified-search.md), [WP-040](docs/wp/WP-040-neural-embeddings-and-hybrid-search.md), [ADR-029](docs/decisions/ADR-029-zero-pytorch-local-neural-embeddings-and-hybrid-search.md)):**
    - Sub-millisecond, multi-database search across **all 31,102 verses** (KJV), parallel translations (ASV, BSB, YLT), Macula Hebrew & Greek morphology (815,000+ linguistic tokens), Ellen G. White commentary, and curated study notes.
+   - **Tri-Brid Reciprocal Rank Fusion (RRF)**: Seamlessly blends SQLite FTS5 BM25 text rank, local dense vector cosine similarity, and Treasury of Scripture Knowledge (TSK) cross-reference graph into a single unified relevance score.
+   - **Three Transparent Search Modes**:
+     - `✦ Hybrid` *(Default)*: Blends direct keyword matches, semantic thematic parallels, and cross-references.
+     - `Aa Keyword`: 100% deterministic SQLite FTS5 BM25 exact phrase and keyword search.
+     - `☵ Thematic`: Pure local vector cosine similarity across 384-dimensional embeddings for conceptual discovery (e.g. *suffering servant*, *messianic sacrifice*, *covenant faithfulness*).
+   - **Zero Cloud / Zero Generative Hallucinations**: Runs 100% offline on standard CPU via quantized ONNX (`multilingual-e5-small`). It is pure mathematical vector geometry over pinned Scripture, with zero generative AI chatbots, zero synthetic text fabrication, and zero telemetry.
    - **Bidirectional Query Expansion**: Searching English concepts (e.g. *covenant*, *sanctuary*, *atonement*) automatically discovers underlying Hebrew (*bərît* H1285) and Greek (*diathēkē* G1242) roots and semantic domains.
    - **Smart Omnibox Routing**: Entering a scripture reference (e.g. `John 3:16`, `Gen 1:1-3`) navigates the Scripture reading pane; keywords or Strong's codes auto-route to the Search workstation.
    - **Fine-Grained Filter Operators**: Search with `book:genesis`, `translation:bsb`, `strong:H7225`, `domain:sanctuary`, `egw:GC`, exact quotes (`"faith without works"`), or boolean operators (`AND`, `OR`, `NOT`).
@@ -170,23 +176,27 @@ python scripts/study.py shell
 
 ### 4. Full Verification Suite
 
-The repository enforces strict data integrity via 5 automated validators and full test coverage:
+The repository enforces strict data integrity via 6 automated validators (F1–F6) and full test coverage:
 
 ```bash
 bash scripts/verify_all.sh
 ```
-*(Runs 907 unit and integration tests, F1–F6 schema/integrity validators, and raw source cryptographic checksum gates.)*
+*(Runs 925 unit and integration tests, F1–F6 schema/integrity validators, and raw source cryptographic checksum gates.)*
 
 ---
 
 ## Architectural Principles & Integrity
 
-1. **Deterministic Core is the Source of Truth**:
-   The core is 100% deterministic and runs entirely offline. AI is strictly an optional research assistant; any AI-suggested semantic links are placed in a provisional review queue and gated behind human review before entering the knowledge base ([correlations/DETERMINISTIC_VS_AI.md](correlations/DETERMINISTIC_VS_AI.md)).
-2. **Offline-First & Zero Telemetry**:
-   All Scripture databases, lexicons, syntax trees, and commentary indexes reside locally on your machine. No telemetry, no usage tracking, no remote logging ([ADR-023](docs/decisions/ADR-023-zero-python-distribution-and-packaging.md)).
-3. **Cryptographic Data Integrity (ADR-027)**:
-   All SQLite databases (`bible.db`, `macula.db`, `egw.db`) are validated with canonical content-level SHA-256 projections (`data/INTEGRITY.json`) so they remain reproducible across different platforms, compilers, and architectures.
+1. **Deterministic Core as the Source of Truth**:
+   The primary knowledge base (Scripture text, parallel translations, Greek/Hebrew syntax trees, morphology, lexicons, cross-reference ledgers) is 100% deterministic, human-curated, and verified by cryptographic SHA-256 checksums. No AI or LLM has written, edited, or hallucinated any verse or note in the core ([correlations/DETERMINISTIC_VS_AI.md](correlations/DETERMINISTIC_VS_AI.md)).
+2. **Local Mathematical Vector Retrieval (Zero Cloud / Zero Generative AI)**:
+   The search engine provides dense neural embeddings running entirely offline on your CPU via quantized ONNX (`multilingual-e5-small`). It computes mathematical cosine similarity to surface thematic and conceptual parallels across passages, without calling external APIs or generating synthetic text. Users have full control to toggle between `✦ Hybrid`, `Aa Keyword` (pure deterministic BM25), and `☵ Thematic` modes at any time.
+3. **Offline-First & Zero Telemetry**:
+   All Scripture databases, lexicons, syntax trees, vectors, and commentary indexes reside locally on your machine. No telemetry, no usage tracking, no remote logging ([ADR-023](docs/decisions/ADR-023-zero-python-distribution-and-packaging.md)).
+4. **Lightweight Distribution & On-Demand Library Indexing**:
+   To keep desktop installer payloads lean and avoid multi-gigabyte PyTorch/model bloat, only the pre-computed Bible vector database is bundled (`data/embeddings.db`, 61.4 MB). Users who ingest external study materials (Spirit of Prophecy, personal study notes) can vectorize their library locally directly on-device in the background.
+5. **Cryptographic Data Integrity ([ADR-027](docs/decisions/ADR-027-content-level-sqlite-integrity.md))**:
+   All canonical SQLite databases (`bible.db`, `macula.db`) are validated with content-level SHA-256 projections (`data/INTEGRITY.json`) so they remain reproducible across different platforms, compilers, and architectures.
 
 ---
 
@@ -221,8 +231,8 @@ We strictly follow the architectural policy: **"Link out, don't redistribute"** 
 | [Visual Tour](docs/VISUAL_TOUR.md) | High-resolution screenshots of the workstation in everyday use |
 | [User & Study Guide](docs/USER_GUIDE.md) | Practical study walkthroughs, features, and keyboard shortcuts |
 | [How to Study the Bible](docs/HOW_TO_STUDY_THE_BIBLE.md) | Inductive Bible study methods, word studies, and sanctuary typology |
-| [Architecture Decisions (ADRs)](docs/decisions/INDEX.md) | 28 formal architecture decision records (ADR-001 through ADR-028) |
-| [Work Packages (WPs)](docs/wp/INDEX.md) | Tracked engineering milestones and delivered work packages (WP-001..039) |
+| [Architecture Decisions (ADRs)](docs/decisions/INDEX.md) | 29 formal architecture decision records (ADR-001 through ADR-029) |
+| [Work Packages (WPs)](docs/wp/INDEX.md) | Tracked engineering milestones and delivered work packages (WP-001..040) |
 | [Workflow & Engineering Guide](docs/WORKFLOW.md) | Engineering workflow, subagent reviews, and verification standards |
 | [Tag Taxonomy](tags/taxonomy.json) | Controlled vocabulary for books, themes, and relationship types |
 | [Roadmap](ROADMAP.md) | Living goal inventory, current progress, and sequenced milestones |
