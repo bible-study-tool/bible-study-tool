@@ -16,6 +16,7 @@ import sys
 import textwrap
 from typing import Any
 
+from search.corpus import clean_token_text
 from search.corpus.bible_books import BIBLE_BOOKS, CANONICAL_OSIS_ORDER
 from search.ui.formatting import strip_ansi
 from search.ui.study_service import PassageStudy, StudyService, VerseStudy, WordStudyResult
@@ -378,11 +379,11 @@ class BibleStudyTUI:
 
             pin_marker = "*" if is_pinned else " "
             prefix = f"{v.verse:>3}{pin_marker} "
-            v_text = v.text
+            v_text = clean_token_text(v.text)
             if self.show_strongs:
                 tokens_str = []
                 for tok in v.tokens:
-                    t_text = tok.get("text", "")
+                    t_text = clean_token_text(tok.get("text", ""))
                     s_codes = tok.get("strongs", [])
                     if s_codes:
                         tokens_str.append(f"{t_text}[{','.join(s_codes)}]")

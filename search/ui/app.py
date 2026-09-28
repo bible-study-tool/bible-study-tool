@@ -28,6 +28,7 @@ from textual.widgets import (
     TabPane,
 )
 
+from search.corpus import clean_token_text
 from search.corpus.discourse_flow import (
     DISCOURSE_CATEGORY_COLORS,
     DiscourseCategory,
@@ -97,7 +98,7 @@ class VerseWidget(Static):
         if self.show_strongs and self.verse.tokens:
             token_parts = []
             for tok in self.verse.tokens:
-                t_word = escape(tok.get("text", ""))
+                t_word = escape(clean_token_text(tok.get("text", "")))
                 s_codes = tok.get("strongs", [])
                 if s_codes:
                     token_parts.append(f"{t_word}[green]\\[{','.join(s_codes)}][/green]")
@@ -105,7 +106,7 @@ class VerseWidget(Static):
                     token_parts.append(t_word)
             text = " ".join(token_parts)
         else:
-            text = escape(self.verse.text)
+            text = escape(clean_token_text(self.verse.text))
 
         lines = [f"{num_str}{badge_str}{citation_badge}{text}"]
 
@@ -745,7 +746,7 @@ class BibleStudyApp(App):
         # Build Strong's to KJV word(s) mapping from verse tokens
         s_to_kjv: dict[str, list[str]] = {}
         for tok in v.tokens:
-            t_text = tok.get("text", "").strip()
+            t_text = clean_token_text(tok.get("text", "")).strip()
             for sc in tok.get("strongs", []):
                 norm_sc = sc.upper()
                 canon_sc = norm_sc[0] + norm_sc[1:].lstrip("0") if len(norm_sc) > 1 else norm_sc

@@ -591,7 +591,25 @@ class StudyCLITests(unittest.TestCase):
         self.assertEqual(res["id"], "PP.44.1")
         self.assertIn("Genesis", res["text"])
 
+    def test_divine_name_rendering_in_terminal(self):
+        """Verify Exodus 6:1-2 renders uppercase LORD without raw XML tags in terminal interfaces."""
+        from search.corpus import clean_token_text
+
+        service = StudyService()
+        ps = service.get_passage_study("Exod 6:1-2")
+        self.assertEqual(len(ps.verses), 2)
+        v1 = ps.verses[0]
+        # In raw tokens, divineName tag is preserved for frontend typography
+        tok_texts = [t.get("text", "") for t in v1.tokens]
+        self.assertTrue(any("divineName" in t for t in tok_texts))
+
+        # In clean_token_text, it is formatted to uppercase LORD for terminal display
+        cleaned = [clean_token_text(t) for t in tok_texts]
+        self.assertTrue(any("LORD" in t for t in cleaned))
+        self.assertFalse(any("<" in t for t in cleaned))
+
 
 if __name__ == "__main__":
     unittest.main()
+
 

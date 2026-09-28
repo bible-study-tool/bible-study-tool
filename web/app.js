@@ -208,6 +208,76 @@ async function api(path) {
 
 /* ---- rendering ---- */
 
+/* ---- biblical typography & markup helpers ---- */
+
+function formatDivineName(rawName) {
+  if (!rawName) return "";
+  // Capitalize initial letter, lowercase the rest so font-variant: small-caps
+  // renders initial letter at full cap-height and the rest in small-caps (e.g. Lord, God, Lord's).
+  return rawName.charAt(0).toUpperCase() + rawName.slice(1).toLowerCase();
+}
+
+function stripBiblicalMarkup(text) {
+  if (!text || !text.includes("<")) return text || "";
+  return text.replace(/<divineName>(.*?)<\/divineName>/gi, (_m, p1) => p1.toUpperCase())
+             .replace(/<[^>]+>/g, "");
+}
+
+function appendFormattedVerseText(container, text) {
+  if (!text) return;
+  if (!text.includes("<")) {
+    container.appendChild(document.createTextNode(text));
+    return;
+  }
+  const regex = /<divineName>(.*?)<\/divineName>|<(?:supplied|transChange[^>]*)>(.*?)<\/(?:supplied|transChange)>|<[^>]+>/gi;
+  let lastIndex = 0;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      container.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+    }
+    if (match[1] !== undefined) {
+      const span = document.createElement("span");
+      span.className = "divine-name";
+      span.textContent = formatDivineName(match[1]);
+      container.appendChild(span);
+    } else if (match[2] !== undefined) {
+      const span = document.createElement("span");
+      span.className = "supplied-word";
+      span.textContent = match[2];
+      container.appendChild(span);
+    }
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    container.appendChild(document.createTextNode(text.slice(lastIndex)));
+  }
+}
+
+function formatBiblicalHtml(text) {
+  if (!text) return "";
+  if (!text.includes("<")) return escapeHtml(text);
+  const regex = /<divineName>(.*?)<\/divineName>|<(?:supplied|transChange[^>]*)>(.*?)<\/(?:supplied|transChange)>|<[^>]+>/gi;
+  let lastIndex = 0;
+  let match;
+  let out = "";
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      out += escapeHtml(text.slice(lastIndex, match.index));
+    }
+    if (match[1] !== undefined) {
+      out += `<span class="divine-name">${escapeHtml(formatDivineName(match[1]))}</span>`;
+    } else if (match[2] !== undefined) {
+      out += `<span class="supplied-word">${escapeHtml(match[2])}</span>`;
+    }
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    out += escapeHtml(text.slice(lastIndex));
+  }
+  return out;
+}
+
 function createRefChip(ref, className = "prophecy-ref-link") {
   const link = document.createElement("button");
   link.type = "button";
@@ -402,7 +472,7 @@ function renderVerse(v) {
     v.tokens.forEach((tok, tIdx) => {
       const tokSpan = document.createElement("span");
       tokSpan.className = "token-wrap";
-      tokSpan.appendChild(document.createTextNode(tok.text || ""));
+      appendFormattedVerseText(tokSpan, tok.text || "");
       if (tok.strongs && tok.strongs.length > 0) {
         for (const s of tok.strongs) {
           tokSpan.appendChild(document.createTextNode(" "));
@@ -415,7 +485,7 @@ function renderVerse(v) {
       textSpan.appendChild(tokSpan);
     });
   } else {
-    textSpan.textContent = v.text;
+    appendFormattedVerseText(textSpan, v.text || "");
     if (v.strongs_list && v.strongs_list.length) {
       for (const s of v.strongs_list) {
         textSpan.appendChild(document.createTextNode(" "));
@@ -583,18 +653,20 @@ function renderTranslations(pass) {
     const lines = extra.map(([t, text]) => `
       <div class="translation-row">
         <span class="translation-badge">[${escapeHtml(t.toUpperCase())}]</span>
-        <span class="translation-text">${escapeHtml(text)}</span>
+        <span class="translation-text">${formatBiblicalHtml(text)}</span>
       </div>
     `).join("");
 
     // First verse defaults to open; subsequent verses default to collapsed per progressive disclosure
     const isOpen = idx === 0 ? "open" : "";
+    const cleanSnippet = stripBiblicalMarkup(v.text || "");
+    const snippetText = cleanSnippet.slice(0, 50) + (cleanSnippet.length > 50 ? "…" : "");
     return `
       <details class="disclosure-card translation-card" ${isOpen}>
         <summary class="disclosure-summary">
           <span class="disclosure-arrow" aria-hidden="true">▸</span>
           <span class="verse-num">${v.verse}</span>
-          <span class="translation-snippet">${escapeHtml(v.text.slice(0, 50))}${v.text.length > 50 ? "…" : ""}</span>
+          <span class="translation-snippet">${escapeHtml(snippetText)}</span>
           <span class="translation-count-badge">${extra.length} versions</span>
         </summary>
         <div class="disclosure-body">
@@ -742,12 +814,14 @@ function renderLanguages(pass) {
     });
 
     const origBanner = v.original_text ? `<div class="verse-original-text" dir="auto">${escapeHtml(v.original_text)}</div>` : "";
+    const cleanSnippet = stripBiblicalMarkup(v.text || "");
+    const snippetText = cleanSnippet.slice(0, 50) + (cleanSnippet.length > 50 ? "…" : "");
 
     return `
       <div class="verse-language-group" data-verse="${v.verse}">
         <div class="verse-language-header">
           <span class="verse-num">${v.verse}</span>
-          <span class="verse-language-snippet">${escapeHtml(v.text.slice(0, 50))}${v.text.length > 50 ? "…" : ""}</span>
+          <span class="verse-language-snippet">${escapeHtml(snippetText)}</span>
         </div>
         ${origBanner}
         ${cards.join("")}

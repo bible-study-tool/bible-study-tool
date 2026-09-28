@@ -1144,6 +1144,26 @@ class WebServerModuleTests(unittest.TestCase):
         # Must support prefers-reduced-motion
         self.assertIn("@media (prefers-reduced-motion: reduce)", css_text)
 
+    def test_divine_name_and_biblical_typography(self) -> None:
+        """Verifies high-fidelity biblical typography for divine names and supplied words."""
+        css_text = (get_web_dir() / "styles.css").read_text(encoding="utf-8")
+        js_text = (get_web_dir() / "app.js").read_text(encoding="utf-8")
+
+        # CSS assertions
+        self.assertIn(".divine-name", css_text)
+        self.assertIn("font-variant: small-caps", css_text)
+        self.assertIn("font-variant-caps: small-caps", css_text)
+        self.assertIn(".supplied-word", css_text)
+        self.assertIn("font-style: italic", css_text)
+
+        # JS assertions
+        self.assertIn("function formatDivineName(", js_text)
+        self.assertIn("function appendFormattedVerseText(", js_text)
+        self.assertIn("function formatBiblicalHtml(", js_text)
+        self.assertIn("function stripBiblicalMarkup(", js_text)
+        self.assertIn("appendFormattedVerseText(tokSpan, tok.text", js_text)
+        self.assertIn("appendFormattedVerseText(textSpan, v.text", js_text)
+
 
 if __name__ == "__main__":
     unittest.main()

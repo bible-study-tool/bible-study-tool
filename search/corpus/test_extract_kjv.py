@@ -10,6 +10,7 @@ from search.corpus.extract_kjv import (
     DEFAULT_BIBLE_DB,
     DEFAULT_KJV_JSON,
     BibleDB,
+    clean_token_text,
     clean_verse_text,
     compile_bible_db,
     extract_tokens,
@@ -25,6 +26,19 @@ class TestKjvExtraction(unittest.TestCase):
         raw = '<w lemma="strong:H07225">In the beginning</w> <w lemma="strong:H0430">God</w> <w lemma="strong:H0853 strong:H01254" morph="strongMorph:TH8804">created</w> <note type="margin">apparatus note</note> the heaven and the earth.'
         clean = clean_verse_text(raw)
         self.assertEqual(clean, "In the beginning God created the heaven and the earth.")
+
+        divine_raw = '<w lemma="strong:H03068">Then the <divineName>Lord</divineName></w> said unto Moses'
+        self.assertEqual(clean_verse_text(divine_raw), "Then the LORD said unto Moses")
+
+    def test_clean_token_text(self):
+        self.assertEqual(clean_token_text("Then the <divineName>Lord</divineName>"), "Then the LORD")
+        self.assertEqual(clean_token_text("And <divineName>God</divineName>"), "And GOD")
+        self.assertEqual(clean_token_text("the <divineName>Lord’s</divineName>"), "the LORD’S")
+        self.assertEqual(clean_token_text("the <divineName>LORD</divineName>"), "the LORD")
+        self.assertEqual(clean_token_text("dry <transChange type=\"added\">land</transChange>"), "dry land")
+        self.assertEqual(clean_token_text("plain word"), "plain word")
+        self.assertEqual(clean_token_text(""), "")
+        self.assertIsNone(clean_token_text(None))
 
     def test_extract_tokens_ot(self):
         raw = '<w lemma="strong:H07225">In the beginning</w> <w lemma="strong:H0430">God</w> <w lemma="strong:H0853 strong:H01254" morph="strongMorph:TH8804">created</w>'

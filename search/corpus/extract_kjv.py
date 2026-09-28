@@ -56,16 +56,32 @@ class WordToken:
     src: Optional[str] = None
 
 
+_DIVINE_NAME_RE = re.compile(r"<divineName>(.*?)</divineName>", re.IGNORECASE)
+
+
+def clean_token_text(text: str) -> str:
+    """Format token text for plain-text and terminal rendering.
+
+    Transforms <divineName>...</divineName> tags to uppercase (e.g. 'LORD', 'GOD')
+    and strips any lingering XML/OSIS markup tags.
+    """
+    if not text or "<" not in text:
+        return text
+    text = _DIVINE_NAME_RE.sub(lambda m: m.group(1).upper(), text)
+    return _TAG_RE.sub("", text)
+
+
 def clean_verse_text(raw: str) -> str:
     """Strip OSIS markup, unescape XML entities, and condense whitespace.
 
     Preserves translated text and translation-supplied italics (<transChange>).
-    Removes margin apparatus notes (<note>...</note>) and XML tags.
+    Removes margin apparatus notes (<note>...</note>) and XML tags, transforming
+    divine names (<divineName>) to uppercase LORD/GOD.
     """
     if not raw:
         return ""
     text = _NOTE_RE.sub("", raw)
-    text = _TAG_RE.sub("", text)
+    text = clean_token_text(text)
     text = html.unescape(text)
     return _WS_RE.sub(" ", text).strip()
 

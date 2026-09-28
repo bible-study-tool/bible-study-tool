@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
+from search.corpus import clean_token_text
 from search.corpus.bible_books import CANONICAL_OSIS_ORDER, BIBLE_BOOKS
 from search.linking.egw import is_egw_token, normalize_token
 from search.ui.formatting import (
@@ -241,7 +242,7 @@ class StudyShell:
                 # Render inline Strong's tokens
                 token_parts = []
                 for tok in v.tokens:
-                    t_text = tok.get("text", "")
+                    t_text = clean_token_text(tok.get("text", ""))
                     s_codes = tok.get("strongs", [])
                     if s_codes:
                         s_str = style(f"[{','.join(s_codes)}]", MAGENTA, DIM)
@@ -250,7 +251,7 @@ class StudyShell:
                         token_parts.append(t_text)
                 verse_text = " ".join(token_parts)
             else:
-                verse_text = v.text
+                verse_text = clean_token_text(v.text)
 
             wrapped = wrap_text(verse_text, width=w, indent="     ")
             if wrapped:
