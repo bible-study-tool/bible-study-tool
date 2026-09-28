@@ -30,7 +30,7 @@ if hasattr(sys.stderr, "reconfigure"):
     except Exception:
         pass
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 
 def is_frozen() -> bool:

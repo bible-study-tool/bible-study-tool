@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.4-beta] - 2026-09-28
+
+### Added
+- **Native Desktop Application Packaging & Window Architecture (WP-038, ADR-028):**
+  - Truly zero-terminal, "download → click → use" desktop installers and applications across all major desktop operating systems:
+    - macOS Apple Silicon & Intel (`.dmg` drag-and-drop installer)
+    - Windows x86_64 (`.exe` NSIS installer & `.msi` package)
+    - Linux x86_64 (`.AppImage` executable & `.deb` package)
+  - Embedded desktop window using Tauri v2 with native WebView, custom title bar, Study Room Desk window dimensions (1280x860, min 900x600), and dark walnut substrate background.
+  - Robust Rust sidecar supervisor (`src-tauri/src/lib.rs`):
+    - Automatically discovers available system ports and launches the internal Python engine with dynamic port binding.
+    - Polls health endpoints (`/api/health`) before displaying the window.
+    - Implements cross-platform process tree termination (`SIGTERM`/`SIGKILL` on Unix, job objects on Windows) on window close to guarantee zero orphan background processes.
+    - Reuses existing active web servers if running in local development mode.
+  - Automated desktop packaging integrated into GitHub Actions release workflow (`.github/workflows/release.yml`) and local builder (`scripts/build_desktop.py`).
+
+- **Deterministic Cross-Language Unified Search Workstation (WP-039, Pillar C3/C4):**
+  - Sub-millisecond, zero-ML deterministic search engine unifying all project databases:
+    - King James Version (`bible_fts`, 31,102 verses)
+    - Parallel public-domain translations: ASV, BSB, YLT (`translations_fts`, 93,306 verses)
+    - Macula Hebrew Old Testament & Greek New Testament morphology (`data/macula.db`, 815,870 linguistic tokens)
+    - Ellen G. White Spirit of Prophecy commentary (`egw_fts`, ~150,000 paragraphs)
+    - Curated theological study notes (`materials/bible/`, in-memory FTS5 index)
+  - **Bidirectional Query Expansion Bridge (`search/corpus/search_bridge.py`):**
+    - Seamlessly links English concepts (e.g. `covenant`, `sanctuary`) to underlying Hebrew and Greek roots (e.g. `בְּרִית` *bərît* H1285, `διαθήκη` *diathēkē* G1242).
+    - Monotonic logistic sigmoid score normalization $[0.0, 1.0]$ across disparate SQLite FTS5 BM25 ranks.
+  - **Smart Omnibox Routing & Serene Workstation UI (`web/`):**
+    - Omnibox automatically routes valid scripture references (e.g. `John 3:16`, `Gen 1:1-3`, `Ps 23`) to the Scripture reader, and queries/Strong's numbers to the Search tab (`#panel-search`).
+    - Tranquil Study Room Desk source filter pills (`All`, `Scripture`, `Translations`, `Original Languages`, `Commentary`, `Curated`) with persistent count badges.
+    - Collapsible fine-grained advanced search drawer with filters for translations, testaments, books, search modes, and cheat sheet syntax tips.
+    - Interactive query expansion root chips and one-click navigation to Bible verses or commentary paragraphs.
+    - Global keyboard shortcuts `/` and `0` to focus Search.
+
+- **High-Fidelity Biblical Typography across Web, Desktop, and Terminal:**
+  - Standardized small-caps rendering for the Tetragrammaton YHWH (`<divineName>LORD</divineName>` and `<divineName>GOD</divineName>`) and italics for supplied words (`<transChange type="added">...`).
+  - Terminal cleanup function (`clean_token_text`) stripping raw XML tokens into uppercase LORD for TUI and CLI interfaces.
+
+### Fixed
+- **Headless CI Test Environment & Integrity:**
+  - Enriched minimal test fixture (`search/fixtures/sample_test_data.json.gz`) with Exodus verses, translations, and Greek crosswalk entries to support isolated CI runs.
+  - Eliminated N+1 queries in `MaculaSearchEngine.search_gloss` by batching crosswalk definition queries (`WHERE strongs IN (...)`) and parameterizing `include_samples=False` to prevent scanning the 560,000-row `tokens` table during searches.
+  - Fixed SQLite multi-threading read safety in `search/corpus/query.py` (`check_same_thread=False`).
+
+---
+
 ## [0.1.3-alpha] - 2026-09-27
 
 ### Added
@@ -148,6 +193,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - F1–F4 automated validators (schema, Strong's, cross-references, dead-link audit).
   - 645 automated unit and integration tests passing in CI.
 
+[0.1.4-beta]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.4-beta
 [0.1.3-alpha]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.3-alpha
 [0.1.2-alpha]: https://gitlab.com/bible-study-tool/adventist-bible-study-tool/-/releases/v0.1.2-alpha
 [0.1.1-alpha]: https://gitlab.com/bible-study-tool/adventist-bible-study-tool/-/releases/v0.1.1-alpha

@@ -383,6 +383,20 @@ class ReleaseNotesExtractorTests(unittest.TestCase):
         self.assertIn("GitHub Actions CI/CD Pipeline", res.stdout)
         self.assertIn("Fresh CI Environment Packaging", res.stdout)
 
+    def test_extract_release_notes_cli_v014(self):
+        repo_root = get_repo_root()
+        script = repo_root / "scripts" / "extract_release_notes.py"
+        res = subprocess.run(
+            ["python", str(script), "v0.1.4-beta"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.assertIn("Native Desktop Application Packaging & Window Architecture", res.stdout)
+        self.assertIn("Deterministic Cross-Language Unified Search Workstation", res.stdout)
+        self.assertIn("High-Fidelity Biblical Typography", res.stdout)
+        self.assertIn("Headless CI Test Environment & Integrity", res.stdout)
+
     def test_extract_release_notes_fallback(self):
         repo_root = get_repo_root()
         script = repo_root / "scripts" / "extract_release_notes.py"

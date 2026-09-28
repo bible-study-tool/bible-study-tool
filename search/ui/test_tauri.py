@@ -8,6 +8,8 @@ import re
 import tomllib
 import unittest
 
+from search.resource import __version__
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -44,7 +46,7 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
 
         self.assertEqual(data.get("productName"), "Adventist Bible Study")
         self.assertEqual(data.get("identifier"), "org.biblestudytool.desktop")
-        self.assertEqual(data.get("version"), "0.1.3")
+        self.assertEqual(data.get("version"), __version__)
 
         # Zero-build web assets (ADR-013, ADR-024 §5)
         build_cfg = data.get("build", {})
@@ -78,7 +80,7 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
 
         pkg = data.get("package", {})
         self.assertEqual(pkg.get("name"), "adventist-bible-study")
-        self.assertEqual(pkg.get("version"), "0.1.3")
+        self.assertEqual(pkg.get("version"), __version__)
         self.assertEqual(pkg.get("license"), "MIT")
 
         deps = data.get("dependencies", {})
