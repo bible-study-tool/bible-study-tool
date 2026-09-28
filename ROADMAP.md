@@ -104,7 +104,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **H2. Reviewer tooling** — make the human-review gate easy (semantic-link promotion UX)
 - `[ ]` **H3. Contributor docs** — onboarding guide, entry-authoring quickstart
 - `[ ]` **H4. Code of conduct** — community/curation emphasis
-- `[ ]` **H5. Release & versioning** — tagged releases, changelog
+- `[x]` **H5. Release & versioning** — tagged releases, changelog (`v0.1.0-alpha` through `v0.1.4-beta`)
 - `[x]` **H6. Verifiable Curation Manifest & Velocity Dashboard** — terminal `status: approved` lifecycle state, cryptographic `data/curation-manifest.json` auditing human review, and real-time curation frontier breakdown in `scripts/status.py` — WP-037
 
 ### P. Public Distribution *(new — making the Word accessible to everyone)*
@@ -112,7 +112,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[x]` **P1. GUI-first zero-Python distribution** — frozen engine binary + sidecar `data/` folder + browser launcher (Phase 1 delivered in WP-029, `v0.1.3-alpha`), native desktop installer & embedded window via Tauri (Phase 2 delivered in WP-038, ADR-024, ADR-028: macOS `.dmg` / Windows `.exe` / Linux `.AppImage`); zero Python or terminal required; pre-built databases included; first-run setup wizard; public-domain EGW one-click download
 - `[ ]` **P2. Docker image** — container running workstation in web terminal (ttyd); accessible at `localhost:8080`; for servers, NAS, technically confident users
 - `[x]` **P3. GitLab Releases CI** — automated binary builds on `v*` tags; release notes generated from ROADMAP + CHANGELOG
-- `[ ]` **P4. First public release `v0.1.0`** — binary + illustrated INSTALL.md + USER_GUIDE.md as primary entry point
+- `[x]` **P4. Public releases `v0.1.0` through `v0.1.4`** — binary + desktop installers + illustrated INSTALL.md + USER_GUIDE.md as primary entry point
 
 ---
 
@@ -190,8 +190,8 @@ scrollmapper/bible_databases (MIT) additionally serves A6 (translations).
 ### Phase 5 — Semantic & Cross-Language Search Upgrade
 14. **C1 — True semantic embeddings**
 15. **C2 — Hybrid search**
-16. **C3 — Cross-language semantic search** — `[~]` in progress (WP-039: deterministic bidirectional English <-> Strong's <-> Hebrew/Greek lemma query expansion across bible.db, macula.db, egw.db, materials/)
-17. **C4 — Faceted/filtered querying** — `[x]` Phase 1 done (`query(facets, text, limit)`, CLI `--theme/--translation/--language/--status/--text`, `/api/c4-query`); `[~]` Phase 2 in progress (WP-039: unified multi-source search workstation, syntax operators `book:`, `testament:`, `translation:`, `strong:`, `domain:`, `egw:`, exact quotes, and omnibox routing)
+16. **C3 — Cross-language semantic search** — `[x]` done (WP-039: deterministic bidirectional English <-> Strong's <-> Hebrew/Greek lemma query expansion across bible.db, macula.db, egw.db, materials/)
+17. **C4 — Faceted/filtered querying** — `[x]` done (WP-039: unified multi-source search workstation, syntax operators `book:`, `testament:`, `translation:`, `strong:`, `domain:`, `egw:`, exact quotes, and omnibox routing)
 
 ### Phase 6 — Review Workflow & AI Assistant
 18. **E2 — AI-suggestion review tooling** (promotion UX)
