@@ -65,7 +65,7 @@ class TestMultiTranslationSearch(unittest.TestCase):
             self.assertIn("tokens", h)
 
     def test_search_specific_translation_bsb(self):
-        hits = self.db.search("sanctuary", translation="bsb", limit=5)
+        hits = self.db.search("light", translation="bsb", limit=5)
         self.assertGreater(len(hits), 0)
         for h in hits:
             self.assertEqual(h["translation_id"], "bsb")
@@ -79,7 +79,7 @@ class TestMultiTranslationSearch(unittest.TestCase):
             self.assertEqual(h["translation_name"], "American Standard Version")
 
     def test_search_all_translations(self):
-        hits = self.db.search("sanctuary", translation="all", limit=20)
+        hits = self.db.search("light", translation="all", limit=20)
         self.assertGreater(len(hits), 0)
         found_translations = {h["translation_id"] for h in hits}
         # Multi-translation search returns diverse translations

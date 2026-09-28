@@ -271,7 +271,7 @@ class DeterministicSearchBridge:
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.close()
 
-    def expand_query(self, term: str) -> dict[str, Any]:
+    def expand_query(self, term: str, limit: int = 16) -> dict[str, Any]:
         """Perform bidirectional lexical expansion for an English keyword or Strong's code.
 
         Links:
@@ -289,7 +289,7 @@ class DeterministicSearchBridge:
         }
 
         try:
-            hits = self.macula_engine.search(clean, limit=6)
+            hits = self.macula_engine.search(clean, limit=limit)
         except Exception:
             return expansion
 

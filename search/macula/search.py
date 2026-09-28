@@ -194,7 +194,7 @@ class MaculaSearchEngine:
             return self._lexicon_data["greek"].get(s_norm)
         return None
 
-    def search_strongs(self, strongs_code: str) -> Optional[MaculaLexicalHit]:
+    def search_strongs(self, strongs_code: str, include_samples: bool = True) -> Optional[MaculaLexicalHit]:
         """Look up a Strong's code directly from strongs_crosswalk and strongs-lexicon."""
         s_clean = strongs_code.strip().upper()
         m = _STRONGS_RE.match(s_clean)
@@ -206,10 +206,10 @@ class MaculaSearchEngine:
 
         if not canonical_code:
             # Try both H and G
-            hit = self.search_strongs(f"H{num}")
+            hit = self.search_strongs(f"H{num}", include_samples=include_samples)
             if hit:
                 return hit
-            return self.search_strongs(f"G{num}")
+            return self.search_strongs(f"G{num}", include_samples=include_samples)
 
         cur = self.conn.execute(
             "SELECT * FROM strongs_crosswalk WHERE strongs = ?;",
@@ -231,13 +231,13 @@ class MaculaSearchEngine:
                 occurrences=0,
                 domains=[],
                 lxx_crosswalk={},
-                sample_verses=self.get_sample_verses(canonical_code),
+                sample_verses=self.get_sample_verses(canonical_code) if include_samples else [],
                 definition=entry.get("desc", ""),
                 match_type="strongs",
                 score=1.0,
             )
 
-        return self._build_hit_from_row(row, match_type="strongs", score=1.0, include_samples=True)
+        return self._build_hit_from_row(row, match_type="strongs", score=1.0, include_samples=include_samples)
 
     def search_lemma(self, lemma_query: str, limit: int = 20) -> list[MaculaLexicalHit]:
         """Search by Hebrew or Greek lemma/surface form (exact or stripped diacritics)."""
@@ -329,15 +329,33 @@ class MaculaSearchEngine:
                         results.append(hit)
 
         # 3. Definition inverted index matches
-        if len(results) < limit and self._def_index and term in self._def_index:
-            for s_code in self._def_index[term]:
-                if s_code not in seen_strongs and len(results) < limit:
+        if self._def_index and term in self._def_index:
+            cand_codes = [c for c in self._def_index[term][:100] if c not in seen_strongs]
+            if cand_codes:
+                placeholders = ",".join("?" for _ in cand_codes)
+                cur = self.conn.execute(
+                    f"SELECT * FROM strongs_crosswalk WHERE strongs IN ({placeholders}) ORDER BY occurrences DESC LIMIT ?;",
+                    (*cand_codes, limit),
+                )
+                fetched_codes: set[str] = set()
+                for r in cur.fetchall():
+                    s_code = r["strongs"]
+                    fetched_codes.add(s_code)
                     seen_strongs.add(s_code)
-                    hit = self.search_strongs(s_code)
-                    if hit:
-                        hit.match_type = "definition"
-                        hit.score = 0.75
-                        results.append(hit)
+                    results.append(self._build_hit_from_row(r, match_type="definition", score=0.75, include_samples=False))
+
+                # Lexicon fallback for codes absent from strongs_crosswalk (e.g. minimal test fixture)
+                if len(results) < limit:
+                    for s_code in cand_codes:
+                        if s_code not in fetched_codes:
+                            seen_strongs.add(s_code)
+                            hit = self.search_strongs(s_code, include_samples=False)
+                            if hit:
+                                hit.match_type = "definition"
+                                hit.score = 0.75
+                                results.append(hit)
+                            if len(results) >= limit:
+                                break
 
         # Sort results: exact score first, then occurrences
         results.sort(key=lambda h: (h.score, h.occurrences), reverse=True)
