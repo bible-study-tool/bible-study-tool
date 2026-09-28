@@ -70,7 +70,7 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
         bundle_cfg = data.get("bundle", {})
         self.assertTrue(bundle_cfg.get("active"))
         self.assertEqual(bundle_cfg.get("targets"), "all")
-        self.assertIn("binaries/*", bundle_cfg.get("resources", []))
+        self.assertIn("binaries/", bundle_cfg.get("resources", []))
         self.assertIn("icons/icon.icns", bundle_cfg.get("icon", []))
         self.assertIn("icons/icon.ico", bundle_cfg.get("icon", []))
 
