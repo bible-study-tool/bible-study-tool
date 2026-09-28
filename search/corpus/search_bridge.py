@@ -254,6 +254,7 @@ class DeterministicSearchBridge:
         return self._curated_con
 
     def close(self) -> None:
+        self._hybrid_engine = None
         if self._bible_db is not None:
             self._bible_db.close()
             self._bible_db = None
@@ -328,12 +329,67 @@ class DeterministicSearchBridge:
         self,
         parsed: ParsedQuery,
         limit: int = 50,
+        mode: str = "hybrid",
     ) -> list[SearchHit]:
-        """Search KJV Scripture in data/bible.db."""
+        """Search KJV Scripture in data/bible.db with Tri-Brid RRF or BM25."""
         if not self.bible_db.exists():
             return []
         if parsed.translation and parsed.translation not in ("all", "*", "kjv"):
             return []
+
+        # If hybrid or thematic mode is requested and we have text query without strongs code,
+        # use the Tri-Brid Reciprocal Rank Fusion engine (ADR-029)
+        if mode in ("hybrid", "thematic", "semantic") and parsed.clean_text and not parsed.strongs:
+            try:
+                from search.corpus.hybrid_search import HybridSearchEngine
+
+                if getattr(self, "_hybrid_engine", None) is None:
+                    self._hybrid_engine = HybridSearchEngine(bible_db=self.bible_db)
+                if self._hybrid_engine.vector_store.available():
+                    hybrid_res = self._hybrid_engine.search(
+                        query=parsed.clean_text,
+                        mode=mode,
+                        limit=limit,
+                        book=parsed.book,
+                        testament=parsed.testament,
+                        translation="kjv",
+                    )
+                    hits: list[SearchHit] = []
+                    max_possible_rrf = (1.0 + 0.8 + 0.5) / 61.0
+                    for h in hybrid_res.get("hits", []):
+                        ref_str = f"{h['book']} {h['chapter']}:{h['verse']}"
+                        clean_txt = clean_verse_text(h.get("text", "") or h.get("clean_text", ""))
+                        # Calibrate RRF score into the unified [0.50, 0.99] range
+                        relative_rrf = min(1.0, max(0.0, h["rrf_score"] / max_possible_rrf))
+                        calibrated_score = round(0.50 + 0.49 * relative_rrf, 4)
+                        hits.append(SearchHit(
+                            source="scripture",
+                            id=h["verse_id"],
+                            reference=ref_str,
+                            title=f"{ref_str} (KJV)",
+                            snippet=clean_txt,
+                            score=calibrated_score,
+                            metadata={
+                                "osis": h["osis"],
+                                "book_name": h["book"],
+                                "chapter": h["chapter"],
+                                "verse": h["verse"],
+                                "translation": "kjv",
+                                "strongs": h.get("strongs", []),
+                                "testament": h.get("testament", ""),
+                                "match_type": h.get("match_type", "hybrid"),
+                                "match_reason": h.get("match_reason", ""),
+                                "rrf_score": h["rrf_score"],
+                                "semantic_score": h.get("semantic_score"),
+                                "semantic_rank": h.get("semantic_rank"),
+                                "text_rank": h.get("text_rank"),
+                                "tsk_citations": h.get("tsk_citations", []),
+                            },
+                        ))
+                    if hits:
+                        return hits
+            except Exception:
+                pass
 
         try:
             if not parsed.clean_text and parsed.strongs:
@@ -383,6 +439,8 @@ class DeterministicSearchBridge:
                     "translation": "kjv",
                     "strongs": v.get("strongs", []),
                     "testament": v.get("testament", ""),
+                    "match_type": "exact",
+                    "match_reason": "Direct keyword match (BM25)",
                 },
             ))
         return hits
@@ -604,6 +662,7 @@ class DeterministicSearchBridge:
         query: str,
         sources: Sequence[str] | str = "all",
         limit: int = 50,
+        mode: str = "hybrid",
         book: Optional[str] = None,
         testament: Optional[str] = None,
         translation: Optional[str] = None,
@@ -677,7 +736,7 @@ class DeterministicSearchBridge:
         grouped_hits: dict[str, list[SearchHit]] = {src: [] for src in ALL_SOURCES}
 
         if "scripture" in active_sources:
-            grouped_hits["scripture"] = self._search_scripture(parsed, limit=limit)
+            grouped_hits["scripture"] = self._search_scripture(parsed, limit=limit, mode=mode)
 
         if "translations" in active_sources:
             grouped_hits["translations"] = self._search_translations(parsed, limit=limit)
@@ -710,6 +769,7 @@ class DeterministicSearchBridge:
 
         return {
             "query": query,
+            "mode": mode,
             "parsed": parsed.to_dict(),
             "is_reference": parsed.is_reference,
             "reference_target": parsed.reference_target,

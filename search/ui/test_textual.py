@@ -323,7 +323,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify syntax & frames inspector tab displays both original text and English glosses."""
         app = BibleStudyApp(initial_ref="Gen 1:1")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             syntax_scroll = app.query_one("#syntax-content", VerticalScroll)
             content_text = _extract_text(syntax_scroll)
 
@@ -337,7 +337,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify lexicon tab displays KJV word mapping and Septuagint English glosses."""
         app = BibleStudyApp(initial_ref="Gen 1:1")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             app.action_tab_lexicon()
             await pilot.pause()
             lexicon_scroll = app.query_one("#lexicon-content", VerticalScroll)
@@ -355,7 +355,7 @@ class TextualAppTests(unittest.IsolatedAsyncioTestCase):
         """Verify commentary tab renders full paragraph text instead of truncated snippets."""
         app = BibleStudyApp(initial_ref="Gen 1:1")
         async with app.run_test() as pilot:
-            await pilot.pause()
+            await _wait_until_ready(app, pilot)
             app.action_tab_commentary()
             await pilot.pause()
             commentary_scroll = app.query_one("#commentary-content", VerticalScroll)

@@ -184,6 +184,52 @@ def get_lexicons_dir() -> Path:
     return get_app_dir() / "lexicons"
 
 
+def get_models_dir() -> Path:
+    """Return the directory containing quantized ONNX neural models and tokenizers (ADR-029).
+
+    Resolution employs candidate evaluation:
+    1. ``BIBLE_STUDY_MODELS_DIR`` environment variable if set and existing.
+    2. Primary tier: The first candidate containing neural model files among:
+       - Sidecar ``data/models`` (``get_data_dir() / "models"``)
+       - Repository ``models/`` (``get_repo_root() / "models"``)
+       - Sidecar ``models/`` alongside executable (``get_app_dir() / "models"``)
+       - Bundled ``models/`` in bundle root (``get_bundle_root() / "models"``)
+    3. Fallback: ``get_data_dir() / "models"``.
+    """
+    env_models = os.environ.get("BIBLE_STUDY_MODELS_DIR")
+    if env_models:
+        p = Path(env_models).resolve()
+        if p.exists():
+            return p
+
+    candidates = list(dict.fromkeys([
+        get_data_dir() / "models",
+        get_repo_root() / "models",
+        get_app_dir() / "models",
+        get_bundle_root() / "models",
+    ]))
+
+    for cand in candidates:
+        if cand.is_dir() and (any(cand.glob("**/*.onnx")) or any(cand.glob("**/tokenizer.json"))):
+            return cand
+
+    for cand in candidates:
+        if cand.is_dir():
+            return cand
+
+    return get_data_dir() / "models"
+
+
+def get_embeddings_db_path() -> Path:
+    """Return the canonical path to the pre-computed embeddings database (ADR-029)."""
+    env_db = os.environ.get("BIBLE_STUDY_EMBEDDINGS_DB")
+    if env_db:
+        p = Path(env_db).resolve()
+        if p.exists():
+            return p
+    return get_data_dir() / "embeddings.db"
+
+
 def data_path(rel_path: str | Path) -> Path:
     """Resolve a database or data asset path.
 

@@ -135,11 +135,23 @@ def _cosine(a: np.ndarray, b: np.ndarray) -> float:
 def get_embedder(prefer_model: bool = True) -> BaseEmbedder:
     """Return the best available embedder.
 
-    If `prefer_model` and sentence-transformers is installed, returns the
-    transformer embedder; otherwise the deterministic n-gram embedder.
+    Priority (ADR-029):
+    1. Zero-PyTorch OnnxEmbedder (fast local ONNX CPU inference)
+    2. SentenceTransformerEmbedder (if PyTorch/sentence-transformers installed)
+    3. Deterministic CharNgramEmbedder (offline zero-dependency fallback)
     """
     if prefer_model:
+        try:
+            from search.linking.onnx_embedder import OnnxEmbedder
+
+            onnx_emb = OnnxEmbedder()
+            if onnx_emb.available():
+                return onnx_emb
+        except Exception:
+            pass
+
         st = SentenceTransformerEmbedder()
         if st.available():
             return st
+
     return CharNgramEmbedder()

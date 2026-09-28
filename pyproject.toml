@@ -26,8 +26,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Higher-fidelity multilingual embedder (layer c). Optional.
+# Higher-fidelity multilingual embedder (layer c, ADR-029). Optional.
 ml = [
+    "onnxruntime>=1.16",
+    "tokenizers>=0.15",
     "sentence-transformers>=2.2",
 ]
 # Testing.

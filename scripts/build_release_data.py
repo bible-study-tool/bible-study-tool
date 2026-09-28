@@ -206,7 +206,11 @@ def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
 
     # 3. Compact and copy SQLite databases via VACUUM INTO
     print("3. Compacting and copying SQLite databases...")
-    for db_name in ["bible.db", "macula.db"]:
+    candidate_dbs = ["bible.db", "macula.db"]
+    if (data_src / "embeddings.db").is_file():
+        candidate_dbs.append("embeddings.db")
+
+    for db_name in candidate_dbs:
         src = data_src / db_name
         dst = out_dir / db_name
         print(f"   Compacting {db_name} -> {dst}...")
@@ -232,7 +236,7 @@ def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
                 p.unlink()
     print("   ✔ SQLite databases vacuumed, WAL-initialized, and verified.")
 
-    # 4. Copy canonical derived lexicons
+    # 4. Copy canonical derived lexicons and optional neural models
     print("4. Copying canonical lexicons...")
     json_count = 0
     for p in sorted(lexicons_src.glob("*.json")):
@@ -245,6 +249,11 @@ def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
         if extra_src.is_file():
             shutil.copy2(extra_src, out_dir / extra)
             print(f"   ✔ Copied {extra}.")
+
+    models_src = data_src / "models"
+    if models_src.is_dir():
+        shutil.copytree(models_src, out_dir / "models", dirs_exist_ok=True)
+        print("   ✔ Copied local ONNX neural models and tokenizers.")
 
     # Enforce copyright boundary tripwire (ADR-002, ADR-023, ADR-024)
     if (out_dir / "egw.db").exists():

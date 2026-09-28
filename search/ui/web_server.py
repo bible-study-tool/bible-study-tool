@@ -303,12 +303,14 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
             egw_book = query.get("egw_book", query.get("egw", [None]))[0]
             expand_raw = query.get("expand", ["1"])[0].strip().lower()
             expand = expand_raw not in ("0", "false", "no")
+            mode = query.get("mode", ["hybrid"])[0].strip().lower()
 
             try:
                 res = study.search(
                     query=raw_q,
                     sources=sources,
                     limit=limit,
+                    mode=mode,
                     book=book,
                     testament=testament,
                     translation=translation,

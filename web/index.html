@@ -74,20 +74,30 @@
             </div>
           </form>
 
-          <!-- Source Filter Pills -->
-          <div class="search-pills-bar" role="group" aria-label="Search source filters">
-            <button type="button" class="search-pill active" data-source="all">All <span class="pill-count" id="pill-count-all">0</span></button>
-            <button type="button" class="search-pill" data-source="scripture">Scripture <span class="pill-count" id="pill-count-scripture">0</span></button>
-            <button type="button" class="search-pill" data-source="translations">Translations <span class="pill-count" id="pill-count-translations">0</span></button>
-            <button type="button" class="search-pill" data-source="original">Original Languages <span class="pill-count" id="pill-count-original">0</span></button>
-            <button type="button" class="search-pill" data-source="commentary">Commentary <span class="pill-count" id="pill-count-commentary">0</span></button>
-            <button type="button" class="search-pill" data-source="curated">Curated <span class="pill-count" id="pill-count-curated">0</span></button>
+          <!-- Search Control Bar: Mode Toggle + Source Filter Pills -->
+          <div class="search-controls-wrapper">
+            <div class="search-mode-bar" role="radiogroup" aria-label="Search Mode">
+              <span class="mode-label" id="search-mode-label">Mode:</span>
+              <button type="button" class="mode-pill active" data-mode="hybrid" role="radio" aria-checked="true" title="Tri-Brid RRF: Blends exact text, local neural embeddings, and TSK cross-references">✦ Hybrid</button>
+              <button type="button" class="mode-pill" data-mode="keyword" role="radio" aria-checked="false" title="Exact SQLite FTS5 BM25 keyword matching">Aa Keyword</button>
+              <button type="button" class="mode-pill" data-mode="thematic" role="radio" aria-checked="false" title="Dense vector semantic cosine similarity for concepts &amp; motifs">☵ Thematic</button>
+            </div>
 
-            <!-- Collapsible Advanced Search Trigger -->
-            <button type="button" id="search-advanced-toggle" class="btn-search-advanced" aria-expanded="false" aria-controls="search-advanced-drawer" title="Toggle fine-grained search filters and syntax cheat sheet">
-              <span>⚙ Filters &amp; Syntax</span>
-              <span class="advanced-arrow" aria-hidden="true">▾</span>
-            </button>
+            <!-- Source Filter Pills -->
+            <div class="search-pills-bar" role="group" aria-label="Search source filters">
+              <button type="button" class="search-pill active" data-source="all">All <span class="pill-count" id="pill-count-all">0</span></button>
+              <button type="button" class="search-pill" data-source="scripture">Scripture <span class="pill-count" id="pill-count-scripture">0</span></button>
+              <button type="button" class="search-pill" data-source="translations">Translations <span class="pill-count" id="pill-count-translations">0</span></button>
+              <button type="button" class="search-pill" data-source="original">Original Languages <span class="pill-count" id="pill-count-original">0</span></button>
+              <button type="button" class="search-pill" data-source="commentary">Commentary <span class="pill-count" id="pill-count-commentary">0</span></button>
+              <button type="button" class="search-pill" data-source="curated">Curated <span class="pill-count" id="pill-count-curated">0</span></button>
+
+              <!-- Collapsible Advanced Search Trigger -->
+              <button type="button" id="search-advanced-toggle" class="btn-search-advanced" aria-expanded="false" aria-controls="search-advanced-drawer" title="Toggle fine-grained search filters and syntax cheat sheet">
+                <span>⚙ Filters &amp; Syntax</span>
+                <span class="advanced-arrow" aria-hidden="true">▾</span>
+              </button>
+            </div>
           </div>
 
           <!-- Fine-Grained Advanced Search Drawer (Collapsible) -->

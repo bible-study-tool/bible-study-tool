@@ -102,6 +102,16 @@ class SearchApiTests(unittest.TestCase):
         self.assertEqual(ref_target.get("chapter"), 3)
         self.assertEqual(ref_target.get("start_verse"), 16)
 
+    def test_search_modes_hybrid_keyword(self) -> None:
+        q = urllib.parse.quote("beginning")
+        res_hyb = self._get_json(f"/api/search?q={q}&mode=hybrid&limit=5")
+        self.assertEqual(res_hyb.get("status"), "ok")
+        self.assertEqual(res_hyb.get("mode"), "hybrid")
+
+        res_kw = self._get_json(f"/api/search?q={q}&mode=keyword&limit=5")
+        self.assertEqual(res_kw.get("status"), "ok")
+        self.assertEqual(res_kw.get("mode"), "keyword")
+
 
 if __name__ == "__main__":
     unittest.main()

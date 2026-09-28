@@ -1175,6 +1175,8 @@ class WebServerModuleTests(unittest.TestCase):
         self.assertIn('id="tab-search"', html_text)
         self.assertIn('id="panel-search"', html_text)
         self.assertIn('id="search-panel-input"', html_text)
+        self.assertIn('class="search-mode-bar"', html_text)
+        self.assertIn('data-mode="hybrid"', html_text)
         self.assertIn('class="search-pills-bar"', html_text)
         self.assertIn('id="search-advanced-toggle"', html_text)
         self.assertIn('id="search-advanced-drawer"', html_text)
@@ -1183,12 +1185,18 @@ class WebServerModuleTests(unittest.TestCase):
 
         # CSS assertions
         self.assertIn(".search-toolbar", css_text)
+        self.assertIn(".search-mode-bar", css_text)
+        self.assertIn(".mode-pill", css_text)
         self.assertIn(".search-pill", css_text)
         self.assertIn(".search-advanced-drawer", css_text)
         self.assertIn(".search-hit-card", css_text)
+        self.assertIn(".hit-match-type-badge", css_text)
+        self.assertIn(".hit-cosine-badge", css_text)
 
         # JS assertions
         self.assertIn("initSearchWorkstation()", js_text)
+        self.assertIn("setSearchMode(", js_text)
+        self.assertIn("currentSearchMode", js_text)
         self.assertIn("runLibrarySearch(", js_text)
         self.assertIn("handleOmniboxSubmit(", js_text)
         self.assertIn("SCRIPTURE_REF_PATTERN", js_text)

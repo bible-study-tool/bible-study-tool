@@ -3290,6 +3290,7 @@ function filterAndRenderCrossReferences() {
 
 let currentSearchQuery = "";
 let currentSearchSource = "all";
+let currentSearchMode = "hybrid";
 let isAdvancedSearchOpen = false;
 
 function initSearchWorkstation() {
@@ -3300,6 +3301,17 @@ function initSearchWorkstation() {
       if (q) {
         runLibrarySearch(q);
       }
+    });
+  }
+
+  // Search mode pills (Hybrid, Keyword, Thematic)
+  const modePills = document.querySelectorAll(".mode-pill");
+  if (modePills && modePills.length > 0) {
+    modePills.forEach((pill) => {
+      pill.addEventListener("click", () => {
+        const mode = pill.dataset.mode || "hybrid";
+        setSearchMode(mode);
+      });
     });
   }
 
@@ -3346,6 +3358,21 @@ function initSearchWorkstation() {
   }
 }
 
+function setSearchMode(mode) {
+  currentSearchMode = mode;
+  const modePills = document.querySelectorAll(".mode-pill");
+  if (modePills) {
+    modePills.forEach((p) => {
+      const isActive = p.dataset.mode === mode;
+      p.classList.toggle("active", isActive);
+      p.setAttribute("aria-checked", String(isActive));
+    });
+  }
+  if (currentSearchQuery) {
+    runLibrarySearch(currentSearchQuery);
+  }
+}
+
 function setSearchSource(source) {
   currentSearchSource = source;
   if (els.searchPills) {
@@ -3382,6 +3409,7 @@ async function runLibrarySearch(rawQuery, sourceOverride) {
   const params = new URLSearchParams();
   params.set("q", q);
   params.set("sources", source);
+  params.set("mode", currentSearchMode || "hybrid");
   params.set("limit", "50");
   params.set("expand", "1");
 
@@ -3497,13 +3525,42 @@ function renderSearchResults(data) {
     const formattedSnippet = formatBiblicalHtml(hit.snippet || "")
       .replace(/\[b\](.*?)\[\/b\]/gi, '<mark class="search-match">$1</mark>');
 
+    const mType = hit.metadata && hit.metadata.match_type;
+    const mReason = hit.metadata && hit.metadata.match_reason;
+    const sScore = hit.metadata && hit.metadata.semantic_score;
+
+    let matchBadgeHtml = "";
+    if (mType) {
+      const typeLabels = {
+        hybrid: "✦ Hybrid",
+        exact: "Aa Exact",
+        semantic: "☵ Thematic",
+        cross_reference: "⇄ Cross-Ref",
+      };
+      const label = typeLabels[mType] || mType;
+      matchBadgeHtml = `<span class="hit-match-type-badge match-${escapeHtml(mType)}" title="${escapeHtml(mReason || '')}">${escapeHtml(label)}</span>`;
+    }
+
+    let cosineBadgeHtml = "";
+    if (sScore !== undefined && sScore !== null) {
+      cosineBadgeHtml = `<span class="hit-cosine-badge" title="Semantic cosine similarity">cos: ${Number(sScore).toFixed(2)}</span>`;
+    }
+
+    let reasonHtml = "";
+    if (mReason) {
+      reasonHtml = `<div class="search-hit-reason">${escapeHtml(mReason)}</div>`;
+    }
+
     card.innerHTML = `
       <div class="search-hit-header">
         <span class="hit-source-badge src-${escapeHtml(hit.source)}">${escapeHtml(srcLabel)}</span>
+        ${matchBadgeHtml}
         <button type="button" class="hit-title-link">${escapeHtml(hit.title)}</button>
+        ${cosineBadgeHtml}
         <span class="hit-score-badge">${pctScore}% match</span>
       </div>
       <div class="search-hit-snippet">${formattedSnippet}</div>
+      ${reasonHtml}
       <div class="search-hit-footer"></div>
     `;
 

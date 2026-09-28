@@ -58,8 +58,8 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[x]` **B4. Original-Language Theological Nuances** — plain-English theological glosses for Hebrew verbal stems (Qal, Niphal, Piel, Pual, Hiphil, Hophal, Hitpael) and Greek aspects/voices (Aorist, Present, Perfect across Active/Middle/Passive), accessible without formal seminary training via HTTP endpoint (`/api/nuance`) and interactive UI cards with progressive disclosure — WP-031, ADR-025
 
 ### C. Search & Semantic Engine
-- `[ ]` **C1. True semantic embeddings** — enable multilingual-e5 by default when corpus is large enough
-- `[ ]` **C2. Hybrid search** — FTS5 BM25 + embeddings, combined ranker
+- `[x]` **C1. True semantic embeddings** — local zero-PyTorch neural vector embeddings (`multilingual-e5-small`) via ONNX Runtime CPU inference (<10ms single query latency, <40 MB RAM) and offline pre-computed whole-Bible vector database (`data/embeddings.db`, 31,102 verses, 384 dims, L2-normalized) with deterministic fallback — ADR-029, WP-040
+- `[x]` **C2. Hybrid search** — Tri-Brid Reciprocal Rank Fusion (RRF) blending deterministic SQLite FTS5 BM25, local dense vector cosine similarity, and Treasury of Scripture Knowledge (TSK) reciprocal cross-references; search mode selector (`✦ Hybrid`, `Aa Keyword`, `☵ Thematic`), match-type badges, and plain-English match explanations — ADR-029, WP-040
 - `[x]` **C3. Cross-language semantic search** — deterministic bidirectional lexical expansion across English, Strong's codes (H/G), Hebrew and Greek lemmas, semantic domains (Louw-Nida, SDBH), and parallel translations (ASV, BSB, YLT) without external neural models; unified multi-database search across `bible.db`, `macula.db`, `egw.db`, and `materials/` with normalized BM25 ranking, smart omnibox reference routing, and dedicated search workstation UI — WP-039
 - `[x]` **C4. Faceted/filtered querying** — by book/theme/translation/language/status; clean query API
   (Phases 1–3 shipped: `search/corpus/query.py` + CLI flags + `/api/c4-query` endpoint + cross-source BM25 ranking across curated entries, Bible, and EGW; `search/test_query.py`, 10 tests)
