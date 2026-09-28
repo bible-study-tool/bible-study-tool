@@ -1,6 +1,6 @@
 # WP-038: Native Desktop Application (Tauri Packaging & GUI Window)
 
-status: open
+status: complete
 scope: Pillar P (P1), Pillar D (D1) — package the study workstation as a true native desktop application using Tauri v2, providing standard macOS (.dmg/.app) and Windows (.msi/.exe) installers that eliminate terminal usage for non-technical users.
 priority: high
 
@@ -44,7 +44,7 @@ Per **ADR-024** and **ADR-028**, Tauri encapsulates the application into a nativ
 ## Implementation Phases
 
 ### Phase 1 — Tauri Workspace Setup (`src-tauri/`)
-- [ ] Initialize `src-tauri/` project structure:
+- [x] Initialize `src-tauri/` project structure:
   - `src-tauri/Cargo.toml` with `tauri` dependencies and sidecar features
   - `src-tauri/tauri.conf.json` configured:
     - App title: "Adventist Bible Study"
@@ -56,7 +56,7 @@ Per **ADR-024** and **ADR-028**, Tauri encapsulates the application into a nativ
   - App icons in `src-tauri/icons/`
 
 ### Phase 2 — Rust Supervisor & Sidecar Lifecycle
-- [ ] Implement sidecar process manager in `src-tauri/src/`:
+- [x] Implement sidecar process manager in `src-tauri/src/`:
   - Locate `bible-study` executable (packaged sidecar or relative path in dev mode)
   - Find an available open port on `127.0.0.1`
   - Spawn `bible-study --server --port <PORT> --no-browser`
@@ -65,13 +65,13 @@ Per **ADR-024** and **ADR-028**, Tauri encapsulates the application into a nativ
   - Implement clean termination handler (SIGTERM / TerminateProcess) on window exit
 
 ### Phase 3 — Web Client Integration
-- [ ] Ensure `web/app.js` transparently detects its backend origin:
+- [x] Ensure `web/app.js` transparently detects its backend origin:
   - If running in Tauri webview with dynamic port, route API requests to `http://127.0.0.1:<PORT>`
   - Retain default relative `/api/...` for browser-tab execution
   - Add native window controls or focus integration where appropriate
 
 ### Phase 4 — Packaging & Build Script Automation
-- [ ] Create `scripts/build_desktop.py` (or extend `scripts/build_release.py`):
+- [x] Create `scripts/build_desktop.py` (or extend `scripts/build_release.py`):
   - Builds the frozen `bible-study` executable first
   - Places it in the Tauri sidecar target location
   - Invokes `cargo tauri build` to generate platform installers:
@@ -81,15 +81,15 @@ Per **ADR-024** and **ADR-028**, Tauri encapsulates the application into a nativ
   - Verifies generated installer integrity
 
 ### Phase 5 — CI Matrix Integration & Automated Releases
-- [ ] Update `.github/workflows/release.yml`:
+- [x] Update `.github/workflows/release.yml`:
   - Add Rust toolchain setup step (`dtolnay/rust-toolchain@stable`)
   - Run Tauri desktop build job across `macos-latest`, `windows-latest`, and `ubuntu-latest`
   - Upload native desktop installers (`.dmg`, `.exe`/`.msi`, `.AppImage`) as GitHub release assets alongside existing zero-Python archives
 
 ## Acceptance Criteria
-- [ ] Running the desktop app opens a native application window rendering the Study Room Desk interface.
-- [ ] No terminal or shell window appears during launch or execution on macOS or Windows.
-- [ ] Quitting the desktop application terminates the background `bible-study` server process cleanly.
-- [ ] `web/` assets remain 100% zero-build (no npm/vite/webpack build step required).
-- [ ] Automated tests verify Tauri configuration and sidecar lifecycle integrity.
-- [ ] `bash scripts/verify_all.sh` remains 100% green.
+- [x] Running the desktop app opens a native application window rendering the Study Room Desk interface.
+- [x] No terminal or shell window appears during launch or execution on macOS or Windows.
+- [x] Quitting the desktop application terminates the background `bible-study` server process cleanly.
+- [x] `web/` assets remain 100% zero-build (no npm/vite/webpack build step required).
+- [x] Automated tests verify Tauri configuration and sidecar lifecycle integrity.
+- [x] `bash scripts/verify_all.sh` remains 100% green.
