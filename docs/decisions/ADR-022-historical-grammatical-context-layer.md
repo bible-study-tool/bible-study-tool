@@ -1,7 +1,7 @@
 # ADR-022: Historical-Grammatical Context Layer
 
-* Status: Proposed
-* Date: 2026-09-06
+* Status: Accepted
+* Date: 2026-09-06 (Updated 2026-09-28)
 * Deciders: Project Maintainers, Pair Programming Assistant
 * Consulted: [ADR-001](ADR-001-deterministic-core-vs-ai.md), [ADR-010](ADR-010-wordgraph.md), [ADR-012](ADR-012-macula-hebrew-linguistic-integration.md), [ADR-013](ADR-013-design-principles-stewardship-and-scalability.md), [ADR-014](ADR-014-whole-bible-macula-sqlite-architecture.md), [ADR-020](ADR-020-persistent-viewport-workstation-and-comprehension-engine.md)
 * Informs: Future C-pillar (Search & Semantic Engine), D-pillar (UX)
@@ -90,18 +90,13 @@ And link it from the TUI's book-header display (shown when entering a new book i
 - **Cons:** Book-level granularity only; not verse-specific
 - **Verdict:** Good complement to Option A; can be done immediately
 
-## Decision (Deferred — Requires Discussion)
+## Decision
 
-**No architectural decision made yet.** This ADR is `Proposed` pending team review.
+**Accepted.** The project adopts a unified multi-tier architecture combining Options A, B, and C tracked under [WP-041](../wp/WP-041-historical-grammatical-context-layer.md):
 
-Recommended sequencing:
-1. **Immediate (this session or next):** Implement Option C — per-book historical preambles
-   for John and Genesis. Zero risk, high educational value.
-2. **Near-term (next work package):** Implement Option A — add `historical_context:` to the
-   YAML frontmatter schema (`kc-schema.md`) and seed curated chapters.
-3. **Long-term (new pillar or C-series WP):** Evaluate Option B — `data/history.db` using
-   STEPBible TIPNR + OpenBible.info geography, following the Macula ingestion pattern
-   (ADR-014). Pin upstream commit + SHA-256, add F5 validator, expose in Tab 6.
+1. **Option C (Immediate & Continuous):** Per-book historical preambles for canonical books establishing authorship, date, cultural milieu, and audience.
+2. **Option A (Passage Curation):** Structured `historical_context:` front-matter schema in `kc-schema.md` for high-value curated passages.
+3. **Option B (Whole-Bible Storage):** Normalized SQLite database (`data/history.db`) ingesting pinned OpenBible.info Geography, STEPBible TIPNR, STEPBible TOTHT, and curated New Testament chronological mappings with content-level checksums (ADR-027). Integrated into the Study Room Desk through an offline-first inspection panel without visual slop (ADR-025).
 
 ## Constraints
 

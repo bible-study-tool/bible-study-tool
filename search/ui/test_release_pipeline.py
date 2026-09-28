@@ -287,6 +287,7 @@ class GitHubActionsConfigTests(unittest.TestCase):
         self.assertIn("*.AppImage", rel_files, "Release files must include Linux .AppImage")
         self.assertIn("*.msi", rel_files, "Release files must include Windows .msi")
         self.assertIn("*.deb", rel_files, "Release files must include Linux .deb")
+        self.assertNotIn("*.rpm", rel_files, "Release files must not publish .rpm (slow, unused package)")
 
     def test_gitattributes_enforces_lf(self):
         gitattributes = get_repo_root() / ".gitattributes"

@@ -119,12 +119,22 @@ def stage_sidecar_for_bundle(repo_root: Path, os_name: str) -> Path | None:
     return staged_binary
 
 
-def run_tauri_build(repo_root: Path, debug: bool = False) -> int:
+def run_tauri_build(repo_root: Path, debug: bool = False, bundles: str | None = None) -> int:
     """Execute the Tauri native application build."""
     cmd = resolve_tauri_command()
     cmd.append("build")
     if debug:
         cmd.append("--debug")
+    if bundles is not None:
+        cleaned_bundles = ",".join(b.strip() for b in bundles.split(",") if b.strip())
+        if cleaned_bundles:
+            cmd.extend(["--bundles", cleaned_bundles])
+    elif sys.platform.startswith("linux"):
+        # On Linux, default to deb and appimage, explicitly skipping rpm.
+        # Tauri's rpm builder performs automated ELF dependency scanning
+        # (`find-requires` inspecting hundreds of PyInstaller .so files)
+        # and single-threaded xz compression, which takes 20-30+ minutes in CI.
+        cmd.extend(["--bundles", "deb,appimage"])
 
     print(f"==> Running Tauri build: {' '.join(cmd)}")
     env = os.environ.copy()
@@ -163,6 +173,7 @@ def main() -> int:
     parser.add_argument("--skip-engine", action="store_true", help="Skip building PyInstaller engine if already present")
     parser.add_argument("--check-only", action="store_true", help="Check prerequisites and exit")
     parser.add_argument("--debug", action="store_true", help="Build debug target instead of release")
+    parser.add_argument("--bundles", type=str, default=None, help="Comma-separated list of bundles to package (defaults to 'deb,appimage' on Linux)")
     args = parser.parse_args()
 
     os_name, arch_name, platform_tag = detect_platform()
@@ -198,7 +209,7 @@ def main() -> int:
         print("ERROR: Could not find frozen engine binary to stage into Tauri bundle.", file=sys.stderr)
         return 1
 
-    ret = run_tauri_build(REPO_ROOT, debug=args.debug)
+    ret = run_tauri_build(REPO_ROOT, debug=args.debug, bundles=args.bundles)
     if ret == 0:
         print("==> Collecting desktop installers into dist/...")
         collected = collect_desktop_artifacts(REPO_ROOT, REPO_ROOT / "dist")

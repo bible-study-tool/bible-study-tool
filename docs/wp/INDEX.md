@@ -51,6 +51,7 @@ entries `draft` -> `review`.
 | [WP-038](WP-038-tauri-desktop-application.md) | Pillar P, D | Native Desktop Application (Tauri Packaging & GUI Window: .dmg / .exe / .AppImage) | complete |
 | [WP-039](WP-039-deterministic-cross-language-unified-search.md) | Pillar C (C3, C4), D (D1, D3, D4) | Deterministic Cross-Language & Unified Multi-Database Search Workstation | complete |
 | [WP-040](WP-040-neural-embeddings-and-hybrid-search.md) | Pillar C (C1, C2) | Local Neural Semantic Embeddings & Hybrid Search Engine | complete |
+| [WP-041](WP-041-historical-grammatical-context-layer.md) | Pillar C, D, E | Historical-Grammatical Context Layer & Architectural Ergonomics (ADR-022, 1986 GC Methods of Bible Study) | open |
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1

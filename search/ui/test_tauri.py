@@ -7,7 +7,9 @@ from pathlib import Path
 import re
 import tomllib
 import unittest
+from unittest.mock import patch
 
+from scripts.build_desktop import run_tauri_build
 from search.resource import __version__
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -152,6 +154,53 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
         self.assertEqual(args.port, 9000)
         self.assertTrue(args.no_browser)
 
+    def test_tauri_linux_conf_excludes_rpm(self):
+        """Verify that src-tauri/tauri.linux.conf.json restricts bundle targets to deb and appimage, omitting rpm."""
+        linux_conf_path = REPO_ROOT / "src-tauri" / "tauri.linux.conf.json"
+        self.assertTrue(linux_conf_path.is_file(), "tauri.linux.conf.json must exist to customize Linux bundles")
+        linux_conf = json.loads(linux_conf_path.read_text(encoding="utf-8"))
+        targets = linux_conf.get("bundle", {}).get("targets", [])
+        self.assertIn("deb", targets)
+        self.assertIn("appimage", targets)
+        self.assertNotIn("rpm", targets, "RPM generation must be omitted to prevent slow ELF scanning and xz compression")
+
+    def test_build_desktop_linux_bundles_command(self):
+        """Verify that build_desktop.py defaults to deb,appimage bundles on Linux and leaves other platforms unrestricted."""
+        with patch("subprocess.run") as mock_run:
+            mock_run.return_value.returncode = 0
+            with patch("sys.platform", "linux"):
+                ret = run_tauri_build(REPO_ROOT)
+                self.assertEqual(ret, 0)
+                cmd = mock_run.call_args[0][0]
+                self.assertIn("--bundles", cmd)
+                idx = cmd.index("--bundles")
+                self.assertEqual(cmd[idx + 1], "deb,appimage")
+
+            with patch("sys.platform", "darwin"):
+                ret = run_tauri_build(REPO_ROOT)
+                self.assertEqual(ret, 0)
+                cmd = mock_run.call_args[0][0]
+                self.assertNotIn("--bundles", cmd)
+
+        with patch("subprocess.run") as mock_run:
+            mock_run.return_value.returncode = 0
+            ret = run_tauri_build(REPO_ROOT, bundles="appimage")
+            self.assertEqual(ret, 0)
+            cmd = mock_run.call_args[0][0]
+            self.assertIn("--bundles", cmd)
+            idx = cmd.index("--bundles")
+            self.assertEqual(cmd[idx + 1], "appimage")
+
+        with patch("subprocess.run") as mock_run:
+            mock_run.return_value.returncode = 0
+            ret = run_tauri_build(REPO_ROOT, bundles=" deb, appimage ")
+            self.assertEqual(ret, 0)
+            cmd = mock_run.call_args[0][0]
+            self.assertIn("--bundles", cmd)
+            idx = cmd.index("--bundles")
+            self.assertEqual(cmd[idx + 1], "deb,appimage")
+
 
 if __name__ == "__main__":
     unittest.main()
+
