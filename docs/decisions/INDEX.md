@@ -33,6 +33,7 @@ time** (or retroactively seeded, as here) — see `AGENTS.md` Non-negotiable 8.
 | [ADR-025](ADR-025-visual-identity-and-anti-slop-design-charter.md) | Visual Identity, "Study Room Desk" Mental Anchor, and Anti-Slop Design Charter | Accepted |
 | [ADR-026](ADR-026-treasury-of-scripture-knowledge-cross-references.md) | Treasury of Scripture Knowledge (TSK) Cross-Reference Integration & Whole-Bible Hyperlinking | Accepted |
 | [ADR-027](ADR-027-content-level-sqlite-integrity.md) | Content-Level Integrity Verification for SQLite Data Bundles (`INTEGRITY.json`, Option B) | Accepted |
+| [ADR-028](ADR-028-tauri-desktop-packaging-and-native-window.md) | Tauri Desktop Packaging and Native Window Architecture (Pillar D/P, WP-038) | Accepted |
 
 
 ## When to write one

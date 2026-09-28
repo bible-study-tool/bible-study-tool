@@ -109,7 +109,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
 ### P. Public Distribution *(new — making the Word accessible to everyone)*
 > *"What's the point of having the word and not sharing it?"*
-- `[x]` **P1. GUI-first zero-Python distribution** — frozen engine binary + sidecar `data/` folder + browser launcher (Phase 1), Tauri embedded window (Phase 2); zero Python or terminal required; pre-built databases included; first-run setup wizard; public-domain EGW one-click download — WP-029, ADR-023, ADR-024
+- `[~]` **P1. GUI-first zero-Python distribution** — frozen engine binary + sidecar `data/` folder + browser launcher (Phase 1 delivered in WP-029, `v0.1.3-alpha`), native desktop installer & embedded window via Tauri (Phase 2 in progress: WP-038, ADR-024, ADR-028: macOS `.dmg` / Windows `.exe` / Linux `.AppImage`); zero Python or terminal required; pre-built databases included; first-run setup wizard; public-domain EGW one-click download
 - `[ ]` **P2. Docker image** — container running workstation in web terminal (ttyd); accessible at `localhost:8080`; for servers, NAS, technically confident users
 - `[x]` **P3. GitLab Releases CI** — automated binary builds on `v*` tags; release notes generated from ROADMAP + CHANGELOG
 - `[ ]` **P4. First public release `v0.1.0`** — binary + illustrated INSTALL.md + USER_GUIDE.md as primary entry point

@@ -48,6 +48,7 @@ entries `draft` -> `review`.
 | [WP-035](WP-035-treasury-of-scripture-knowledge-tsk-integration.md) | Pillar A, C | Treasury of Scripture Knowledge (TSK) Ingestion Engine (~340k whole-Bible cross-references in SQLite) | complete |
 | [WP-036](WP-036-interactive-whole-bible-cross-reference-workstation.md) | Pillar D (UX) | Interactive Whole-Bible Cross-Reference Workstation UI (Web & TUI ranked xref chips, preview tooltips) | complete |
 | [WP-037](WP-037-curation-manifest-and-velocity-dashboard.md) | Pillar A, F, H | Curation Velocity Dashboard & Verifiable Terminal Manifest (status: approved, curation-manifest.json) | complete |
+| [WP-038](WP-038-tauri-desktop-application.md) | Pillar P, D | Native Desktop Application (Tauri Packaging & GUI Window: .dmg / .exe / .AppImage) | open |
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1

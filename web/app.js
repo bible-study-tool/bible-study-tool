@@ -189,8 +189,15 @@ function setTheme(id) {
 
 /* ---- tiny fetch helper ---- */
 
+const API_BASE = (typeof window !== "undefined" && window.__BIBLE_STUDY_API_BASE__) || "";
+
+function apiUrl(path) {
+  if (!API_BASE) return path;
+  return `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
 async function api(path) {
-  const res = await fetch(path);
+  const res = await fetch(apiUrl(path));
   let data = null;
   try { data = await res.json(); } catch (_e) { /* non-JSON error body */ }
   if (!res.ok) {
@@ -934,7 +941,7 @@ async function uploadBookFiles(files) {
     }
     setStatus("status-loading", `Ingesting ${file.name} (${i + 1}/${files.length})…`);
     try {
-      const res = await fetch(`/api/import-books?filename=${encodeURIComponent(file.name)}`, {
+      const res = await fetch(apiUrl(`/api/import-books?filename=${encodeURIComponent(file.name)}`), {
         method: "POST",
         headers: {
           "Content-Type": "application/octet-stream",
