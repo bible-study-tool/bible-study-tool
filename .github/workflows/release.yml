@@ -1,12 +1,11 @@
 name: Release
 
-# Multi-Platform Standalone Release Pipeline
+# Multi-Platform Standalone & Desktop Release Pipeline (ADR-024, ADR-028, WP-038)
 #
 # Triggered on version tags (v*) or manual dispatch.
-# Builds zero-Python standalone distributions for Linux (x86_64),
-# Windows (x86_64), macOS Apple Silicon (arm64, macos-latest), and
-# macOS Intel (x86_64, macos-13). Packages sidecar databases and cryptographic
-# checksums, and publishes the formal release with release assets on GitHub Releases.
+# Builds zero-Python standalone distributions AND native desktop installers (.dmg, .exe, .AppImage)
+# for Linux (x86_64), Windows (x86_64), and macOS (arm64). Packages sidecar databases and
+# cryptographic checksums, and publishes the formal release assets to GitHub Releases.
 
 "on":
   push:
@@ -29,7 +28,7 @@ env:
 
 jobs:
   build-standalone:
-    name: Build Standalone (${{ matrix.target }})
+    name: Build Standalone & Desktop (${{ matrix.target }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -71,6 +70,24 @@ jobs:
         if: runner.os == 'Windows'
         run: python scripts/build_release.py --skip-tests --zip
 
+      - name: Install Tauri system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust Cache
+        uses: swatinem/rust-cache@v2
+
+      - name: Install Tauri CLI
+        run: npm install -g @tauri-apps/cli@^2
+
+      - name: Build native desktop application (Tauri)
+        run: python scripts/build_desktop.py --skip-engine
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -80,6 +97,16 @@ jobs:
             dist/*.tar.gz.sha256
             dist/*.zip
             dist/*.zip.sha256
+            dist/*.dmg
+            dist/*.dmg.sha256
+            dist/*.exe
+            dist/*.exe.sha256
+            dist/*.msi
+            dist/*.msi.sha256
+            dist/*.AppImage
+            dist/*.AppImage.sha256
+            dist/*.deb
+            dist/*.deb.sha256
             dist/RELEASE_NOTES.md
             dist/bible-study-*/SHA256SUMS
           if-no-files-found: ignore
@@ -101,11 +128,11 @@ jobs:
       - name: Inspect and organize distribution packages
         run: |
           mkdir -p dist
-          find dist-downloads -type f \( -name "*.tar.gz*" -o -name "*.zip*" -o -name "RELEASE_NOTES.md" \) -exec cp -v {} dist/ \;
+          find dist-downloads -type f \( -name "*.tar.gz*" -o -name "*.zip*" -o -name "*.dmg*" -o -name "*.exe*" -o -name "*.msi*" -o -name "*.AppImage*" -o -name "*.deb*" -o -name "RELEASE_NOTES.md" \) -exec cp -v {} dist/ \;
           ls -la dist/
-          pkg_count=$(ls -1 dist/*.tar.gz dist/*.zip 2>/dev/null | wc -l)
+          pkg_count=$(ls -1 dist/*.tar.gz dist/*.zip dist/*.dmg dist/*.exe dist/*.msi dist/*.AppImage dist/*.deb 2>/dev/null | wc -l)
           if [ "$pkg_count" -eq 0 ]; then
-            echo "ERROR: No standalone distribution packages found in dist/." >&2
+            echo "ERROR: No standalone or desktop distribution packages found in dist/." >&2
             exit 1
           fi
 
@@ -120,3 +147,13 @@ jobs:
             dist/*.tar.gz.sha256
             dist/*.zip
             dist/*.zip.sha256
+            dist/*.dmg
+            dist/*.dmg.sha256
+            dist/*.exe
+            dist/*.exe.sha256
+            dist/*.msi
+            dist/*.msi.sha256
+            dist/*.AppImage
+            dist/*.AppImage.sha256
+            dist/*.deb
+            dist/*.deb.sha256

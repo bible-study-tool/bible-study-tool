@@ -269,6 +269,25 @@ class GitHubActionsConfigTests(unittest.TestCase):
             "Git line endings must be configured before actions/checkout step",
         )
 
+    def test_release_workflow_includes_tauri_desktop_build(self):
+        """Verify release workflow invokes build_desktop.py and publishes native desktop installers."""
+        release_yml = get_repo_root() / ".github" / "workflows" / "release.yml"
+        data = yaml.safe_load(release_yml.read_text(encoding="utf-8"))
+
+        build_steps = data["jobs"]["build-standalone"].get("steps", [])
+        step_runs = " ".join(s.get("run", "") for s in build_steps)
+        self.assertIn("build_desktop.py", step_runs, "Release workflow must invoke build_desktop.py")
+
+        rel_steps = data["jobs"]["create-github-release"]["steps"]
+        gh_release_step = next((s for s in rel_steps if "action-gh-release" in s.get("uses", "")), None)
+        self.assertIsNotNone(gh_release_step, "Release job must have action-gh-release step")
+        rel_files = gh_release_step.get("with", {}).get("files", "")
+        self.assertIn("*.dmg", rel_files, "Release files must include macOS .dmg")
+        self.assertIn("*.exe", rel_files, "Release files must include Windows .exe")
+        self.assertIn("*.AppImage", rel_files, "Release files must include Linux .AppImage")
+        self.assertIn("*.msi", rel_files, "Release files must include Windows .msi")
+        self.assertIn("*.deb", rel_files, "Release files must include Linux .deb")
+
     def test_gitattributes_enforces_lf(self):
         gitattributes = get_repo_root() / ".gitattributes"
         self.assertTrue(gitattributes.is_file(), ".gitattributes must exist at repo root")

@@ -31,6 +31,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from scripts.build_release import detect_platform, get_version
+from scripts.build_release_data import sha256_file
 
 
 def check_tauri_prerequisites() -> dict[str, bool]:
@@ -69,8 +70,9 @@ def stage_sidecar_for_bundle(repo_root: Path, os_name: str) -> Path | None:
     ext = ".exe" if os_name == "windows" else ""
     binary_name = f"bible-study{ext}"
 
-    # Search candidates in dist/
+    # Search candidates in dist/ (prioritizing versioned staged release folders)
     candidates = [
+        *sorted(dist_dir.glob(f"bible-study-*-{os_name}*/{binary_name}"), reverse=True),
         dist_dir / f"bible-study-{os_name}-x86_64" / binary_name,
         dist_dir / f"bible-study-{os_name}-arm64" / binary_name,
         dist_dir / "bible-study" / binary_name,
@@ -110,8 +112,9 @@ def stage_sidecar_for_bundle(repo_root: Path, os_name: str) -> Path | None:
         found_data = repo_root / "data"
     if found_data.is_dir():
         target_data = target_dir / "data"
-        if not target_data.exists():
-            shutil.copytree(found_data, target_data)
+        if target_data.exists():
+            shutil.rmtree(target_data)
+        shutil.copytree(found_data, target_data)
 
     return staged_binary
 
@@ -125,8 +128,34 @@ def run_tauri_build(repo_root: Path, debug: bool = False) -> int:
 
     print(f"==> Running Tauri build: {' '.join(cmd)}")
     env = os.environ.copy()
-    proc = subprocess.run(cmd, cwd=repo_root, env=env)
+    proc = subprocess.run(cmd, cwd=repo_root, env=env, shell=(sys.platform == "win32"))
     return proc.returncode
+
+
+def collect_desktop_artifacts(repo_root: Path, dist_dir: Path) -> list[Path]:
+    """Find generated Tauri desktop installers and copy them to dist/ with SHA256 checksums."""
+    bundle_dir = repo_root / "src-tauri" / "target" / "release" / "bundle"
+    if not bundle_dir.is_dir():
+        return []
+
+    dist_dir.mkdir(parents=True, exist_ok=True)
+    collected: list[Path] = []
+    extensions = ("*.dmg", "*.AppImage", "*.deb", "*.msi", "*.exe")
+    for ext in extensions:
+        for f in bundle_dir.rglob(ext):
+            if "build" in f.parts or "deps" in f.parts or f.name.lower() in ("bible-study.exe", "uninstall.exe"):
+                continue
+            dest = dist_dir / f.name
+            shutil.copy2(f, dest)
+            collected.append(dest)
+
+            digest = sha256_file(dest)
+            sha_file = dest.with_name(f"{dest.name}.sha256")
+            sha_file.write_text(f"{digest}  {dest.name}\n", encoding="utf-8")
+            collected.append(sha_file)
+            print(f"  ✔ Collected installer: {dest.name} (SHA-256: {digest[:16]}...)")
+
+    return collected
 
 
 def main() -> int:
@@ -166,9 +195,16 @@ def main() -> int:
     if staged:
         print(f"==> Staged engine binary: {staged}")
     else:
-        print("WARNING: Could not find frozen engine binary to stage. Tauri build may fail if sidecar is required.")
+        print("ERROR: Could not find frozen engine binary to stage into Tauri bundle.", file=sys.stderr)
+        return 1
 
-    return run_tauri_build(REPO_ROOT, debug=args.debug)
+    ret = run_tauri_build(REPO_ROOT, debug=args.debug)
+    if ret == 0:
+        print("==> Collecting desktop installers into dist/...")
+        collected = collect_desktop_artifacts(REPO_ROOT, REPO_ROOT / "dist")
+        print(f"==> Total installer artifacts collected: {len(collected)}")
+
+    return ret
 
 
 if __name__ == "__main__":
