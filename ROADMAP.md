@@ -109,7 +109,7 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
 ### P. Public Distribution *(new — making the Word accessible to everyone)*
 > *"What's the point of having the word and not sharing it?"*
-- `[~]` **P1. GUI-first zero-Python distribution** — frozen engine binary + sidecar `data/` folder + browser launcher (Phase 1 delivered in WP-029, `v0.1.3-alpha`), native desktop installer & embedded window via Tauri (Phase 2 in progress: WP-038, ADR-024, ADR-028: macOS `.dmg` / Windows `.exe` / Linux `.AppImage`); zero Python or terminal required; pre-built databases included; first-run setup wizard; public-domain EGW one-click download
+- `[x]` **P1. GUI-first zero-Python distribution** — frozen engine binary + sidecar `data/` folder + browser launcher (Phase 1 delivered in WP-029, `v0.1.3-alpha`), native desktop installer & embedded window via Tauri (Phase 2 delivered in WP-038, ADR-024, ADR-028: macOS `.dmg` / Windows `.exe` / Linux `.AppImage`); zero Python or terminal required; pre-built databases included; first-run setup wizard; public-domain EGW one-click download
 - `[ ]` **P2. Docker image** — container running workstation in web terminal (ttyd); accessible at `localhost:8080`; for servers, NAS, technically confident users
 - `[x]` **P3. GitLab Releases CI** — automated binary builds on `v*` tags; release notes generated from ROADMAP + CHANGELOG
 - `[ ]` **P4. First public release `v0.1.0`** — binary + illustrated INSTALL.md + USER_GUIDE.md as primary entry point
@@ -187,11 +187,11 @@ scrollmapper/bible_databases (MIT) additionally serves A6 (translations).
 12. **B2 — Macula automated lookup (Text-Fabric)**
 13. **B3 — Macula semantic enrichment**
 
-### Phase 5 — Semantic Search Upgrade
+### Phase 5 — Semantic & Cross-Language Search Upgrade
 14. **C1 — True semantic embeddings**
 15. **C2 — Hybrid search**
-16. **C3 — Cross-language semantic search**
-17. **C4 — Faceted/filtered querying** — ✅ Phase 1 done (`query(facets, text, limit)`, CLI `--theme/--translation/--language/--status/--text`, `/api/c4-query`)
+16. **C3 — Cross-language semantic search** — `[~]` in progress (WP-039: deterministic bidirectional English <-> Strong's <-> Hebrew/Greek lemma query expansion across bible.db, macula.db, egw.db, materials/)
+17. **C4 — Faceted/filtered querying** — `[x]` Phase 1 done (`query(facets, text, limit)`, CLI `--theme/--translation/--language/--status/--text`, `/api/c4-query`); `[~]` Phase 2 in progress (WP-039: unified multi-source search workstation, syntax operators `book:`, `testament:`, `translation:`, `strong:`, `domain:`, `egw:`, exact quotes, and omnibox routing)
 
 ### Phase 6 — Review Workflow & AI Assistant
 18. **E2 — AI-suggestion review tooling** (promotion UX)
