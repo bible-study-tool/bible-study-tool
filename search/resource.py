@@ -78,12 +78,14 @@ def get_repo_root() -> Path:
 def get_data_dir() -> Path:
     """Return the directory where database files (bible.db, macula.db, egw.db) reside.
 
-    Precedence:
+    Resolution employs a two-tier evaluation across candidate locations:
     1. ``BIBLE_STUDY_DATA_DIR`` environment variable if set and existing.
-    2. Sidecar ``data/`` alongside the application executable (``get_app_dir() / "data"``).
-    3. Bundled ``data/`` in the bundle root (``get_bundle_root() / "data"``).
-    4. Current working directory ``Path.cwd() / "data"``.
-    5. Fallback: ``get_app_dir() / "data"``.
+    2. Primary tier: The first candidate containing ``bible.db`` or ``SHA256SUMS`` among:
+       - Sidecar ``data/`` alongside executable (``get_app_dir() / "data"``)
+       - Repository ``data/`` (``get_repo_root() / "data"``)
+       - Current working directory (``Path.cwd() / "data"``)
+       - Bundled ``data/`` in bundle root (``get_bundle_root() / "data"``)
+    3. Fallback tier: The first existing directory among candidates, defaulting to ``get_app_dir() / "data"``.
     """
     env_data = os.environ.get("BIBLE_STUDY_DATA_DIR")
     if env_data:
@@ -91,19 +93,24 @@ def get_data_dir() -> Path:
         if p.exists():
             return p
 
-    app_data = get_app_dir() / "data"
-    if app_data.is_dir():
-        return app_data
+    candidates = list(dict.fromkeys([
+        get_app_dir() / "data",
+        get_repo_root() / "data",
+        Path.cwd() / "data",
+        get_bundle_root() / "data",
+    ]))
 
-    bundle_data = get_bundle_root() / "data"
-    if bundle_data.is_dir():
-        return bundle_data
+    # Prefer candidate directories that actually contain databases or checksum manifests
+    for cand in candidates:
+        if cand.is_dir() and ((cand / "bible.db").is_file() or (cand / "SHA256SUMS").is_file()):
+            return cand
 
-    cwd_data = Path.cwd() / "data"
-    if cwd_data.is_dir():
-        return cwd_data
+    # Fallback to first existing candidate directory
+    for cand in candidates:
+        if cand.is_dir():
+            return cand
 
-    return app_data
+    return get_app_dir() / "data"
 
 
 def get_web_dir() -> Path:
@@ -140,13 +147,15 @@ def get_web_dir() -> Path:
 def get_lexicons_dir() -> Path:
     """Return the directory containing canonical lexicons.
 
-    Precedence:
+    Resolution employs a two-tier evaluation across candidate locations:
     1. ``BIBLE_STUDY_LEXICONS_DIR`` environment variable if set and existing.
-    2. Sidecar ``lexicons/`` alongside the executable (``get_app_dir() / "lexicons"``).
-    3. ``get_data_dir() / "lexicons"`` (if sidecar layout packages lexicons in data/).
-    4. Bundled ``lexicons/`` in bundle root (``get_bundle_root() / "lexicons"``).
-    5. Current working directory ``Path.cwd() / "lexicons"``.
-    6. Fallback: ``get_app_dir() / "lexicons"``.
+    2. Primary tier: The first candidate containing JSON lexicon files among:
+       - Sidecar ``lexicons/`` alongside executable (``get_app_dir() / "lexicons"``)
+       - Repository ``lexicons/`` (``get_repo_root() / "lexicons"``)
+       - ``get_data_dir() / "lexicons"`` (if packaged inside data/)
+       - Current working directory (``Path.cwd() / "lexicons"``)
+       - Bundled ``lexicons/`` in bundle root (``get_bundle_root() / "lexicons"``)
+    3. Fallback tier: The first existing directory among candidates, defaulting to ``get_app_dir() / "lexicons"``.
     """
     env_lex = os.environ.get("BIBLE_STUDY_LEXICONS_DIR")
     if env_lex:
@@ -154,23 +163,25 @@ def get_lexicons_dir() -> Path:
         if p.exists():
             return p
 
-    app_lex = get_app_dir() / "lexicons"
-    if app_lex.is_dir():
-        return app_lex
+    candidates = list(dict.fromkeys([
+        get_app_dir() / "lexicons",
+        get_repo_root() / "lexicons",
+        get_data_dir() / "lexicons",
+        Path.cwd() / "lexicons",
+        get_bundle_root() / "lexicons",
+    ]))
 
-    data_lex = get_data_dir() / "lexicons"
-    if data_lex.is_dir():
-        return data_lex
+    # Prefer candidate directories that contain actual JSON lexicon files
+    for cand in candidates:
+        if cand.is_dir() and any(cand.glob("*.json")):
+            return cand
 
-    bundle_lex = get_bundle_root() / "lexicons"
-    if bundle_lex.is_dir():
-        return bundle_lex
+    # Fallback to first existing candidate directory
+    for cand in candidates:
+        if cand.is_dir():
+            return cand
 
-    cwd_lex = Path.cwd() / "lexicons"
-    if cwd_lex.is_dir():
-        return cwd_lex
-
-    return app_lex
+    return get_app_dir() / "lexicons"
 
 
 def data_path(rel_path: str | Path) -> Path:

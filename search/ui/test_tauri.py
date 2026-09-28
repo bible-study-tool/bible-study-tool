@@ -98,6 +98,8 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
         self.assertIn("find_repo_root", code)
         self.assertIn("resolve_engine_path", code)
         self.assertIn("resolve_engine_command", code)
+        self.assertIn("configure_engine_env", code)
+        self.assertIn("BIBLE_STUDY_DATA_DIR", code)
         self.assertIn("search.ui.web", code)
         self.assertIn("bible-study", code)
 

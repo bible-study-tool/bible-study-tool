@@ -139,14 +139,12 @@ pub fn resolve_engine_path(_app_handle: &tauri::AppHandle) -> Option<PathBuf> {
             let candidates = [
                 root.join("src-tauri/binaries/bible-study.exe"),
                 root.join(primary_dist),
-                root.join("dist/bible-study/bible-study.exe"),
                 root.join("bible-study.exe"),
             ];
             #[cfg(not(target_os = "windows"))]
             let candidates = [
                 root.join("src-tauri/binaries/bible-study"),
                 root.join(primary_dist),
-                root.join("dist/bible-study/bible-study"),
                 root.join("bible-study"),
             ];
 
@@ -161,6 +159,47 @@ pub fn resolve_engine_path(_app_handle: &tauri::AppHandle) -> Option<PathBuf> {
     None
 }
 
+/// Inject repository data and lexicon environment variables so dev and standalone engines
+/// always share and resolve the repository's databases and lexicons.
+pub fn configure_engine_env(cmd: &mut Command) {
+    if let Some(repo_root) = find_repo_root() {
+        let data_dir = repo_root.join("data");
+        let lex_dir = repo_root.join("lexicons");
+
+        // Only inject repository data dir if it contains DBs or manifest and caller hasn't explicitly set it
+        if (data_dir.join("bible.db").is_file() || data_dir.join("SHA256SUMS").is_file())
+            && std::env::var_os("BIBLE_STUDY_DATA_DIR").is_none()
+        {
+            cmd.env("BIBLE_STUDY_DATA_DIR", &data_dir);
+        }
+
+        if lex_dir.is_dir() && std::env::var_os("BIBLE_STUDY_LEXICONS_DIR").is_none() {
+            cmd.env("BIBLE_STUDY_LEXICONS_DIR", &lex_dir);
+        }
+
+        if std::env::var_os("BIBLE_STUDY_REPO_ROOT").is_none() {
+            cmd.env("BIBLE_STUDY_REPO_ROOT", &repo_root);
+        }
+    }
+}
+
+/// Configure common sidecar arguments, flags, and environment variables.
+pub fn configure_engine_process(cmd: &mut Command, port: u16) {
+    cmd.stdin(std::process::Stdio::null())
+        .arg("--port")
+        .arg(port.to_string())
+        .arg("--no-browser");
+
+    configure_engine_env(cmd);
+
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        cmd.creation_flags(CREATE_NO_WINDOW);
+    }
+}
+
 /// Resolve the launch command for the backend engine:
 /// 1. Frozen standalone binary if present (production / packaged desktop app)
 /// 2. Local Python virtual environment in repository if running in dev mode
@@ -171,18 +210,7 @@ pub fn resolve_engine_command(app_handle: &tauri::AppHandle, port: u16) -> Optio
         if let Some(engine_dir) = engine_path.parent() {
             cmd.current_dir(engine_dir);
         }
-        cmd.stdin(std::process::Stdio::null())
-            .arg("--port")
-            .arg(port.to_string())
-            .arg("--no-browser");
-
-        #[cfg(target_os = "windows")]
-        {
-            use std::os::windows::process::CommandExt;
-            const CREATE_NO_WINDOW: u32 = 0x08000000;
-            cmd.creation_flags(CREATE_NO_WINDOW);
-        }
-
+        configure_engine_process(&mut cmd, port);
         return Some(cmd);
     }
 
@@ -213,20 +241,8 @@ pub fn resolve_engine_command(app_handle: &tauri::AppHandle, port: u16) -> Optio
         log::info!("Spawning development Python engine using {:?} from {:?}", py_bin, repo_root);
         let mut cmd = Command::new(py_bin);
         cmd.current_dir(&repo_root);
-        cmd.stdin(std::process::Stdio::null())
-            .arg("-m")
-            .arg("search.ui.web")
-            .arg("--port")
-            .arg(port.to_string())
-            .arg("--no-browser");
-
-        #[cfg(target_os = "windows")]
-        {
-            use std::os::windows::process::CommandExt;
-            const CREATE_NO_WINDOW: u32 = 0x08000000;
-            cmd.creation_flags(CREATE_NO_WINDOW);
-        }
-
+        cmd.arg("-m").arg("search.ui.web");
+        configure_engine_process(&mut cmd, port);
         return Some(cmd);
     }
 

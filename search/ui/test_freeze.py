@@ -72,6 +72,45 @@ class FrozenResourceResolutionTests(unittest.TestCase):
                 self.assertEqual(resolved, sidecar_db)
                 self.assertTrue(resolved.exists())
 
+    def test_frozen_data_path_skips_empty_bundle_data(self):
+        """Verify that get_data_dir() prefers a candidate with bible.db over an empty bundle data dir."""
+        from search.resource import get_data_dir
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = Path(tmpdir)
+            bundle_dir = tmp / "bundle"
+            bundle_data = bundle_dir / "data"
+            bundle_data.mkdir(parents=True)
+            (bundle_data / "prophetic_lexicon.json").write_text("{}", encoding="utf-8")
+
+            repo_dir = tmp / "repo"
+            repo_data = repo_dir / "data"
+            repo_data.mkdir(parents=True)
+            (repo_data / "bible.db").write_text("sqlite", encoding="utf-8")
+
+            with patch.object(sys, "frozen", True, create=True), \
+                 patch.object(sys, "_MEIPASS", str(bundle_dir), create=True), \
+                 patch.dict(os.environ, {"BIBLE_STUDY_REPO_ROOT": str(repo_dir)}):
+                self.assertEqual(get_data_dir(), repo_data)
+
+    def test_frozen_lexicons_path_skips_empty_bundle_lexicons(self):
+        """Verify that get_lexicons_dir() prefers a candidate with *.json over an empty bundle lexicons dir."""
+        from search.resource import get_lexicons_dir
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = Path(tmpdir)
+            bundle_dir = tmp / "bundle"
+            bundle_lex = bundle_dir / "lexicons"
+            bundle_lex.mkdir(parents=True)
+
+            repo_dir = tmp / "repo"
+            repo_lex = repo_dir / "lexicons"
+            repo_lex.mkdir(parents=True)
+            (repo_lex / "strongs-greek.json").write_text("{}", encoding="utf-8")
+
+            with patch.object(sys, "frozen", True, create=True), \
+                 patch.object(sys, "_MEIPASS", str(bundle_dir), create=True), \
+                 patch.dict(os.environ, {"BIBLE_STUDY_REPO_ROOT": str(repo_dir)}):
+                self.assertEqual(get_lexicons_dir(), repo_lex)
+
 
 class TextualFrozenCompatibilityTests(unittest.TestCase):
     """Test Textual driver resolution and headless app lifecycle in frozen mode."""
