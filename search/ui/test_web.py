@@ -108,6 +108,19 @@ class WebServerTests(unittest.TestCase):
         self.assertIn(b'id="launch-wizard-btn"', body)
         self.assertIn(b"shortcuts-table", body)
 
+    def test_favicon_and_image_mime_types(self) -> None:
+        # Verify index.html references favicon.png
+        status, body, _ = self._get("/")
+        self.assertEqual(status, 200)
+        html = body.decode("utf-8")
+        self.assertIn('<link rel="icon" type="image/png" href="/favicon.png">', html)
+
+        # Verify favicon.png serves image/png
+        status, icon_body, headers = self._get("/favicon.png")
+        self.assertEqual(status, 200)
+        self.assertEqual(headers, "image/png")
+        self.assertGreater(len(icon_body), 0)
+
     def test_pane_divider_accessibility_attributes(self) -> None:
         status, body, _ = self._get("/")
         self.assertEqual(status, 200)

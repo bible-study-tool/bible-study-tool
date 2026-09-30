@@ -193,6 +193,10 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 ".html": "text/html; charset=utf-8",
                 ".css": "text/css; charset=utf-8",
                 ".js": "application/javascript; charset=utf-8",
+                ".png": "image/png",
+                ".ico": "image/x-icon",
+                ".svg": "image/svg+xml",
+                ".webp": "image/webp",
             }.get(target.suffix, "application/octet-stream")
             self._reply(HTTPStatus.OK, target.read_bytes(), ctype)
 

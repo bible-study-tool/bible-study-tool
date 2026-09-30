@@ -1,14 +1,21 @@
+<div align="center">
+
+<img src="docs/images/bible-icon.png" alt="Adventist Bible Study Tool Icon" width="128" />
+
 # Adventist Bible Study Tool
+
+**An interactive, zero-cloud biblical research workstation for deep inductive study.**  
+Brings original Biblical Hebrew and Koine Greek into plain English, cross-references all 66 books with 344,000+ reciprocal links, and unifies Scripture, parallel translations, and historical commentary on a serene desktop study desk.
 
 <p align="center">
   <a href="https://github.com/bible-study-tool/bible-study-tool/actions/workflows/ci.yml"><img src="https://github.com/bible-study-tool/bible-study-tool/actions/workflows/ci.yml/badge.svg" alt="CI Status"></a>
   <a href="https://github.com/bible-study-tool/bible-study-tool/releases"><img src="https://img.shields.io/github/v/release/bible-study-tool/bible-study-tool?label=desktop%20release&color=blue" alt="Latest Release"></a>
-  <a href="scripts/verify_all.sh"><img src="https://img.shields.io/badge/tests-928%20passing-brightgreen" alt="Tests"></a>
-  <a href="docs/INSTALL.md"><img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-informational" alt="Platforms"></a>
+  <a href="scripts/verify_all.sh"><img src="https://img.shields.io/badge/tests-929%20passing-brightgreen" alt="Tests"></a>
+  <a href="docs/DOWNLOADS.md"><img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-informational" alt="Platforms"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT%20%2F%20CC--BY--4.0-blue.svg" alt="License"></a>
 </p>
 
-An interactive, zero-cloud biblical research workstation that brings original Biblical Hebrew and Koine Greek into plain English, cross-references all 66 books with 344,000+ reciprocal links, and unifies Scripture, parallel translations, and historical commentary on a serene desktop study desk.
+</div>
 
 > 📖 **Quick Links**:
 > - **Download Desktop App**: [Direct Downloads & Platform Packages](docs/DOWNLOADS.md) for macOS, Windows, and Linux.
@@ -19,9 +26,15 @@ An interactive, zero-cloud biblical research workstation that brings original Bi
 
 ## What You Can Do With It
 
+<p align="center">
+  <a href="docs/VISUAL_TOUR.md"><img src="docs/images/image_2026-09-30_13-59-42.png" alt="Adventist Bible Study Tool - Original Languages & Concordance Workstation in Sepia" width="100%"></a>
+  <br>
+  <em>The Study Room Desk in Warm Sepia: Scripture reading desk (left) alongside Original Languages &amp; Concordance inspector (right) unpacking Greek verbal aspect and theological nuance in plain English.</em>
+</p>
+
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│  [ Genesis 1:1 ]   Translations: KJV │ ASV │ BSB │ YLT   [Search: /]   [Palettes: 9]   │
+│  [ Genesis 1:1 ]   Translations: KJV │ ASV │ BSB │ YLT   [Search: /]   [Palettes: 10]  │
 ├─────────────────────────────────────────────────┬──────────────────────────────────────┤
 │  SCRIPTURE READING DESK                         │ STUDY ROOM INSPECTOR                 │
 │                                                 │                                      │
@@ -85,11 +98,12 @@ An interactive, zero-cloud biblical research workstation that brings original Bi
    - In-browser reading drawer with physical printed pagination fidelity matching the published books (e.g., `PP 44.1`, `DA 19.1`, `GC 623.2`).
    - Sequential chapter traversal (`‹ Prev / Next ›`) and direct canonical citation jumps.
 
-8. **9 Study Room Color Palettes & Classical Typography**:
+8. **10 Study Room Color Palettes & Classical Typography**:
    - Designed for long, distraction-free study sessions without eye fatigue:
      - **Warm Palettes**: Warm Sepia, Dark Walnut (default Study Room Desk).
      - **Dark Themes**: Dracula, Catppuccin Mocha, Tokyo Night, Nord, Gruvbox Dark, Solarized Dark.
      - **Light Theme**: Clean archival parchment.
+     - **Terminal Theme**: Transparent terminal pass-through mode.
    - Draggable 65/35 split-pane, Fullscreen Focus Mode (`f`), Panel Zoom (`z`), and WCAG AAA compliant contrast.
 
 9. **Terminal Power Workstation (TUI Companion)**:
@@ -123,19 +137,45 @@ For detailed step-by-step instructions, see the [Downloads Guide](docs/DOWNLOADS
 
 ## Workstation Tour & Screenshots
 
-*Detailed screenshot walkthroughs and high-resolution captures are in [docs/VISUAL_TOUR.md](docs/VISUAL_TOUR.md).*
+Explore the dedicated research workstations across different Study Room themes. *(For the complete visual walkthrough of all workstations and color palettes, see the [Visual Tour (docs/VISUAL_TOUR.md)](docs/VISUAL_TOUR.md).)*
 
-```
-┌──────────────────────────────────────────────────────────────────────────┐
-│                          [ WORKSTATION GALLERY ]                         │
-│                                                                          │
-│   [ 1. Reading Desk & Inspector ]     [ 2. Sanctuary Plan of Salvation ] │
-│   [ 3. Cross-Language Search ]        [ 4. Multi-Translation Matrix ]    │
-│   [ 5. Apocalyptic Prophetic Keys ]   [ 6. Terminal TUI Interface ]      │
-└──────────────────────────────────────────────────────────────────────────┘
-```
+### 1. Unified & Hybrid Semantic Search Engine (WP-039, WP-040)
+*Instant multi-source retrieval blending keyword exact matches (BM25), dense neural embeddings (cosine similarity), and cross-references with transparent hit counts across Scripture, Translations, and Spirit of Prophecy commentary (shown in Nord theme).*
 
-*(To add or view community screenshots and workflow recordings, see [docs/VISUAL_TOUR.md](docs/VISUAL_TOUR.md).)*
+<p align="center">
+  <a href="docs/VISUAL_TOUR.md#2-unified--hybrid-semantic-search-engine"><img src="docs/images/image_2026-09-30_14-58-13-edited.png" alt="Unified &amp; Hybrid Semantic Search Engine in Nord Theme" width="100%"></a>
+</p>
+
+### 2. Multi-Translation Parallel Reading Desk (v)
+*Side-by-side or stacked comparative reading across KJV (with Strong's numbers), ASV, BSB, and YLT with classical biblical typography and small-caps divine names (shown in Light Paper theme).*
+
+<p align="center">
+  <a href="docs/VISUAL_TOUR.md#3-multi-translation-parallel-reading-desk"><img src="docs/images/image_2026-09-30_14-58-31-edited1.png" alt="Multi-Translation Parallel Reading Desk in Light Paper Theme" width="100%"></a>
+</p>
+
+### 3. Interactive Sanctuary Typology Blueprint & Plan of Salvation (A13)
+*Vector architectural floorplan traversing the Courtyard, Holy Place, and Most Holy Place across the 4-stage Plan of Salvation timeline slider: Cross (AD 31) ➔ Intercession ➔ 1844 Judgment ➔ Consummation (shown in Tokyo Night theme).*
+
+<p align="center">
+  <a href="docs/VISUAL_TOUR.md#4-interactive-sanctuary-typology-blueprint--plan-of-salvation"><img src="docs/images/image_2026-09-30_14-57-57-edited.png" alt="Sanctuary Typology Blueprint &amp; Plan of Salvation in Tokyo Night Theme" width="100%"></a>
+</p>
+
+### 4. Master Prophetic Key Table & Apocalyptic Symbol Chaining (WP-031)
+*Historicist apocalyptic symbol decoder linking Daniel and Revelation beasts, horns, waters, time periods, and trumpets to their Old Testament proof texts and historical consensus citations (shown in Gruvbox Dark theme).*
+
+<p align="center">
+  <a href="docs/VISUAL_TOUR.md#5-master-prophetic-key-table--apocalyptic-symbol-chaining"><img src="docs/images/image_2026-09-30_14-58-31-edited.png" alt="Master Prophetic Key Table in Gruvbox Dark Theme" width="100%"></a>
+</p>
+
+### 5. Spirit of Prophecy Progressive Narrative Reader (WP-033)
+*In-browser narrative reading drawer with physical book pagination fidelity (e.g. DA 662.1, PP 44.1, GC 623.2), sequential chapter traversal, and direct citation jumps (shown in Dracula theme).*
+
+<p align="center">
+  <a href="docs/VISUAL_TOUR.md#6-spirit-of-prophecy-progressive-narrative-reader--correlations"><img src="docs/images/image_2026-09-30_14-57-27-edited.png" alt="Spirit of Prophecy Progressive Narrative Reader in Dracula Theme" width="100%"></a>
+</p>
+
+> 🖼️ **Want to see more layouts and color palettes?**  
+> Browse the [Visual Tour (docs/VISUAL_TOUR.md)](docs/VISUAL_TOUR.md) for Dark Walnut, Sepia, Focus Mode, terminal TUI screenshots, and keyboard shortcut demonstrations.
 
 ---
 
@@ -187,7 +227,7 @@ The repository enforces strict data integrity via 6 automated validators (F1–F
 ```bash
 bash scripts/verify_all.sh
 ```
-*(Runs 928 unit and integration tests, F1–F6 schema/integrity validators, and raw source cryptographic checksum gates.)*
+*(Runs 929 unit and integration tests, F1–F6 schema/integrity validators, and raw source cryptographic checksum gates.)*
 
 ---
 

@@ -109,8 +109,8 @@ The workstation is built around a balanced, ergonomic two-pane study desk:
 - **Custom Split**: Click and drag the vertical divider handle horizontally to adjust the width between reading and research.
 - **Double-Click Reset**: Double-click the divider handle at any time to snap back to the default 65% reading / 35% study panel balance.
 
-### The Right Pane: 7 Dedicated Study Tabs
-The study side-pane provides 7 deep research panels:
+### The Right Pane: 8 Dedicated Study Tabs
+The study side-pane provides 8 deep research panels:
 1. **Translations**: Parallel comparison of four trusted versions (KJV, ASV, BSB, YLT) with side-by-side verse cards and stacked alignment.
 2. **Languages**: Plain-English Hebrew, Aramaic, and Greek grammar nuances, verbal stems (Qal, Niphal, Piel, etc.), voices, moods, and participant roles.
 3. **Cross-Refs**: Interactive cross-reference explorer with Layer A curated theological links and Layer B Treasury of Scripture Knowledge (~345,000 links) with instantaneous keyword filtering.
@@ -118,14 +118,15 @@ The study side-pane provides 7 deep research panels:
 5. **Sanctuary**: Interactive vector blueprint floorplan of the Hebrew Sanctuary and a 4-stage Plan of Salvation chronological slider (Cross AD 31 → Intercession → 1844 Investigative Judgment → Consummation).
 6. **Commentary**: Progressive Spirit of Prophecy chapter reader and per-verse commentary extracts from Ellen G. White's Conflict of the Ages series and devotional works.
 7. **Notes**: Personal study notes and topical annotations.
+8. **Search**: Unified & Hybrid Semantic Search engine (`/`) fusing keyword BM25, dense neural vectors, and cross-references.
 
 **Panel Zoom (`z` or `Shift+F`)**: Want to examine the Sanctuary blueprint or read an entire chapter of *The Desire of Ages* across your whole screen? Press `z`, `Shift+F`, or double-click any tab header to maximize the study panel to full window width. Press `Esc` or click **⤢ Exit Full View** to return.
 
 ---
 
-## 4. The 8 Core Comprehension Tools
+## 4. The 9 Core Research & Comprehension Tools
 
-The workstation equips you with eight specialized study tools designed to unlock deeper understanding:
+The workstation equips you with nine specialized research tools designed to unlock deeper biblical understanding:
 
 ---
 
@@ -145,8 +146,8 @@ Ancient biblical languages often communicate shades of meaning that single Engli
   - *Perfect*: An action completed in the past with enduring, permanent present results (e.g. Romans 1:1 — Paul *having been permanently set apart* unto the gospel).
   - *Middle Voice*: Deep personal interest and affectionate involvement (e.g. Ephesians 1:4 — God chose us *for Himself* out of boundless love).
 
-![Original Language Nuance Inspector](images/image_2026-09-15_11-04-17.png)
-*Tab 2 (Languages / Syntax) displaying grammatical breakdown and theological nuance for the active verse.*
+![Original Language Nuance Inspector](images/image_2026-09-30_13-59-42.png)
+*Tab 2 (Languages / Syntax) displaying grammatical breakdown and plain-English theological nuance for the active verse (shown in Sepia theme).*
 
 ---
 
@@ -183,8 +184,8 @@ Comparing reliable translations is one of the most effective ways to discern the
   - **YLT** (Young's Literal Translation 1898): Strict literal rendering preserving original Hebrew and Greek verb tenses.
 - Press `v` again to return to single-column reading, or select **Tab 1 (`Translations`)** in the side-pane for side-by-side comparison cards for the active verse.
 
-![Parallel Translations in Dark Walnut](images/image_2026-09-15_11-04-26.png)
-*Parallel Translations comparison stack (KJV, ASV, BSB, YLT) in Dark Walnut theme.*
+![Parallel Translations in Light Paper theme](images/image_2026-09-30_14-58-31-edited1.png)
+*Parallel Translations comparison stack (KJV, ASV, BSB, YLT) with small-caps divine names in Light Paper theme.*
 
 ---
 
@@ -211,8 +212,8 @@ The Sanctuary is the grand visual model of the entire Plan of Salvation (Psalm 7
   3. *3. Investigative Judgment (1844–Close of Probation)* — **Cleansing of the Sanctuary**: Christ enters the Most Holy Place for the final Day of Atonement judgment (Daniel 8:14, Leviticus 16, Revelation 14:6–7).
   4. *4. Consummation / New Earth* — **Eternal Restoration**: The sanctuary cleansed, sin eradicated, and God tabernacling forever with His redeemed people (Revelation 21:3).
 
-![Sanctuary Blueprint in Sepia theme](images/image_2026-09-15_11-04-08.png)
-*Interactive Sanctuary Blueprint floorplan with the 4-stage Plan of Salvation slider.*
+![Sanctuary Blueprint in Tokyo Night theme](images/image_2026-09-30_14-57-57-edited.png)
+*Interactive Sanctuary Blueprint floorplan with the 4-stage Plan of Salvation slider in Tokyo Night theme.*
 
 ---
 
@@ -224,6 +225,9 @@ Daniel and Revelation use symbolic language that the Bible itself interprets:
 - **Historicist Consensus**: Clear doctrinal grounding reflecting the historicist prophetic interpretation of Daniel 2, 7, 8, 9, 11, and Revelation 12–14.
 - **Inline Text Badges**: Click any prophecy badge directly in the Scripture reader to pull up the symbol's verified definition and cross-references without leaving your reading flow.
 
+![Master Prophetic Key Table in Gruvbox Dark theme](images/image_2026-09-30_14-58-31-edited.png)
+*Historicist Prophetic Key Table in panel zoom view (`z`) displaying apocalyptic symbols and scriptural keys in Gruvbox Dark theme.*
+
 ---
 
 ### Tool 8: Progressive Spirit of Prophecy Chapter Reader (Commentary Tab & Key `c`)
@@ -232,6 +236,24 @@ Connect the inspired commentary of Ellen G. White to your biblical exegesis:
 - **Per-Verse Commentary**: Selecting any verse loads verified commentary paragraphs from Ellen G. White's writings (e.g. *Patriarchs and Prophets*, *The Desire of Ages*, *The Great Controversy*, *Christ's Object Lessons*).
 - **Direct Citation Token Goto (`g`)**: Jump straight to any specific paragraph in the Spirit of Prophecy corpus using standard tokens (e.g. `DA 19.1`, `PP 44.1`, `GC 678.1`, `SC 62.2`).
 - **Progressive Chapter Reader**: Toggle the continuous chapter reader mode to read whole chapters of Ellen G. White's books with authentic page break indicators, allowing you to follow her complete thematic narrative.
+
+![Progressive Spirit of Prophecy Reader in Dracula theme](images/image_2026-09-30_14-57-27-edited.png)
+*Narrative Reader drawer displaying Chapter 73 ("Let Not Your Heart Be Troubled") of The Desire of Ages with authentic physical pagination (DA 662.1) in Dracula theme.*
+
+---
+
+### Tool 9: Unified & Hybrid Semantic Search Engine (Search Tab & Key `/`)
+
+Discover connections across Scripture, parallel translations, and Spirit of Prophecy commentary with sub-millisecond multi-database search:
+- **Tri-Brid Reciprocal Rank Fusion (RRF)**: Blends SQLite FTS5 exact BM25 keyword matching, local dense vector cosine similarity (quantized ONNX), and Treasury of Scripture Knowledge (TSK) cross-reference graph.
+- **Three Search Modes**:
+  - `✦ Hybrid`: Blends keywords, semantic concepts, and cross-references.
+  - `Aa Keyword`: Pure deterministic FTS5 BM25 search.
+  - `☵ Thematic`: Pure local vector geometry for conceptual discovery (e.g. *suffering servant*, *covenant faithfulness*).
+- **Category Filter Pills**: Real-time hit counts across Scripture, Translations, Original Languages, Commentary, and Curated notes.
+
+![Unified & Hybrid Semantic Search in Nord theme](images/image_2026-09-30_14-58-13-edited.png)
+*Unified & Hybrid Semantic Search workstation in Nord theme showing real-time hit counts across Scripture and commentary.*
 
 ---
 
