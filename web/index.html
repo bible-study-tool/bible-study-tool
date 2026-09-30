@@ -51,7 +51,6 @@
     <aside class="pane pane-side">
       <div class="tab-bar">
         <div class="tab-list" role="tablist" aria-label="Study panels">
-          <button class="tab" role="tab" aria-selected="false" data-tab="search" id="tab-search" aria-controls="panel-search" title="Library Search across Scripture, Translations, Macula, EGW &amp; Notes (double-click to maximize)">Search</button>
           <button class="tab" role="tab" aria-selected="true" data-tab="translations" title="Translations (double-click to maximize)">Translations</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="languages" title="Languages (double-click to maximize)">Languages</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="xrefs" id="tab-xrefs" aria-controls="panel-xrefs" title="Cross References &amp; Treasury of Scripture Knowledge (double-click to maximize)">Cross-Refs</button>
@@ -59,6 +58,7 @@
           <button class="tab" role="tab" aria-selected="false" data-tab="sanctuary" title="Sanctuary Blueprint (double-click to maximize)">Sanctuary</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="commentary" id="tab-commentary" title="Spirit of Prophecy Commentary (double-click to maximize)">Commentary</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="notes" title="Notes (double-click to maximize)">Notes</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="search" id="tab-search" aria-controls="panel-search" title="Library Search across Scripture, Translations, Macula, EGW &amp; Notes (double-click to maximize)">Search</button>
         </div>
         <button id="exit-zoom-btn" class="tab-exit-zoom" aria-label="Exit full panel view" title="Exit full panel view (Esc / double-click)" hidden>⤢ Exit Full View</button>
       </div>
@@ -496,17 +496,43 @@
           </div>
 
           <div class="setting-card">
+            <label class="toggle-control" for="wizard-strongs-toggle">
+              <input type="checkbox" id="wizard-strongs-toggle" checked>
+              <div class="toggle-track"><span class="toggle-thumb"></span></div>
+              <div class="toggle-label">
+                <strong>Show Strong's Concordance Numbers</strong>
+                <span class="toggle-sub">Display clickable Strong's Hebrew and Greek tags inline with scripture verses (shortcut: <kbd>s</kbd>).</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-row">
+              <div class="setting-info">
+                <label class="setting-label"><strong>Content Reading Font Size</strong></label>
+                <span class="setting-sub">Scale Scripture and commentary text size without affecting application UI buttons (shortcuts: <kbd>+</kbd> / <kbd>-</kbd> / <kbd>0</kbd>).</span>
+              </div>
+              <div class="font-scale-control" role="group" aria-label="Reading font size controls">
+                <button type="button" class="btn-tool btn-font-dec" id="wizard-font-dec-btn" aria-label="Decrease reading font size" title="Decrease font size (-)">A−</button>
+                <span class="font-scale-value" id="wizard-font-scale-value" aria-live="polite">100%</span>
+                <button type="button" class="btn-tool btn-font-inc" id="wizard-font-inc-btn" aria-label="Increase reading font size" title="Increase font size (+)">A+</button>
+                <button type="button" class="btn-tool btn-font-reset" id="wizard-font-reset-btn" aria-label="Reset reading font size" title="Reset font size (0)">Reset</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-card">
             <label class="toggle-control" for="auto-update-toggle">
               <input type="checkbox" id="auto-update-toggle" checked>
               <div class="toggle-track"><span class="toggle-thumb"></span></div>
               <div class="toggle-label">
                 <strong>Check for Application Updates</strong>
-                <span class="toggle-sub">Periodically checks GitLab Releases for new versions and critical bug fixes.</span>
+                <span class="toggle-sub">Periodically checks GitHub Releases for new versions and critical bug fixes.</span>
               </div>
             </label>
             <div class="privacy-callout">
               <div class="privacy-badge">&#128274; Zero-Telemetry Guarantee</div>
-              <p>When update checking is active, the application only queries the public GitLab release tag. <strong>No identifiers, no IP logging, no queries, and no personal telemetry are ever transmitted.</strong></p>
+              <p>When update checking is active, the application only queries the public GitHub release tag. <strong>No identifiers, no IP logging, no queries, and no personal telemetry are ever transmitted.</strong></p>
             </div>
           </div>
         </section>
@@ -637,6 +663,21 @@
               </div>
             </label>
           </div>
+
+          <div class="setting-card">
+            <div class="setting-row">
+              <div class="setting-info">
+                <label class="setting-label"><strong>Content Reading Font Size</strong></label>
+                <span class="setting-sub">Scale Scripture and commentary text size without affecting application UI buttons (shortcuts: <kbd>+</kbd> / <kbd>-</kbd> / <kbd>0</kbd>).</span>
+              </div>
+              <div class="font-scale-control" role="group" aria-label="Reading font size controls">
+                <button type="button" class="btn-tool btn-font-dec" id="settings-font-dec-btn" aria-label="Decrease reading font size" title="Decrease font size (-)">A−</button>
+                <span class="font-scale-value" id="settings-font-scale-value" aria-live="polite">100%</span>
+                <button type="button" class="btn-tool btn-font-inc" id="settings-font-inc-btn" aria-label="Increase reading font size" title="Increase font size (+)">A+</button>
+                <button type="button" class="btn-tool btn-font-reset" id="settings-font-reset-btn" aria-label="Reset reading font size" title="Reset font size (0)">Reset</button>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section class="settings-section">
@@ -647,12 +688,12 @@
               <div class="toggle-track"><span class="toggle-thumb"></span></div>
               <div class="toggle-label">
                 <strong>Check for Application Updates</strong>
-                <span class="toggle-sub">Periodically checks GitLab Releases for new versions and critical bug fixes.</span>
+                <span class="toggle-sub">Periodically checks GitHub Releases for new versions and critical bug fixes.</span>
               </div>
             </label>
             <div class="privacy-callout">
               <div class="privacy-badge">&#128274; Zero-Telemetry Guarantee</div>
-              <p>When update checking is active, the application only queries the public GitLab release tag. <strong>No identifiers, no IP logging, no queries, and no personal telemetry are ever transmitted.</strong></p>
+              <p>When update checking is active, the application only queries the public GitHub release tag. <strong>No identifiers, no IP logging, no queries, and no personal telemetry are ever transmitted.</strong></p>
             </div>
           </div>
         </section>
@@ -680,9 +721,13 @@
         </section>
 
         <section class="settings-section">
-          <h3 class="settings-section-title">Setup &amp; Shortcuts</h3>
-          <div class="settings-action-row">
-            <button type="button" id="open-shortcuts-btn" class="btn-tool">Keyboard Shortcuts (<kbd>?</kbd>)</button>
+          <div class="settings-section-header">
+            <h3 class="settings-section-title">Keyboard Navigation &amp; Shortcuts</h3>
+            <button type="button" id="open-shortcuts-btn" class="btn-tool btn-sm">Full Reference (<kbd>?</kbd>)</button>
+          </div>
+          <p class="setting-sub" style="margin-bottom: var(--space-3);">Keyboard shortcuts for high-speed, mouse-free Bible study:</p>
+          <div id="settings-shortcuts-list" class="settings-shortcuts-list"></div>
+          <div class="settings-action-row" style="margin-top: var(--space-4);">
             <button type="button" id="launch-wizard-btn" class="btn-tool">Launch Setup &amp; Verification Guide…</button>
           </div>
         </section>
@@ -706,25 +751,12 @@
         <table class="shortcuts-table" role="table" aria-label="Keyboard Shortcuts">
           <thead>
             <tr>
-              <th scope="col">Key</th>
+              <th scope="col" style="width: 38%;">Key</th>
               <th scope="col">Action</th>
             </tr>
           </thead>
-          <tbody>
-            <tr><td><kbd>h</kbd> / <kbd>l</kbd> or <kbd>[</kbd> / <kbd>]</kbd> or <kbd>&larr;</kbd> / <kbd>&rarr;</kbd></td><td>Previous / Next chapter</td></tr>
-            <tr><td><kbd>j</kbd> / <kbd>k</kbd> or <kbd>&darr;</kbd> / <kbd>&uarr;</kbd></td><td>Move to next / previous verse</td></tr>
-            <tr><td><kbd>Space</kbd> / <kbd>Enter</kbd></td><td>Pin / inspect selected verse</td></tr>
-            <tr><td><kbd>g</kbd> or <kbd>/</kbd> or <kbd>Ctrl+P</kbd></td><td>Jump to passage / focus search</td></tr>
-            <tr><td><kbd>1</kbd> &ndash; <kbd>7</kbd></td><td>Switch side tabs (1: Translations, 2: Languages, 3: Cross-Refs, 4: Prophecy, 5: Sanctuary, 6: Commentary, 7: Notes)</td></tr>
-            <tr><td><kbd>x</kbd></td><td>Jump to Cross-References workstation</td></tr>
-            <tr><td><kbd>f</kbd></td><td>Toggle Scripture Focus Mode (full-width text)</td></tr>
-            <tr><td><kbd>z</kbd> / <kbd>Shift+F</kbd></td><td>Toggle Panel Zoom (maximize active pane)</td></tr>
-            <tr><td><kbd>s</kbd></td><td>Toggle inline Strong's concordance numbers</td></tr>
-            <tr><td><kbd>v</kbd></td><td>Toggle parallel translations</td></tr>
-            <tr><td><kbd>c</kbd></td><td>Open Spirit of Prophecy commentary</td></tr>
-            <tr><td><kbd>t</kbd></td><td>Cycle visual theme (Sepia, Light, Dark)</td></tr>
-            <tr><td><kbd>?</kbd></td><td>Open this keyboard shortcuts guide</td></tr>
-            <tr><td><kbd>Esc</kbd></td><td>Exit focus/zoom mode, dismiss card, close dialog</td></tr>
+          <tbody id="shortcuts-table-body">
+            <!-- Dynamically populated from central SHORTCUTS registry in app.js -->
           </tbody>
         </table>
       </div>

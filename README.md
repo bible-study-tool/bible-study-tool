@@ -3,7 +3,7 @@
 <p align="center">
   <a href="https://github.com/bible-study-tool/bible-study-tool/actions/workflows/ci.yml"><img src="https://github.com/bible-study-tool/bible-study-tool/actions/workflows/ci.yml/badge.svg" alt="CI Status"></a>
   <a href="https://github.com/bible-study-tool/bible-study-tool/releases"><img src="https://img.shields.io/github/v/release/bible-study-tool/bible-study-tool?label=desktop%20release&color=blue" alt="Latest Release"></a>
-  <a href="scripts/verify_all.sh"><img src="https://img.shields.io/badge/tests-907%20passing-brightgreen" alt="Tests"></a>
+  <a href="scripts/verify_all.sh"><img src="https://img.shields.io/badge/tests-928%20passing-brightgreen" alt="Tests"></a>
   <a href="docs/INSTALL.md"><img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-informational" alt="Platforms"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT%20%2F%20CC--BY--4.0-blue.svg" alt="License"></a>
 </p>
@@ -11,7 +11,7 @@
 An interactive, zero-cloud biblical research workstation that brings original Biblical Hebrew and Koine Greek into plain English, cross-references all 66 books with 344,000+ reciprocal links, and unifies Scripture, parallel translations, and historical commentary on a serene desktop study desk.
 
 > 📖 **Quick Links**:
-> - **Download Desktop App**: [Latest Native Installers (v0.1.4-beta)](#download--install-native-desktop-app) for macOS, Windows, and Linux.
+> - **Download Desktop App**: [Direct Downloads & Platform Packages](docs/DOWNLOADS.md) for macOS, Windows, and Linux.
 > - **Visual Tour & Gallery**: Browse everyday workflows and layouts in the [Visual Tour](docs/VISUAL_TOUR.md).
 > - **Study Tutorials**: Step-by-step inductive study guides in the [User & Study Guide](docs/USER_GUIDE.md) and [How to Study the Bible](docs/HOW_TO_STUDY_THE_BIBLE.md).
 
@@ -27,7 +27,7 @@ An interactive, zero-cloud biblical research workstation that brings original Bi
 │                                                 │                                      │
 │  1 In the beginning God created the heaven and  │ [Languages] [TSK X-Refs] [Commentary]│
 │    the earth.                                   │                                      │
-│                                                 │ • בְּרֵאשִׁית (bərēʾšît) — H7225       │
+│                                                 │ • בְּרֵאשִׁית (bərēʾšît) — H7225          │
 │  2 And the earth was without form, and void;    │   Gloss: "in the beginning"          │
 │    and darkness was upon the face of the deep.  │   Stem: Qal • Finite verbal action   │
 │    And the Spirit of God moved upon the face    │                                      │
@@ -100,18 +100,24 @@ An interactive, zero-cloud biblical research workstation that brings original Bi
 
 ## Download & Install (Native Desktop App)
 
-Release **v0.1.4-beta** delivers native, single-click desktop applications with zero terminal commands required:
+The desktop application is self-contained with zero external dependencies and zero terminal setup required:
 
-| Platform | Installer Format | Architecture | Download Link |
+| Platform | Package Format | Architecture | Download Link |
 | :--- | :--- | :--- | :--- |
-| **macOS** | `.dmg` drag-and-drop | Apple Silicon (M1/M2/M3/M4) | [Download .dmg](https://github.com/bible-study-tool/bible-study-tool/releases/download/v0.1.4-beta/Adventist.Bible.Study_0.1.4_aarch64.dmg) |
-| **Windows** | `.exe` NSIS setup | 64-bit x86_64 | [Download .exe](https://github.com/bible-study-tool/bible-study-tool/releases/download/v0.1.4-beta/Adventist.Bible.Study_0.1.4_x64-setup.exe) |
-| **Windows** | `.msi` package | 64-bit x86_64 | [Download .msi](https://github.com/bible-study-tool/bible-study-tool/releases/download/v0.1.4-beta/Adventist.Bible.Study_0.1.4_x64_en-US.msi) |
-| **Linux** | `.AppImage` standalone | 64-bit x86_64 | [Download .AppImage](https://github.com/bible-study-tool/bible-study-tool/releases/download/v0.1.4-beta/Adventist.Bible.Study_0.1.4_amd64.AppImage) |
-| **Linux** | `.deb` Debian/Ubuntu | 64-bit x86_64 | [Download .deb](https://github.com/bible-study-tool/bible-study-tool/releases/download/v0.1.4-beta/Adventist.Bible.Study_0.1.4_amd64.deb) |
-| **Portable** | `.zip` (Win) / `.tar.gz` (Linux/Mac) | Portable USB / Zero-Python | [GitHub Releases](https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.4-beta) |
+| **macOS** | `.dmg` Drag-and-Drop | Apple Silicon (M1/M2/M3/M4) | [**Download for macOS**](https://github.com/bible-study-tool/bible-study-tool/releases/latest) |
+| **Windows** | `.exe` Setup / `.msi` | 64-bit Windows 10 & 11 | [**Download for Windows**](https://github.com/bible-study-tool/bible-study-tool/releases/latest) |
+| **Linux** | `.AppImage` / `.deb` | 64-bit Linux Distributions | [**Download for Linux**](https://github.com/bible-study-tool/bible-study-tool/releases/latest) |
+| **All Platforms** | Dedicated Downloads Portal | Detailed guides & checksums | [**Downloads Guide (docs/DOWNLOADS.md)**](docs/DOWNLOADS.md) |
 
-For detailed step-by-step instructions, see the [Installation Guide](docs/INSTALL.md).
+> [!IMPORTANT]
+> **macOS Note ("App is damaged and can't be opened"):**
+> Because this is a free, non-profit community project built for Christian study, we do not pay Apple's $99/year commercial developer fee. If macOS Gatekeeper shows a warning dialog, either:
+> 1. Go to **System Settings** ➔ **Privacy & Security** and click **"Open Anyway"**; OR
+> 2. Open Terminal and run: `xattr -cr "/Applications/Adventist Bible Study.app"`
+>
+> *(See the [macOS Instructions](docs/DOWNLOADS.md#macos) for step-by-step guidance.)*
+
+For detailed step-by-step instructions, see the [Downloads Guide](docs/DOWNLOADS.md) and [Installation Manual](docs/INSTALL.md).
 
 ---
 
@@ -181,7 +187,7 @@ The repository enforces strict data integrity via 6 automated validators (F1–F
 ```bash
 bash scripts/verify_all.sh
 ```
-*(Runs 925 unit and integration tests, F1–F6 schema/integrity validators, and raw source cryptographic checksum gates.)*
+*(Runs 928 unit and integration tests, F1–F6 schema/integrity validators, and raw source cryptographic checksum gates.)*
 
 ---
 

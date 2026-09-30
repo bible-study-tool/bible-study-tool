@@ -32,6 +32,9 @@
   --type-lg: 1.25rem;
   --type-xl: 1.75rem;
 
+  /* Content typography scaling (independent from UI chrome font size) */
+  --content-font-scale: 1;
+
   --header-h: 3.5rem;
   --footer-h: 1.75rem;
   --side-w: min(21rem, 30vw);
@@ -425,6 +428,70 @@ button:disabled { opacity: 0.45; cursor: default; }
   line-height: 1.4;
 }
 
+/* Content Font Scale Controls */
+.font-scale-control {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.font-scale-value {
+  font-family: var(--font-mono);
+  font-size: var(--type-sm);
+  font-weight: 600;
+  color: var(--ink);
+  min-width: 3.5rem;
+  text-align: center;
+  user-select: none;
+}
+
+.font-scale-control .btn-tool {
+  font-family: var(--font-ui);
+  font-size: var(--type-xs);
+  padding: 4px 10px;
+  font-weight: 600;
+}
+
+/* Settings Shortcuts Preview List */
+.settings-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.settings-shortcuts-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.shortcut-preview-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  font-size: var(--type-xs);
+}
+
+.shortcut-preview-keys {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.shortcut-preview-desc {
+  color: var(--ink);
+  margin-left: var(--space-2);
+  text-align: right;
+}
+
 .theme-select-input {
   font: inherit;
   font-size: var(--type-sm);
@@ -554,7 +621,9 @@ button:disabled { opacity: 0.45; cursor: default; }
   background-repeat: repeat;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
   overflow-y: hidden;
+  min-width: 0;
   min-height: 0;
   height: 100%;
 }
@@ -582,7 +651,7 @@ button:disabled { opacity: 0.45; cursor: default; }
 
 .verses {
   font-family: var(--font-reading);
-  font-size: var(--type-lg);
+  font-size: calc(var(--type-lg) * var(--content-font-scale, 1));
 }
 
 .verse-item {
@@ -656,17 +725,40 @@ button:disabled { opacity: 0.45; cursor: default; }
 /* ---- Side pane / tabs ---- */
 .tab-bar {
   display: flex;
+  align-items: stretch;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
+  flex-shrink: 0;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-bar::-webkit-scrollbar {
+  height: 3px;
+}
+
+.tab-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tab-bar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-s);
 }
 
 .tab-list {
   display: flex;
-  flex: 1;
+  flex: 1 0 auto;
+  min-width: 0;
 }
 
 .tab {
-  flex: 1;
+  flex: 0 0 auto;
+  white-space: nowrap;
   border: none;
   border-bottom: 2px solid transparent;
   border-radius: 0;
@@ -674,6 +766,8 @@ button:disabled { opacity: 0.45; cursor: default; }
   color: var(--ink-muted);
   padding: var(--space-2) var(--space-3);
   font-size: var(--type-sm);
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease;
 }
 
 .tab:hover { color: var(--ink); }
@@ -694,6 +788,10 @@ button:disabled { opacity: 0.45; cursor: default; }
   gap: var(--space-1);
   border-left: 1px solid var(--border);
   transition: color 150ms ease, background 150ms ease;
+  position: sticky;
+  right: 0;
+  z-index: 3;
+  flex-shrink: 0;
 }
 
 .tab-exit-zoom:hover {
@@ -704,11 +802,13 @@ button:disabled { opacity: 0.45; cursor: default; }
 .tab-body {
   padding: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   font-size: var(--type-sm);
   display: flex;
   flex-direction: column;
   flex: 1 1 0;
   min-height: 0;
+  min-width: 0;
 }
 .tab-hint {
   color: var(--ink-muted);
@@ -1608,6 +1708,7 @@ kbd {
 .translation-row {
   margin-bottom: var(--space-2);
   line-height: 1.5;
+  font-size: calc(var(--type-sm) * var(--content-font-scale, 1));
 }
 
 .translation-row:last-child {
@@ -3340,7 +3441,7 @@ kbd {
   margin-bottom: var(--space-3);
   line-height: 1.68;
   font-family: var(--font-serif);
-  font-size: var(--type-m);
+  font-size: calc(var(--type-m, 1rem) * var(--content-font-scale, 1));
   color: var(--ink);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-s);

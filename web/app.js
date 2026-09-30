@@ -152,6 +152,17 @@ const els = {
   shortcutsModal: $("#shortcuts-modal"),
   shortcutsCloseBtn: $("#shortcuts-close-btn"),
   shortcutsDoneBtn: $("#shortcuts-done-btn"),
+  wizardStrongsToggle: $("#wizard-strongs-toggle"),
+  wizardFontDecBtn: $("#wizard-font-dec-btn"),
+  wizardFontIncBtn: $("#wizard-font-inc-btn"),
+  wizardFontResetBtn: $("#wizard-font-reset-btn"),
+  wizardFontScaleValue: $("#wizard-font-scale-value"),
+  settingsFontDecBtn: $("#settings-font-dec-btn"),
+  settingsFontIncBtn: $("#settings-font-inc-btn"),
+  settingsFontResetBtn: $("#settings-font-reset-btn"),
+  settingsFontScaleValue: $("#settings-font-scale-value"),
+  settingsShortcutsList: $("#settings-shortcuts-list"),
+  shortcutsTableBody: $("#shortcuts-table-body"),
 };
 
 /* ---- Theme management (design tokens via [data-theme], ADR-024 §4) ---- */
@@ -893,6 +904,11 @@ async function navigate(ref) {
     updateProphecyInContext(pass.ref);
     updateSanctuaryInContext(pass.ref);
     updateCommentary(pass.ref);
+    if (pass && pass.ref) {
+      try {
+        localStorage.setItem("abst.last_ref", pass.ref);
+      } catch (_) {}
+    }
   } catch (err) {
     showError(String(err.message || err));
   }
@@ -997,6 +1013,9 @@ function openWizard(initialStep = 1) {
 }
 
 function closeWizard() {
+  try {
+    localStorage.setItem("abst.setup_completed", "true");
+  } catch (_) {}
   if (els.wizardModal && typeof els.wizardModal.close === "function") {
     if (els.wizardModal.open) {
       els.wizardModal.close();
@@ -1291,6 +1310,127 @@ function initZebraShading() {
   });
 }
 
+/* ---- Central Keyboard Shortcuts Registry & Rendering ---- */
+
+const SHORTCUTS = [
+  { keys: ["h", "l"], altKeys: ["[", "]", "←", "→"], desc: "Previous / Next chapter" },
+  { keys: ["j", "k"], altKeys: ["↓", "↑"], desc: "Move to next / previous verse" },
+  { keys: ["Space"], altKeys: ["Enter"], desc: "Pin / inspect selected verse" },
+  { keys: ["g"], altKeys: ["/"], desc: "Jump to passage / focus search" },
+  { keys: ["Ctrl+P"], desc: "Quick jump to passage from anywhere" },
+  { keys: ["1 – 8"], desc: "Switch side tabs (1: Translations, 2: Languages, 3: X-Refs, 4: Prophecy, 5: Sanctuary, 6: Commentary, 7: Notes, 8: Search)" },
+  { keys: ["+", "-"], altKeys: ["=", "_"], desc: "Increase / decrease reading text size" },
+  { keys: ["0"], desc: "Reset reading text size to 100%" },
+  { keys: ["s"], desc: "Toggle inline Strong's concordance numbers" },
+  { keys: ["x"], desc: "Jump to Cross-References workstation" },
+  { keys: ["c"], desc: "Open Spirit of Prophecy commentary" },
+  { keys: ["v"], desc: "Toggle parallel translations" },
+  { keys: ["f"], desc: "Toggle Scripture Focus Mode (full-width text)" },
+  { keys: ["z"], altKeys: ["Shift+F"], desc: "Toggle Panel Zoom (maximize active pane)" },
+  { keys: ["t"], desc: "Cycle visual theme (Sepia, Light, Dark)" },
+  { keys: ["?"], desc: "Open this keyboard shortcuts reference" },
+  { keys: ["Esc"], desc: "Exit focus/zoom mode, dismiss card, close dialog" },
+];
+
+function formatShortcutKeysHtml(item) {
+  let html = item.keys.map((k) => `<kbd>${escapeHtml(k)}</kbd>`).join(" / ");
+  if (item.altKeys && item.altKeys.length > 0) {
+    html += ` or ${item.altKeys.map((k) => `<kbd>${escapeHtml(k)}</kbd>`).join(" / ")}`;
+  }
+  return html;
+}
+
+function renderShortcutsUI() {
+  if (els.shortcutsTableBody) {
+    els.shortcutsTableBody.innerHTML = SHORTCUTS.map((s) => `
+      <tr>
+        <td>${formatShortcutKeysHtml(s)}</td>
+        <td>${escapeHtml(s.desc)}</td>
+      </tr>
+    `).join("");
+  }
+  if (els.settingsShortcutsList) {
+    els.settingsShortcutsList.innerHTML = SHORTCUTS.map((s) => `
+      <div class="shortcut-preview-item">
+        <div class="shortcut-preview-keys">${formatShortcutKeysHtml(s)}</div>
+        <span class="shortcut-preview-desc">${escapeHtml(s.desc)}</span>
+      </div>
+    `).join("");
+  }
+}
+
+/* ---- Content Font Scale Management ---- */
+
+let currentContentFontScale = 1.0;
+
+function setContentFontScale(scale, save = true) {
+  const clamped = Math.round(Math.max(0.7, Math.min(2.0, scale)) * 10) / 10;
+  currentContentFontScale = clamped;
+  document.documentElement.style.setProperty("--content-font-scale", String(clamped));
+  const label = `${Math.round(clamped * 100)}%`;
+  if (els.settingsFontScaleValue) els.settingsFontScaleValue.textContent = label;
+  if (els.wizardFontScaleValue) els.wizardFontScaleValue.textContent = label;
+  if (save) {
+    try {
+      localStorage.setItem("abst.content_font_scale", String(clamped));
+    } catch (_) {}
+  }
+}
+
+function adjustContentFontScale(delta) {
+  setContentFontScale(currentContentFontScale + delta, true);
+}
+
+function resetContentFontScale() {
+  setContentFontScale(1.0, true);
+}
+
+function initContentFontScale() {
+  let scale = 1.0;
+  try {
+    const saved = localStorage.getItem("abst.content_font_scale");
+    if (saved) {
+      const parsed = parseFloat(saved);
+      if (!isNaN(parsed) && parsed >= 0.5 && parsed <= 3.0) {
+        scale = parsed;
+      }
+    }
+  } catch (_) {}
+  setContentFontScale(scale, false);
+}
+
+/* ---- Strong's Concordance Numbers Visibility ---- */
+
+function setStrongsVisibility(visible, save = true) {
+  if (els.verses) {
+    els.verses.classList.toggle("hide-strongs", !visible);
+  }
+  if (els.settingsStrongsToggle) els.settingsStrongsToggle.checked = visible;
+  if (els.wizardStrongsToggle) els.wizardStrongsToggle.checked = visible;
+  if (save) {
+    try {
+      localStorage.setItem("abst.show_strongs", String(visible));
+    } catch (_) {}
+  }
+}
+
+function toggleStrongTags() {
+  if (!els.verses) return;
+  const currentlyVisible = !els.verses.classList.contains("hide-strongs");
+  setStrongsVisibility(!currentlyVisible, true);
+}
+
+function initStrongsState() {
+  let showStrongs = true;
+  try {
+    const saved = localStorage.getItem("abst.show_strongs");
+    if (saved !== null) {
+      showStrongs = saved !== "false";
+    }
+  } catch (_) {}
+  setStrongsVisibility(showStrongs, false);
+}
+
 /* ---- Workspace Settings & Shortcuts Modal ---- */
 
 function initSettingsModal() {
@@ -1322,22 +1462,28 @@ function initSettingsModal() {
       } catch (_) {}
     });
   }
-  if (els.settingsStrongsToggle && els.verses) {
-    let savedStrongs = null;
-    try {
-      savedStrongs = localStorage.getItem("abst.show_strongs");
-    } catch (_) {}
-    const showStrongs = savedStrongs !== "false";
-    els.settingsStrongsToggle.checked = showStrongs;
-    els.verses.classList.toggle("hide-strongs", !showStrongs);
-    els.settingsStrongsToggle.addEventListener("change", () => {
-      const enabled = els.settingsStrongsToggle.checked;
-      els.verses.classList.toggle("hide-strongs", !enabled);
-      try {
-        localStorage.setItem("abst.show_strongs", String(enabled));
-      } catch (_) {}
+
+  // Strong's toggles (Settings and Setup Wizard)
+  if (els.settingsStrongsToggle) {
+    els.settingsStrongsToggle.addEventListener("change", (e) => {
+      setStrongsVisibility(e.target.checked, true);
     });
   }
+  if (els.wizardStrongsToggle) {
+    els.wizardStrongsToggle.addEventListener("change", (e) => {
+      setStrongsVisibility(e.target.checked, true);
+    });
+  }
+
+  // Content Font Scale Controls (DRY helper for Settings and Setup Wizard)
+  function bindFontScaleControls(decBtn, incBtn, resetBtn) {
+    if (decBtn) decBtn.addEventListener("click", () => adjustContentFontScale(-0.1));
+    if (incBtn) incBtn.addEventListener("click", () => adjustContentFontScale(0.1));
+    if (resetBtn) resetBtn.addEventListener("click", resetContentFontScale);
+  }
+  bindFontScaleControls(els.settingsFontDecBtn, els.settingsFontIncBtn, els.settingsFontResetBtn);
+  bindFontScaleControls(els.wizardFontDecBtn, els.wizardFontIncBtn, els.wizardFontResetBtn);
+
   if (els.settingsAutoUpdateToggle && els.autoUpdateToggle) {
     els.settingsAutoUpdateToggle.checked = els.autoUpdateToggle.checked;
     els.settingsAutoUpdateToggle.addEventListener("change", () => {
@@ -1364,6 +1510,8 @@ function initSettingsModal() {
   if (els.shortcutsDoneBtn) {
     els.shortcutsDoneBtn.addEventListener("click", () => closeShortcuts());
   }
+
+  renderShortcutsUI();
 }
 
 function openSettings() {
@@ -1446,17 +1594,6 @@ function togglePinSelectedVerse() {
   } else {
     strongsTag.click();
   }
-}
-
-function toggleStrongTags() {
-  if (!els.verses) return;
-  const isHidden = els.verses.classList.toggle("hide-strongs");
-  if (els.settingsStrongsToggle) {
-    els.settingsStrongsToggle.checked = !isHidden;
-  }
-  try {
-    localStorage.setItem("abst.show_strongs", String(!isHidden));
-  } catch (_) {}
 }
 
 function cycleTheme() {
@@ -1831,16 +1968,24 @@ function initFocusAndZoomModes() {
       return;
     }
 
-    // Side tab shortcuts: '0' or '/' for Search, 'x' for Cross-Refs, plus updated tab numbers
-    if (e.key === "0" || e.key === "/") {
+    // Reading content font scale: '+', '=', '-', '_', '0' (reset)
+    if (e.key === "+" || e.key === "=") {
       e.preventDefault();
-      switchTab("search");
-      if (els.searchPanelInput) {
-        els.searchPanelInput.focus();
-        els.searchPanelInput.select();
-      }
+      adjustContentFontScale(0.1);
       return;
     }
+    if (e.key === "-" || e.key === "_") {
+      e.preventDefault();
+      adjustContentFontScale(-0.1);
+      return;
+    }
+    if (e.key === "0") {
+      e.preventDefault();
+      resetContentFontScale();
+      return;
+    }
+
+    // Side tab shortcuts: 'x' for Cross-Refs, plus tab numbers 1-8
     if (e.key === "x" || e.key === "X") { e.preventDefault(); switchTab("xrefs"); return; }
     if (e.key === "1") { e.preventDefault(); switchTab("translations"); return; }
     if (e.key === "2") { e.preventDefault(); switchTab("languages"); return; }
@@ -1849,6 +1994,15 @@ function initFocusAndZoomModes() {
     if (e.key === "5") { e.preventDefault(); switchTab("sanctuary"); return; }
     if (e.key === "6") { e.preventDefault(); switchTab("commentary"); return; }
     if (e.key === "7") { e.preventDefault(); switchTab("notes"); return; }
+    if (e.key === "8") {
+      e.preventDefault();
+      switchTab("search");
+      if (els.searchPanelInput) {
+        els.searchPanelInput.focus();
+        els.searchPanelInput.select();
+      }
+      return;
+    }
 
     // Help modal: '?'
     if (e.key === "?") {
@@ -1922,17 +2076,41 @@ if (els.next) {
   });
 }
 
-function switchTab(tabName) {
+function switchTab(tabName, { smooth = true } = {}) {
+  const tabExists = Array.from(els.tabs).some((t) => t.dataset.tab === tabName);
+  const targetTab = tabExists ? tabName : "translations";
+  let activeBtn = null;
   for (const t of els.tabs) {
-    t.setAttribute("aria-selected", String(t.dataset.tab === tabName));
+    const isSelected = t.dataset.tab === targetTab;
+    t.setAttribute("aria-selected", String(isSelected));
+    if (isSelected) activeBtn = t;
   }
   document.querySelectorAll(".tab-body").forEach((body) => {
-    body.hidden = body.id !== `panel-${tabName}`;
+    body.hidden = body.id !== `panel-${targetTab}`;
   });
+  if (activeBtn && typeof activeBtn.scrollIntoView === "function") {
+    const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    activeBtn.scrollIntoView({
+      behavior: smooth && !prefersReduced ? "smooth" : "auto",
+      block: "nearest",
+      inline: "nearest",
+    });
+  }
+  try {
+    localStorage.setItem("abst.active_tab", targetTab);
+  } catch (_) {}
 }
 
 for (const tab of els.tabs) {
   tab.addEventListener("click", () => switchTab(tab.dataset.tab));
+}
+
+if (els.wizardModal) {
+  els.wizardModal.addEventListener("cancel", () => {
+    try {
+      localStorage.setItem("abst.setup_completed", "true");
+    } catch (_) {}
+  });
 }
 
 if (els.wizardCloseBtn) els.wizardCloseBtn.addEventListener("click", closeWizard);
@@ -3617,6 +3795,16 @@ function renderSearchResults(data) {
 
 initPaneResizer();
 initFocusAndZoomModes();
+exitDistractionFreeModes();
+try {
+  if (!localStorage.getItem("abst.split_percent")) {
+    resetSplit();
+  }
+} catch (_) {
+  resetSplit();
+}
+initContentFontScale();
+initStrongsState();
 initAutoUpdate();
 initZebraShading();
 initSettingsModal();
@@ -3626,6 +3814,7 @@ initCommentaryWorkstation();
 initCrossReferencesWorkstation();
 initSearchWorkstation();
 initBookDropzone();
+
 let setupCompleted = false;
 try {
   setupCompleted = localStorage.getItem("abst.setup_completed") === "true";
@@ -3634,8 +3823,22 @@ if (!setupCompleted) {
   openWizard();
 }
 
+let savedTab = null;
+try {
+  savedTab = localStorage.getItem("abst.active_tab");
+} catch (_) {}
+switchTab(savedTab || "translations", { smooth: false });
+
 const urlParams = new URLSearchParams(window.location.search);
-const initialRef = urlParams.get("ref") || "Genesis 1:1-3";
+let initialRef = urlParams.get("ref");
+if (!initialRef) {
+  try {
+    initialRef = localStorage.getItem("abst.last_ref");
+  } catch (_) {}
+}
+if (!initialRef) {
+  initialRef = "Genesis 1:1-3";
+}
 loadThemes().then(() => navigate(initialRef)).catch((err) => {
   showError("Engine not reachable — is the local server running? " + err.message);
 });

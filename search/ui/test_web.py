@@ -1201,6 +1201,62 @@ class WebServerModuleTests(unittest.TestCase):
         self.assertIn("handleOmniboxSubmit(", js_text)
         self.assertIn("SCRIPTURE_REF_PATTERN", js_text)
 
+    def test_content_font_scaling_and_workspace_ergonomics(self) -> None:
+        """Verifies content text font scaling tokens, Strong's toggles, tab isolation, and state memory."""
+        html_text = (get_web_dir() / "index.html").read_text(encoding="utf-8")
+        css_text = (get_web_dir() / "styles.css").read_text(encoding="utf-8")
+        js_text = (get_web_dir() / "app.js").read_text(encoding="utf-8")
+
+        # 1. Content Typography Scaling Tokens (only text, not UI chrome)
+        self.assertIn("--content-font-scale: 1;", css_text)
+        self.assertIn("calc(var(--type-lg) * var(--content-font-scale, 1))", css_text)
+        self.assertIn("calc(var(--type-sm) * var(--content-font-scale, 1))", css_text)
+        self.assertIn("calc(var(--type-m, 1rem) * var(--content-font-scale, 1))", css_text)
+        self.assertIn(".font-scale-control", css_text)
+        self.assertIn(".font-scale-value", css_text)
+
+        # 2. Controls in HTML (Setup Wizard Step 2 & Settings modal)
+        self.assertIn('id="wizard-font-dec-btn"', html_text)
+        self.assertIn('id="wizard-font-inc-btn"', html_text)
+        self.assertIn('id="wizard-font-reset-btn"', html_text)
+        self.assertIn('id="wizard-font-scale-value"', html_text)
+        self.assertIn('id="settings-font-dec-btn"', html_text)
+        self.assertIn('id="settings-font-inc-btn"', html_text)
+        self.assertIn('id="settings-font-reset-btn"', html_text)
+        self.assertIn('id="settings-font-scale-value"', html_text)
+
+        # 3. Strong's toggles in HTML & JS (Setup Wizard Step 2 + Settings)
+        self.assertIn('id="wizard-strongs-toggle"', html_text)
+        self.assertIn('id="settings-strongs-toggle"', html_text)
+        self.assertIn("function setStrongsVisibility(", js_text)
+        self.assertIn("function initStrongsState(", js_text)
+        self.assertIn('"abst.show_strongs"', js_text)
+
+        # 4. Central SHORTCUTS Registry & Dynamic Rendering
+        self.assertIn("const SHORTCUTS = [", js_text)
+        self.assertIn("function renderShortcutsUI()", js_text)
+        self.assertIn('id="shortcuts-table-body"', html_text)
+        self.assertIn('id="settings-shortcuts-list"', html_text)
+
+        # 5. Side Panel Layout & Tab Header Frame Isolation
+        self.assertIn(".pane-side", css_text)
+        self.assertIn("overflow-x: hidden;", css_text)
+        self.assertIn("min-width: 0;", css_text)
+        self.assertIn(".tab-bar", css_text)
+        self.assertIn("overflow-x: auto;", css_text)
+        self.assertIn("white-space: nowrap;", css_text)
+        self.assertIn(".tab-exit-zoom", css_text)
+        self.assertIn("position: sticky;", css_text)
+
+        # 6. State Memory & Startup Reset
+        self.assertIn('"abst.last_ref"', js_text)
+        self.assertIn('"abst.active_tab"', js_text)
+        self.assertIn('"abst.content_font_scale"', js_text)
+        self.assertIn('"abst.setup_completed"', js_text)
+        self.assertIn("exitDistractionFreeModes()", js_text)
+        self.assertIn("resetSplit()", js_text)
+        self.assertIn("initContentFontScale()", js_text)
+
 
 if __name__ == "__main__":
     unittest.main()
