@@ -173,14 +173,20 @@ class TestDeterministicSearchBridge(unittest.TestCase):
             self.assertTrue(all(h["source"] == "commentary" for h in res_comm["results"]))
 
     def test_search_modes_hybrid_vs_keyword(self):
+        from search.resource import get_embeddings_db_path
+
         res_hyb = self.bridge.search("beginning", mode="hybrid", limit=5)
         self.assertEqual(res_hyb.get("mode"), "hybrid")
         self.assertGreater(res_hyb["total_hits"], 0)
+        has_embeddings = get_embeddings_db_path().is_file()
         for hit in res_hyb["results"]:
             if hit["source"] == "scripture":
                 self.assertGreaterEqual(hit["score"], 0.50)
                 self.assertLessEqual(hit["score"], 0.99)
-                self.assertIn("rrf_score", hit["metadata"])
+                if has_embeddings:
+                    self.assertIn("rrf_score", hit["metadata"])
+                else:
+                    self.assertIn("match_type", hit["metadata"])
 
         res_kw = self.bridge.search("beginning", mode="keyword", limit=5)
         self.assertEqual(res_kw.get("mode"), "keyword")

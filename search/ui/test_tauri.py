@@ -141,9 +141,17 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
         self.assertIn("cargo", prereqs)
         self.assertIn("rustc", prereqs)
 
-        cmd = resolve_tauri_command()
-        self.assertIsInstance(cmd, list)
-        self.assertGreaterEqual(len(cmd), 1)
+        with patch("shutil.which", side_effect=lambda x: "/usr/bin/cargo-tauri" if x == "cargo-tauri" else None):
+            cmd = resolve_tauri_command()
+            self.assertEqual(cmd, ["cargo", "tauri"])
+
+        with patch("shutil.which", side_effect=lambda x: "/usr/bin/npx" if x == "npx" else None):
+            cmd = resolve_tauri_command()
+            self.assertEqual(cmd, ["npx", "@tauri-apps/cli"])
+
+        with patch("shutil.which", return_value=None):
+            with self.assertRaises(RuntimeError):
+                resolve_tauri_command()
 
     def test_web_cli_parser_tolerates_server_flag(self):
         """Verify that build_web_parser parses the --server flag without error (ADR-028)."""
@@ -166,7 +174,8 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
 
     def test_build_desktop_linux_bundles_command(self):
         """Verify that build_desktop.py defaults to deb,appimage bundles on Linux and leaves other platforms unrestricted."""
-        with patch("subprocess.run") as mock_run:
+        with patch("subprocess.run") as mock_run, \
+             patch("scripts.build_desktop.resolve_tauri_command", side_effect=lambda: ["cargo", "tauri"]):
             mock_run.return_value.returncode = 0
             with patch("sys.platform", "linux"):
                 ret = run_tauri_build(REPO_ROOT)
@@ -182,7 +191,8 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
                 cmd = mock_run.call_args[0][0]
                 self.assertNotIn("--bundles", cmd)
 
-        with patch("subprocess.run") as mock_run:
+        with patch("subprocess.run") as mock_run, \
+             patch("scripts.build_desktop.resolve_tauri_command", side_effect=lambda: ["cargo", "tauri"]):
             mock_run.return_value.returncode = 0
             ret = run_tauri_build(REPO_ROOT, bundles="appimage")
             self.assertEqual(ret, 0)
@@ -191,7 +201,8 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
             idx = cmd.index("--bundles")
             self.assertEqual(cmd[idx + 1], "appimage")
 
-        with patch("subprocess.run") as mock_run:
+        with patch("subprocess.run") as mock_run, \
+             patch("scripts.build_desktop.resolve_tauri_command", side_effect=lambda: ["cargo", "tauri"]):
             mock_run.return_value.returncode = 0
             ret = run_tauri_build(REPO_ROOT, bundles=" deb, appimage ")
             self.assertEqual(ret, 0)

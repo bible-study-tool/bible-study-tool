@@ -76,7 +76,7 @@ class FrozenResourceResolutionTests(unittest.TestCase):
         """Verify that get_data_dir() prefers a candidate with bible.db over an empty bundle data dir."""
         from search.resource import get_data_dir
         with tempfile.TemporaryDirectory() as tmpdir:
-            tmp = Path(tmpdir)
+            tmp = Path(tmpdir).resolve()
             bundle_dir = tmp / "bundle"
             bundle_data = bundle_dir / "data"
             bundle_data.mkdir(parents=True)
@@ -96,7 +96,7 @@ class FrozenResourceResolutionTests(unittest.TestCase):
         """Verify that get_lexicons_dir() prefers a candidate with *.json over an empty bundle lexicons dir."""
         from search.resource import get_lexicons_dir
         with tempfile.TemporaryDirectory() as tmpdir:
-            tmp = Path(tmpdir)
+            tmp = Path(tmpdir).resolve()
             bundle_dir = tmp / "bundle"
             bundle_lex = bundle_dir / "lexicons"
             bundle_lex.mkdir(parents=True)

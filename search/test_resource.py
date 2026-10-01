@@ -86,26 +86,26 @@ class ResourceEnvironmentOverrideTests(unittest.TestCase):
 
     def test_repo_root_override(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            tmp = Path(tmpdir)
+            tmp = Path(tmpdir).resolve()
             with patch.dict(os.environ, {"BIBLE_STUDY_REPO_ROOT": str(tmp)}):
                 self.assertEqual(get_repo_root(), tmp)
 
     def test_data_dir_override(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            tmp = Path(tmpdir)
+            tmp = Path(tmpdir).resolve()
             with patch.dict(os.environ, {"BIBLE_STUDY_DATA_DIR": str(tmp)}):
                 self.assertEqual(get_data_dir(), tmp)
                 self.assertEqual(data_path("test.db"), tmp / "test.db")
 
     def test_web_dir_override(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            tmp = Path(tmpdir)
+            tmp = Path(tmpdir).resolve()
             with patch.dict(os.environ, {"BIBLE_STUDY_WEB_DIR": str(tmp)}):
                 self.assertEqual(get_web_dir(), tmp)
 
     def test_lexicons_dir_override(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            tmp = Path(tmpdir)
+            tmp = Path(tmpdir).resolve()
             with patch.dict(os.environ, {"BIBLE_STUDY_LEXICONS_DIR": str(tmp)}):
                 self.assertEqual(get_lexicons_dir(), tmp)
                 self.assertEqual(lexicon_path("custom.json"), tmp / "custom.json")
@@ -116,8 +116,8 @@ class FrozenEnvironmentSimulationTests(unittest.TestCase):
 
     def test_simulated_onefile_frozen(self) -> None:
         with tempfile.TemporaryDirectory() as meipass_dir, tempfile.TemporaryDirectory() as app_dir:
-            meipass_path = Path(meipass_dir)
-            app_path = Path(app_dir)
+            meipass_path = Path(meipass_dir).resolve()
+            app_path = Path(app_dir).resolve()
             fake_exe = app_path / "AdventistBibleStudy"
             fake_exe.touch()
 
