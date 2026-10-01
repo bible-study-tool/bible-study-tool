@@ -46,7 +46,7 @@ for arg in "$@"; do
       echo "Usage: $0 [--ml] [--dist] [--data] [--verify] [--all-in-one]"
       echo
       echo "Options:"
-      echo "  --data     Fetch pinned raw sources and hydrate SQLite databases (bible.db, macula.db)"
+      echo "  --data     Fetch pinned raw sources, models, and hydrate SQLite databases (bible.db, macula.db, embeddings.db)"
       echo "  --ml       Install optional machine-learning dependencies (sentence-transformers)"
       echo "  --dist     Install standalone packaging tools (pyinstaller)"
       echo "  --verify   Run full verification suite (scripts/verify_all.sh) after bootstrap"
@@ -63,6 +63,9 @@ for arg in "$@"; do
 done
 
 EXTRAS="test"
+if [[ "$WANT_DATA" == true ]]; then
+  EXTRAS="$EXTRAS,onnx"
+fi
 if [[ "$WANT_ML" == true ]]; then
   EXTRAS="$EXTRAS,ml"
 fi
@@ -139,6 +142,9 @@ fi
 
 echo "Verifying environment..."
 "$VENV_PYTHON" -c "import yaml, numpy, pytest, textual, search, search.resource; print('✔ Core dependencies, TUI, and namespace packages successfully verified.')"
+if [[ "$WANT_DATA" == true ]]; then
+  "$VENV_PYTHON" -c "import onnxruntime, tokenizers; print('✔ ONNX Runtime and tokenizers verified.')"
+fi
 
 if [[ "$WANT_DATA" == true ]]; then
   echo
@@ -146,11 +152,12 @@ if [[ "$WANT_DATA" == true ]]; then
   echo "Fetching pinned sources & hydrating databases..."
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   DATA_DIR="$REPO_ROOT/data"
-  if [[ ! -f "$DATA_DIR/KJV-osis.json" || ! -f "$DATA_DIR/macula-greek/27-revelation.xml" ]]; then
-    echo "1. Fetching and verifying pinned sources (scripts/fetch_sources.sh)..."
+  MODEL_DIR="$DATA_DIR/models/multilingual-e5-small"
+  if [[ ! -f "$DATA_DIR/KJV-osis.json" || ! -f "$DATA_DIR/macula-greek/27-revelation.xml" || ! -f "$MODEL_DIR/model_quantized.onnx" || ! -f "$MODEL_DIR/tokenizer.json" ]]; then
+    echo "1. Fetching and verifying pinned sources & neural model (scripts/fetch_sources.sh)..."
     bash "$REPO_ROOT/scripts/fetch_sources.sh"
   else
-    echo "1. Pinned raw sources already present."
+    echo "1. Pinned raw sources and neural model already present."
   fi
 
   if [[ ! -f "$DATA_DIR/bible.db" ]]; then
@@ -168,6 +175,13 @@ if [[ "$WANT_DATA" == true ]]; then
     "$VENV_PYTHON" -m search.macula.build_db --repo "$REPO_ROOT"
   else
     echo "3. data/macula.db already present."
+  fi
+
+  if [[ ! -f "$DATA_DIR/embeddings.db" ]]; then
+    echo "4. Compiling data/embeddings.db (31,102 Scripture dense vectors via ONNX)..."
+    "$VENV_PYTHON" "$REPO_ROOT/scripts/build_embeddings.py" --strict
+  else
+    echo "4. data/embeddings.db already present."
   fi
   echo "✔ Database hydration complete."
 fi

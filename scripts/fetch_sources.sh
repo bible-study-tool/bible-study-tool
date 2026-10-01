@@ -32,6 +32,9 @@ TBESG_URL="https://raw.githubusercontent.com/STEPBible/STEPBible-Data/${STEPBIBL
 TSK_PIN="ff50bd777cfcad43d93b297202ac2ca714d3e865"
 TSK_URL="https://raw.githubusercontent.com/bible-study-tool/bible-study-tool/${TSK_PIN}/cross-references.zip"
 TSK_UPSTREAM_URL="https://a.openbible.info/data/cross-references.zip"
+E5_MODEL_PIN="761b726dd34fb83930e26aab4e9ac3899aa1fa78"
+E5_ONNX_URL="https://huggingface.co/Xenova/multilingual-e5-small/resolve/${E5_MODEL_PIN}/onnx/model_quantized.onnx"
+E5_TOK_URL="https://huggingface.co/Xenova/multilingual-e5-small/resolve/${E5_MODEL_PIN}/tokenizer.json"
 
 # --- verification (shared by both modes) -------------------------------------
 verify() {
@@ -226,6 +229,11 @@ else
   fi
   mv "$DATA/cross-references.zip.tmp" "$DATA/cross-references.zip"
 fi
+
+# --- 8. Multilingual Neural Embeddings Model (multilingual-e5-small) ----------
+mkdir -p "$DATA/models/multilingual-e5-small"
+fetch "$E5_ONNX_URL" "$DATA/models/multilingual-e5-small/model_quantized.onnx"
+fetch "$E5_TOK_URL" "$DATA/models/multilingual-e5-small/tokenizer.json"
 
 # --- verification ------------------------------------------------------------
 verify

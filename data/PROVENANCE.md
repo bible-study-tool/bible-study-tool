@@ -265,6 +265,23 @@ SHA-256:
 30379be544785f4c2cdf8eba0d83d10dedc04a6903b5dcd0d91d670e90619d6d  cross-references.zip
 ```
 
+### 8. Multilingual Neural Embeddings Model (`multilingual-e5-small`)
+
+| Field | Value |
+| --- | --- |
+| Upstream | <https://huggingface.co/Xenova/multilingual-e5-small> |
+| Pinned commit | `761b726dd34fb83930e26aab4e9ac3899aa1fa78` (2024-03-12) |
+| Upstream Paths | `onnx/model_quantized.onnx`, `tokenizer.json` |
+| License | **MIT License** (Liang Wang et al. / Microsoft Research & Xenova). Permits unrestricted copying, distribution, and commercial use. |
+| Feeds | `data/embeddings.db` (pre-computed whole-Bible dense vector database across all 31,102 verses) via `python scripts/build_embeddings.py`, and runtime query inference via `search.linking.onnx_embedder.OnnxEmbedder`. |
+
+SHA-256:
+
+```
+f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193  models/multilingual-e5-small/model_quantized.onnx
+0b44a9d7b51c3c62626640cda0e2c2f70fdacdc25bbbd68038369d14ebdf4c39  models/multilingual-e5-small/tokenizer.json
+```
+
 ## Generated artifacts (for offline drift detection)
 
 The committed artifacts regenerate byte-identically from the pinned sources

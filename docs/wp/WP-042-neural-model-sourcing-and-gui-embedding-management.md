@@ -44,16 +44,16 @@ Deliver complete architectural and user-facing closure for local neural embeddin
 
 ## Tasks
 
-- [ ] ### Task 1: Neural Model Provenance & Upstream Pinning (`data/PROVENANCE.md`, `scripts/fetch_sources.sh`)
-  - Pin the official Hugging Face quantized multilingual transformer assets in `data/PROVENANCE.md` with upstream commit hash (revision `e27a207e408ecf6d90a904fa77ef790e54ff5213`):
+- [x] ### Task 1: Neural Model Provenance & Upstream Pinning (`data/PROVENANCE.md`, `scripts/fetch_sources.sh`)
+  - Pin the official Hugging Face quantized multilingual transformer assets in `data/PROVENANCE.md` with upstream commit hash (revision `761b726dd34fb83930e26aab4e9ac3899aa1fa78`):
     - Upstream: `https://huggingface.co/Xenova/multilingual-e5-small`
     - Relative paths (relative to `data/` for `fetch_sources.sh`):
       - `models/multilingual-e5-small/model_quantized.onnx` (`f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193`)
       - `models/multilingual-e5-small/tokenizer.json` (`0b44a9d7b51c3c62626640cda0e2c2f70fdacdc25bbbd68038369d14ebdf4c39`)
-  - Update `scripts/fetch_sources.sh` to fetch from `https://huggingface.co/Xenova/multilingual-e5-small/resolve/e27a207e408ecf6d90a904fa77ef790e54ff5213/...` and cryptographically verify files.
+  - Update `scripts/fetch_sources.sh` to fetch from `https://huggingface.co/Xenova/multilingual-e5-small/resolve/761b726dd34fb83930e26aab4e9ac3899aa1fa78/...` and cryptographically verify files.
   - Ensure `--check` mode verifies model files when present.
 
-- [ ] ### Task 2: Developer Bootstrap Hydration & Strict Testing (`scripts/bootstrap.sh`, `pyproject.toml`, `search/corpus/test_search_bridge.py`)
+- [x] ### Task 2: Developer Bootstrap Hydration & Strict Testing (`scripts/bootstrap.sh`, `pyproject.toml`, `search/corpus/test_search_bridge.py`)
   - Ensure zero-PyTorch ONNX dependencies (`onnxruntime>=1.16`, `tokenizers>=0.15`) are installed during `--data` or as a lean `[project.optional-dependencies] onnx` target without pulling in PyTorch or `sentence-transformers` (ADR-013, ADR-029).
   - Update `scripts/bootstrap.sh`:
     - In `--data` and `--all-in-one` modes, ensure `data/models/` is fetched/verified via `fetch_sources.sh`.

@@ -26,6 +26,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Lean zero-PyTorch neural vector embedding runtime (ADR-013, ADR-029).
+onnx = [
+    "onnxruntime>=1.16",
+    "tokenizers>=0.15",
+]
 # Higher-fidelity multilingual embedder (layer c, ADR-029). Optional.
 ml = [
     "onnxruntime>=1.16",
