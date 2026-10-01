@@ -1286,6 +1286,99 @@ button:disabled { opacity: 0.45; cursor: default; }
   border-color: #a82020;
 }
 
+/* Neural Semantic Search & Progress */
+.setting-title-with-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.neural-progress-container {
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+}
+
+.neural-progress-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: var(--radius-s);
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.neural-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--primary);
+  border-radius: var(--radius-s);
+  transition: width 200ms ease;
+}
+
+.neural-progress-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--type-xs);
+  color: var(--ink-muted);
+}
+
+.neural-progress-val {
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--primary);
+}
+
+/* Collapsible Settings Sections */
+.settings-collapsible {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  background: var(--surface-alt);
+  overflow: hidden;
+}
+
+.settings-collapsible-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  transition: background-color 150ms ease;
+}
+
+.settings-collapsible-summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-collapsible-summary:hover {
+  background: var(--surface);
+}
+
+.settings-collapsible-summary:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: -2px;
+}
+
+.settings-collapsible-summary .collapsible-indicator {
+  display: inline-block;
+  font-size: var(--type-sm);
+  color: var(--secondary);
+  transition: transform 150ms ease;
+}
+
+.settings-collapsible[open] > .settings-collapsible-summary .collapsible-indicator {
+  transform: rotate(180deg);
+}
+
+.settings-collapsible-body {
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
 .commentary-empty-actions {
   margin-top: var(--space-3);
 }

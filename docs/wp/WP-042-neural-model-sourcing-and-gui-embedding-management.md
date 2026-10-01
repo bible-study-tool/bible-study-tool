@@ -61,7 +61,7 @@ Deliver complete architectural and user-facing closure for local neural embeddin
   - Restore the strict test assertion in `search/corpus/test_search_bridge.py`:
     - `test_search_modes_hybrid_vs_keyword` must strictly assert `"rrf_score"` presence when running in a fully hydrated environment.
 
-- [ ] ### Task 3: Backend Model Status & Vectorization Endpoints (`search/ui/study_service.py`, `search/ui/web_server.py`)
+- [x] ### Task 3: Backend Model Status & Vectorization Endpoints (`search/ui/study_service.py`, `search/ui/web_server.py`)
   - Define isolated storage for user library vectors in `data/library_embeddings.db` (`paragraphs(paragraph_id TEXT PRIMARY KEY, vector BLOB, magnitude REAL)`), ensuring canonical `data/embeddings.db` remains untouched and copyright boundaries are preserved (ADR-002, ADR-023).
   - Implement REST API endpoints:
     - `GET /api/model/status`: Returns JSON reporting `model_available` (bool), `model_name` (str), `model_size_mb` (float), `download_in_progress` (bool), `download_percent` (float), `scripture_embeddings_count` (int), and `user_library_embeddings_count` (int).
@@ -69,7 +69,7 @@ Deliver complete architectural and user-facing closure for local neural embeddin
     - `POST /api/library/vectorize`: Rejects if model is not installed (400); otherwise initiates background vectorization of imported library paragraphs (`egw.db` or imported books) into `data/library_embeddings.db`.
     - `GET /api/library/vectorize/progress`: Polls status of active library vectorization (`is_running`, `total`, `processed`, `percent`, `eta_seconds`, `error`).
 
-- [ ] ### Task 4: GUI Settings Integration & Collapsible Ergonomics (`web/index.html`, `web/app.js`, `web/styles.css`)
+- [x] ### Task 4: GUI Settings Integration & Collapsible Ergonomics (`web/index.html`, `web/app.js`, `web/styles.css`)
   - In `web/index.html` (Settings Modal):
     - Add a dedicated **"Neural Semantic Search & Vector Embeddings"** section *before* Keyboard Navigation & Shortcuts.
     - Include:
@@ -101,11 +101,11 @@ Deliver complete architectural and user-facing closure for local neural embeddin
 
 ## Acceptance Criteria
 
-- [ ] `data/PROVENANCE.md` records pinned URLs and SHA-256 checksums for `model_quantized.onnx` and `tokenizer.json`.
-- [ ] `scripts/fetch_sources.sh` downloads and verifies model files with zero errors.
-- [ ] `./bootstrap.sh --data` on a clean checkout hydrates `bible.db`, `macula.db`, and `embeddings.db`.
+- [x] `data/PROVENANCE.md` records pinned URLs and SHA-256 checksums for `model_quantized.onnx` and `tokenizer.json`.
+- [x] `scripts/fetch_sources.sh` downloads and verifies model files with zero errors.
+- [x] `./bootstrap.sh --data` on a clean checkout hydrates `bible.db`, `macula.db`, and `embeddings.db`.
 - [ ] All 929+ automated tests and F1–F6 integrity validators pass with `bash scripts/verify_all.sh`.
-- [ ] `GET /api/model/status` reports model and vector counts accurately.
-- [ ] The Settings modal displays the Neural Semantic Search card before Keyboard Shortcuts.
-- [ ] Keyboard Shortcuts in Settings are neatly tucked inside an accessible, collapsible `<details>` container.
-- [ ] Clicking "Vectorize Library" runs local on-device embedding generation with visible progress.
+- [x] `GET /api/model/status` reports model and vector counts accurately.
+- [x] The Settings modal displays the Neural Semantic Search card before Keyboard Shortcuts.
+- [x] Keyboard Shortcuts in Settings are neatly tucked inside an accessible, collapsible `<details>` container.
+- [x] Clicking "Vectorize Library" runs local on-device embedding generation with visible progress.

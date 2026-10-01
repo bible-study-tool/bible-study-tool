@@ -32,7 +32,9 @@ def find_local_model_files(
     """Locate the ONNX model file and tokenizer.json for a model."""
     search_dirs: list[Path] = []
     if model_dir is not None:
-        search_dirs.append(Path(model_dir))
+        p = Path(model_dir)
+        search_dirs.append(p / model_name)
+        search_dirs.append(p)
 
     configured_models_dir = get_models_dir()
     search_dirs.append(configured_models_dir / model_name)

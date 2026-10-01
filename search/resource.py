@@ -230,6 +230,15 @@ def get_embeddings_db_path() -> Path:
     return get_data_dir() / "embeddings.db"
 
 
+def get_library_embeddings_db_path() -> Path:
+    """Return the path to the user library embeddings database (ADR-002, ADR-029)."""
+    env_db = os.environ.get("BIBLE_STUDY_LIBRARY_EMBEDDINGS_DB")
+    if env_db:
+        return Path(env_db).resolve()
+    return get_data_dir() / "library_embeddings.db"
+
+
+
 def data_path(rel_path: str | Path) -> Path:
     """Resolve a database or data asset path.
 

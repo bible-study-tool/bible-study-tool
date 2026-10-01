@@ -56,6 +56,7 @@ from search.corpus.sanctuary import (
 from search.linking.egw import EgwDB, DEFAULT_EGW_DB, is_egw_token, normalize_token
 from search.linking.loader import _parse_frontmatter
 from search.resource import data_path, get_lexicons_dir, get_repo_root, lexicon_path
+from search.ui.neural_manager import NeuralModelManager
 
 from rich.markup import escape
 
@@ -337,6 +338,7 @@ class StudyService:
         self._verse_nuance_cache: dict[str, list[GrammarNuance]] = {}
         self._curated_xrefs_cache: dict[str, list[dict[str, Any]]] = {}
         self._lock = threading.RLock()
+        self.neural_manager = NeuralModelManager(study_service=self)
 
     def _load_tbes_file(self, path: Path) -> tuple[dict[str, str], dict[str, list[dict[str, Any]]]]:
         if not path.exists():
@@ -1326,6 +1328,26 @@ class StudyService:
                     "books_count": 0,
                     "paragraphs_count": 0,
                 }
+
+    def get_neural_model_status(self) -> dict[str, Any]:
+        """Return neural model availability and vector index statistics."""
+        return self.neural_manager.get_model_status()
+
+    def start_model_download(self) -> dict[str, Any]:
+        """Initiate background streaming download of pinned neural model weights."""
+        return self.neural_manager.start_model_download()
+
+    def get_model_download_progress(self) -> dict[str, Any]:
+        """Return real-time progress for active neural model download."""
+        return self.neural_manager.get_download_progress()
+
+    def start_library_vectorization(self, batch_size: int = 32, force: bool = False) -> dict[str, Any]:
+        """Initiate background vectorization of imported user library paragraphs."""
+        return self.neural_manager.start_library_vectorization(batch_size=batch_size, force=force)
+
+    def get_library_vectorize_progress(self) -> dict[str, Any]:
+        """Return real-time progress for active library vectorization."""
+        return self.neural_manager.get_vectorize_progress()
 
     def search(
         self,

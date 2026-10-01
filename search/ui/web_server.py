@@ -231,6 +231,12 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 self._api_search(query)
             elif path == "/api/import-books":
                 self._api_import_books_status()
+            elif path == "/api/model/status":
+                self._api_model_status()
+            elif path == "/api/model/download/progress":
+                self._api_model_download_progress()
+            elif path == "/api/library/vectorize/progress":
+                self._api_library_vectorize_progress()
             elif path.startswith("/api/"):
                 self._reply_error(HTTPStatus.NOT_FOUND, "unknown endpoint")
             else:
@@ -242,6 +248,10 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
             query = parse_qs(parsed.query)
             if path == "/api/import-books":
                 self._api_import_books(query)
+            elif path == "/api/model/download":
+                self._api_model_download()
+            elif path == "/api/library/vectorize":
+                self._api_library_vectorize(query)
             elif path.startswith("/api/"):
                 self._reply_error(HTTPStatus.NOT_FOUND, "unknown endpoint")
             else:
@@ -272,6 +282,9 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "xrefs_url": "/api/xrefs",
                 "verify_bundle_url": "/api/verify-bundle",
                 "import_books_url": "/api/import-books",
+                "model_status_url": "/api/model/status",
+                "model_download_url": "/api/model/download",
+                "library_vectorize_url": "/api/library/vectorize",
                 "egw_available": has_egw,
                 "egw_stats": egw_stats,
             })
@@ -843,6 +856,58 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "results": results,
                 "paragraphs_added": total_paras_added,
                 "stats": final_stats,
+            })
+
+        def _api_model_status(self) -> None:
+            status = study.get_neural_model_status()
+            self._reply_json(HTTPStatus.OK, status)
+
+        def _api_model_download(self) -> None:
+            try:
+                res = study.start_model_download()
+                self._reply_json(HTTPStatus.OK, res)
+            except Exception as exc:
+                self._reply_json(HTTPStatus.INTERNAL_SERVER_ERROR, {
+                    "status": "error",
+                    "error": str(exc),
+                })
+
+        def _api_model_download_progress(self) -> None:
+            res = study.get_model_download_progress()
+            self._reply_json(HTTPStatus.OK, {
+                "status": "ok",
+                **res,
+            })
+
+        def _api_library_vectorize(self, query: dict[str, list[str]]) -> None:
+            model_status = study.get_neural_model_status()
+            if not model_status.get("model_available"):
+                self._reply_error(
+                    HTTPStatus.BAD_REQUEST,
+                    "Neural model is not installed. Please download the model first.",
+                )
+                return
+
+            force = query.get("force", ["0"])[0].lower() in ("1", "true", "yes")
+            batch_size_str = query.get("batch_size", ["32"])[0]
+            try:
+                batch_size = max(1, min(128, int(batch_size_str)))
+            except ValueError:
+                batch_size = 32
+
+            try:
+                res = study.start_library_vectorization(batch_size=batch_size, force=force)
+                self._reply_json(HTTPStatus.OK, res)
+            except (ValueError, RuntimeError) as exc:
+                self._reply_error(HTTPStatus.BAD_REQUEST, str(exc))
+            except Exception as exc:
+                self._reply_error(HTTPStatus.INTERNAL_SERVER_ERROR, str(exc))
+
+        def _api_library_vectorize_progress(self) -> None:
+            res = study.get_library_vectorize_progress()
+            self._reply_json(HTTPStatus.OK, {
+                "status": "ok",
+                **res,
             })
 
     return StudyHandler

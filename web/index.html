@@ -720,17 +720,82 @@
             <p id="settings-import-message" class="import-message"></p>
           </div>
         </section>
+        <section class="settings-section" id="settings-neural-section">
+          <h3 class="settings-section-title">Neural Semantic Search &amp; Vector Embeddings</h3>
+          <p class="setting-desc">Local-first neural search (ADR-029). Runs INT8 quantized multilingual Transformer models on-device without cloud dependencies.</p>
+
+          <div class="setting-card">
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title-with-badge">
+                  <strong>Neural Embedding Model</strong>
+                  <span id="neural-model-badge" class="badge badge-subtle">Checking…</span>
+                </div>
+                <span class="setting-sub" id="neural-model-desc">Multilingual E5 Small (INT8 Quantized, CPU-optimized, ~113 MB)</span>
+              </div>
+              <button type="button" id="download-model-btn" class="btn-tool btn-sm">Download Model</button>
+            </div>
+            <div id="model-download-progress-container" class="neural-progress-container" hidden>
+              <div class="neural-progress-bar">
+                <div id="model-download-progress-fill" class="neural-progress-fill"></div>
+              </div>
+              <div class="neural-progress-status">
+                <span id="model-download-message" class="neural-progress-text">Downloading model weights…</span>
+                <span id="model-download-percent" class="neural-progress-val">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-row">
+              <div class="setting-info">
+                <strong>Scripture Vector Index (Canonical)</strong>
+                <span class="setting-sub" id="scripture-vectors-status">Whole-Bible dense vector index (31,102 verses). Pre-computed &amp; verified.</span>
+              </div>
+              <span id="scripture-vectors-badge" class="badge badge-subtle">Ready</span>
+            </div>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-title-with-badge">
+                  <strong>User Library &amp; Notes Vector Index</strong>
+                  <span id="library-vectors-badge" class="badge badge-subtle">0 Indexed</span>
+                </div>
+                <span class="setting-sub" id="library-vectors-desc">Vectorize imported commentary, Spirit of Prophecy, and personal study notes into isolated storage.</span>
+              </div>
+              <button type="button" id="vectorize-library-btn" class="btn-tool btn-sm">Vectorize Library</button>
+            </div>
+            <div id="library-vectorize-progress-container" class="neural-progress-container" hidden>
+              <div class="neural-progress-bar">
+                <div id="library-vectorize-progress-fill" class="neural-progress-fill"></div>
+              </div>
+              <div class="neural-progress-status">
+                <span id="library-vectorize-message" class="neural-progress-text">Indexing library paragraphs…</span>
+                <span id="library-vectorize-percent" class="neural-progress-val">0%</span>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section class="settings-section">
-          <div class="settings-section-header">
-            <h3 class="settings-section-title">Keyboard Navigation &amp; Shortcuts</h3>
-            <button type="button" id="open-shortcuts-btn" class="btn-tool btn-sm">Full Reference (<kbd>?</kbd>)</button>
-          </div>
-          <p class="setting-sub" style="margin-bottom: var(--space-3);">Keyboard shortcuts for high-speed, mouse-free Bible study:</p>
-          <div id="settings-shortcuts-list" class="settings-shortcuts-list"></div>
-          <div class="settings-action-row" style="margin-top: var(--space-4);">
-            <button type="button" id="launch-wizard-btn" class="btn-tool">Launch Setup &amp; Verification Guide…</button>
-          </div>
+          <details class="settings-collapsible" id="settings-shortcuts-collapsible">
+            <summary class="settings-collapsible-summary">
+              <span class="settings-section-title" style="margin: 0;">Keyboard Navigation &amp; Shortcuts</span>
+              <span class="collapsible-indicator" aria-hidden="true">&#9662;</span>
+            </summary>
+            <div class="settings-collapsible-body">
+              <div class="settings-section-header" style="margin-top: var(--space-2); margin-bottom: var(--space-2);">
+                <p class="setting-sub" style="margin: 0;">Keyboard shortcuts for high-speed, mouse-free Bible study:</p>
+                <button type="button" id="open-shortcuts-btn" class="btn-tool btn-sm">Full Reference (<kbd>?</kbd>)</button>
+              </div>
+              <div id="settings-shortcuts-list" class="settings-shortcuts-list"></div>
+              <div class="settings-action-row" style="margin-top: var(--space-4);">
+                <button type="button" id="launch-wizard-btn" class="btn-tool">Launch Setup &amp; Verification Guide…</button>
+              </div>
+            </div>
+          </details>
         </section>
       </div>
 

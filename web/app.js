@@ -147,6 +147,22 @@ const els = {
   settingsImportStatus: $("#settings-import-status"),
   settingsImportProgressFill: $("#settings-import-progress-fill"),
   settingsImportMessage: $("#settings-import-message"),
+  neuralModelBadge: $("#neural-model-badge"),
+  neuralModelDesc: $("#neural-model-desc"),
+  downloadModelBtn: $("#download-model-btn"),
+  modelDownloadProgressContainer: $("#model-download-progress-container"),
+  modelDownloadProgressFill: $("#model-download-progress-fill"),
+  modelDownloadMessage: $("#model-download-message"),
+  modelDownloadPercent: $("#model-download-percent"),
+  scriptureVectorsStatus: $("#scripture-vectors-status"),
+  scriptureVectorsBadge: $("#scripture-vectors-badge"),
+  libraryVectorsBadge: $("#library-vectors-badge"),
+  libraryVectorsDesc: $("#library-vectors-desc"),
+  vectorizeLibraryBtn: $("#vectorize-library-btn"),
+  libraryVectorizeProgressContainer: $("#library-vectorize-progress-container"),
+  libraryVectorizeProgressFill: $("#library-vectorize-progress-fill"),
+  libraryVectorizeMessage: $("#library-vectorize-message"),
+  libraryVectorizePercent: $("#library-vectorize-percent"),
   openShortcutsBtn: $("#open-shortcuts-btn"),
   launchWizardBtn: $("#launch-wizard-btn"),
   shortcutsModal: $("#shortcuts-modal"),
@@ -1443,6 +1459,9 @@ function initSettingsModal() {
   if (els.settingsDoneBtn) {
     els.settingsDoneBtn.addEventListener("click", () => closeSettings());
   }
+  if (els.settingsModal) {
+    els.settingsModal.addEventListener("close", () => closeSettings());
+  }
   if (els.settingsThemeSelect) {
     els.settingsThemeSelect.addEventListener("change", () => setTheme(els.settingsThemeSelect.value));
   }
@@ -1511,7 +1530,201 @@ function initSettingsModal() {
     els.shortcutsDoneBtn.addEventListener("click", () => closeShortcuts());
   }
 
+  if (els.downloadModelBtn) {
+    els.downloadModelBtn.addEventListener("click", triggerModelDownload);
+  }
+  if (els.vectorizeLibraryBtn) {
+    els.vectorizeLibraryBtn.addEventListener("click", triggerLibraryVectorization);
+  }
+
   renderShortcutsUI();
+}
+
+let neuralModelStatusPolling = null;
+let libraryVectorizePolling = null;
+
+async function fetchNeuralModelStatus() {
+  try {
+    const res = await fetch(apiUrl("/api/model/status"));
+    if (!res.ok) return;
+    const data = await res.json();
+    renderNeuralModelStatus(data);
+  } catch (err) {
+    console.debug("Failed to fetch neural model status:", err);
+  }
+}
+
+function renderNeuralModelStatus(data) {
+  if (!data) return;
+
+  // Model Badge & Download Button
+  if (els.neuralModelBadge) {
+    if (data.model_available) {
+      els.neuralModelBadge.textContent = `● Ready (${data.model_size_mb} MB)`;
+      els.neuralModelBadge.className = "badge badge-success";
+      if (els.downloadModelBtn) {
+        els.downloadModelBtn.textContent = "Installed";
+        els.downloadModelBtn.disabled = true;
+      }
+    } else {
+      els.neuralModelBadge.textContent = "○ Not Installed";
+      els.neuralModelBadge.className = "badge badge-subtle";
+      if (els.downloadModelBtn) {
+        els.downloadModelBtn.textContent = "Download Model";
+        els.downloadModelBtn.disabled = data.download_in_progress;
+      }
+    }
+  }
+
+  // Model Download in Progress
+  if (els.modelDownloadProgressContainer) {
+    if (data.download_in_progress) {
+      els.modelDownloadProgressContainer.hidden = false;
+      if (els.modelDownloadProgressFill) {
+        els.modelDownloadProgressFill.style.width = `${data.download_percent || 0}%`;
+      }
+      if (els.modelDownloadPercent) {
+        els.modelDownloadPercent.textContent = `${data.download_percent || 0}%`;
+      }
+      if (els.modelDownloadMessage) {
+        els.modelDownloadMessage.textContent = "Downloading model weights…";
+        els.modelDownloadMessage.style.color = "";
+      }
+      if (!neuralModelStatusPolling) {
+        neuralModelStatusPolling = setInterval(fetchNeuralModelStatus, 800);
+      }
+    } else {
+      if (neuralModelStatusPolling) {
+        clearInterval(neuralModelStatusPolling);
+        neuralModelStatusPolling = null;
+      }
+      if (data.download_error) {
+        els.modelDownloadProgressContainer.hidden = false;
+        if (els.modelDownloadMessage) {
+          els.modelDownloadMessage.textContent = `Download error: ${data.download_error}`;
+          els.modelDownloadMessage.style.color = "#d73a49";
+        }
+      } else {
+        els.modelDownloadProgressContainer.hidden = true;
+      }
+    }
+  }
+
+  // Scripture Vectors Status
+  if (els.scriptureVectorsBadge) {
+    const sCount = data.scripture_embeddings_count || 0;
+    if (sCount > 0) {
+      els.scriptureVectorsBadge.textContent = `${sCount.toLocaleString()} Verses Indexed`;
+      els.scriptureVectorsBadge.className = "badge badge-success";
+    } else {
+      els.scriptureVectorsBadge.textContent = "Pending Hydration";
+      els.scriptureVectorsBadge.className = "badge badge-subtle";
+    }
+  }
+
+  // Library Vectors Status
+  if (els.libraryVectorsBadge) {
+    const lCount = data.user_library_embeddings_count || 0;
+    els.libraryVectorsBadge.textContent = `${lCount.toLocaleString()} Indexed`;
+    els.libraryVectorsBadge.className = lCount > 0 ? "badge badge-success" : "badge badge-subtle";
+  }
+
+  // Library Vectorize in Progress
+  if (els.libraryVectorizeProgressContainer) {
+    if (data.library_vectorize_in_progress) {
+      els.libraryVectorizeProgressContainer.hidden = false;
+      if (els.vectorizeLibraryBtn) els.vectorizeLibraryBtn.disabled = true;
+      if (els.libraryVectorizeProgressFill) {
+        els.libraryVectorizeProgressFill.style.width = `${data.library_vectorize_percent || 0}%`;
+      }
+      if (els.libraryVectorizePercent) {
+        els.libraryVectorizePercent.textContent = `${data.library_vectorize_percent || 0}%`;
+      }
+      if (els.libraryVectorizeMessage) {
+        els.libraryVectorizeMessage.textContent = "Indexing library paragraphs…";
+        els.libraryVectorizeMessage.style.color = "";
+      }
+      if (!libraryVectorizePolling) {
+        libraryVectorizePolling = setInterval(fetchNeuralModelStatus, 800);
+      }
+    } else {
+      if (libraryVectorizePolling) {
+        clearInterval(libraryVectorizePolling);
+        libraryVectorizePolling = null;
+      }
+      if (els.vectorizeLibraryBtn) {
+        els.vectorizeLibraryBtn.disabled = !data.model_available;
+      }
+      if (data.library_vectorize_error) {
+        els.libraryVectorizeProgressContainer.hidden = false;
+        if (els.libraryVectorizeMessage) {
+          els.libraryVectorizeMessage.textContent = `Vectorize error: ${data.library_vectorize_error}`;
+          els.libraryVectorizeMessage.style.color = "#d73a49";
+        }
+      } else {
+        els.libraryVectorizeProgressContainer.hidden = true;
+      }
+    }
+  }
+}
+
+async function triggerModelDownload() {
+  if (els.downloadModelBtn) els.downloadModelBtn.disabled = true;
+  if (els.modelDownloadProgressContainer) {
+    els.modelDownloadProgressContainer.hidden = false;
+    if (els.modelDownloadProgressFill) els.modelDownloadProgressFill.style.width = "0%";
+    if (els.modelDownloadPercent) els.modelDownloadPercent.textContent = "0%";
+    if (els.modelDownloadMessage) {
+      els.modelDownloadMessage.textContent = "Contacting model repository…";
+      els.modelDownloadMessage.style.color = "";
+    }
+  }
+  try {
+    const res = await fetch(apiUrl("/api/model/download"), { method: "POST" });
+    const data = await res.json();
+    if (data.status === "already_installed") {
+      fetchNeuralModelStatus();
+      return;
+    }
+    if (!neuralModelStatusPolling) {
+      neuralModelStatusPolling = setInterval(fetchNeuralModelStatus, 800);
+    }
+  } catch (err) {
+    if (els.downloadModelBtn) els.downloadModelBtn.disabled = false;
+    if (els.modelDownloadMessage) {
+      els.modelDownloadMessage.textContent = `Failed to start download: ${err.message}`;
+      els.modelDownloadMessage.style.color = "#d73a49";
+    }
+  }
+}
+
+async function triggerLibraryVectorization() {
+  if (els.vectorizeLibraryBtn) els.vectorizeLibraryBtn.disabled = true;
+  if (els.libraryVectorizeProgressContainer) {
+    els.libraryVectorizeProgressContainer.hidden = false;
+    if (els.libraryVectorizeProgressFill) els.libraryVectorizeProgressFill.style.width = "0%";
+    if (els.libraryVectorizePercent) els.libraryVectorizePercent.textContent = "0%";
+    if (els.libraryVectorizeMessage) {
+      els.libraryVectorizeMessage.textContent = "Starting on-device vectorization…";
+      els.libraryVectorizeMessage.style.color = "";
+    }
+  }
+  try {
+    const res = await fetch(apiUrl("/api/library/vectorize"), { method: "POST" });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || `HTTP ${res.status}`);
+    }
+    if (!libraryVectorizePolling) {
+      libraryVectorizePolling = setInterval(fetchNeuralModelStatus, 800);
+    }
+  } catch (err) {
+    if (els.vectorizeLibraryBtn) els.vectorizeLibraryBtn.disabled = false;
+    if (els.libraryVectorizeMessage) {
+      els.libraryVectorizeMessage.textContent = err.message;
+      els.libraryVectorizeMessage.style.color = "#d73a49";
+    }
+  }
 }
 
 function openSettings() {
@@ -1520,11 +1733,20 @@ function openSettings() {
       els.settingsModal.showModal();
     }
   }
+  fetchNeuralModelStatus();
 }
 
 function closeSettings() {
   if (els.settingsModal && els.settingsModal.open) {
     els.settingsModal.close();
+  }
+  if (neuralModelStatusPolling) {
+    clearInterval(neuralModelStatusPolling);
+    neuralModelStatusPolling = null;
+  }
+  if (libraryVectorizePolling) {
+    clearInterval(libraryVectorizePolling);
+    libraryVectorizePolling = null;
   }
 }
 
