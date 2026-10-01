@@ -189,6 +189,9 @@ cd bible-study-tool
 
 # One-command bootstrap (creates .venv, installs dependencies, hydrates SQLite databases, and verifies):
 ./bootstrap.sh --data --verify
+
+# Activate the virtual environment:
+source .venv/bin/activate
 ```
 
 ### 2. Launch the Application
@@ -197,6 +200,7 @@ cd bible-study-tool
 # Launch the desktop web interface:
 python -m search.ui.web
 # (or with the installed CLI entrypoint: bible-study)
+# (or run directly without activating: .venv/bin/python -m search.ui.web)
 
 # Launch the interactive terminal TUI:
 python scripts/study.py tui "John 1"

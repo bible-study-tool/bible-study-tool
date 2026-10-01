@@ -420,7 +420,7 @@ from `data/bible.db` and `data/macula.db` (content hash, not bytes; see the
 Release Data Bundle Provenance section below):
 
 ```
-  INTEGRITY.json content_sha256 for bible.db:  e51f97596c75fc8ace3a44740e705197bf452ec6e97d420eeff53593429a7105
+  INTEGRITY.json content_sha256 for bible.db:  70738d0f7c9b18aca301f963b2b4e6065ae18551607b8a3e952116834c64aef1
   INTEGRITY.json content_sha256 for macula.db: 80f6c84f974626e4ea0d34e2a8bef92876ce359120aefb579cbd34dbb5b207b5
 ```
 

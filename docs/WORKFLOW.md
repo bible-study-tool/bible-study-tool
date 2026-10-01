@@ -33,6 +33,7 @@ Two file classes rule everything else:
 ```bash
 # On a fresh clone or updated branch, initialize dependencies & environment:
 ./bootstrap.sh --data
+source .venv/bin/activate
 
 # Ground truth: branch, tree state, roadmap status:
 python scripts/status.py

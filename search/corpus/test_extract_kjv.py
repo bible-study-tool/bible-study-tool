@@ -100,7 +100,7 @@ class TestBibleDB(unittest.TestCase):
     def test_verse_lookups_across_testaments(self):
         targets = [
             ("Gen.1.1", "In the beginning God created the heaven and the earth."),
-            ("Deut.6.4", "Hear, O Israel: The Lord our God is one Lord:"),
+            ("Deut.6.4", "Hear, O Israel: The LORD our God is one LORD:"),
             ("Dan.8.14", "And he said unto me, Unto two thousand and three hundred days; then shall the sanctuary be cleansed."),
             ("John 3:16", "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."),
             ("Rom 8:28", "And we know that all things work together for good to them that love God, to them who are the called according to his purpose."),

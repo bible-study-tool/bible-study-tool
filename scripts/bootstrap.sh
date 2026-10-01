@@ -76,7 +76,12 @@ echo "Adventist Bible Study Tool — Environment Bootstrap"
 echo "=============================================================="
 
 find_python() {
-  for cmd in python3 python; do
+  local candidates=()
+  if [[ -n "${PYTHON:-}" ]]; then
+    candidates+=("$PYTHON")
+  fi
+  candidates+=(python3 python3.13 python3.12 python3.11 python3.10 /opt/homebrew/bin/python3 /usr/local/bin/python3 python)
+  for cmd in "${candidates[@]}"; do
     if command -v "$cmd" >/dev/null 2>&1; then
       if "$cmd" -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)" 2>/dev/null; then
         echo "$cmd"
@@ -90,6 +95,8 @@ find_python() {
 SYSTEM_PYTHON="$(find_python || true)"
 if [[ -z "$SYSTEM_PYTHON" ]]; then
   echo "ERROR: Python 3.10 or higher is required but was not found on PATH." >&2
+  echo "  - On macOS: brew install python (or download from https://www.python.org/downloads/)" >&2
+  echo "  - On Linux: sudo apt install python3 python3-venv (or distribution equivalent)" >&2
   exit 1
 fi
 
@@ -98,6 +105,13 @@ echo "Detected Python: $SYSTEM_PYTHON (v$PY_VERSION)"
 
 VENV_DIR="$REPO_ROOT/.venv"
 VENV_PYTHON="$VENV_DIR/bin/python"
+
+if [[ -d "$VENV_DIR" && -x "$VENV_PYTHON" ]]; then
+  if ! "$VENV_PYTHON" -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)" 2>/dev/null; then
+    echo "Existing virtual environment at $VENV_DIR uses Python < 3.10. Recreating with $SYSTEM_PYTHON..."
+    rm -rf "$VENV_DIR"
+  fi
+fi
 
 if [[ ! -d "$VENV_DIR" ]]; then
   echo "Creating virtual environment at $VENV_DIR ..."
@@ -161,7 +175,16 @@ fi
 if [[ "$RUN_VERIFY" == true ]]; then
   echo
   echo "Running full verification suite..."
-  PYTHON="$VENV_PYTHON" bash "$REPO_ROOT/scripts/verify_all.sh"
+  if ! PYTHON="$VENV_PYTHON" bash "$REPO_ROOT/scripts/verify_all.sh"; then
+    echo >&2
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" >&2
+    echo "Verification encountered failures (see above)." >&2
+    echo "Note: Your virtual environment is intact at $VENV_DIR." >&2
+    echo "To activate it and inspect or test:" >&2
+    echo "  source .venv/bin/activate" >&2
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" >&2
+    exit 1
+  fi
 fi
 
 echo

@@ -115,6 +115,10 @@ You can reopen the wizard or change settings at any time by clicking the **⚙ S
 
 If you are developing features or prefer running directly from a Git clone:
 
+### Prerequisites
+- **Python 3.10 or higher**: macOS Sonoma ships with Python 3.9 and no `/usr/bin/python`. If needed, install modern Python via Homebrew (`brew install python`) or from [python.org](https://www.python.org/downloads/).
+- **Git**
+
 ```bash
 # 1. Clone the repository
 git clone https://github.com/bible-study-tool/bible-study-tool.git
@@ -123,13 +127,19 @@ cd bible-study-tool
 # 2. Automated one-command bootstrap (creates .venv, installs dependencies, hydrates databases, and verifies):
 ./bootstrap.sh --data --verify
 
-# 3. Launch the desktop web interface
-python -m search.ui.web
+# 3. Activate the virtual environment
+source .venv/bin/activate
 
-# Or launch the interactive terminal TUI
+# 4. Launch the desktop web interface
+python -m search.ui.web
+# Or run with the installed console entrypoint:
+bible-study
+# (Alternatively, run directly without activating: .venv/bin/python -m search.ui.web)
+
+# Or launch the interactive terminal TUI:
 python scripts/study.py tui "John 1:1-18"
 
-# 4. Run the complete test and verification suite
+# 5. Run the complete test and verification suite
 bash scripts/verify_all.sh
 ```
 
