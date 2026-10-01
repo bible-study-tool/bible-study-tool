@@ -24,6 +24,7 @@ Select the package for your computer below. Each package is a standalone applica
 | :--- | :--- | :--- |
 | **macOS Native App** | `.dmg` Drag & Drop Installer | [**Download for macOS (Apple Silicon)**](https://github.com/bible-study-tool/bible-study-tool/releases/latest) |
 | **macOS Portable Archive** | `.tar.gz` | [**Download .tar.gz Archive**](https://github.com/bible-study-tool/bible-study-tool/releases/latest) |
+| **macOS Setup Helper** | `.command` Script | [**Download install-macos.command**](https://github.com/bible-study-tool/bible-study-tool/releases/latest) |
 
 > [!IMPORTANT]
 > **First-Time macOS Opening ("App is damaged and can't be opened"):**
@@ -31,21 +32,26 @@ Select the package for your computer below. Each package is a standalone applica
 >
 > *"Adventist Bible Study is damaged and can't be opened. You should move it to the Trash."*
 >
-> **How to open in 5 seconds (choose either method):**
+> **How to open in 5 seconds (choose any method):**
 >
-> - **Method A (System Settings — No Terminal):**
+> - **Method 1 (Automatic Setup Script — Recommended):**
+>   1. Download [`install-macos.command`](https://github.com/bible-study-tool/bible-study-tool/releases/latest) (or use the one included in your downloaded archive).
+>   2. **Right-click (Control-click)** `install-macos.command` ➔ select **Open** ➔ click **Open**.
+>   3. The script automatically installs the app to your `Applications` folder, removes Apple's quarantine flag (`com.apple.quarantine`), applies a local signature, and launches the app!
+>
+> - **Method 2 (Terminal — 1 Quick Command):**
+>   If you already dragged the app into `Applications`, open Terminal (Cmd+Space, type `Terminal`) and paste:
+>   ```bash
+>   xattr -cr "/Applications/Adventist Bible Study.app"
+>   ```
+>   Press Enter. The app will now open immediately like any other Mac application.
+>
+> - **Method 3 (System Settings — No Script or Terminal):**
 >   1. Drag **Adventist Bible Study** into your **Applications** folder.
 >   2. Double-click it once (it will show the warning; click **Cancel**).
 >   3. Open **System Settings** ➔ **Privacy & Security**.
 >   4. Scroll down to the **Security** section. You will see: *"Adventist Bible Study was blocked to protect your Mac."*
 >   5. Click **"Open Anyway"** and enter your password. You only have to do this once!
->
-> - **Method B (Terminal — 1 Command):**
->   Open Terminal (Cmd+Space, type `Terminal`) and paste:
->   ```bash
->   xattr -cr "/Applications/Adventist Bible Study.app"
->   ```
->   Press Enter. The app will now open immediately like any other Mac application.
 
 ---
 

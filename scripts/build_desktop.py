@@ -203,6 +203,23 @@ def collect_desktop_artifacts(repo_root: Path, dist_dir: Path) -> list[Path]:
             collected.append(sha_file)
             print(f"  ✔ Collected installer: {dest.name} (SHA-256: {digest[:16]}...)")
 
+    # Collect macOS helper script if on Darwin or if packaging macOS DMG
+    has_dmg = any(f.suffix.lower() == ".dmg" for f in collected if f.is_file())
+    macos_cmd = repo_root / "scripts" / "install-macos.command"
+    if (sys.platform == "darwin" or has_dmg) and macos_cmd.is_file():
+        dest_cmd = dist_dir / "install-macos.command"
+        shutil.copy2(macos_cmd, dest_cmd)
+        try:
+            dest_cmd.chmod(0o755)
+        except Exception:
+            pass
+        collected.append(dest_cmd)
+        cmd_digest = sha256_file(dest_cmd)
+        cmd_sha = dest_cmd.with_name(f"{dest_cmd.name}.sha256")
+        cmd_sha.write_text(f"{cmd_digest}  {dest_cmd.name}\n", encoding="utf-8")
+        collected.append(cmd_sha)
+        print(f"  ✔ Collected helper: {dest_cmd.name} (SHA-256: {cmd_digest[:16]}...)")
+
     return collected
 
 

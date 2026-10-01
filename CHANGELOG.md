@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.1.6-beta] - 2026-10-01
+## [0.1.6] - 2026-10-01
 
 ### Added
+- **macOS First-Time Setup & Quarantine Helper (`scripts/install-macos.command`):**
+  - Added an automated setup script that moves the application to `~/Applications` (or `/Applications`), strips Apple Gatekeeper internet quarantine flags (`com.apple.quarantine`), applies local ad-hoc code signatures, and launches the desktop app.
+  - Eliminates terminal friction for non-technical users on macOS (accessible via simple Right-click ➔ Open).
 - **Neural Model Provenance Sourcing, Developer Bootstrap Hydration, and GUI Vector Management (WP-042, ADR-029):**
   - **Cryptographic Provenance Pinning:** Pinned `Xenova/multilingual-e5-small` INT8 quantized ONNX weights (`model_quantized.onnx`, 113.6 MB) and tokenizer (`tokenizer.json`, 7.1 MB) at upstream revision `761b726dd34fb83930e26aab4e9ac3899aa1fa78` with SHA-256 digests in `data/PROVENANCE.md` and automated retrieval via `scripts/fetch_sources.sh`.
   - **Zero-PyTorch Optional Target:** Added lean `[project.optional-dependencies] onnx = ["onnxruntime>=1.16", "tokenizers>=0.15"]` in `pyproject.toml` and integrated automated model fetching and vector database hydration (`data/embeddings.db`) into `./bootstrap.sh --data` and `--all-in-one`.
@@ -236,7 +239,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - F1–F4 automated validators (schema, Strong's, cross-references, dead-link audit).
   - 645 automated unit and integration tests passing in CI.
 
-[0.1.6-beta]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.6-beta
+[0.1.6]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.6
+[0.1.6-beta]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.6
 [0.1.5-beta]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.5-beta
 [0.1.4-beta]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.4-beta
 [0.1.3-alpha]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.3-alpha

@@ -382,6 +382,13 @@ def main() -> int:
             encoding="utf-8",
         )
         os.chmod(cmd_path, 0o755)
+        installer_script = repo_root / "scripts" / "install-macos.command"
+        if installer_script.is_file():
+            shutil.copy2(installer_script, stage_dir / "install-macos.command")
+            try:
+                (stage_dir / "install-macos.command").chmod(0o755)
+            except Exception:
+                pass
         codesign_bin = shutil.which("codesign")
         if codesign_bin:
             try:

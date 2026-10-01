@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -28,6 +29,24 @@ class ReleasePipelineScriptTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(res.returncode, 0, f"bash -n failed: {res.stderr}")
+
+    @unittest.skipUnless(shutil.which("bash"), "bash executable not available")
+    def test_install_macos_command_syntax_and_structure(self):
+        script_path = get_repo_root() / "scripts" / "install-macos.command"
+        self.assertTrue(script_path.is_file(), "scripts/install-macos.command must exist")
+        self.assertTrue(os.access(script_path, os.X_OK), "scripts/install-macos.command must be executable (+x)")
+        res = subprocess.run(
+            ["bash", "-n", str(script_path)],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(res.returncode, 0, f"bash -n failed on install-macos.command: {res.stderr}")
+        content = script_path.read_text(encoding="utf-8")
+        self.assertIn("com.apple.quarantine", content)
+        self.assertIn("xattr", content)
+        self.assertIn("Adventist Bible Study.app", content)
+        self.assertIn("codesign", content)
+        self.assertIn("open", content)
 
     @unittest.skipUnless(shutil.which("bash"), "bash executable not available")
     def test_build_release_help(self):

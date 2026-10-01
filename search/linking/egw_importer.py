@@ -40,6 +40,9 @@ _PAGEBREAK_ID_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Minimum paragraph batch size before triggering high-speed bulk ingestion with full FTS5 rebuild
+FAST_BULK_PARAGRAPH_THRESHOLD = 1000
+
 # Canonical verification anchors (token -> expected text start)
 # Used to verify whether ingested editions match canonical pagination without blocking.
 CANONICAL_ANCHORS: dict[str, dict[str, Any]] = {
@@ -626,7 +629,7 @@ class BulkImporter:
         if not paragraphs:
             return 0
 
-        if fast:
+        if fast and len(paragraphs) >= FAST_BULK_PARAGRAPH_THRESHOLD:
             return self.db.fast_bulk_insert(paragraphs)
         return self.db.insert_paragraphs_batch(paragraphs)
 

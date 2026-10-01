@@ -340,6 +340,11 @@ class StudyService:
         self._lock = threading.RLock()
         self.neural_manager = NeuralModelManager(study_service=self)
 
+    @property
+    def lock(self) -> threading.RLock:
+        """Re-entrant lock protecting study service state and database operations."""
+        return self._lock
+
     def _load_tbes_file(self, path: Path) -> tuple[dict[str, str], dict[str, list[dict[str, Any]]]]:
         if not path.exists():
             return {}, {}

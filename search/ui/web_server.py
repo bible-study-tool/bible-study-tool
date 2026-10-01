@@ -731,126 +731,128 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
             results = []
             total_paras_added = 0
 
-            with tempfile.TemporaryDirectory() as tmp_dir_str:
-                tmp_dir = Path(tmp_dir_str)
-                for raw_name, data in uploaded_files:
-                    fname = Path(raw_name).name
-                    ext = Path(fname).suffix.lower()
+            with study.lock:
+                with tempfile.TemporaryDirectory() as tmp_dir_str:
+                    tmp_dir = Path(tmp_dir_str)
+                    for raw_name, data in uploaded_files:
+                        fname = Path(raw_name).name
+                        ext = Path(fname).suffix.lower()
 
-                    if ext in (".db", ".sqlite", ".sqlite3") or fname == "egw.db":
-                        target_tmp = tmp_dir / fname
-                        target_tmp.write_bytes(data)
-                        try:
-                            test_conn = sqlite3.connect(str(target_tmp))
-                            cur = test_conn.execute(
-                                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('egw_paragraphs', 'egw_books');"
-                            )
-                            has_table = cur.fetchone() is not None
-                            test_conn.close()
-                        except Exception as exc:
-                            results.append({"filename": fname, "status": "error", "error": f"Invalid SQLite file: {exc}"})
-                            continue
-
-                        if not has_table:
-                            results.append({
-                                "filename": fname,
-                                "status": "error",
-                                "error": "Missing egw_paragraphs table in uploaded SQLite database.",
-                            })
-                            continue
-
-                        # Atomically replace egw.db
-                        study.replace_egw_db(target_tmp)
-                        stats = study.get_egw_stats()
-                        results.append({
-                            "filename": fname,
-                            "status": "ok",
-                            "type": "database",
-                            "total_paragraphs": stats["paragraphs_count"],
-                            "total_books": stats["books_count"],
-                        })
-
-                    elif ext == ".zip":
-                        zip_file_path = tmp_dir / fname
-                        zip_file_path.write_bytes(data)
-                        extract_dir = tmp_dir / f"extracted_{fname}"
-                        extract_dir.mkdir(exist_ok=True)
-                        try:
-                            with zipfile.ZipFile(zip_file_path, "r") as zf:
-                                for member in zf.infolist():
-                                    target_p = (extract_dir / member.filename).resolve()
-                                    if not str(target_p).startswith(str(extract_dir.resolve())):
-                                        raise ValueError(f"Dangerous path in archive: {member.filename}")
-                                zf.extractall(extract_dir)
-                        except Exception as exc:
-                            results.append({"filename": fname, "status": "error", "error": f"Invalid ZIP archive: {exc}"})
-                            continue
-
-                        # Check if a .db is inside the zip
-                        db_files = list(extract_dir.glob("**/*.db")) + list(extract_dir.glob("**/*.sqlite*"))
-                        db_imported = False
-                        if db_files:
-                            best_db = db_files[0]
+                        if ext in (".db", ".sqlite", ".sqlite3") or fname == "egw.db":
+                            target_tmp = tmp_dir / fname
+                            target_tmp.write_bytes(data)
                             try:
-                                test_conn = sqlite3.connect(str(best_db))
+                                test_conn = sqlite3.connect(str(target_tmp))
                                 cur = test_conn.execute(
                                     "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('egw_paragraphs', 'egw_books');"
                                 )
                                 has_table = cur.fetchone() is not None
                                 test_conn.close()
-                            except Exception:
-                                has_table = False
-                            if has_table:
-                                study.replace_egw_db(best_db)
-                                stats = study.get_egw_stats()
+                            except Exception as exc:
+                                results.append({"filename": fname, "status": "error", "error": f"Invalid SQLite file: {exc}"})
+                                continue
+
+                            if not has_table:
+                                results.append({
+                                    "filename": fname,
+                                    "status": "error",
+                                    "error": "Missing egw_paragraphs table in uploaded SQLite database.",
+                                })
+                                continue
+
+                            # Atomically replace egw.db
+                            study.replace_egw_db(target_tmp)
+                            stats = study.get_egw_stats()
+                            results.append({
+                                "filename": fname,
+                                "status": "ok",
+                                "type": "database",
+                                "total_paragraphs": stats["paragraphs_count"],
+                                "total_books": stats["books_count"],
+                            })
+
+                        elif ext == ".zip":
+                            zip_file_path = tmp_dir / fname
+                            zip_file_path.write_bytes(data)
+                            extract_dir = tmp_dir / f"extracted_{fname}"
+                            extract_dir.mkdir(exist_ok=True)
+                            try:
+                                with zipfile.ZipFile(zip_file_path, "r") as zf:
+                                    for member in zf.infolist():
+                                        target_p = (extract_dir / member.filename).resolve()
+                                        if not str(target_p).startswith(str(extract_dir.resolve())):
+                                            raise ValueError(f"Dangerous path in archive: {member.filename}")
+                                    zf.extractall(extract_dir)
+                            except Exception as exc:
+                                results.append({"filename": fname, "status": "error", "error": f"Invalid ZIP archive: {exc}"})
+                                continue
+
+                            # Check if a .db is inside the zip
+                            db_files = list(extract_dir.glob("**/*.db")) + list(extract_dir.glob("**/*.sqlite*"))
+                            db_imported = False
+                            if db_files:
+                                best_db = db_files[0]
+                                try:
+                                    test_conn = sqlite3.connect(str(best_db))
+                                    cur = test_conn.execute(
+                                        "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('egw_paragraphs', 'egw_books');"
+                                    )
+                                    has_table = cur.fetchone() is not None
+                                    test_conn.close()
+                                except Exception:
+                                    has_table = False
+                                if has_table:
+                                    study.replace_egw_db(best_db)
+                                    stats = study.get_egw_stats()
+                                    results.append({
+                                        "filename": fname,
+                                        "status": "ok",
+                                        "type": "database_from_zip",
+                                        "total_paragraphs": stats["paragraphs_count"],
+                                        "total_books": stats["books_count"],
+                                    })
+                                    db_imported = True
+
+                            if not db_imported:
+                                egw_inst = study.ensure_egw_db()
+                                importer = BulkImporter(egw_inst)
+                                imported_counts = importer.import_directory(extract_dir, recursive=True)
+                                added = sum(max(0, c) for c in imported_counts.values())
+                                total_paras_added += added
                                 results.append({
                                     "filename": fname,
                                     "status": "ok",
-                                    "type": "database_from_zip",
-                                    "total_paragraphs": stats["paragraphs_count"],
-                                    "total_books": stats["books_count"],
+                                    "type": "zip_archive",
+                                    "files_imported": len(imported_counts),
+                                    "paragraphs_added": added,
                                 })
-                                db_imported = True
 
-                        if not db_imported:
+                        elif ext in (".epub", ".txt", ".md", ".json"):
+                            target_tmp = tmp_dir / fname
+                            target_tmp.write_bytes(data)
                             egw_inst = study.ensure_egw_db()
                             importer = BulkImporter(egw_inst)
-                            imported_counts = importer.import_directory(extract_dir, recursive=True)
-                            added = sum(max(0, c) for c in imported_counts.values())
-                            total_paras_added += added
+                            try:
+                                added = importer.import_file(target_tmp)
+                                total_paras_added += max(0, added)
+                                results.append({
+                                    "filename": fname,
+                                    "status": "ok",
+                                    "type": ext.lstrip("."),
+                                    "paragraphs_added": added,
+                                })
+                            except Exception as exc:
+                                results.append({"filename": fname, "status": "error", "error": str(exc)})
+                        else:
                             results.append({
                                 "filename": fname,
-                                "status": "ok",
-                                "type": "zip_archive",
-                                "files_imported": len(imported_counts),
-                                "paragraphs_added": added,
+                                "status": "error",
+                                "error": f"Unsupported format '{ext}'. Expected .epub, .txt, .md, .json, .zip, or .db",
                             })
 
-                    elif ext in (".epub", ".txt", ".md", ".json"):
-                        target_tmp = tmp_dir / fname
-                        target_tmp.write_bytes(data)
-                        egw_inst = study.ensure_egw_db()
-                        importer = BulkImporter(egw_inst)
-                        try:
-                            added = importer.import_file(target_tmp)
-                            total_paras_added += max(0, added)
-                            results.append({
-                                "filename": fname,
-                                "status": "ok",
-                                "type": ext.lstrip("."),
-                                "paragraphs_added": added,
-                            })
-                        except Exception as exc:
-                            results.append({"filename": fname, "status": "error", "error": str(exc)})
-                    else:
-                        results.append({
-                            "filename": fname,
-                            "status": "error",
-                            "error": f"Unsupported format '{ext}'. Expected .epub, .txt, .md, .json, .zip, or .db",
-                        })
+                    study.reload_egw_db()
+                    final_stats = study.get_egw_stats()
 
-            study.reload_egw_db()
-            final_stats = study.get_egw_stats()
             self._reply_json(HTTPStatus.OK, {
                 "status": "ok",
                 "results": results,
