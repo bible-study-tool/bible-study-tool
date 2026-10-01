@@ -87,13 +87,17 @@ class ReleasePipelineScriptTests(unittest.TestCase):
         self.assertIn("--zip", res.stdout)
         self.assertIn("--check", res.stdout)
 
-    def test_ensure_pinned_sources_when_present(self):
+    @staticmethod
+    def _load_build_release_data():
         import importlib.util
-        from unittest.mock import patch
-
         spec = importlib.util.spec_from_file_location("build_release_data", BUILD_RELEASE_DATA_PY)
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
+        return mod
+
+    def test_ensure_pinned_sources_when_present(self):
+        from unittest.mock import patch
+        mod = self._load_build_release_data()
 
         with tempfile.TemporaryDirectory() as td:
             tmp_repo = Path(td)
@@ -111,12 +115,8 @@ class ReleasePipelineScriptTests(unittest.TestCase):
                 mock_run.assert_not_called()
 
     def test_ensure_pinned_sources_missing_triggers_bash(self):
-        import importlib.util
         from unittest.mock import patch
-
-        spec = importlib.util.spec_from_file_location("build_release_data", BUILD_RELEASE_DATA_PY)
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
+        mod = self._load_build_release_data()
 
         with tempfile.TemporaryDirectory() as td:
             tmp_repo = Path(td)
@@ -130,9 +130,73 @@ class ReleasePipelineScriptTests(unittest.TestCase):
                 args, _ = mock_run.call_args
                 self.assertIn("fetch_sources.sh", str(args[0]))
 
+    def test_assemble_data_bundle_requires_embeddings_db(self):
+        from unittest.mock import patch
+        mod = self._load_build_release_data()
 
+        with tempfile.TemporaryDirectory() as td:
+            tmp_repo = Path(td)
+            data_dir = tmp_repo / "data"
+            data_dir.mkdir()
+            (data_dir / "bible.db").touch()
+            (data_dir / "macula.db").touch()
+            out_dir = tmp_repo / "out"
 
+            with patch("subprocess.run"):
+                with self.assertRaises(SystemExit) as cm:
+                    mod.assemble_data_bundle(out_dir, tmp_repo)
+                self.assertEqual(cm.exception.code, 1)
 
+    def test_assemble_data_bundle_requires_onnx_models(self):
+        import sqlite3
+        from unittest.mock import patch
+        mod = self._load_build_release_data()
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp_repo = Path(td)
+            data_dir = tmp_repo / "data"
+            data_dir.mkdir()
+            (tmp_repo / "lexicons").mkdir()
+            for name in ["bible.db", "macula.db", "embeddings.db"]:
+                conn = sqlite3.connect(str(data_dir / name))
+                conn.execute("CREATE TABLE t (id INT)")
+                conn.close()
+            out_dir = tmp_repo / "out"
+
+            with patch("subprocess.run"):
+                with self.assertRaises(SystemExit) as cm:
+                    mod.assemble_data_bundle(out_dir, tmp_repo)
+                self.assertEqual(cm.exception.code, 1)
+
+    def test_assemble_data_bundle_excludes_copyright_dbs(self):
+        import sqlite3
+        from unittest.mock import patch
+        mod = self._load_build_release_data()
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp_repo = Path(td)
+            data_dir = tmp_repo / "data"
+            data_dir.mkdir()
+            (tmp_repo / "lexicons").mkdir()
+            for name in ["bible.db", "macula.db", "embeddings.db"]:
+                conn = sqlite3.connect(str(data_dir / name))
+                conn.execute("CREATE TABLE t (id INT)")
+                conn.close()
+            models_dir = data_dir / "models" / "multilingual-e5-small"
+            models_dir.mkdir(parents=True)
+            (models_dir / "model.onnx").touch()
+            (models_dir / "tokenizer.json").touch()
+            out_dir = tmp_repo / "out"
+
+            for forbidden_name in ("egw.db", "library_embeddings.db"):
+                with self.subTest(forbidden=forbidden_name):
+                    def inject_forbidden(*args, **kwargs):
+                        (out_dir / forbidden_name).touch()
+
+                    with patch("subprocess.run"), patch("shutil.copytree", side_effect=inject_forbidden):
+                        with self.assertRaises(SystemExit) as cm:
+                            mod.assemble_data_bundle(out_dir, tmp_repo)
+                        self.assertEqual(cm.exception.code, 1)
 class GitlabCIConfigTests(unittest.TestCase):
     """Verify integrity and schema of .gitlab-ci.yml."""
 

@@ -92,7 +92,7 @@ def ensure_test_databases(repo: str | Path | None = None) -> None:
 
     # 1. Hydrate Bible DB if missing or empty
     if not bible_db_path.is_file() or bible_db_path.stat().st_size < 10_000:
-        from search.corpus.extract_kjv import BibleDB
+        from search.corpus.extract_kjv import BibleDB, clean_verse_text
         bdb = BibleDB(bible_db_path)
         bdb.init_db(force=True)
         try:
@@ -101,9 +101,22 @@ def ensure_test_databases(repo: str | Path | None = None) -> None:
                     "INSERT OR REPLACE INTO books VALUES (?, ?, ?, ?, ?, ?)",
                     ((b["osis"], b["order_num"], b["name"], b["testament"], b["chapters"], b["verses"]) for b in pkg["bible"]["books"]),
                 )
+                verse_rows = (
+                    (
+                        v["id"],
+                        v["osis"],
+                        v["chapter"],
+                        v["verse"],
+                        v["text"],
+                        clean_verse_text(v["text"]) if v.get("text") else v.get("clean_text", ""),
+                        v["strongs_json"],
+                        v["tokens_json"],
+                    )
+                    for v in pkg["bible"]["verses"]
+                )
                 bdb.conn.executemany(
                     "INSERT OR REPLACE INTO verses VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    ((v["id"], v["osis"], v["chapter"], v["verse"], v["text"], v["clean_text"], v["strongs_json"], v["tokens_json"]) for v in pkg["bible"]["verses"]),
+                    verse_rows,
                 )
                 bdb.conn.executemany(
                     "INSERT OR REPLACE INTO translations VALUES (?, ?, ?, ?, ?)",

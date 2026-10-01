@@ -106,15 +106,53 @@ def stage_sidecar_for_bundle(repo_root: Path, os_name: str) -> Path | None:
             shutil.rmtree(target_internal)
         shutil.copytree(found_internal, target_internal)
 
-    # Stage sidecar data directory per ADR-024 / ADR-028
+    # Stage sidecar data directory per ADR-024 / ADR-028 / WP-042
     found_data = found.parent / "data"
     if not found_data.is_dir():
         found_data = repo_root / "data"
-    if found_data.is_dir():
-        target_data = target_dir / "data"
-        if target_data.exists():
-            shutil.rmtree(target_data)
-        shutil.copytree(found_data, target_data)
+    if not found_data.is_dir():
+        sys.stderr.write(
+            f"FATAL: Sidecar data directory not found at '{found_data}'! "
+            "Desktop release requires data assets (ADR-024, ADR-028).\n"
+        )
+        return None
+
+    target_data = target_dir / "data"
+    if target_data.exists():
+        shutil.rmtree(target_data)
+    shutil.copytree(
+        found_data,
+        target_data,
+        ignore=shutil.ignore_patterns("egw.db*", "library_embeddings.db*", "*.tmp", "*.pyc", "__pycache__"),
+    )
+
+    # Enforce neural models and embeddings presence for desktop sidecar (ADR-029, WP-042)
+    target_embeddings = target_data / "embeddings.db"
+    if not target_embeddings.is_file():
+        sys.stderr.write(
+            "FATAL: Sidecar data missing embeddings.db! "
+            "Desktop release requires pre-computed scripture embeddings (ADR-029, WP-042). "
+            "Run 'python scripts/build_embeddings.py' before packaging.\n"
+        )
+        return None
+
+    target_models = target_data / "models"
+    onnx_files = list(target_models.glob("**/*.onnx")) if target_models.is_dir() else []
+    tokenizer_files = list(target_models.glob("**/tokenizer.json")) if target_models.is_dir() else []
+    if not target_models.is_dir() or not onnx_files or not tokenizer_files:
+        sys.stderr.write(
+            "FATAL: Sidecar data missing ONNX models or tokenizer.json in models/! "
+            "Desktop release requires complete neural model assets (ADR-029, WP-042). "
+            "Run 'scripts/fetch_sources.sh' before packaging.\n"
+        )
+        return None
+
+    # Enforce strict absence of user/copyright databases (ADR-002, ADR-023, ADR-028)
+    for forbidden in ("egw.db", "library_embeddings.db"):
+        matches = list(target_data.glob(f"{forbidden}*"))
+        if matches:
+            sys.stderr.write(f"FATAL: Forbidden user/copyright database file {matches[0].name} staged in Tauri bundle!\n")
+            return None
 
     return staged_binary
 
@@ -206,7 +244,7 @@ def main() -> int:
     if staged:
         print(f"==> Staged engine binary: {staged}")
     else:
-        print("ERROR: Could not find frozen engine binary to stage into Tauri bundle.", file=sys.stderr)
+        print("ERROR: Staging failed or could not find frozen engine binary to stage into Tauri bundle.", file=sys.stderr)
         return 1
 
     ret = run_tauri_build(REPO_ROOT, debug=args.debug, bundles=args.bundles)

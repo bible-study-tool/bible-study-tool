@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import re
+import tempfile
 import tomllib
 import unittest
 from unittest.mock import patch
@@ -210,6 +211,66 @@ class TauriDesktopConfigurationTests(unittest.TestCase):
             self.assertIn("--bundles", cmd)
             idx = cmd.index("--bundles")
             self.assertEqual(cmd[idx + 1], "deb,appimage")
+
+    def test_stage_sidecar_for_bundle_excludes_copyright_dbs_and_requires_neural_assets(self):
+        """Verify build_desktop.stage_sidecar_for_bundle requires embeddings/models and excludes egw/library_embeddings."""
+        from scripts.build_desktop import stage_sidecar_for_bundle
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp_repo = Path(td)
+            dist_dir = tmp_repo / "dist" / "bible-study"
+            dist_dir.mkdir(parents=True)
+            fake_bin = dist_dir / "bible-study"
+            fake_bin.touch()
+
+            data_dir = tmp_repo / "data"
+            data_dir.mkdir()
+            (data_dir / "bible.db").touch()
+            (data_dir / "macula.db").touch()
+
+            # 1. Missing embeddings.db -> returns None
+            res = stage_sidecar_for_bundle(tmp_repo, "linux")
+            self.assertIsNone(res)
+
+            # 2. Add embeddings.db but missing models -> returns None
+            (data_dir / "embeddings.db").touch()
+            res = stage_sidecar_for_bundle(tmp_repo, "linux")
+            self.assertIsNone(res)
+
+            # 2b. Add models dir with onnx but missing tokenizer.json -> returns None
+            models_dir = data_dir / "models" / "multilingual-e5-small"
+            models_dir.mkdir(parents=True)
+            (models_dir / "model_quantized.onnx").touch()
+            res = stage_sidecar_for_bundle(tmp_repo, "linux")
+            self.assertIsNone(res)
+
+            # 3. Add tokenizer.json -> succeeds
+            (models_dir / "tokenizer.json").touch()
+
+            # Also add forbidden dbs and WAL files to source data_dir
+            (data_dir / "egw.db").touch()
+            (data_dir / "egw.db-wal").touch()
+            (data_dir / "library_embeddings.db").touch()
+            (data_dir / "library_embeddings.db-shm").touch()
+
+            res = stage_sidecar_for_bundle(tmp_repo, "linux")
+            self.assertIsNotNone(res)
+            staged_data = tmp_repo / "src-tauri" / "binaries" / "data"
+            self.assertTrue((staged_data / "embeddings.db").exists())
+            self.assertTrue((staged_data / "models" / "multilingual-e5-small" / "model_quantized.onnx").exists())
+            self.assertTrue((staged_data / "models" / "multilingual-e5-small" / "tokenizer.json").exists())
+            # Copyright databases and sidecars must be strictly ignored and not staged
+            self.assertFalse((staged_data / "egw.db").exists())
+            self.assertFalse((staged_data / "egw.db-wal").exists())
+            self.assertFalse((staged_data / "library_embeddings.db").exists())
+            self.assertFalse((staged_data / "library_embeddings.db-shm").exists())
+
+            # 4. Missing data dir completely -> returns None
+            with tempfile.TemporaryDirectory() as td_nodata:
+                nodata_repo = Path(td_nodata)
+                (nodata_repo / "dist" / "bible-study").mkdir(parents=True)
+                (nodata_repo / "dist" / "bible-study" / "bible-study").touch()
+                self.assertIsNone(stage_sidecar_for_bundle(nodata_repo, "linux"))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 # WP-042: Neural Model Provenance Sourcing, Developer Bootstrap Hydration, and GUI Vector Management
 
-status: open
+status: complete
 scope: Pillar C (C1, C2, C7), Pillar D (D1, D3), Pillar G (G6), Pillar P (Desktop) — Complete the end-to-end lifecycle for local neural semantic embeddings: pin ONNX model provenance in PROVENANCE.md, hydrate whole-Bible embeddings during developer bootstrap, package model/vector sidecars for desktop release bundles, expose in-app model download and user library vectorization in the GUI, and reorganize the Settings modal with collapsible shortcuts.
 priority: high
 
@@ -84,7 +84,7 @@ Deliver complete architectural and user-facing closure for local neural embeddin
   - In `web/styles.css`:
     - Style the neural model setting card, progress bars, and collapsible shortcuts accordion according to the Study Room Desk warm aesthetic (ADR-025).
 
-- [ ] ### Task 5: Packaging & Release Sidecar Staging Verification (`scripts/build_release_data.py`, `scripts/build_desktop.py`)
+- [x] ### Task 5: Packaging & Release Sidecar Staging Verification (`scripts/build_release_data.py`, `scripts/build_desktop.py`)
   - In `scripts/build_release_data.py`, enforce that release bundling strictly requires `data/models/` and `data/embeddings.db`, raising a fatal exit if missing rather than silently emitting an incomplete bundle.
   - Ensure desktop packaging (`scripts/build_desktop.py`) stages the verified neural model files and `embeddings.db` into `src-tauri/binaries/data/` while strictly excluding copyrighted user content (`egw.db`, `library_embeddings.db`) per ADR-002 and ADR-028.
 
@@ -104,7 +104,7 @@ Deliver complete architectural and user-facing closure for local neural embeddin
 - [x] `data/PROVENANCE.md` records pinned URLs and SHA-256 checksums for `model_quantized.onnx` and `tokenizer.json`.
 - [x] `scripts/fetch_sources.sh` downloads and verifies model files with zero errors.
 - [x] `./bootstrap.sh --data` on a clean checkout hydrates `bible.db`, `macula.db`, and `embeddings.db`.
-- [ ] All 929+ automated tests and F1–F6 integrity validators pass with `bash scripts/verify_all.sh`.
+- [x] All 929+ automated tests and F1–F6 integrity validators pass with `bash scripts/verify_all.sh` (945 passed).
 - [x] `GET /api/model/status` reports model and vector counts accurately.
 - [x] The Settings modal displays the Neural Semantic Search card before Keyboard Shortcuts.
 - [x] Keyboard Shortcuts in Settings are neatly tucked inside an accessible, collapsible `<details>` container.

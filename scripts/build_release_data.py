@@ -206,9 +206,15 @@ def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
 
     # 3. Compact and copy SQLite databases via VACUUM INTO
     print("3. Compacting and copying SQLite databases...")
-    candidate_dbs = ["bible.db", "macula.db"]
-    if (data_src / "embeddings.db").is_file():
-        candidate_dbs.append("embeddings.db")
+    embeddings_src = data_src / "embeddings.db"
+    if not embeddings_src.is_file():
+        sys.stderr.write(
+            "FATAL: data/embeddings.db not found! Release bundle requires pre-computed "
+            "scripture embeddings (ADR-029, WP-042). Run 'python scripts/build_embeddings.py' to generate.\n"
+        )
+        sys.exit(1)
+
+    candidate_dbs = ["bible.db", "macula.db", "embeddings.db"]
 
     for db_name in candidate_dbs:
         src = data_src / db_name
@@ -236,8 +242,8 @@ def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
                 p.unlink()
     print("   ✔ SQLite databases vacuumed, WAL-initialized, and verified.")
 
-    # 4. Copy canonical derived lexicons and optional neural models
-    print("4. Copying canonical lexicons...")
+    # 4. Copy canonical derived lexicons and neural models
+    print("4. Copying canonical lexicons and neural models...")
     json_count = 0
     for p in sorted(lexicons_src.glob("*.json")):
         shutil.copy2(p, out_dir / "lexicons" / p.name)
@@ -251,14 +257,24 @@ def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
             print(f"   ✔ Copied {extra}.")
 
     models_src = data_src / "models"
-    if models_src.is_dir():
-        shutil.copytree(models_src, out_dir / "models", dirs_exist_ok=True)
-        print("   ✔ Copied local ONNX neural models and tokenizers.")
-
-    # Enforce copyright boundary tripwire (ADR-002, ADR-023, ADR-024)
-    if (out_dir / "egw.db").exists():
-        sys.stderr.write("FATAL: egw.db found in release bundle directory! Violates copyright boundary.\n")
+    onnx_files = list(models_src.glob("**/*.onnx")) if models_src.is_dir() else []
+    tokenizer_files = list(models_src.glob("**/tokenizer.json")) if models_src.is_dir() else []
+    if not models_src.is_dir() or not onnx_files or not tokenizer_files:
+        sys.stderr.write(
+            "FATAL: data/models/ not found or missing ONNX neural weights or tokenizer.json! "
+            "Release bundle requires pinned ONNX models (ADR-029, WP-042). "
+            "Run 'scripts/fetch_sources.sh' to download pinned model assets.\n"
+        )
         sys.exit(1)
+    shutil.copytree(models_src, out_dir / "models", dirs_exist_ok=True)
+    print("   ✔ Copied local ONNX neural models and tokenizers.")
+
+    # Enforce copyright boundary tripwire (ADR-002, ADR-023, ADR-024, WP-042)
+    for forbidden in ("egw.db", "library_embeddings.db"):
+        matches = list(out_dir.glob(f"{forbidden}*"))
+        if matches:
+            sys.stderr.write(f"FATAL: {matches[0].name} found in release bundle directory! Violates copyright boundary.\n")
+            sys.exit(1)
 
     # 5. Generate content-level integrity manifest (ADR-027)
     print("5. Generating integrity manifests...")
