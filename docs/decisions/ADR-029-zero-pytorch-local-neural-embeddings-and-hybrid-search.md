@@ -34,6 +34,11 @@ Traditional neural search solutions introduce severe drawbacks:
    - Conceptual parallels surface naturally without keyword overlap.
    - Scripture-interpreting-Scripture apostolic cross-references receive reciprocal reinforcement.
 
+5. **Two-Tier Storage & Copyright Boundary Preservation (WP-042):**
+   - Canonical Scripture embeddings (31,102 verses) reside in immutable, bundled `data/embeddings.db`.
+   - User-supplied external materials (Spirit of Prophecy commentary, personal notes, or imported documents) are vectorized locally on-device on demand into an isolated SQLite database (`data/library_embeddings.db`).
+   - This ensures canonical databases remain pure and uncorrupted, while user materials remain 100% private and quarantined against packaging leaks (ADR-002, ADR-023, ADR-028).
+
 ## Status
 
 Accepted.
@@ -45,6 +50,7 @@ Accepted.
   - Desktop installer sizes remain lean and portable (~25 MB compressed vector DB addition).
   - No 2 GB PyTorch installation or GPU required.
   - Exact textual search precision is preserved alongside thematic discovery.
+  - Strict copyright boundaries: user-imported content vectors are isolated from canonical Scripture vectors.
 * **Negative / Trade-offs:**
   - Requires maintaining the offline vector generation script (`scripts/build_embeddings.py`).
   - Packaging must stage `data/embeddings.db` and the quantized ONNX model file.
@@ -59,3 +65,4 @@ Accepted.
 - [ADR-028: Tauri Desktop Packaging and Native Window Architecture](ADR-028-tauri-desktop-packaging-and-native-window.md)
 - [WP-039: Deterministic Cross-Language Unified Search Workstation](../wp/WP-039-deterministic-cross-language-unified-search.md)
 - [WP-040: Local Neural Semantic Embeddings & Hybrid Search Engine](../wp/WP-040-neural-embeddings-and-hybrid-search.md)
+- [WP-042: Neural Model Provenance Sourcing, Developer Bootstrap Hydration, and GUI Vector Management](../wp/WP-042-neural-model-sourcing-and-gui-embedding-management.md)

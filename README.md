@@ -10,7 +10,7 @@ Brings original Biblical Hebrew and Koine Greek into plain English, cross-refere
 <p align="center">
   <a href="https://github.com/bible-study-tool/bible-study-tool/actions/workflows/ci.yml"><img src="https://github.com/bible-study-tool/bible-study-tool/actions/workflows/ci.yml/badge.svg" alt="CI Status"></a>
   <a href="https://github.com/bible-study-tool/bible-study-tool/releases"><img src="https://img.shields.io/github/v/release/bible-study-tool/bible-study-tool?label=desktop%20release&color=blue" alt="Latest Release"></a>
-  <a href="scripts/verify_all.sh"><img src="https://img.shields.io/badge/tests-929%20passing-brightgreen" alt="Tests"></a>
+  <a href="scripts/verify_all.sh"><img src="https://img.shields.io/badge/tests-945%20passing-brightgreen" alt="Tests"></a>
   <a href="docs/DOWNLOADS.md"><img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-informational" alt="Platforms"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT%20%2F%20CC--BY--4.0-blue.svg" alt="License"></a>
 </p>
@@ -71,6 +71,7 @@ Brings original Biblical Hebrew and Koine Greek into plain English, cross-refere
    - **Bidirectional Query Expansion**: Searching English concepts (e.g. *covenant*, *sanctuary*, *atonement*) automatically discovers underlying Hebrew (*bərît* H1285) and Greek (*diathēkē* G1242) roots and semantic domains.
    - **Smart Omnibox Routing**: Entering a scripture reference (e.g. `John 3:16`, `Gen 1:1-3`) navigates the Scripture reading pane; keywords or Strong's codes auto-route to the Search workstation.
    - **Fine-Grained Filter Operators**: Search with `book:genesis`, `translation:bsb`, `strong:H7225`, `domain:sanctuary`, `egw:GC`, exact quotes (`"faith without works"`), or boolean operators (`AND`, `OR`, `NOT`).
+   - **In-App Model & Vector Management ([WP-042](docs/wp/WP-042-neural-model-sourcing-and-gui-embedding-management.md))**: Full GUI control in Settings to inspect neural model status, stream pinned model weights with cryptographic verification, and vectorize user-provided books/notes locally on-device into isolated personal storage (`data/library_embeddings.db`).
 
 3. **Whole-Bible Treasury of Scripture Knowledge (TSK)**:
    - Over **344,000 vote-ranked reciprocal cross-reference links** spanning all 66 books and 31,102 verses, embedded locally in SQLite (`data/bible.db`).
@@ -187,7 +188,7 @@ Explore the dedicated research workstations across different Study Room themes. 
 git clone https://github.com/bible-study-tool/bible-study-tool.git
 cd bible-study-tool
 
-# One-command bootstrap (creates .venv, installs dependencies, hydrates SQLite databases, and verifies):
+# One-command bootstrap (creates .venv, installs dependencies, hydrates databases & ONNX neural models, precomputes Scripture embeddings, and verifies):
 ./bootstrap.sh --data --verify
 
 # Activate the virtual environment:
@@ -231,7 +232,7 @@ The repository enforces strict data integrity via 6 automated validators (F1–F
 ```bash
 bash scripts/verify_all.sh
 ```
-*(Runs 929 unit and integration tests, F1–F6 schema/integrity validators, and raw source cryptographic checksum gates.)*
+*(Runs 945 unit and integration tests, F1–F6 schema/integrity validators, and raw source cryptographic checksum gates.)*
 
 ---
 

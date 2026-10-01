@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.6-beta] - 2026-10-01
+
+### Added
+- **Neural Model Provenance Sourcing, Developer Bootstrap Hydration, and GUI Vector Management (WP-042, ADR-029):**
+  - **Cryptographic Provenance Pinning:** Pinned `Xenova/multilingual-e5-small` INT8 quantized ONNX weights (`model_quantized.onnx`, 113.6 MB) and tokenizer (`tokenizer.json`, 7.1 MB) at upstream revision `761b726dd34fb83930e26aab4e9ac3899aa1fa78` with SHA-256 digests in `data/PROVENANCE.md` and automated retrieval via `scripts/fetch_sources.sh`.
+  - **Zero-PyTorch Optional Target:** Added lean `[project.optional-dependencies] onnx = ["onnxruntime>=1.16", "tokenizers>=0.15"]` in `pyproject.toml` and integrated automated model fetching and vector database hydration (`data/embeddings.db`) into `./bootstrap.sh --data` and `--all-in-one`.
+  - **In-App GUI Model Downloader & Settings Integration:**
+    - Dedicated "Neural Semantic Search & Vector Embeddings" setting card in the Workstation Settings modal (`web/index.html`).
+    - Live status pill indicator (`● Ready (INT8 Quantized, 113 MB)` or `○ Not Installed`) with real-time model and vector counts.
+    - One-click background streaming model downloader with SHA-256 validation, animated progress bar, and thread-safe cancellation.
+    - Accessible collapsible accordion (`<details class="settings-collapsible">`) tucking keyboard shortcuts away to keep operational settings prominent without scrolling.
+  - **On-Device User Library Vectorization:**
+    - GUI action "Vectorize Library & Notes" enabling students and pastors to compute dense semantic vectors on-device for imported books and notes into an isolated SQLite database (`data/library_embeddings.db`).
+    - Preserves 100% privacy, zero cloud telemetry, and strict copyright boundaries (ADR-002, ADR-023, ADR-029), leaving canonical Scripture embeddings (`data/embeddings.db`) immutable.
+  - **Release Sidecar Staging & Packaging Tripwires:**
+    - Enforced mandatory presence of `embeddings.db` and ONNX model files in `scripts/build_release_data.py` and `scripts/build_desktop.py`, raising fatal diagnostic errors if missing.
+    - Hardened copyright boundary tripwires with wildcard matching (`egw.db*`, `library_embeddings.db*`) to prevent SQLite WAL/SHM sidecar leaks in release bundles.
+
+### Fixed
+- **Developer Bootstrap & POSIX Portability:**
+  - Added root `INSTALL.md` pointer and updated `docs/INSTALL.md` with explicit Python 3.10+ prerequisites, virtual environment activation step (`source .venv/bin/activate`), and platform hints for macOS Sonoma VM and Linux package managers.
+  - Updated `scripts/bootstrap.sh` to provide helpful OS hints if Python 3.10+ is missing, and to report intact virtual environments upon validation errors.
+- **Headless CI Test Fixture Typography Parity:**
+  - Regenerated `search/fixtures/sample_test_data.json.gz` with canonical `<divineName>` typography (`LORD` / `GOD`) and applied `clean_verse_text()` in `search/testutil.py:ensure_test_databases()`, eliminating headless CI assertion divergence on Deut 6:4.
+  - Synchronized `bible.db` content-level SHA-256 in `data/INTEGRITY.json` with fresh source builds.
+
+---
+
 ## [0.1.5-beta] - 2026-09-28
 
 ### Added
@@ -208,6 +236,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - F1–F4 automated validators (schema, Strong's, cross-references, dead-link audit).
   - 645 automated unit and integration tests passing in CI.
 
+[0.1.6-beta]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.6-beta
+[0.1.5-beta]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.5-beta
 [0.1.4-beta]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.4-beta
 [0.1.3-alpha]: https://github.com/bible-study-tool/bible-study-tool/releases/tag/v0.1.3-alpha
 [0.1.2-alpha]: https://gitlab.com/bible-study-tool/adventist-bible-study-tool/-/releases/v0.1.2-alpha

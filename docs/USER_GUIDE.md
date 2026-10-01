@@ -255,6 +255,18 @@ Discover connections across Scripture, parallel translations, and Spirit of Prop
 ![Unified & Hybrid Semantic Search in Nord theme](images/image_2026-09-30_14-58-13-edited.png)
 *Unified & Hybrid Semantic Search workstation in Nord theme showing real-time hit counts across Scripture and commentary.*
 
+#### Managing Neural Models & User Library Vectorization (In-App Settings)
+
+The workstation provides full GUI control over local semantic embeddings directly inside the **⚙ Settings** modal (click the gear icon in the header), without requiring you to open a terminal:
+
+- **Model Status Indicator**: Displays whether the quantized INT8 neural model (`multilingual-e5-small`) is active (`● Ready (<size> MB)`) or not yet installed (`○ Not Installed`), with model specs detailed in the subtitle (`Multilingual E5 Small (INT8 Quantized, CPU-optimized, ~113 MB)`).
+- **One-Click Model Download**: If running in an environment without pre-bundled weights, a single click on **"Download Model"** streams the pinned model weights directly in the background with real-time percentage tracking and cryptographic SHA-256 verification. If model weights are missing, the search engine automatically falls back to exact keyword matching (BM25) without crashing.
+- **Pre-Computed Scripture Vectors**: All 31,102 canonical Bible verses are pre-computed offline into `data/embeddings.db`. Your computer never needs to re-index Scripture at runtime.
+- **On-Device User Library Vectorization**: When you import study materials, notes, or Spirit of Prophecy commentary, clicking **"Vectorize Library"** calculates 384-dimensional semantic vectors locally on your CPU with a live progress bar and ETA.
+  - *Zero Cloud / Total Privacy*: Vectorization occurs 100% locally on your computer—no queries, notes, or text are ever transmitted to cloud servers.
+  - *Strict Copyright Boundaries*: User vectors are saved into an isolated personal database (`data/library_embeddings.db`), keeping canonical Scripture embeddings (`data/embeddings.db`) immutable.
+- **Collapsible Shortcuts Accordion**: Keyboard navigation and shortcut reference tables are tucked into an accessible, collapsible drawer (`Keyboard Navigation & Shortcuts`), keeping operational controls (font scaling, themes, and model management) front-and-center without excessive scrolling.
+
 ---
 
 ## 5. Step-by-Step Study & Teaching Walkthroughs

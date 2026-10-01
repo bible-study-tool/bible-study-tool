@@ -124,7 +124,7 @@ If you are developing features or prefer running directly from a Git clone:
 git clone https://github.com/bible-study-tool/bible-study-tool.git
 cd bible-study-tool
 
-# 2. Automated one-command bootstrap (creates .venv, installs dependencies, hydrates databases, and verifies):
+# 2. Automated one-command bootstrap (creates .venv, installs dependencies, hydrates databases & ONNX neural models, precomputes Scripture embeddings, and verifies):
 ./bootstrap.sh --data --verify
 
 # 3. Activate the virtual environment
