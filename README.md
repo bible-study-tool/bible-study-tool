@@ -10,7 +10,7 @@ Brings original Biblical Hebrew and Koine Greek into plain English, cross-refere
 <p align="center">
   <a href="https://github.com/bible-study-tool/bible-study-tool/actions/workflows/ci.yml"><img src="https://github.com/bible-study-tool/bible-study-tool/actions/workflows/ci.yml/badge.svg" alt="CI Status"></a>
   <a href="https://github.com/bible-study-tool/bible-study-tool/releases"><img src="https://img.shields.io/github/v/release/bible-study-tool/bible-study-tool?label=desktop%20release&color=blue" alt="Latest Release"></a>
-  <a href="scripts/verify_all.sh"><img src="https://img.shields.io/badge/tests-946%20passing-brightgreen" alt="Tests"></a>
+  <a href="scripts/verify_all.sh"><img src="https://img.shields.io/badge/tests-947%20passing-brightgreen" alt="Tests"></a>
   <a href="docs/DOWNLOADS.md"><img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-informational" alt="Platforms"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT%20%2F%20CC--BY--4.0-blue.svg" alt="License"></a>
 </p>

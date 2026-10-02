@@ -127,6 +127,8 @@ def ensure_pinned_sources(repo_root: Path) -> None:
         data_src / "cross-references.zip",
         data_src / "macula-greek" / "27-revelation.xml",
         data_src / "macula-hebrew" / "39-Mal-003-lowfat.xml",
+        data_src / "models" / "multilingual-e5-small" / "model_quantized.onnx",
+        data_src / "models" / "multilingual-e5-small" / "tokenizer.json",
     ]
     missing = [p for p in required if not p.exists()]
     if not missing:
@@ -179,8 +181,9 @@ def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
     # 1. Verify source databases exist or compile them
     bible_db_src = data_src / "bible.db"
     macula_db_src = data_src / "macula.db"
+    embeddings_src = data_src / "embeddings.db"
 
-    if not bible_db_src.is_file() or not macula_db_src.is_file():
+    if not bible_db_src.is_file() or not macula_db_src.is_file() or not embeddings_src.is_file():
         ensure_pinned_sources(repo_root)
 
     if not bible_db_src.is_file():
@@ -198,6 +201,25 @@ def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
     else:
         print("   Found data/macula.db.")
 
+    if not embeddings_src.is_file():
+        print("   data/embeddings.db not found; compiling pre-computed vector embeddings...")
+        build_embeddings_script = repo_root / "scripts" / "build_embeddings.py"
+        subprocess.run(
+            [
+                sys.executable,
+                str(build_embeddings_script),
+                "--bible",
+                str(bible_db_src),
+                "--output",
+                str(embeddings_src),
+                "--strict",
+            ],
+            cwd=repo_root,
+            check=True,
+        )
+    else:
+        print("   Found data/embeddings.db.")
+
     # 2. Clean and prepare output directory
     print(f"2. Preparing output directory: {out_dir}")
     shutil.rmtree(out_dir, ignore_errors=True)
@@ -206,7 +228,6 @@ def assemble_data_bundle(out_dir: Path, repo_root: Path) -> None:
 
     # 3. Compact and copy SQLite databases via VACUUM INTO
     print("3. Compacting and copying SQLite databases...")
-    embeddings_src = data_src / "embeddings.db"
     if not embeddings_src.is_file():
         sys.stderr.write(
             "FATAL: data/embeddings.db not found! Release bundle requires pre-computed "

@@ -128,6 +128,10 @@ class ReleasePipelineScriptTests(unittest.TestCase):
             (data_dir / "macula-greek" / "27-revelation.xml").touch()
             (data_dir / "macula-hebrew").mkdir()
             (data_dir / "macula-hebrew" / "39-Mal-003-lowfat.xml").touch()
+            models_dir = data_dir / "models" / "multilingual-e5-small"
+            models_dir.mkdir(parents=True)
+            (models_dir / "model_quantized.onnx").touch()
+            (models_dir / "tokenizer.json").touch()
 
             with patch("subprocess.run") as mock_run:
                 mod.ensure_pinned_sources(tmp_repo)
@@ -161,10 +165,36 @@ class ReleasePipelineScriptTests(unittest.TestCase):
             (data_dir / "macula.db").touch()
             out_dir = tmp_repo / "out"
 
-            with patch("subprocess.run"):
+            with patch.object(mod, "ensure_pinned_sources"), patch("subprocess.run"):
                 with self.assertRaises(SystemExit) as cm:
                     mod.assemble_data_bundle(out_dir, tmp_repo)
                 self.assertEqual(cm.exception.code, 1)
+
+    def test_assemble_data_bundle_compiles_embeddings_db_when_missing(self):
+        """Verify assemble_data_bundle triggers build_embeddings.py with explicit paths when embeddings.db is absent."""
+        from unittest.mock import patch
+        mod = self._load_build_release_data()
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp_repo = Path(td)
+            data_dir = tmp_repo / "data"
+            data_dir.mkdir()
+            (data_dir / "bible.db").touch()
+            (data_dir / "macula.db").touch()
+            out_dir = tmp_repo / "out"
+
+            recorded_commands = []
+            def fake_subprocess_run(cmd, **kwargs):
+                recorded_commands.append(cmd)
+                # When build_embeddings.py is called, do not create the file so we test the call
+                return None
+
+            with patch.object(mod, "ensure_pinned_sources") as mock_ensure, \
+                 patch("subprocess.run", side_effect=fake_subprocess_run):
+                with self.assertRaises(SystemExit):
+                    mod.assemble_data_bundle(out_dir, tmp_repo)
+                mock_ensure.assert_called_once()
+                self.assertTrue(any("build_embeddings.py" in str(c) for c in recorded_commands))
 
     def test_assemble_data_bundle_requires_onnx_models(self):
         import sqlite3

@@ -44,6 +44,8 @@ test = [
 # Standalone distribution packaging (ADR-024, WP-029).
 dist = [
     "pyinstaller>=6.0",
+    "onnxruntime>=1.16",
+    "tokenizers>=0.15",
 ]
 
 [project.scripts]

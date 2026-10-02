@@ -62,7 +62,15 @@ jobs:
       - name: Install dependencies and build tools
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          python -m pip install -e '.[test,dist]'
+          python -m pip install -e '.[test,dist,onnx]'
+
+      - name: Cache Neural Models and Scripture Embeddings
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/models
+            data/embeddings.db
+          key: neural-assets-${{ runner.os }}-${{ hashFiles('data/PROVENANCE.md', 'scripts/build_embeddings.py') }}
 
       - name: Build standalone package (Linux / macOS)
         if: runner.os != 'Windows'
@@ -101,6 +109,8 @@ jobs:
             dist/*.zip.sha256
             dist/*.dmg
             dist/*.dmg.sha256
+            dist/*.command
+            dist/*.command.sha256
             dist/*.exe
             dist/*.exe.sha256
             dist/*.msi
@@ -130,9 +140,9 @@ jobs:
       - name: Inspect and organize distribution packages
         run: |
           mkdir -p dist
-          find dist-downloads -type f \( -name "*.tar.gz*" -o -name "*.zip*" -o -name "*.dmg*" -o -name "*.exe*" -o -name "*.msi*" -o -name "*.AppImage*" -o -name "*.deb*" -o -name "RELEASE_NOTES.md" \) -exec cp -v {} dist/ \;
+          find dist-downloads -type f \( -name "*.tar.gz*" -o -name "*.zip*" -o -name "*.dmg*" -o -name "*.exe*" -o -name "*.msi*" -o -name "*.AppImage*" -o -name "*.deb*" -o -name "*.command*" -o -name "RELEASE_NOTES.md" \) -exec cp -v {} dist/ \;
           ls -la dist/
-          pkg_count=$(ls -1 dist/*.tar.gz dist/*.zip dist/*.dmg dist/*.exe dist/*.msi dist/*.AppImage dist/*.deb 2>/dev/null | wc -l)
+          pkg_count=$(ls -1 dist/*.tar.gz dist/*.zip dist/*.dmg dist/*.exe dist/*.msi dist/*.AppImage dist/*.deb dist/*.command 2>/dev/null | wc -l)
           if [ "$pkg_count" -eq 0 ]; then
             echo "ERROR: No standalone or desktop distribution packages found in dist/." >&2
             exit 1
@@ -151,6 +161,8 @@ jobs:
             dist/*.zip.sha256
             dist/*.dmg
             dist/*.dmg.sha256
+            dist/*.command
+            dist/*.command.sha256
             dist/*.exe
             dist/*.exe.sha256
             dist/*.msi
