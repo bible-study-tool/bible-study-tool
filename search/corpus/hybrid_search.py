@@ -27,12 +27,13 @@ import numpy as np
 from search.dbaccess import connect_db_reader
 from search.corpus.extract_kjv import BibleDB
 from search.linking.onnx_embedder import OnnxEmbedder
-from search.resource import get_data_dir, get_embeddings_db_path
+from search.resource import get_data_dir, get_embeddings_db_path, get_library_embeddings_db_path
 
 logger = logging.getLogger(__name__)
 
 _DEFAULT_K_RRF = 60
 _DEFAULT_WEIGHTS = (1.0, 0.8, 0.5)  # (w_text, w_semantic, w_tsk)
+_DEFAULT_EGW_WEIGHTS = (1.0, 0.8)  # (w_text, w_semantic)
 
 
 @dataclass
@@ -57,6 +58,32 @@ class HybridHit:
     match_reason: str = ""
     translation: str = "KJV"
     strongs: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class EgwHybridHit:
+    """A scored EGW commentary hit combining BM25 keyword and dense neural semantic signals."""
+
+    paragraph_id: str
+    book_code: str
+    book_title: str
+    chapter_num: Optional[int]
+    chapter_title: Optional[str]
+    page: int
+    paragraph: int
+    ref_code: str
+    text: str
+    snippet: str
+    rrf_score: float
+    text_rank: Optional[int] = None
+    text_score: Optional[float] = None
+    semantic_rank: Optional[int] = None
+    semantic_score: Optional[float] = None
+    match_type: str = "hybrid"  # "hybrid" | "exact" | "semantic"
+    match_reason: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -155,6 +182,133 @@ class VectorStore:
         sorted_top_indices = top_indices[np.argsort(-scores[top_indices])]
 
         return [(self._verse_ids[idx], float(scores[idx])) for idx in sorted_top_indices]
+
+
+class LibraryVectorStore:
+    """In-memory contiguous float32 matrix for user library / EGW commentary cosine similarity scans."""
+
+    def __init__(self, db_path: Optional[Path] = None) -> None:
+        self.db_path = Path(db_path).resolve() if db_path else get_library_embeddings_db_path()
+        self._matrix: Optional[np.ndarray] = None
+        self._paragraph_ids: list[str] = []
+        self._book_indices: dict[str, list[int]] = {}
+        self._lock = threading.Lock()
+        self._is_loaded: bool = False
+        self._load_error: Optional[str] = None
+
+    def available(self) -> bool:
+        """Return True if library embeddings database exists and can be loaded."""
+        if not self._is_loaded:
+            if self.db_path.is_file() and (self._load_error is None or "not found" in self._load_error):
+                self._load()
+        return self._is_loaded
+
+    def reload(self) -> bool:
+        """Force reload of the vector matrix from disk."""
+        with self._lock:
+            self._is_loaded = False
+            self._load_error = None
+            self._matrix = None
+            self._paragraph_ids = []
+            self._book_indices = {}
+        return self.available()
+
+    def _load(self) -> None:
+        with self._lock:
+            if self._is_loaded:
+                return
+            if not self.db_path.is_file():
+                self._load_error = f"Library embeddings database not found at {self.db_path}"
+                return
+
+            try:
+                conn = connect_db_reader(self.db_path)
+                cur = conn.cursor()
+                cur.execute("SELECT COUNT(*) FROM paragraphs")
+                count_row = cur.fetchone()
+                total_rows = count_row[0] if count_row else 0
+                if total_rows == 0:
+                    self._load_error = "Library embeddings database contains no paragraphs."
+                    conn.close()
+                    return
+
+                matrix = np.empty((total_rows, 384), dtype=np.float32)
+                paragraph_ids: list[str] = []
+                book_indices: dict[str, list[int]] = {}
+
+                cur.execute("SELECT paragraph_id, book_code, vector FROM paragraphs ORDER BY rowid")
+                chunk_size = 10000
+                row_offset = 0
+
+                while True:
+                    chunk = cur.fetchmany(chunk_size)
+                    if not chunk:
+                        break
+                    chunk_len = len(chunk)
+                    for idx_in_chunk, (pid, b_code, _) in enumerate(chunk):
+                        global_idx = row_offset + idx_in_chunk
+                        paragraph_ids.append(pid)
+                        if b_code:
+                            clean_b = b_code.strip().upper()
+                            if clean_b:
+                                book_indices.setdefault(clean_b, []).append(global_idx)
+
+                    chunk_bytes = b"".join(r[2] for r in chunk)
+                    matrix[row_offset : row_offset + chunk_len] = np.frombuffer(
+                        chunk_bytes, dtype=np.float32
+                    ).reshape(chunk_len, 384)
+                    row_offset += chunk_len
+
+                conn.close()
+                self._matrix = matrix
+                self._paragraph_ids = paragraph_ids
+                self._book_indices = book_indices
+                self._is_loaded = True
+                logger.info(f"Loaded {len(self._paragraph_ids):,} library vectors from {self.db_path}")
+            except Exception as exc:
+                self._load_error = str(exc)
+                logger.warning(f"Failed to load LibraryVectorStore: {exc}")
+
+    def query(
+        self,
+        q_vec: np.ndarray,
+        top_k: int = 100,
+        allowed_book_codes: Optional[set[str]] = None,
+    ) -> list[tuple[str, float]]:
+        """Compute cosine similarity against all library paragraphs and return top hits."""
+        if not self.available() or self._matrix is None:
+            return []
+
+        # Single BLAS dot product across all vectors
+        scores = self._matrix @ q_vec
+
+        # Apply book scoping filter if requested
+        if allowed_book_codes is not None:
+            clean_allowed = {b.strip().upper() for b in allowed_book_codes if b}
+            if not clean_allowed:
+                return []
+            matching_indices: list[int] = []
+            for b_code in clean_allowed:
+                matching_indices.extend(self._book_indices.get(b_code, []))
+            if not matching_indices:
+                return []
+            idx_arr = np.array(matching_indices, dtype=np.intp)
+            scoped_scores = scores[idx_arr]
+            n_results = min(top_k, len(scoped_scores))
+            if n_results <= 0:
+                return []
+            top_local = np.argpartition(scoped_scores, -n_results)[-n_results:]
+            sorted_top_local = top_local[np.argsort(-scoped_scores[top_local])]
+            return [(self._paragraph_ids[idx_arr[i]], float(scoped_scores[i])) for i in sorted_top_local]
+
+        n_results = min(top_k, len(scores))
+        if n_results <= 0:
+            return []
+
+        top_indices = np.argpartition(scores, -n_results)[-n_results:]
+        sorted_top_indices = top_indices[np.argsort(-scores[top_indices])]
+
+        return [(self._paragraph_ids[idx], float(scores[idx])) for idx in sorted_top_indices]
 
 
 class HybridSearchEngine:
@@ -445,6 +599,197 @@ class HybridSearchEngine:
                 match_reason=m_reason,
                 translation=translation.upper(),
                 strongs=v_meta["strongs"],
+            )
+            hits.append(hit.to_dict())
+
+        t_total = (time.perf_counter() - t_start) * 1000
+
+        return {
+            "query": query,
+            "mode": mode,
+            "total_hits": len(hits),
+            "hits": hits,
+            "timings_ms": {
+                "embed": round(t_embed, 2),
+                "vector_scan": round(t_vector, 2),
+                "fts_search": round(t_fts, 2),
+                "total": round(t_total, 2),
+            },
+        }
+
+
+class EgwHybridSearchEngine:
+    """Orchestrates Dual-Signal Reciprocal Rank Fusion search across Spirit of Prophecy (EGW) commentary."""
+
+    def __init__(
+        self,
+        egw_db: Optional[Any] = None,
+        library_vector_store: Optional[LibraryVectorStore] = None,
+        embedder: Optional[OnnxEmbedder] = None,
+    ) -> None:
+        if egw_db is None:
+            from search.linking.egw import EgwDB
+            self.egw_db = EgwDB()
+        else:
+            self.egw_db = egw_db
+        self.library_vector_store = library_vector_store or LibraryVectorStore()
+        self.embedder = embedder or OnnxEmbedder()
+
+    def search(
+        self,
+        query: str,
+        mode: str = "hybrid",
+        limit: int = 50,
+        book_code: Optional[str] = None,
+        weights: tuple[float, float] = _DEFAULT_EGW_WEIGHTS,
+        k_rrf: int = _DEFAULT_K_RRF,
+    ) -> dict[str, Any]:
+        """Perform Dual-Signal RRF search across EGW commentary paragraphs."""
+        t_start = time.perf_counter()
+        t_embed = 0.0
+        t_vector = 0.0
+        t_fts = 0.0
+
+        query_clean = query.strip()
+        if not query_clean or not self.egw_db.exists():
+            return {
+                "query": query,
+                "mode": mode,
+                "total_hits": 0,
+                "hits": [],
+                "timings_ms": {"total": 0.0},
+            }
+
+        clean_book = book_code.strip().upper() if book_code else None
+
+        # -------------------------------------------------------------
+        # Signal 1: Deterministic FTS5 BM25 Search in egw.db
+        # -------------------------------------------------------------
+        text_hits_raw: list[dict[str, Any]] = []
+        if mode in ("hybrid", "keyword", "exact"):
+            t0 = time.perf_counter()
+            text_hits_raw = self.egw_db.search(
+                query=query_clean,
+                book_code=clean_book,
+                limit=max(limit * 2, 50),
+            )
+            t_fts = (time.perf_counter() - t0) * 1000
+
+        text_ranks: dict[str, int] = {}
+        text_scores: dict[str, float] = {}
+        text_snippets: dict[str, str] = {}
+        for rank, hit in enumerate(text_hits_raw, 1):
+            pid = hit["id"]
+            text_ranks[pid] = rank
+            text_scores[pid] = float(hit.get("rank", 0.0))
+            if hit.get("snippet"):
+                text_snippets[pid] = hit["snippet"]
+
+        # -------------------------------------------------------------
+        # Signal 2: Dense Neural Vector Cosine Search in library_embeddings.db
+        # -------------------------------------------------------------
+        vector_hits_raw: list[tuple[str, float]] = []
+        if mode in ("hybrid", "thematic", "semantic") and self.library_vector_store.available():
+            t0 = time.perf_counter()
+            q_vec = self.embedder.embed(query_clean, is_query=True)
+            t_embed = (time.perf_counter() - t0) * 1000
+
+            t0 = time.perf_counter()
+            allowed_books = {clean_book} if clean_book else None
+            vector_hits_raw = self.library_vector_store.query(
+                q_vec,
+                top_k=max(limit * 2, 80),
+                allowed_book_codes=allowed_books,
+            )
+            t_vector = (time.perf_counter() - t0) * 1000
+
+        semantic_ranks: dict[str, int] = {}
+        semantic_scores: dict[str, float] = {}
+        for rank, (pid, score) in enumerate(vector_hits_raw, 1):
+            semantic_ranks[pid] = rank
+            semantic_scores[pid] = score
+
+        # -------------------------------------------------------------
+        # Dual-Signal Reciprocal Rank Fusion (RRF) Blending
+        # -------------------------------------------------------------
+        w_text, w_sem = weights
+        if mode in ("thematic", "semantic"):
+            w_text, w_sem = 0.2, 1.0
+        elif mode in ("keyword", "exact"):
+            w_text, w_sem = 1.0, 0.0
+
+        all_candidate_pids = set(text_ranks.keys()) | set(semantic_ranks.keys())
+        scored_candidates: list[tuple[str, float]] = []
+
+        for pid in all_candidate_pids:
+            score = 0.0
+            if pid in text_ranks:
+                score += w_text / (k_rrf + text_ranks[pid])
+            if pid in semantic_ranks:
+                score += w_sem / (k_rrf + semantic_ranks[pid])
+            scored_candidates.append((pid, score))
+
+        scored_candidates.sort(key=lambda x: x[1], reverse=True)
+        top_candidates = scored_candidates[:limit]
+        top_pids = [pid for pid, _ in top_candidates]
+
+        # Fetch paragraph details in batch from egw.db
+        details = self.egw_db.get_paragraphs_batch(top_pids)
+        hits: list[dict[str, Any]] = []
+
+        for pid, rrf_score in top_candidates:
+            p = details.get(pid)
+            if not p:
+                continue
+
+            t_rank = text_ranks.get(pid)
+            s_rank = semantic_ranks.get(pid)
+            s_score = semantic_scores.get(pid)
+
+            has_text = t_rank is not None
+            has_sem = s_rank is not None
+            is_high_sem = has_sem and (s_score or 0.0) >= 0.70
+
+            if has_text and is_high_sem:
+                m_type = "hybrid"
+                m_reason = f"Keyword match (BM25 #{t_rank}) + High thematic alignment (cos: {s_score:.2f})"
+            elif has_text and has_sem:
+                m_type = "hybrid"
+                m_reason = f"Keyword match (BM25 #{t_rank}) + Thematic parallel (cos: {s_score:.2f})"
+            elif has_text:
+                m_type = "exact"
+                m_reason = f"Direct textual match (BM25 #{t_rank})"
+            elif has_sem:
+                m_type = "semantic"
+                m_reason = f"Thematic & conceptual parallel (cos: {s_score:.2f})"
+            else:
+                m_type = "hybrid"
+                m_reason = "Composite relevance match"
+
+            # Snippet: use BM25 highlighted snippet if available, else first ~180 chars of text
+            snippet = text_snippets.get(pid)
+            if not snippet:
+                full_text = p.get("text", "")
+                snippet = full_text[:180] + ("…" if len(full_text) > 180 else "")
+
+            hit = EgwHybridHit(
+                paragraph_id=pid,
+                book_code=p.get("book_code", ""),
+                book_title=p.get("book_title") or p.get("book_code", ""),
+                chapter_num=p.get("chapter_num"),
+                chapter_title=p.get("chapter_title"),
+                page=p.get("page", 1),
+                paragraph=p.get("paragraph", 1),
+                ref_code=p.get("ref_code") or f"{p.get('book_code', '')} {p.get('page', 1)}.{p.get('paragraph', 1)}",
+                text=p.get("text", ""),
+                snippet=snippet,
+                rrf_score=round(rrf_score, 6),
+                text_rank=t_rank,
+                text_score=round(text_scores.get(pid, 0.0), 4) if pid in text_scores else None,
+                semantic_rank=s_rank,
+                semantic_score=round(s_score, 4) if s_score is not None else None,
+                match_type=m_type,
+                match_reason=m_reason,
             )
             hits.append(hit.to_dict())
 

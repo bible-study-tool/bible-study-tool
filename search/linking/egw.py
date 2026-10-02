@@ -21,7 +21,7 @@ import re
 import sqlite3
 import textwrap
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Sequence
 
 from search.dbaccess import connect_db_reader
 from search.resource import data_path, get_repo_root
@@ -499,6 +499,46 @@ class EgwDB:
         )
         row = cur.fetchone()
         return dict(row) if row else None
+
+    def get_paragraphs_batch(self, paragraph_ids: Sequence[str]) -> dict[str, dict[str, Any]]:
+        """Retrieve multiple paragraphs by canonical IDs or tokens in a single query."""
+        if not self.exists() or not paragraph_ids:
+            return {}
+
+        clean_ids: list[str] = []
+        token_to_cid: dict[str, str] = {}
+        for pid in paragraph_ids:
+            p_strip = pid.strip()
+            try:
+                cid, _, _, _ = normalize_token(p_strip)
+                clean_ids.append(cid)
+                token_to_cid[p_strip] = cid
+            except ValueError:
+                clean_ids.append(p_strip)
+                token_to_cid[p_strip] = p_strip
+
+        unique_ids = list(dict.fromkeys(clean_ids))
+        if not unique_ids:
+            return {}
+
+        results: dict[str, dict[str, Any]] = {}
+        chunk_size = 500
+        for i in range(0, len(unique_ids), chunk_size):
+            chunk = unique_ids[i : i + chunk_size]
+            placeholders = ",".join("?" for _ in chunk)
+            cur = self.readonly_conn.execute(
+                f"SELECT * FROM egw_paragraphs WHERE id IN ({placeholders});",
+                chunk,
+            )
+            for r in cur.fetchall():
+                d = dict(r)
+                results[d["id"]] = d
+
+        for orig_token, cid in token_to_cid.items():
+            if cid in results and orig_token not in results:
+                results[orig_token] = results[cid]
+
+        return results
 
     def get_page(self, book_code: str, page: int) -> list[dict[str, Any]]:
         """Retrieve all paragraphs on a given page."""

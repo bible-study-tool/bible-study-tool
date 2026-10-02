@@ -255,6 +255,7 @@ class DeterministicSearchBridge:
 
     def close(self) -> None:
         self._hybrid_engine = None
+        self._egw_hybrid_engine = None
         if self._bible_db is not None:
             self._bible_db.close()
             self._bible_db = None
@@ -564,10 +565,65 @@ class DeterministicSearchBridge:
         self,
         parsed: ParsedQuery,
         limit: int = 50,
+        mode: str = "keyword",
     ) -> list[SearchHit]:
-        """Search Spirit of Prophecy (EGW) paragraphs in data/egw.db."""
+        """Search Spirit of Prophecy (EGW) paragraphs in data/egw.db with optional hybrid vector blending."""
         if not self.egw_db.exists() or not parsed.clean_text:
             return []
+
+        # If hybrid or thematic mode is requested and library embeddings are available:
+        if mode in ("hybrid", "thematic", "semantic"):
+            try:
+                from search.corpus.hybrid_search import EgwHybridSearchEngine
+
+                if getattr(self, "_egw_hybrid_engine", None) is None:
+                    shared_embedder = getattr(getattr(self, "_hybrid_engine", None), "embedder", None)
+                    self._egw_hybrid_engine = EgwHybridSearchEngine(
+                        egw_db=self.egw_db,
+                        embedder=shared_embedder,
+                    )
+                if self._egw_hybrid_engine.library_vector_store.available():
+                    hybrid_res = self._egw_hybrid_engine.search(
+                        query=parsed.clean_text,
+                        mode=mode,
+                        limit=limit,
+                        book_code=parsed.egw_book,
+                    )
+                    hits: list[SearchHit] = []
+                    max_possible_rrf = (1.0 + 0.8) / 61.0
+                    for h in hybrid_res.get("hits", []):
+                        b_code = h["book_code"]
+                        title = h.get("book_title") or b_code
+                        page = h.get("page", 1)
+                        para = h.get("paragraph", 1)
+                        ref_str = f"{title} p. {page}.{para}"
+                        relative_rrf = min(1.0, max(0.0, h["rrf_score"] / max_possible_rrf))
+                        calibrated_score = round(0.50 + 0.49 * relative_rrf, 4)
+                        hits.append(SearchHit(
+                            source="commentary",
+                            id=h["paragraph_id"],
+                            reference=h.get("ref_code") or f"{b_code} {page}.{para}",
+                            title=ref_str,
+                            snippet=h["snippet"],
+                            score=calibrated_score,
+                            metadata={
+                                "book_code": b_code,
+                                "book_title": title,
+                                "chapter_num": h.get("chapter_num"),
+                                "chapter_title": h.get("chapter_title"),
+                                "page": page,
+                                "paragraph": para,
+                                "match_type": h.get("match_type", "hybrid"),
+                                "match_reason": h.get("match_reason", ""),
+                                "rrf_score": h["rrf_score"],
+                                "semantic_score": h.get("semantic_score"),
+                                "semantic_rank": h.get("semantic_rank"),
+                                "text_rank": h.get("text_rank"),
+                            },
+                        ))
+                    return hits
+            except Exception as exc:
+                logger.warning(f"Commentary hybrid search failed, falling back to BM25: {exc}")
 
         try:
             paras = self.egw_db.search(
@@ -579,7 +635,7 @@ class DeterministicSearchBridge:
             return []
 
         hits: list[SearchHit] = []
-        for p in paras:
+        for rank_idx, p in enumerate(paras, 1):
             b_code = p.get("book_code", "")
             title = p.get("book_title") or b_code
             page = p.get("page", 1)
@@ -604,6 +660,8 @@ class DeterministicSearchBridge:
                     "chapter_title": p.get("chapter_title"),
                     "page": page,
                     "paragraph": para,
+                    "match_type": "exact",
+                    "match_reason": f"Direct textual match (BM25 #{rank_idx})",
                 },
             ))
         return hits
@@ -745,7 +803,7 @@ class DeterministicSearchBridge:
             grouped_hits["original"] = self._search_original(parsed, limit=limit)
 
         if "commentary" in active_sources:
-            grouped_hits["commentary"] = self._search_commentary(parsed, limit=limit)
+            grouped_hits["commentary"] = self._search_commentary(parsed, limit=limit, mode=mode)
 
         if "curated" in active_sources:
             grouped_hits["curated"] = self._search_curated(parsed, limit=limit)

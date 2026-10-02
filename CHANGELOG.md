@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.6] - 2026-10-01
 
-### Added
+- **Spirit of Prophecy (EGW) Hybrid Search & Isolated Library Vector Integration (WP-043, ADR-029):**
+  - **Dual-Signal Reciprocal Rank Fusion (RRF):** Blended deterministic SQLite FTS5 BM25 keyword matching with local dense 384-dimensional cosine similarity across user library embeddings (`data/library_embeddings.db`, 364,022 paragraphs) using `EgwHybridSearchEngine`.
+  - **Memory-Efficient Streaming Matrix Loading:** Pre-allocates a contiguous float32 matrix and streams database rows in 10,000-paragraph chunks in `LibraryVectorStore`, reducing transient peak RAM spikes during loading by ~54% (~600 MB total).
+  - **Book-Code Scoping & Zero Leakage:** Added fast book-code scoping (e.g. `egw:GC` or `egw_book="DA"`) executing vector queries in ~5 ms with strict rejection on empty filters.
+  - **Fast Batch Lookups & Alias Preservation:** Implemented `EgwDB.get_paragraphs_batch()` with SQLite batch chunking (500 per query) and dual-key aliasing for both canonical IDs (`PP.44.1`) and citation tokens (`egw:PP.44.1`).
+  - **Resilient Decoupling & Graceful Degradation:** Preserved absolute independence of Scripture study. If `library_embeddings.db` is absent or unindexed, commentary search gracefully falls back to BM25 keyword matching; if `egw.db` is absent, commentary safely returns empty results without crashing or affecting Scripture search.
+  - **Transparent Match Badging:** Search hit metadata surfaces match types (`✦ Hybrid`, `Aa Exact`, `☵ Thematic`), cosine similarity scores, and plain-English reasons (`Keyword match (BM25 #1) + High thematic alignment (cos: 0.89)`).
 - **macOS First-Time Setup & Quarantine Helper (`scripts/install-macos.command`):**
   - Added an automated setup script that moves the application to `~/Applications` (or `/Applications`), strips Apple Gatekeeper internet quarantine flags (`com.apple.quarantine`), applies local ad-hoc code signatures, and launches the desktop app.
   - Eliminates terminal friction for non-technical users on macOS (accessible via simple Right-click ➔ Open).
