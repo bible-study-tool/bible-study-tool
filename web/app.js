@@ -141,6 +141,14 @@ const els = {
   settingsZebraToggle: $("#settings-zebra-toggle"),
   settingsStrongsToggle: $("#settings-strongs-toggle"),
   settingsAutoUpdateToggle: $("#settings-auto-update-toggle"),
+  settingsInstalledVersion: $("#settings-installed-version"),
+  settingsUpdateStatus: $("#settings-update-status"),
+  settingsCheckUpdateBtn: $("#settings-check-update-btn"),
+  updateBanner: $("#update-notification-banner"),
+  updateBannerVersion: $("#update-banner-version"),
+  updateBannerNotesLink: $("#update-banner-notes-link"),
+  updateBannerDownloadLink: $("#update-banner-download-link"),
+  updateBannerDismissBtn: $("#update-banner-dismiss-btn"),
   settingsBookDropzone: $("#settings-book-dropzone"),
   settingsBrowseBooksBtn: $("#settings-browse-books-btn"),
   settingsBookFileInput: $("#settings-book-file-input"),
@@ -183,6 +191,7 @@ const els = {
 
 /* ---- Theme management (design tokens via [data-theme], ADR-024 §4) ---- */
 
+let appVersion = "0.1.6";
 let themeCatalog = [];
 let currentWizardStep = 1;
 let egwAvailable = false;
@@ -194,6 +203,12 @@ let selectedVerseIdx = -1;
 
 async function loadThemes() {
   const data = await api("/api/health");
+  if (data.version) {
+    appVersion = data.version;
+  }
+  if (els.settingsInstalledVersion) {
+    els.settingsInstalledVersion.textContent = appVersion.startsWith("v") ? appVersion : `v${appVersion}`;
+  }
   themeCatalog = data.themes || [];
   egwAvailable = !!data.egw_available;
   egwStats = data.egw_stats || null;
@@ -1286,26 +1301,196 @@ function initBookDropzone() {
   }
 }
 
-function initAutoUpdate() {
-  if (!els.autoUpdateToggle) return;
-  let saved = null;
+function parseSemver(v) {
+  if (!v) return [0, 0, 0];
+  const clean = String(v).trim().replace(/^v/i, "");
+  const base = clean.split("-")[0].split("+")[0];
+  const parts = base.split(".").map((p) => parseInt(p, 10) || 0);
+  while (parts.length < 3) parts.push(0);
+  return parts.slice(0, 3);
+}
+
+function isNewerVersion(current, candidate) {
+  const cur = parseSemver(current);
+  const cand = parseSemver(candidate);
+  for (let i = 0; i < 3; i++) {
+    if (cand[i] > cur[i]) return true;
+    if (cand[i] < cur[i]) return false;
+  }
+  return false;
+}
+
+function dismissUpdateBanner(versionTag) {
+  if (els.updateBanner) els.updateBanner.hidden = true;
   try {
-    saved = localStorage.getItem("abst.auto_update");
+    if (versionTag) {
+      localStorage.setItem("abst.dismissed_update", versionTag);
+    }
   } catch (_) {}
-  if (saved !== null) {
-    els.autoUpdateToggle.checked = saved === "true";
-  } else {
-    els.autoUpdateToggle.checked = true;
+}
+
+function showUpdateBanner(info) {
+  if (!els.updateBanner) return;
+  const version = info.latest_version || "";
+  if (els.updateBannerVersion) {
+    els.updateBannerVersion.textContent = version.startsWith("v") ? version : `v${version}`;
+  }
+  if (els.updateBannerNotesLink && info.release_notes_url) {
+    els.updateBannerNotesLink.href = info.release_notes_url;
+  }
+  if (els.updateBannerDownloadLink && (info.download_url || info.release_notes_url)) {
+    els.updateBannerDownloadLink.href = info.download_url || info.release_notes_url;
+  }
+  els.updateBanner.hidden = false;
+}
+
+async function checkApplicationUpdates(isManual = false) {
+  if (!isManual) {
+    let autoUpdateEnabled = true;
     try {
-      localStorage.setItem("abst.auto_update", "true");
+      const saved = localStorage.getItem("abst.auto_update");
+      if (saved !== null) autoUpdateEnabled = saved === "true";
+    } catch (_) {}
+    if (!autoUpdateEnabled) return;
+
+    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+    try {
+      const lastCheck = parseInt(localStorage.getItem("abst.last_update_check") || "0", 10);
+      if (Date.now() - lastCheck < TWENTY_FOUR_HOURS_MS) {
+        return;
+      }
     } catch (_) {}
   }
-  els.autoUpdateToggle.addEventListener("change", () => {
+
+  if (isManual) {
+    if (els.settingsCheckUpdateBtn) els.settingsCheckUpdateBtn.disabled = true;
+    if (els.settingsUpdateStatus) {
+      els.settingsUpdateStatus.textContent = "Checking for updates...";
+      els.settingsUpdateStatus.className = "setting-sub update-status-text is-checking";
+    }
+  }
+
+  try {
     try {
-      localStorage.setItem("abst.auto_update", String(els.autoUpdateToggle.checked));
+      localStorage.setItem("abst.last_update_check", String(Date.now()));
     } catch (_) {}
-  });
+
+    let resData = null;
+    try {
+      resData = await api(`/api/check-update${isManual ? "?force=1" : ""}`);
+    } catch (_) {
+      // Fallback to public GitHub Releases API if server endpoint is unreachable
+      const ghRes = await fetch("https://api.github.com/repos/bible-study-tool/bible-study-tool/releases/latest", {
+        headers: { "Accept": "application/vnd.github.v3+json" },
+      });
+      if (ghRes.ok) {
+        const ghData = await ghRes.json();
+        const tag = (ghData.tag_name || "").trim();
+        resData = {
+          status: "ok",
+          current_version: appVersion,
+          latest_version: tag,
+          update_available: isNewerVersion(appVersion, tag),
+          release_notes_url: ghData.html_url,
+          download_url: ghData.html_url,
+        };
+      }
+    }
+
+    if (!resData || resData.status === "offline" || resData.status === "error") {
+      if (isManual && els.settingsUpdateStatus) {
+        els.settingsUpdateStatus.textContent = "Unable to connect to update server (offline).";
+        els.settingsUpdateStatus.className = "setting-sub update-status-text";
+      }
+      return;
+    }
+
+    const latestVer = resData.latest_version;
+    const isNew = resData.update_available || isNewerVersion(appVersion, latestVer);
+
+    if (isNew) {
+      let dismissed = null;
+      try {
+        dismissed = localStorage.getItem("abst.dismissed_update");
+      } catch (_) {}
+
+      const normDismissed = (dismissed || "").trim().replace(/^v/i, "");
+      const normLatest = (latestVer || "").trim().replace(/^v/i, "");
+
+      if (isManual || normDismissed !== normLatest) {
+        showUpdateBanner(resData);
+      }
+
+      if (els.settingsUpdateStatus) {
+        els.settingsUpdateStatus.textContent = `Update available: ${latestVer}!`;
+        els.settingsUpdateStatus.className = "setting-sub update-status-text is-update-available";
+      }
+    } else {
+      if (isManual && els.settingsUpdateStatus) {
+        const curFormatted = appVersion.startsWith("v") ? appVersion : "v" + appVersion;
+        els.settingsUpdateStatus.textContent = `You are running the latest version (${curFormatted}).`;
+        els.settingsUpdateStatus.className = "setting-sub update-status-text";
+      }
+    }
+  } catch (err) {
+    if (isManual && els.settingsUpdateStatus) {
+      els.settingsUpdateStatus.textContent = "Update check failed.";
+      els.settingsUpdateStatus.className = "setting-sub update-status-text";
+    }
+  } finally {
+    if (isManual && els.settingsCheckUpdateBtn) {
+      els.settingsCheckUpdateBtn.disabled = false;
+    }
+  }
 }
+
+function updateAutoUpdatePreference(enabled) {
+  if (els.autoUpdateToggle) els.autoUpdateToggle.checked = enabled;
+  if (els.settingsAutoUpdateToggle) els.settingsAutoUpdateToggle.checked = enabled;
+  try {
+    localStorage.setItem("abst.auto_update", String(enabled));
+  } catch (_) {}
+}
+
+function initAutoUpdate() {
+  let isAutoUpdate = true;
+  try {
+    const saved = localStorage.getItem("abst.auto_update");
+    if (saved !== null) {
+      isAutoUpdate = saved === "true";
+    } else {
+      localStorage.setItem("abst.auto_update", "true");
+    }
+  } catch (_) {}
+
+  if (els.autoUpdateToggle) {
+    els.autoUpdateToggle.checked = isAutoUpdate;
+    els.autoUpdateToggle.addEventListener("change", () => {
+      updateAutoUpdatePreference(els.autoUpdateToggle.checked);
+    });
+  }
+
+  if (els.settingsAutoUpdateToggle) {
+    els.settingsAutoUpdateToggle.checked = isAutoUpdate;
+    els.settingsAutoUpdateToggle.addEventListener("change", () => {
+      updateAutoUpdatePreference(els.settingsAutoUpdateToggle.checked);
+    });
+  }
+
+  if (els.updateBannerDismissBtn) {
+    els.updateBannerDismissBtn.addEventListener("click", () => {
+      const ver = els.updateBannerVersion ? els.updateBannerVersion.textContent : "";
+      dismissUpdateBanner(ver);
+    });
+  }
+
+  if (els.settingsCheckUpdateBtn) {
+    els.settingsCheckUpdateBtn.addEventListener("click", () => {
+      checkApplicationUpdates(true);
+    });
+  }
+}
+
 
 function initZebraShading() {
   if (!els.zebraToggle || !els.verses) return;
@@ -1503,15 +1688,6 @@ function initSettingsModal() {
   bindFontScaleControls(els.settingsFontDecBtn, els.settingsFontIncBtn, els.settingsFontResetBtn);
   bindFontScaleControls(els.wizardFontDecBtn, els.wizardFontIncBtn, els.wizardFontResetBtn);
 
-  if (els.settingsAutoUpdateToggle && els.autoUpdateToggle) {
-    els.settingsAutoUpdateToggle.checked = els.autoUpdateToggle.checked;
-    els.settingsAutoUpdateToggle.addEventListener("change", () => {
-      els.autoUpdateToggle.checked = els.settingsAutoUpdateToggle.checked;
-    });
-    els.autoUpdateToggle.addEventListener("change", () => {
-      els.settingsAutoUpdateToggle.checked = els.autoUpdateToggle.checked;
-    });
-  }
   if (els.launchWizardBtn) {
     els.launchWizardBtn.addEventListener("click", () => {
       closeSettings();
@@ -4061,6 +4237,9 @@ if (!initialRef) {
 if (!initialRef) {
   initialRef = "Genesis 1:1-3";
 }
-loadThemes().then(() => navigate(initialRef)).catch((err) => {
+loadThemes().then(() => {
+  navigate(initialRef);
+  checkApplicationUpdates(false);
+}).catch((err) => {
   showError("Engine not reachable — is the local server running? " + err.message);
 });

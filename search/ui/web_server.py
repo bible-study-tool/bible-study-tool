@@ -37,8 +37,10 @@ from search.ui.study_service import StudyService
 from search.ui.themes import DEFAULT_THEME, THEMES
 
 from search.resource import __version__, get_data_dir, get_web_dir, verify_data_bundle
+from search.ui.version_check import default_version_checker
 
 WEB_ROOT = get_web_dir()
+
 
 # Web-native themes beyond the TUI palettes: always present in the catalog so
 # the theme dropdown and persisted prefs can select them (sepia is the default
@@ -237,6 +239,8 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 self._api_model_download_progress()
             elif path == "/api/library/vectorize/progress":
                 self._api_library_vectorize_progress()
+            elif path == "/api/check-update":
+                self._api_check_update(query)
             elif path.startswith("/api/"):
                 self._reply_error(HTTPStatus.NOT_FOUND, "unknown endpoint")
             else:
@@ -285,9 +289,15 @@ def build_handler(study: StudyService, web_root: Path = WEB_ROOT) -> Callable:
                 "model_status_url": "/api/model/status",
                 "model_download_url": "/api/model/download",
                 "library_vectorize_url": "/api/library/vectorize",
+                "check_update_url": "/api/check-update",
                 "egw_available": has_egw,
                 "egw_stats": egw_stats,
             })
+
+        def _api_check_update(self, query: dict[str, list[str]]) -> None:
+            force = query.get("force", ["0"])[0].lower() in ("1", "true", "yes")
+            result = default_version_checker.check_for_updates(current_version=__version__, force=force)
+            self._reply_json(HTTPStatus.OK, result)
 
         def _api_search(self, query: dict[str, list[str]]) -> None:
             raw_q = query.get("q", query.get("query", [""]))[0].strip()

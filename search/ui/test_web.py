@@ -15,6 +15,7 @@ import threading
 import unittest
 import urllib.error
 import urllib.request
+from unittest.mock import patch
 
 from search.resource import get_web_dir
 from search.resource import __version__
@@ -475,6 +476,7 @@ class WebServerTests(unittest.TestCase):
         self.assertEqual(data["commentary_url"], "/api/commentary")
         self.assertEqual(data["xrefs_url"], "/api/xrefs")
         self.assertEqual(data["import_books_url"], "/api/import-books")
+        self.assertEqual(data["check_update_url"], "/api/check-update")
         self.assertIn("verify_bundle_url", data)
         self.assertIn("egw_available", data)
         self.assertIn("egw_stats", data)
@@ -528,6 +530,29 @@ class WebServerTests(unittest.TestCase):
             self.assertFalse(data["valid"])
             self.assertTrue(data["deep"], "error body must report the verification mode used")
             self.assertTrue(any("Access denied" in err for err in data["errors"]))
+
+    def test_check_update_endpoint(self) -> None:
+        """Integration test for /api/check-update endpoint with mocked version checker."""
+        mock_result = {
+            "status": "ok",
+            "current_version": __version__,
+            "latest_version": "v0.1.7",
+            "update_available": True,
+            "release_name": "v0.1.7",
+            "release_notes_url": "https://github.com/bible-study-tool/bible-study-tool/releases",
+            "download_url": "https://github.com/bible-study-tool/bible-study-tool/releases/latest",
+            "published_at": "2026-10-02T12:00:00Z",
+            "body": "Mock release notes",
+            "cached": False,
+            "error": None,
+        }
+        with patch("search.ui.web_server.default_version_checker.check_for_updates", return_value=mock_result) as mock_chk:
+            data = self._get_json("/api/check-update?force=1")
+            mock_chk.assert_called_once_with(current_version=__version__, force=True)
+            self.assertEqual(data["status"], "ok")
+            self.assertEqual(data["latest_version"], "v0.1.7")
+            self.assertTrue(data["update_available"])
+            self.assertEqual(data["current_version"], __version__)
 
     def test_passage_returns_verses(self) -> None:
         data = self._get_json("/api/passage?ref=Genesis%201:1")

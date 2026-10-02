@@ -115,6 +115,8 @@ Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 - `[ ]` **P2. Docker image** — container running workstation in web terminal (ttyd); accessible at `localhost:8080`; for servers, NAS, technically confident users
 - `[x]` **P3. GitLab Releases CI** — automated binary builds on `v*` tags; release notes generated from ROADMAP + CHANGELOG
 - `[x]` **P4. Public releases `v0.1.0` through `v0.1.4`** — binary + desktop installers + illustrated INSTALL.md + USER_GUIDE.md as primary entry point
+- `[x]` **P5. Version Update Checker & GUI Notification Banner** — zero-telemetry client polling GitHub Releases API, 24h throttling cache, dismissible announcement banner, manual check trigger in Settings, and strict user opt-out enforcement — WP-044, ADR-023
+
 
 ---
 

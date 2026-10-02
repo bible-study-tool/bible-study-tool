@@ -144,6 +144,41 @@ class TestEgwDBBatchLookup(unittest.TestCase):
         self.assertEqual(res["egw:PP.44.1"]["book_code"], "PP")
         self.assertEqual(res["GC.422.1"]["book_code"], "GC")
 
+    def test_get_paragraphs_batch_mock_db(self):
+        """Batch lookup in EgwDB resolves rows and handles token aliases with mock database."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            db_path = Path(tmpdir) / "test_egw.db"
+            db = EgwDB(db_path=db_path)
+            db.init_db()
+            db.conn.execute(
+                """
+                INSERT INTO egw_paragraphs (id, book_code, book_title, page, paragraph, text, ref_code, chapter_num, chapter_title)
+                VALUES ('PP.44.1', 'PP', 'Patriarchs and Prophets', 44, 1, 'In the beginning God created...', 'PP 44.1', 1, 'Why Was Sin Permitted?');
+                """
+            )
+            db.conn.execute(
+                """
+                INSERT INTO egw_paragraphs (id, book_code, book_title, page, paragraph, text, ref_code, chapter_num, chapter_title)
+                VALUES ('GC.422.1', 'GC', 'The Great Controversy', 422, 1, 'The scripture which above all others...', 'GC 422.1', 23, 'What is the Sanctuary?');
+                """
+            )
+            db.conn.commit()
+            db.close()
+
+            # Test using read-only connection
+            reader_db = EgwDB(db_path=db_path)
+            tokens = ["egw:PP.44.1", "GC.422.1", "nonexistent.999.1"]
+            res = reader_db.get_paragraphs_batch(tokens)
+            self.assertIn("PP.44.1", res)
+            self.assertIn("egw:PP.44.1", res)
+            self.assertIn("GC.422.1", res)
+            self.assertNotIn("nonexistent.999.1", res)
+            self.assertEqual(res["PP.44.1"]["book_code"], "PP")
+            self.assertEqual(res["egw:PP.44.1"]["book_code"], "PP")
+            self.assertEqual(res["GC.422.1"]["book_code"], "GC")
+            reader_db.close()
+
+
 
 class TestEgwHybridSearchEngine(unittest.TestCase):
     """Test suite for Dual-Signal Reciprocal Rank Fusion search on EGW writings."""
@@ -291,14 +326,48 @@ class TestDeterministicSearchBridgeCommentary(unittest.TestCase):
             self.assertEqual(hit["source"], "commentary")
             self.assertEqual(hit["metadata"]["match_type"], "exact")
 
+    def test_commentary_search_when_library_embeddings_missing_mock(self):
+        """SearchBridge commentary search handles missing vector store via BM25 fallback with mock EgwDB."""
+        mock_egw = MagicMock()
+        mock_egw.exists.return_value = True
+        mock_egw.search.return_value = [
+            {
+                "id": "GC.1.1",
+                "book_code": "GC",
+                "book_title": "The Great Controversy",
+                "page": 1,
+                "paragraph": 1,
+                "snippet": "Test snippet for [b]sanctuary[/b]",
+                "rank": -4.2,
+                "chapter_num": 1,
+                "chapter_title": "Destruction of Jerusalem",
+            }
+        ]
+        with patch("search.corpus.hybrid_search.get_library_embeddings_db_path", return_value=Path("/nonexistent/lib.db")):
+            bridge = DeterministicSearchBridge(egw_db=mock_egw)
+            res = bridge.search("sanctuary", sources=["commentary"], mode="hybrid", limit=5)
+            self.assertEqual(res["counts"]["commentary"], 1)
+            hit = res["results"][0]
+            self.assertEqual(hit["source"], "commentary")
+            self.assertEqual(hit["id"], "GC.1.1")
+            self.assertEqual(hit["metadata"]["match_type"], "exact")
+            self.assertIn("Direct textual match (BM25 #1)", hit["metadata"]["match_reason"])
+
     def test_commentary_search_when_egw_missing_scripture_unaffected(self):
-        """Scripture search works 100% normally when egw.db is missing."""
+        """Scripture search works 100% normally when egw.db is missing, even on clean CI runners."""
         mock_egw = MagicMock()
         mock_egw.exists.return_value = False
         mock_egw.close.return_value = None
 
-        bridge = DeterministicSearchBridge(egw_db=mock_egw)
-        res = bridge.search("grace", sources="all", mode="hybrid", limit=5)
+        mock_bible = MagicMock()
+        mock_bible.exists.return_value = True
+        mock_bible.search.return_value = [
+            {"id": "Gen.1.1", "osis": "Gen", "chapter": 1, "verse": 1, "text": "In the beginning", "rank": -5.0}
+        ]
+        mock_bible.close.return_value = None
+
+        bridge = DeterministicSearchBridge(bible_db=mock_bible, egw_db=mock_egw)
+        res = bridge.search("beginning", sources="all", mode="keyword", limit=5)
         self.assertGreater(res["counts"]["scripture"], 0)
         self.assertEqual(res["counts"]["commentary"], 0)
 

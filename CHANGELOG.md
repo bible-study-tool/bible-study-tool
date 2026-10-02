@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+- **Version Update Checker & GUI Notification Banner (WP-044, ADR-023):**
+  - **Zero-Telemetry Update Detection:** Implemented `search/ui/version_check.py` to query public GitHub Releases (`/releases/latest`) using standard library HTTP requests. Absolutely zero personal information, IP logs, queries, system metrics, or hardware fingerprints are transmitted.
+  - **Strict User Preference & Opt-Out Enforcement:** Respects the existing "Check for Application Updates" toggle (`#auto-update-toggle` in Setup Wizard and `#settings-auto-update-toggle` in Settings). When toggled off, background checks are completely suppressed.
+  - **Throttled & Non-Intrusive Polling:** Background update checks are throttled to at most once every 24 hours via `localStorage` timestamp caching. In-memory caching protects against GitHub API rate limits.
+  - **Accessible GUI Notification Banner:** Integrated dismissible notification banner (`#update-notification-banner`) right beneath the workstation header, surfacing the new version tag, direct download link, and release notes. Dismissed versions are saved in `localStorage` to avoid repetitive interruptions.
+  - **Manual "Check for Updates Now" Trigger:** Added on-demand update check button and real-time status indicator in the Settings modal ("Network & Privacy" section) that bypasses cache and allows instant verification.
+  - **Graceful Offline Degradation:** If offline or if the GitHub API is unreachable, the check degrades silently without throwing alerts, modal dialogs, or disrupting Bible study.
+  - **Ephemeral CI Runner Test Hardening:** Added mock SQLite database tests for `EgwDB.get_paragraphs_batch()` and `DeterministicSearchBridge` commentary fallback, ensuring clean CI test execution without requiring large local databases (`egw.db`).
+
 ## [0.1.6] - 2026-10-01
 
 - **Spirit of Prophecy (EGW) Hybrid Search & Isolated Library Vector Integration (WP-043, ADR-029):**

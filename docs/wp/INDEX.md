@@ -54,6 +54,8 @@ entries `draft` -> `review`.
 | [WP-041](WP-041-historical-grammatical-context-layer.md) | Pillar C, D, E | Historical-Grammatical Context Layer & Architectural Ergonomics (ADR-022, 1986 GC Methods of Bible Study) | open |
 | [WP-042](WP-042-neural-model-sourcing-and-gui-embedding-management.md) | Pillar C (C1, C2), D (D1, D3), G (G6), P | Neural Model Provenance Sourcing, Developer Bootstrap Hydration, and GUI Vector Management | complete |
 | [WP-043](WP-043-egw-hybrid-search.md) | Pillar C (C1, C2), Pillar A (A7, A12), Pillar D | Spirit of Prophecy (EGW) Hybrid Search & Isolated Library Vector Integration | complete |
+| [WP-044](WP-044-version-update-checker.md) | Pillar D (D2, D3), Pillar E (E3) | Version Update Checker & GUI Notification Banner (Zero-Telemetry GitHub Releases) | complete |
+
 
 
 Priority order: WP-001 first (it also completes the already-curated Day 1

@@ -32,6 +32,23 @@
     </div>
   </header>
 
+  <!-- Application Update Notification Banner (WP-044) -->
+  <aside id="update-notification-banner" class="update-notification-banner" role="region" aria-label="Application update available" hidden>
+    <div class="update-banner-content">
+      <div class="update-banner-info">
+        <span class="update-banner-badge" aria-hidden="true">UPDATE</span>
+        <span class="update-banner-text">
+          A new version of Adventist Bible Study Tool is available: <strong id="update-banner-version">v0.1.7</strong>
+        </span>
+      </div>
+      <div class="update-banner-actions">
+        <a id="update-banner-notes-link" class="btn-banner-secondary" href="https://github.com/bible-study-tool/bible-study-tool/releases" target="_blank" rel="noopener noreferrer">Release Notes</a>
+        <a id="update-banner-download-link" class="btn-banner-primary" href="https://github.com/bible-study-tool/bible-study-tool/releases/latest" target="_blank" rel="noopener noreferrer">Download Update ↗</a>
+        <button id="update-banner-dismiss-btn" class="btn-banner-dismiss" type="button" aria-label="Dismiss update notification" title="Dismiss for now">✕</button>
+      </div>
+    </div>
+  </aside>
+
   <main class="app-main">
     <section id="reading-pane" class="pane pane-reading" aria-live="polite" tabindex="-1">
       <div class="passage-heading">
@@ -692,6 +709,13 @@
                 <span class="toggle-sub">Periodically checks GitHub Releases for new versions and critical bug fixes.</span>
               </div>
             </label>
+            <div class="setting-row update-check-row">
+              <div class="setting-info">
+                <span class="setting-label">Installed Version: <strong id="settings-installed-version">v0.1.6</strong></span>
+                <span id="settings-update-status" class="setting-sub update-status-text" aria-live="polite">Up to date</span>
+              </div>
+              <button type="button" id="settings-check-update-btn" class="btn-tool">Check for Updates Now</button>
+            </div>
             <div class="privacy-callout">
               <div class="privacy-badge">&#128274; Zero-Telemetry Guarantee</div>
               <p>When update checking is active, the application only queries the public GitHub release tag. <strong>No identifiers, no IP logging, no queries, and no personal telemetry are ever transmitted.</strong></p>
